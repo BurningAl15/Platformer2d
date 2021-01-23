@@ -28,6 +28,7 @@ public class PlayerController2d : MonoBehaviour
     private void Awake()
     {
         rgb = GetComponent<Rigidbody2D>();
+        anim = GetComponent<Animator>();
     }
 
     void Start()
@@ -56,6 +57,8 @@ public class PlayerController2d : MonoBehaviour
         //If we are in floor, then reset the doubleJump bool so you can double jump again.
         if (isGrounded)
             canDoubleJump = true;
+        
+        anim.SetBool("isGrounded",isGrounded);
     }
     
     void Jump()
@@ -82,6 +85,8 @@ public class PlayerController2d : MonoBehaviour
             direction = 1;
         else if (horizontalMovement < 0)
             direction = -1;
+
+        anim.SetFloat("moveSpeed", Mathf.Abs(horizontalMovement));
         
         rgb.velocity = new Vector2(horizontalMovement, rgb.velocity.y);
     }
