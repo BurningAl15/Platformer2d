@@ -876,8 +876,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rgb: {fileID: 0}
   anim: {fileID: 0}
-  movementSpeed: 5
-  jumpForce: 15
+  movementSpeed: 8
+  jumpForce: 12
   groundCheckPoint: {fileID: 425313532}
   radius: 0.15
   whatIsGround:

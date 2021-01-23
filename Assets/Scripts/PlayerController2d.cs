@@ -22,7 +22,8 @@ public class PlayerController2d : MonoBehaviour
     [SerializeField] private float radius;
     [SerializeField] private LayerMask whatIsGround;
     private bool isGrounded = false;
-    
+
+    private bool canDoubleJump = true;
     
     private void Awake()
     {
@@ -51,12 +52,25 @@ public class PlayerController2d : MonoBehaviour
     void GroundCheck()
     {
         isGrounded = Physics2D.OverlapCircle(groundCheckPoint.position,radius,whatIsGround);
+        
+        //If we are in floor, then reset the doubleJump bool so you can double jump again.
+        if (isGrounded)
+            canDoubleJump = true;
     }
     
     void Jump()
     {
         if(isGrounded)
             rgb.velocity = new Vector2(rgb.velocity.x, jumpForce);
+        else
+        {
+            //Start this when you are on air
+            if (canDoubleJump)
+            {
+                rgb.velocity = new Vector2(rgb.velocity.x, jumpForce);
+                canDoubleJump = false;
+            }
+        }
     }
     
     
