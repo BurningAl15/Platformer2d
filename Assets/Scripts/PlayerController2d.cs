@@ -9,8 +9,9 @@ public class PlayerController2d : MonoBehaviour
 
     [Header("Property values")] 
     [SerializeField] private float movementSpeed;
-
     private int direction = 1;
+
+    [SerializeField] private float jumpForce;
     
     private void Awake()
     {
@@ -26,8 +27,15 @@ public class PlayerController2d : MonoBehaviour
     {
         Movement();
         FlipSprite();
+        if (Input.GetButtonDown("Jump"))
+            Jump();
     }
 
+    void Jump()
+    {
+        rgb.velocity = new Vector2(rgb.velocity.x, jumpForce);
+    }
+    
     void Movement()
     {
         float horizontalMovement = Input.GetAxis("Horizontal") * movementSpeed;
