@@ -7,9 +7,9 @@ using UnityEngine.Serialization;
 public class PlayerController2d : MonoBehaviour
 {
     [Header("Components")] 
-    [SerializeField] private Rigidbody2D rgb;
-
-    [SerializeField] private Animator anim;
+    [SerializeField] private Rigidbody2D _rgb;
+    [SerializeField] private Animator _anim;
+    [SerializeField] private SpriteRenderer _spriteRenderer;
     private int direction = 1;
 
     [Header("Movement Variables")] 
@@ -27,8 +27,9 @@ public class PlayerController2d : MonoBehaviour
     
     private void Awake()
     {
-        rgb = GetComponent<Rigidbody2D>();
-        anim = GetComponent<Animator>();
+        _rgb = GetComponent<Rigidbody2D>();
+        _anim = GetComponent<Animator>();
+        _spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
     void Start()
@@ -58,19 +59,19 @@ public class PlayerController2d : MonoBehaviour
         if (isGrounded)
             canDoubleJump = true;
         
-        anim.SetBool("isGrounded",isGrounded);
+        _anim.SetBool("isGrounded",isGrounded);
     }
     
     void Jump()
     {
         if(isGrounded)
-            rgb.velocity = new Vector2(rgb.velocity.x, jumpForce);
+            _rgb.velocity = new Vector2(_rgb.velocity.x, jumpForce);
         else
         {
             //Start this when you are on air
             if (canDoubleJump)
             {
-                rgb.velocity = new Vector2(rgb.velocity.x, jumpForce);
+                _rgb.velocity = new Vector2(_rgb.velocity.x, jumpForce);
                 canDoubleJump = false;
             }
         }
@@ -86,14 +87,17 @@ public class PlayerController2d : MonoBehaviour
         else if (horizontalMovement < 0)
             direction = -1;
 
-        anim.SetFloat("moveSpeed", Mathf.Abs(horizontalMovement));
+        _anim.SetFloat("moveSpeed", Mathf.Abs(horizontalMovement));
         
-        rgb.velocity = new Vector2(horizontalMovement, rgb.velocity.y);
+        _rgb.velocity = new Vector2(horizontalMovement, _rgb.velocity.y);
     }
 
     void FlipSprite()
     {
-        transform.eulerAngles = new Vector3(0, direction == 1 ? 0 : 180, 0);
+        //By rotations
+        // transform.eulerAngles = new Vector3(0, direction == 1 ? 0 : 180, 0);
+        //By spriteRenderer
+        _spriteRenderer.flipX = direction != 1;
     }
 
     private void OnDrawGizmos()
