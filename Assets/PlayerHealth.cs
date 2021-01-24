@@ -4,15 +4,15 @@ using UnityEngine;
 
 public class PlayerHealth : MonoBehaviour
 {
+    public static PlayerHealth _instance;
+
     [SerializeField] private int currentHealth, maxHealth;
 
     void Awake()
     {
         currentHealth = maxHealth;
-    }
-    void Update()
-    {
-        
+
+        _instance = this;
     }
 
     public void DealDamage()
@@ -20,7 +20,11 @@ public class PlayerHealth : MonoBehaviour
         currentHealth--;
         
         //Validating
-        if(currentHealth<=0)
+        if (currentHealth <= 0)
+        {
+            currentHealth = 0;            
             gameObject.SetActive(false);
+        }
+        UIController._instance.UpdateHealthDisplay_Damage(currentHealth);
     }
 }
