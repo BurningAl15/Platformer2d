@@ -42,10 +42,6 @@ public class UIController : MonoBehaviour
     public static UIController _instance;
 
     [Header("Hearts")]
-    [SerializeField] private Image heart1;
-    [SerializeField] private Image heart2;
-    [SerializeField] private Image heart3;
-
     [SerializeField] private List<HeartUI> hearts = new List<HeartUI>();
     
     [Header("Heart Sprites")]
