@@ -88,9 +88,8 @@ public class PlayerController2d : MonoBehaviour
         else if (horizontalMovement < 0)
             direction = -1;
 
-        _anim.SetFloat("moveSpeed", Mathf.Abs(horizontalMovement));
-        
         _rgb.velocity = new Vector2(horizontalMovement, _rgb.velocity.y);
+        _anim.SetFloat("moveSpeed", Mathf.Abs(horizontalMovement));
     }
 
     #endregion
@@ -112,6 +111,7 @@ public class PlayerController2d : MonoBehaviour
     {
         knockBackCounter = knockBackLength;
         _rgb.velocity = new Vector2(0, knockBackForce.y);
+        _anim.SetTrigger("Hurt");
     }
     
     void FlipSprite()
