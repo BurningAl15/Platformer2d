@@ -445,9 +445,15 @@ MonoBehaviour:
   heart1: {fileID: 1873912466}
   heart2: {fileID: 749695919}
   heart3: {fileID: 288533913}
-  heartFull: {fileID: 8109154662235370213, guid: d9a616f95048ea84e8fc6f7920f846b8,
-    type: 3}
+  hearts:
+  - heartImage: {fileID: 1873912466}
+  - heartImage: {fileID: 749695919}
+  - heartImage: {fileID: 288533913}
   heartEmpty: {fileID: -4390673095631447188, guid: d9a616f95048ea84e8fc6f7920f846b8,
+    type: 3}
+  heartHalf: {fileID: 2139837793675082937, guid: d9a616f95048ea84e8fc6f7920f846b8,
+    type: 3}
+  heartFull: {fileID: 8109154662235370213, guid: d9a616f95048ea84e8fc6f7920f846b8,
     type: 3}
 --- !u!1 &347828264
 GameObject:
@@ -5962,7 +5968,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentHealth: 0
-  maxHealth: 3
+  maxHealth: 6
 --- !u!1 &1861275301
 GameObject:
   m_ObjectHideFlags: 0

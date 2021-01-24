@@ -1,64 +1,81 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+
+[Serializable]
+public class HeartUI
+{
+    public Image heartImage;
+    private Sprite heartEmpty;
+    private Sprite heartHalf;
+    private Sprite heartFull;
+
+    public void Init(Sprite empty, Sprite half, Sprite full)
+    {
+        heartEmpty = empty;
+        heartHalf = half;
+        heartFull = full;
+
+        heartImage.sprite = heartFull;
+    }
+    public void UpdateHeartSprite_Damage(int _)
+    {
+        if (_ % 2 == 0)
+            heartImage.sprite = heartEmpty;
+        else if (_ % 2 == 1)
+            heartImage.sprite = heartHalf;
+    }
+
+    public void UpdateHeartSprite_Cure(int _)
+    {
+        if (_ % 2 == 1)
+            heartImage.sprite = heartFull;
+        else if (_ % 2 == 0)
+            heartImage.sprite = heartHalf;
+    }
+}
 
 public class UIController : MonoBehaviour
 {
     public static UIController _instance;
 
-    [SerializeField] private Image heart1, heart2, heart3;
+    [Header("Hearts")]
+    [SerializeField] private Image heart1;
+    [SerializeField] private Image heart2;
+    [SerializeField] private Image heart3;
 
-    [SerializeField] private Sprite heartFull, heartEmpty;
+    [SerializeField] private List<HeartUI> hearts = new List<HeartUI>();
     
+    [Header("Heart Sprites")]
+    [SerializeField] private Sprite heartEmpty;
+    [SerializeField] private Sprite heartHalf;
+    [SerializeField] private Sprite heartFull;
+
+    /*
+     Heart stuff logic
+     x -> empty
+     x+1 -> half
+     x+2 -> full
+    */
     void Awake()
     {
         _instance = this;
-        heart1.sprite = heartFull;
-        heart2.sprite = heartFull;
-        heart3.sprite = heartFull;
+        
+        for(int i=0;i<hearts.Count;i++)
+            hearts[i].Init(heartEmpty,heartHalf,heartFull);
     }
-
+    
     public void UpdateHealthDisplay_Damage(int index)
     {
-        switch (index)
-        {
-            default:
-            case 0:
-                heart1.sprite = heartEmpty;
-                heart2.sprite = heartEmpty;
-                heart3.sprite = heartEmpty;
-                break;
-            case 1:
-                heart1.sprite = heartFull;
-                heart2.sprite = heartEmpty;
-                heart3.sprite = heartEmpty;
-                break;
-            case 2:
-                heart1.sprite = heartFull;
-                heart2.sprite = heartFull;
-                heart3.sprite = heartEmpty;
-                break;
-            case 3:
-                heart1.sprite = heartFull;
-                heart2.sprite = heartFull;
-                heart3.sprite = heartFull;
-                break;
-        }
+        int _currentIndex = index / 2;
+        
+        hearts[_currentIndex].UpdateHeartSprite_Damage(index);
     }
     public void UpdateHealthDisplay_Cure(int index)
     {
-        switch (index)
-        {
-            case 1:
-                heart1.sprite = heartFull;
-                break;
-            case 2:
-                heart2.sprite = heartFull;
-                break;
-            case 3:
-                heart3.sprite = heartFull;
-                break;
-        }
+        int _currentIndex = index / 2;
+        hearts[_currentIndex].UpdateHeartSprite_Cure(index);
     }
 }
