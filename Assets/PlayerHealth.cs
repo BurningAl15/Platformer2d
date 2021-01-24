@@ -45,6 +45,8 @@ public class PlayerHealth : MonoBehaviour
             {
                 invicibilityCounter = invincibilityLength;
           
+                PlayerController2d._instance.KnockBack();
+                
                 isInvincible = true;
                 if (currentCoroutine == null)
                     currentCoroutine = StartCoroutine(BlinkEffect());
@@ -55,7 +57,6 @@ public class PlayerHealth : MonoBehaviour
 
     public void CureDamage()
     {
-        print("Current Health: " + currentHealth);
         if(currentHealth!=maxHealth)
             UIController._instance.UpdateHealthDisplay_Cure(currentHealth);
     

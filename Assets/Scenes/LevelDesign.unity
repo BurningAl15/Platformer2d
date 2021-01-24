@@ -6493,6 +6493,9 @@ MonoBehaviour:
   whatIsGround:
     serializedVersion: 2
     m_Bits: 256
+  knockBackLength: 0.25
+  knockBackForce: {x: 3, y: 5}
+  knockBackCounter: 0
 --- !u!95 &1816763294
 Animator:
   serializedVersion: 3
@@ -6524,10 +6527,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f0b40ef730b4b764eb25b676561def1e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _spriteRenderer: {fileID: 0}
   currentHealth: 0
   maxHealth: 8
-  invicibilityCounter: 2
-  invincibilityLength: 0
+  invicibilityCounter: 0
+  invincibilityLength: 2
 --- !u!1 &1861275301
 GameObject:
   m_ObjectHideFlags: 0

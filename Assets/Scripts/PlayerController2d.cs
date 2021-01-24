@@ -6,6 +6,8 @@ using UnityEngine.Serialization;
 
 public class PlayerController2d : MonoBehaviour
 {
+    public static PlayerController2d _instance;
+    
     [Header("Components")] 
     [SerializeField] private Rigidbody2D _rgb;
     [SerializeField] private Animator _anim;
@@ -22,46 +24,46 @@ public class PlayerController2d : MonoBehaviour
     [SerializeField] private float radius;
     [SerializeField] private LayerMask whatIsGround;
     private bool isGrounded = false;
-
     private bool canDoubleJump = true;
+
+    [Header("Knockback Effect Variables")]
+    public float knockBackLength;
+    public Vector2 knockBackForce;
+    public float knockBackCounter;
     
     private void Awake()
     {
         _rgb = GetComponent<Rigidbody2D>();
         _anim = GetComponent<Animator>();
         _spriteRenderer = GetComponent<SpriteRenderer>();
-    }
 
-    void Start()
-    {
-        
+        _instance = this;
     }
 
     void Update()
     {
-        //Horizontal Movement
-        Movement();
+        if (knockBackCounter <= 0)
+        {
+            //Horizontal Movement
+            Movement();
 
-        //Flipping sprite by direction
-        FlipSprite();
+            //Flipping sprite by direction
+            FlipSprite();
 
-        //Checking ground and Jump
-        GroundCheck();
-        if (Input.GetButtonDown("Jump"))
-            Jump();
-    }
-
-    void GroundCheck()
-    {
-        isGrounded = Physics2D.OverlapCircle(groundCheckPoint.position,radius,whatIsGround);
-        
-        //If we are in floor, then reset the doubleJump bool so you can double jump again.
-        if (isGrounded)
-            canDoubleJump = true;
-        
-        _anim.SetBool("isGrounded",isGrounded);
+            //Checking ground and Jump
+            GroundCheck();
+            if (Input.GetButtonDown("Jump"))
+                Jump();   
+        }
+        else
+        {
+            knockBackCounter -= Time.deltaTime;
+            _rgb.velocity = new Vector2(knockBackForce.x * -direction, _rgb.velocity.y);
+        }
     }
     
+    #region Interactions
+
     void Jump()
     {
         if(isGrounded)
@@ -77,7 +79,6 @@ public class PlayerController2d : MonoBehaviour
         }
     }
     
-    
     void Movement()
     {
         float horizontalMovement = Input.GetAxis("Horizontal") * movementSpeed;
@@ -92,6 +93,27 @@ public class PlayerController2d : MonoBehaviour
         _rgb.velocity = new Vector2(horizontalMovement, _rgb.velocity.y);
     }
 
+    #endregion
+
+    #region Utils
+
+    void GroundCheck()
+    {
+        isGrounded = Physics2D.OverlapCircle(groundCheckPoint.position,radius,whatIsGround);
+        
+        //If we are in floor, then reset the doubleJump bool so you can double jump again.
+        if (isGrounded)
+            canDoubleJump = true;
+        
+        _anim.SetBool("isGrounded",isGrounded);
+    }
+
+    public void KnockBack()
+    {
+        knockBackCounter = knockBackLength;
+        _rgb.velocity = new Vector2(0, knockBackForce.y);
+    }
+    
     void FlipSprite()
     {
         //By rotations
@@ -100,6 +122,9 @@ public class PlayerController2d : MonoBehaviour
         _spriteRenderer.flipX = direction != 1;
     }
 
+    #endregion
+
+    //Gizmos
     private void OnDrawGizmos()
     {
         if(isGrounded)
