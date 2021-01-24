@@ -21,12 +21,18 @@ public class PlayerHealth : MonoBehaviour
 
     private Coroutine currentCoroutine = null;
     private bool isInvincible = false;
+
     void Awake()
     {
         _instance = this;
         currentHealth = maxHealth;
 
         _spriteRenderer = GetComponent<SpriteRenderer>();
+    }
+
+    private void Start()
+    {
+        CheckpointManager._instance.UpdateCurrentPosition(transform.position);
     }
 
     public void DealDamage()
@@ -38,8 +44,8 @@ public class PlayerHealth : MonoBehaviour
             //Validating
             if (currentHealth <= 0)
             {
-                currentHealth = 0;            
-                gameObject.SetActive(false);
+                currentHealth = 0;
+                LevelManager._instance.RespawnPlayer();
             }
             else
             {
@@ -55,6 +61,11 @@ public class PlayerHealth : MonoBehaviour
         }
     }
 
+    public void TurnOffPlayer()
+    {                
+        this.gameObject.SetActive(false);
+    }
+    
     public void CureDamage()
     {
         if(currentHealth!=maxHealth)
@@ -68,11 +79,11 @@ public class PlayerHealth : MonoBehaviour
             currentHealth = maxHealth;            
         }
     }
-
+    
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
-            CureDamage();
+        // if (Input.GetKeyDown(KeyCode.Space))
+        //     CureDamage();
 
         if (invicibilityCounter > 0)
         {
@@ -83,6 +94,25 @@ public class PlayerHealth : MonoBehaviour
         }
     }
 
+    public bool IsAlive()
+    {
+        return currentHealth > 0;
+    }
+    public void ResetHealth()
+    {
+        currentHealth = maxHealth;
+    }
+    public void ResetPlayer()
+    {
+        transform.position = CheckpointManager._instance.GetPosition();
+        Color tempColor = _spriteRenderer.color;
+        _spriteRenderer.color = new Color(tempColor.r,
+            tempColor.g,
+            tempColor.b,
+            1);
+        gameObject.SetActive(true);
+    }
+    
     IEnumerator BlinkEffect()
     {
         Color tempColor = _spriteRenderer.color;

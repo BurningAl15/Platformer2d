@@ -74,4 +74,10 @@ public class UIController : MonoBehaviour
         int _currentIndex = index / 2;
         hearts[_currentIndex].UpdateHeartSprite_Cure(index);
     }
+
+    public void ResetHearts()
+    {
+        for(int i=0;i<hearts.Count;i++)
+            hearts[i].Init(heartEmpty,heartHalf,heartFull);
+    }
 }
