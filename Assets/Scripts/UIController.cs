@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -49,6 +50,9 @@ public class UIController : MonoBehaviour
     [SerializeField] private Sprite heartHalf;
     [SerializeField] private Sprite heartFull;
 
+    [Header("Gems UI")] 
+    [SerializeField] private TextMeshProUGUI gemsText;
+    
     /*
      Heart stuff logic
      x -> empty
@@ -62,7 +66,8 @@ public class UIController : MonoBehaviour
         for(int i=0;i<hearts.Count;i++)
             hearts[i].Init(heartEmpty,heartHalf,heartFull);
     }
-    
+
+    #region Health
     public void UpdateHealthDisplay_Damage(int index)
     {
         int _currentIndex = index / 2;
@@ -74,10 +79,15 @@ public class UIController : MonoBehaviour
         int _currentIndex = index / 2;
         hearts[_currentIndex].UpdateHeartSprite_Cure(index);
     }
-
     public void ResetHearts()
     {
         for(int i=0;i<hearts.Count;i++)
             hearts[i].Init(heartEmpty,heartHalf,heartFull);
+    }    
+    #endregion
+
+    public void UpdateGems_UI(int _currentGems)
+    {
+        gemsText.text = "" + _currentGems;
     }
 }

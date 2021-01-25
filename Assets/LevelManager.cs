@@ -10,9 +10,17 @@ public class LevelManager : MonoBehaviour
 
     private Coroutine currentCoroutine = null;
 
+    int gemsCollected = 0;
+    
     private void Awake()
     {
         _instance = this;
+    }
+
+    private void Start()
+    {
+        UIController._instance.UpdateGems_UI(gemsCollected);
+
     }
 
     // private void Update()
@@ -24,6 +32,12 @@ public class LevelManager : MonoBehaviour
     //     }
     // }
 
+    public void UpdateGemsCollected()
+    {
+        gemsCollected++;
+        UIController._instance.UpdateGems_UI(gemsCollected);
+    }
+    
     public void RespawnPlayer()
     {
         if (currentCoroutine == null)
@@ -32,10 +46,8 @@ public class LevelManager : MonoBehaviour
 
     IEnumerator Respawning()
     {
-        print("AA");
         PlayerHealth._instance.TurnOffPlayer();
         yield return new WaitForSeconds(respawnMaxTime);
-        print("BB");
         PlayerHealth._instance.ResetHealth();
         UIController._instance.ResetHearts();
         PlayerHealth._instance.ResetPlayer();
