@@ -6326,6 +6326,7 @@ MonoBehaviour:
   knockBackLength: 0.25
   knockBackForce: {x: 3, y: 5}
   knockBackCounter: 0
+  bounceForce: 10
 --- !u!95 &1816763294
 Animator:
   serializedVersion: 3

@@ -24,6 +24,7 @@ public class EnemyController : MonoBehaviour
 
     private bool isDeath = false;
     private Coroutine currentCoroutine = null;
+
     
     void Awake()
     {

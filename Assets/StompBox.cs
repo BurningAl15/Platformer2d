@@ -11,8 +11,8 @@ public class StompBox : MonoBehaviour
         {
             print("Hit Enemy");
             other.gameObject.SetActive(false);
-            
             other.transform.parent.gameObject.GetComponent<EnemyController>().Death();
+            PlayerController2d._instance.Bounce();
         }
     }
 }

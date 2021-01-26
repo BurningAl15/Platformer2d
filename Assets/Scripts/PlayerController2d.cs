@@ -31,6 +31,8 @@ public class PlayerController2d : MonoBehaviour
     public Vector2 knockBackForce;
     public float knockBackCounter;
 
+    [Header("Enemy Effect Variabels")] 
+    [SerializeField] private float bounceForce;
     
     private void Awake()
     {
@@ -123,6 +125,11 @@ public class PlayerController2d : MonoBehaviour
         _spriteRenderer.flipX = direction != 1;
     }
 
+    public void Bounce()
+    {
+        _rgb.velocity = new Vector2(_rgb.velocity.x, bounceForce);
+    }
+    
     #endregion
 
     //Gizmos
