@@ -22,6 +22,9 @@ public class PlayerHealth : MonoBehaviour
     private Coroutine currentCoroutine = null;
     private bool isInvincible = false;
 
+    [Header("Death Effect")] 
+    [SerializeField] private GameObject deathEffect;
+    
     void Awake()
     {
         _instance = this;
@@ -59,6 +62,22 @@ public class PlayerHealth : MonoBehaviour
             }
             UIController._instance.UpdateHealthDisplay_Damage(currentHealth);
         }
+    }
+
+    public void DeathEffect()
+    {
+        deathEffect.transform.position = this.transform.position;
+        deathEffect.SetActive(true);
+    }
+
+    public bool isDeathEffectEnd()
+    {
+        return deathEffect.GetComponent<TurnOff_OnTime>().finish;
+    }
+
+    public void ResetDeathEffect()
+    {
+        deathEffect.GetComponent<TurnOff_OnTime>().Reset();
     }
 
     public void TurnOffPlayer()

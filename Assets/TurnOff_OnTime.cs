@@ -11,4 +11,9 @@ public class TurnOff_OnTime : MonoBehaviour
         gameObject.SetActive(false);
         finish = true;
     }
+
+    public void Reset()
+    {
+        finish = false;
+    }
 }

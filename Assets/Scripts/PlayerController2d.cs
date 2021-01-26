@@ -30,6 +30,7 @@ public class PlayerController2d : MonoBehaviour
     public float knockBackLength;
     public Vector2 knockBackForce;
     public float knockBackCounter;
+
     
     private void Awake()
     {

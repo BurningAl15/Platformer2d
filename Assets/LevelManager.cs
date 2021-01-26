@@ -46,11 +46,14 @@ public class LevelManager : MonoBehaviour
 
     IEnumerator Respawning()
     {
+        PlayerHealth._instance.DeathEffect();
         PlayerHealth._instance.TurnOffPlayer();
+        yield return new WaitUntil(() => PlayerHealth._instance.isDeathEffectEnd());
         yield return new WaitForSeconds(respawnMaxTime);
         PlayerHealth._instance.ResetHealth();
         UIController._instance.ResetHearts();
         PlayerHealth._instance.ResetPlayer();
+        PlayerHealth._instance.ResetDeathEffect();
         currentCoroutine = null;
     }
 }
