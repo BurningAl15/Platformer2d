@@ -26,6 +26,10 @@ public class Pickup : MonoBehaviour
             if(_pickupType==PickupType.Health)
                 PlayerHealth._instance.CureDamage();
             // if(_pickupType==PickupType.Coin)
+            
+            if (GetComponent<Rigidbody2D>())
+                GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+            
             if (currentCoroutine == null)
                 currentCoroutine = StartCoroutine(CollectEffect());
         }

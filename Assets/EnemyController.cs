@@ -15,7 +15,8 @@ public class EnemyController : MonoBehaviour
     [SerializeField] private int direction=-1;
 
     [Header("Movement Limits")]
-    [SerializeField] private Transform leftPoint, rightPoint;
+    [SerializeField] private Transform leftPoint;
+    [SerializeField] private Transform rightPoint;
 
     [SerializeField] private float moveTime, waitTime;
     private float moveCount, waitCount;
