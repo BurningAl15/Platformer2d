@@ -67,6 +67,11 @@ public class UIController : MonoBehaviour
             hearts[i].Init(heartEmpty,heartHalf,heartFull);
     }
 
+    private void Start()
+    {
+        FadeEffect._instance.Initialize();
+    }
+
     #region Health
     public void UpdateHealthDisplay_Damage(int index)
     {

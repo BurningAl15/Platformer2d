@@ -49,11 +49,14 @@ public class LevelManager : MonoBehaviour
         PlayerHealth._instance.DeathEffect();
         PlayerHealth._instance.TurnOffPlayer();
         yield return new WaitUntil(() => PlayerHealth._instance.isDeathEffectEnd());
+        FadeEffect._instance.Fade_Out();
+        yield return new WaitUntil(() => FadeEffect._instance.endFade);
         yield return new WaitForSeconds(respawnMaxTime);
         PlayerHealth._instance.ResetHealth();
         UIController._instance.ResetHearts();
         PlayerHealth._instance.ResetPlayer();
         PlayerHealth._instance.ResetDeathEffect();
+        FadeEffect._instance.Fade_In();
         currentCoroutine = null;
     }
 }
