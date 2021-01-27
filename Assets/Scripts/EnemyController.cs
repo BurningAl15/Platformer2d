@@ -9,6 +9,7 @@ public class EnemyController : MonoBehaviour
     [SerializeField] private Rigidbody2D rgb;
     [SerializeField] private SpriteRenderer _spriteRenderer;
     [SerializeField] private Animator anim;
+    [SerializeField] private BoxCollider2D damageCollider2D;
     
     [Header("Movement Variables")]
     [SerializeField] private float moveSpeed;
@@ -31,6 +32,7 @@ public class EnemyController : MonoBehaviour
     {
         rgb = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
+        damageCollider2D = GetComponent<BoxCollider2D>();
         
         leftPoint.name = leftPoint.name + "- from -" + this.name;
         rightPoint.name = rightPoint.name + "- from -" + this.name;
@@ -97,6 +99,7 @@ public class EnemyController : MonoBehaviour
     {
         isDeath = true;
         deathEffect.transform.position = _spriteRenderer.transform.position;
+        damageCollider2D.enabled = false;
         deathEffect.SetActive(true);
         yield return new WaitUntil(() => deathEffect.GetComponent<TurnOff_OnTime>().finish);
         gameObject.SetActive(false);

@@ -119,7 +119,6 @@ public class PlayerController2d : MonoBehaviour
         knockBackCounter = knockBackLength;
         _rgb.velocity = new Vector2(0, knockBackForce.y);
         _anim.SetTrigger("Hurt");
-        AudioMixerManager._instance.CallSFX(SFXType.Player_Hurt);            
     }
     
     void FlipSprite()

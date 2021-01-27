@@ -10,7 +10,7 @@ public class DamagePlayer : MonoBehaviour
         if (other.CompareTag(StringUtils.tag_Player))
         {
             // other.GetComponent<PlayerHealth>().DealDamage();
-            PlayerHealth._instance.DealDamage();            
+            PlayerHealth._instance.DealDamage();       
         }
     }
 }

@@ -25,20 +25,17 @@ public class Pickup : MonoBehaviour
             {
                 LevelManager._instance.UpdateGemsCollected();
                 AudioMixerManager._instance.CallSFX(SFXType.Player_Pickup_Gem);
+                if (currentCoroutine == null)
+                    currentCoroutine = StartCoroutine(CollectEffect());
             }
 
-            if (_pickupType == PickupType.Health)
+            if (_pickupType == PickupType.Health && PlayerHealth._instance.isDamaged())
             {
                 PlayerHealth._instance.CureDamage();
                 AudioMixerManager._instance.CallSFX(SFXType.Player_Pickup_Health);
+                if (currentCoroutine == null)
+                    currentCoroutine = StartCoroutine(CollectEffect());
             }
-            // if(_pickupType==PickupType.Coin)
-            
-            if (GetComponent<Rigidbody2D>())
-                GetComponent<Rigidbody2D>().velocity = Vector2.zero;
-            
-            if (currentCoroutine == null)
-                currentCoroutine = StartCoroutine(CollectEffect());
         }
     }
 

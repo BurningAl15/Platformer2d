@@ -11,6 +11,8 @@ public class Checkpoint : MonoBehaviour
     [FormerlySerializedAs("notActive")] [SerializeField] private Sprite checkpointSprite_On;
     [FormerlySerializedAs("active")] [SerializeField] private Sprite checkpointSprite_Off;
 
+    private bool isSelected = false;
+
     void Start()
     {
         _spriteRenderer = GetComponent<SpriteRenderer>();
@@ -24,16 +26,18 @@ public class Checkpoint : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("Player") && !isSelected)
         {
             CheckpointManager._instance.ResetAllCheckpoints();
             CheckpointManager._instance.UpdateCurrentPosition(this.transform);
             _spriteRenderer.sprite = checkpointSprite_On;
+            isSelected = true;
         }
     }
 
     public void ResetCheckpoint()
     {
         _spriteRenderer.sprite = checkpointSprite_Off;
+        isSelected = false;
     }
 }

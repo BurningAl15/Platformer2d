@@ -55,7 +55,8 @@ public class PlayerHealth : MonoBehaviour
                 invicibilityCounter = invincibilityLength;
           
                 PlayerController2d._instance.KnockBack();
-                
+                AudioMixerManager._instance.CallSFX(SFXType.Player_Hurt);            
+  
                 isInvincible = true;
                 if (currentCoroutine == null)
                     currentCoroutine = StartCoroutine(BlinkEffect());
@@ -73,6 +74,11 @@ public class PlayerHealth : MonoBehaviour
     public bool isDeathEffectEnd()
     {
         return deathEffect.GetComponent<TurnOff_OnTime>().finish;
+    }
+
+    public bool isDamaged()
+    {
+        return currentHealth < maxHealth;
     }
 
     public void ResetDeathEffect()

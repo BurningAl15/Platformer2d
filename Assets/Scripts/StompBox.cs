@@ -21,7 +21,8 @@ public class StompBox : MonoBehaviour
             other.gameObject.SetActive(false);
             other.transform.parent.gameObject.GetComponent<EnemyController>().Death();
             PlayerController2d._instance.Bounce();
-            
+            AudioMixerManager._instance.CallSFX(SFXType.Enemy_Death);
+
             float dropSelect = Random.Range(0, 100);
 
             if (dropSelect <= chanceToDrop)
