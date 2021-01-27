@@ -10,19 +10,24 @@ public class SceneUtils : MonoBehaviour
       SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
    }
 
+   public static void LoadScene(string _sceneNumber)
+   {
+      SceneManager.LoadScene(_sceneNumber);
+   }
+   
    public static void LoadScene(int _sceneNumber)
    {
-      SceneManager.LoadScene("Level" + _sceneNumber);
+      SceneManager.LoadScene(_sceneNumber);
    }
    
    public static void ToSelectionScene()
    {
-      SceneManager.LoadScene("SelectionScreen");
+      SceneManager.LoadScene("LevelSelection");
    }
 
    public static void ToMainScene()
    {
-      SceneManager.LoadScene("MainScreen");
+      SceneManager.LoadScene("MainMenu");
    }
 
    public static bool IsInGameplay()

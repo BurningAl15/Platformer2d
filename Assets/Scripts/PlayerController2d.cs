@@ -45,23 +45,26 @@ public class PlayerController2d : MonoBehaviour
 
     void Update()
     {
-        if (knockBackCounter <= 0)
+        if (!PauseMenu._instance.isPaused)
         {
-            //Horizontal Movement
-            Movement();
+            if (knockBackCounter <= 0)
+            {
+                //Horizontal Movement
+                Movement();
 
-            //Flipping sprite by direction
-            FlipSprite();
+                //Flipping sprite by direction
+                FlipSprite();
 
-            //Checking ground and Jump
-            GroundCheck();
-            if (Input.GetButtonDown("Jump"))
-                Jump();   
-        }
-        else
-        {
-            knockBackCounter -= Time.deltaTime;
-            _rgb.velocity = new Vector2(knockBackForce.x * -direction, _rgb.velocity.y);
+                //Checking ground and Jump
+                GroundCheck();
+                if (Input.GetButtonDown("Jump"))
+                    Jump();   
+            }
+            else
+            {
+                knockBackCounter -= Time.deltaTime;
+                _rgb.velocity = new Vector2(knockBackForce.x * -direction, _rgb.velocity.y);
+            }
         }
     }
     
