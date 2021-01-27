@@ -11,7 +11,6 @@ using Random = UnityEngine.Random;
 public enum SFXType
 {
     Player_Jump,
-    Player_Pickup_Gem,
     Player_Pickup_Health,
     Player_Hurt,
     Player_Death,
@@ -27,6 +26,24 @@ public enum SFXType
     Warp_Jingle
 }
 
+[Serializable]
+public class SFXElement
+{
+    public AudioClip clip;
+    public AudioSource source;
+
+    public void CallSFX()
+    {
+        source.Stop();
+        source.clip = clip;
+        source.Play();
+    }
+
+    public void SetPitch(float pitch)
+    {
+        source.pitch = pitch;
+    }
+}
 public class AudioMixerManager : MonoBehaviour
 {
     public static AudioMixerManager _instance;
@@ -42,38 +59,45 @@ public class AudioMixerManager : MonoBehaviour
     [SerializeField] private Sprite sfxOn, sfxOff;
 
     [Header("Background Music")]
-    [SerializeField] private AudioClip background_Intro_Clip;
-    [SerializeField] private AudioClip backgroundClip;
-    [SerializeField] private AudioClip goodEndClip, badEndClip;
+    [FormerlySerializedAs("background_Intro_Clip")]  [SerializeField] private AudioClip background_MainLevel_Clip;
+    [FormerlySerializedAs("backgroundClip")] [SerializeField] private AudioClip background_BossBattle_Clip;
+    [FormerlySerializedAs("goodEndClip")] [SerializeField] private AudioClip background_GameComplete_Clip;
+    [FormerlySerializedAs("badEndClip")] [SerializeField] private AudioClip background_LevelVictory_Clip;
+    [SerializeField] private AudioClip background_LevelSelect_Clip;
+    [SerializeField] private AudioClip background_TitleScreen_Clip;
     [SerializeField] private AudioSource backgroundSource;
     [SerializeField] private AudioSource background2Source;
 
     [Header("SFX")]
-    [SerializeField] private AudioClip click_1_Clip ;
-    [SerializeField] private AudioClip click_2_Clip;
-    [SerializeField] private AudioClip success_Clip ,fail_Clip;
+    // [SerializeField] private AudioClip click_1_Clip ;
+    // [SerializeField] private AudioClip click_2_Clip;
+    [SerializeField] private AudioClip success_Clip;
+    [SerializeField] private AudioClip fail_Clip;
 
-    [SerializeField] private AudioClip levelSelected_Clip;
-    [SerializeField] private AudioClip mapMovement_Clip;
-    [SerializeField] private AudioClip warpJingle_Clip;
+    [SerializeField] private SFXElement levelSelected_Clip;
+    [SerializeField] private SFXElement mapMovement_Clip;
+    [SerializeField] private SFXElement warpJingle_Clip;
 
     [Header("Boss SFX")] 
-    [SerializeField] private AudioClip bossHit_Clip;
-    [SerializeField] private AudioClip bossImpact_Clip;
-    [SerializeField] private AudioClip bossShoot_Clip;
+    [SerializeField] private SFXElement bossHit_Clip;
+    [SerializeField] private SFXElement bossImpact_Clip;
+    [SerializeField] private SFXElement bossShoot_Clip;
     
     [Header("Death Effect SFX")]
-    [SerializeField] private AudioClip deathEffect_Enemy_Clip;
+    [SerializeField] private SFXElement deathEffect_Enemy_Clip;
     
     [Header("Player SFX")]
-    [SerializeField] private AudioClip deathEffect_Player_Clip;
-    [SerializeField] private AudioClip pickup_gem_clip;
-    [SerializeField] private AudioClip pickup_helth_clip;
-    [SerializeField] private AudioClip jump_Clip;
-    [SerializeField] private AudioClip hurt_Clip;
+    [SerializeField] private SFXElement deathEffect_Player_Clip;
+    [SerializeField] private SFXElement pickup_gem_clip;
+    [SerializeField] private SFXElement pickup_helth_clip;
+    [SerializeField] private SFXElement jump_Clip;
+    [SerializeField] private SFXElement hurt_Clip;
     
-    [SerializeField] private AudioSource sfxSource;
-    [SerializeField] private AudioSource gems_sfxSource;
+
+    [Header("Pitch Growing Variables")]
+    private float initialPitch=.5f;
+    private float growPitchRate = .05f;
+    private float maxPitch = 1.5f;
 
     private Coroutine currentCoroutine = null;
     
@@ -83,60 +107,66 @@ public class AudioMixerManager : MonoBehaviour
         switch (sfxType)
         {
             case SFXType.Player_Pickup_Health:
-                clip = pickup_helth_clip;
-                sfxSource.pitch = 1;
+                pickup_helth_clip.CallSFX();
+                pickup_helth_clip.SetPitch(1);
                 break;
             case SFXType.Player_Jump:
-                clip = jump_Clip;
-                sfxSource.pitch = Random.Range(.8f, 1.2f);
+                jump_Clip.CallSFX();
+                jump_Clip.SetPitch(Random.Range(.8f, 1.2f));
                 break;          
             case SFXType.Player_Hurt:
-                clip = hurt_Clip;
-                sfxSource.pitch = Random.Range(.8f, 1.2f);
+                hurt_Clip.CallSFX();
+                hurt_Clip.SetPitch(Random.Range(.8f, 1.2f));
                 break;
             case SFXType.Player_Death:
-                clip = deathEffect_Player_Clip;
-                sfxSource.pitch = Random.Range(.8f, 1.2f);
+                deathEffect_Player_Clip.CallSFX();
+                deathEffect_Player_Clip.SetPitch(Random.Range(.8f, 1.2f));
                 break;
             case SFXType.Enemy_Death:
-                clip = deathEffect_Enemy_Clip;
-                sfxSource.pitch = Random.Range(.8f, 1.2f);
+                deathEffect_Enemy_Clip.CallSFX();
+                deathEffect_Enemy_Clip.SetPitch(Random.Range(.8f, 1.2f));
                 break;
             case SFXType.Boss_Hit:
-                clip = bossHit_Clip;
-                sfxSource.pitch = 1;
+                bossHit_Clip.CallSFX();
+                bossHit_Clip.SetPitch(1);
                 break;
             case SFXType.Boss_Impact:
-                clip = bossImpact_Clip;
-                sfxSource.pitch = 1;
+                bossImpact_Clip.CallSFX();
+                bossImpact_Clip.SetPitch(1);
                 break;
             case SFXType.Boss_Shoot:
-                clip = bossShoot_Clip;
-                sfxSource.pitch = 1;
+                bossShoot_Clip.CallSFX();
+                bossShoot_Clip.SetPitch(1);
                 break;
             case SFXType.Level_Selected:
-                clip = levelSelected_Clip;
-                sfxSource.pitch = Random.Range(.8f, 1.2f);
+                levelSelected_Clip.CallSFX();
+                levelSelected_Clip.SetPitch(1);
                 break;
             case SFXType.Map_Movement:
-                clip = mapMovement_Clip;
-                sfxSource.pitch = 1;
+                mapMovement_Clip.CallSFX();
+                mapMovement_Clip.SetPitch(1);
                 break;
             case SFXType.Warp_Jingle:
-                clip = warpJingle_Clip;
-                sfxSource.pitch = 1;
+                warpJingle_Clip.CallSFX();
+                warpJingle_Clip.SetPitch(1);
                 break;
         }
-        
-        sfxSource.PlayOneShot(clip);
     }
 
     public void CallSFX_Gems()
     {
-        gems_sfxSource.Stop();
-        gems_sfxSource.pitch = Random.Range(.9f, 1.1f);
-        gems_sfxSource.clip = pickup_gem_clip;
-        gems_sfxSource.Play();
+        pickup_gem_clip.SetPitch(initialPitch);
+        pickup_gem_clip.CallSFX();
+
+        initialPitch += growPitchRate;
+        
+        if (initialPitch >= maxPitch)
+            initialPitch = maxPitch;
+    }
+
+    public void ResetPitch()
+    {
+        initialPitch = .5f;
     }
 
     private void Awake()
@@ -169,20 +199,20 @@ public class AudioMixerManager : MonoBehaviour
 
         // if (SceneUtils.IsInGameplay())
         // {
-        //     if (currentCoroutine == null)
-        //         currentCoroutine = StartCoroutine(InitBackground());
+        if (currentCoroutine == null)
+            currentCoroutine = StartCoroutine(InitBackground());
         // }
     }
 
     IEnumerator InitBackground()
     {
-        backgroundSource.loop = false;
-        backgroundSource.clip = background_Intro_Clip;
-        backgroundSource.Play();
-
-        yield return new WaitUntil(() => !backgroundSource.isPlaying);
-        
-        backgroundSource.clip = backgroundClip;
+        // backgroundSource.loop = false;
+        // backgroundSource.clip = background_MainLevel_Clip;
+        // backgroundSource.Play();
+        //
+        // yield return new WaitUntil(() => !backgroundSource.isPlaying);
+        yield return null;
+        backgroundSource.clip = background_MainLevel_Clip;
         backgroundSource.Play();
         backgroundSource.loop = true;
         currentCoroutine = null;
@@ -194,7 +224,7 @@ public class AudioMixerManager : MonoBehaviour
         // if (currentCoroutine == null)
         //     currentCoroutine = StartCoroutine(BackgroundFadeEffect(_end));
             
-        AudioClip tempClip = _end ? goodEndClip : badEndClip;
+        AudioClip tempClip = _end ? background_GameComplete_Clip : background_LevelVictory_Clip;
 
         if (!_end)
             backgroundSource.loop = false;
@@ -210,7 +240,7 @@ public class AudioMixerManager : MonoBehaviour
         // float maxValue = _end ? .5f : .4f;
         
         float maxValue = .4f;
-        AudioClip tempClip = _end ? goodEndClip : badEndClip;
+        AudioClip tempClip = _end ? background_GameComplete_Clip : background_LevelVictory_Clip;
 
         background2Source.loop = _end;
         background2Source.clip = tempClip;
@@ -302,48 +332,49 @@ public class AudioMixerManager : MonoBehaviour
     }
 
 
-    public void CallButtonClick(int clickSound)
-    {
-        AudioClip clip = null;
-        switch (clickSound)
-        {
-            case 0:
-                clip = click_1_Clip;
-                break;
-            case 1:
-                clip = click_2_Clip;
-                break;
-        }
-        
-        sfxSource.PlayOneShot(clip);
-    }
+    // public void CallButtonClick(int clickSound)
+    // {
+    //     AudioClip clip = null;
+    //     switch (clickSound)
+    //     {
+    //         case 0:
+    //             clip = click_1_Clip;
+    //             break;
+    //         case 1:
+    //             clip = click_2_Clip;
+    //             break;
+    //     }
+    //     
+    //     sfxSource.PlayOneShot(clip);
+    // }
     
-    public void CallButtonClick()
-    {
-        AudioClip clip = null;
-        int tempRand = Random.Range(0, 2);
-        switch (tempRand)
-        {
-            case 0:
-                clip = click_1_Clip;
-                break;
-            case 1:
-                clip = click_2_Clip;
-                break;
-        }
-        
-        sfxSource.PlayOneShot(clip);
-    }
+    // public void CallButtonClick()
+    // {
+    //     AudioClip clip = null;
+    //     int tempRand = Random.Range(0, 2);
+    //     switch (tempRand)
+    //     {
+    //         case 0:
+    //             clip = click_1_Clip;
+    //             break;
+    //         case 1:
+    //             clip = click_2_Clip;
+    //             break;
+    //     }
+    //     
+    //     sfxSource.PlayOneShot(clip);
+    // }
 
-    public void SuccessSound()
-    {
-        sfxSource.PlayOneShot(success_Clip);
-    }
-
-    public void FailSound()
-    {
-        sfxSource.PlayOneShot(fail_Clip);
-    }
+    // public void SuccessSound()
+    // {
+    //     sfxSource.PlayOneShot(success_Clip);
+    // }
+    //
+    // public void FailSound()
+    // {
+    //     sfxSource.PlayOneShot(fail_Clip);
+    // }
+    
     #region Not Used
 
     public void SetBackgroundMusicVolume(float _soundLevel)

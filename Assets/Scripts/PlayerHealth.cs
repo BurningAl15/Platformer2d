@@ -49,14 +49,16 @@ public class PlayerHealth : MonoBehaviour
             {
                 currentHealth = 0;
                 LevelManager._instance.RespawnPlayer();
+                AudioMixerManager._instance.ResetPitch();
             }
             else
             {
                 invicibilityCounter = invincibilityLength;
           
                 PlayerController2d._instance.KnockBack();
-                AudioMixerManager._instance.CallSFX(SFXType.Player_Hurt);            
-  
+                AudioMixerManager._instance.CallSFX(SFXType.Player_Hurt);
+                AudioMixerManager._instance.ResetPitch();
+                
                 isInvincible = true;
                 if (currentCoroutine == null)
                     currentCoroutine = StartCoroutine(BlinkEffect());
