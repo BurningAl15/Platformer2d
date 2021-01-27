@@ -24,7 +24,7 @@ public class Pickup : MonoBehaviour
             if (_pickupType == PickupType.Gem)
             {
                 LevelManager._instance.UpdateGemsCollected();
-                AudioMixerManager._instance.CallSFX(SFXType.Player_Pickup_Gem);
+                AudioMixerManager._instance.CallSFX_Gems();
                 if (currentCoroutine == null)
                     currentCoroutine = StartCoroutine(CollectEffect());
             }

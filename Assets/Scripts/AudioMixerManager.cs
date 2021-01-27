@@ -73,6 +73,7 @@ public class AudioMixerManager : MonoBehaviour
     [SerializeField] private AudioClip hurt_Clip;
     
     [SerializeField] private AudioSource sfxSource;
+    [SerializeField] private AudioSource gems_sfxSource;
 
     private Coroutine currentCoroutine = null;
     
@@ -81,45 +82,61 @@ public class AudioMixerManager : MonoBehaviour
         AudioClip clip = null;
         switch (sfxType)
         {
-            case SFXType.Player_Pickup_Gem:
-                clip = pickup_gem_clip;
-                break;
             case SFXType.Player_Pickup_Health:
                 clip = pickup_helth_clip;
+                sfxSource.pitch = 1;
                 break;
             case SFXType.Player_Jump:
                 clip = jump_Clip;
+                sfxSource.pitch = Random.Range(.8f, 1.2f);
                 break;          
             case SFXType.Player_Hurt:
                 clip = hurt_Clip;
+                sfxSource.pitch = Random.Range(.8f, 1.2f);
                 break;
             case SFXType.Player_Death:
                 clip = deathEffect_Player_Clip;
+                sfxSource.pitch = Random.Range(.8f, 1.2f);
                 break;
             case SFXType.Enemy_Death:
                 clip = deathEffect_Enemy_Clip;
+                sfxSource.pitch = Random.Range(.8f, 1.2f);
                 break;
             case SFXType.Boss_Hit:
                 clip = bossHit_Clip;
+                sfxSource.pitch = 1;
                 break;
             case SFXType.Boss_Impact:
                 clip = bossImpact_Clip;
+                sfxSource.pitch = 1;
                 break;
             case SFXType.Boss_Shoot:
                 clip = bossShoot_Clip;
+                sfxSource.pitch = 1;
                 break;
             case SFXType.Level_Selected:
                 clip = levelSelected_Clip;
+                sfxSource.pitch = Random.Range(.8f, 1.2f);
                 break;
             case SFXType.Map_Movement:
                 clip = mapMovement_Clip;
+                sfxSource.pitch = 1;
                 break;
             case SFXType.Warp_Jingle:
                 clip = warpJingle_Clip;
+                sfxSource.pitch = 1;
                 break;
         }
         
         sfxSource.PlayOneShot(clip);
+    }
+
+    public void CallSFX_Gems()
+    {
+        gems_sfxSource.Stop();
+        gems_sfxSource.pitch = Random.Range(.9f, 1.1f);
+        gems_sfxSource.clip = pickup_gem_clip;
+        gems_sfxSource.Play();
     }
 
     private void Awake()
