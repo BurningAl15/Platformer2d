@@ -7,7 +7,7 @@ public class DamagePlayer : MonoBehaviour
 {
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag(StringUtils.tag_Player))
         {
             // other.GetComponent<PlayerHealth>().DealDamage();
             PlayerHealth._instance.DealDamage();            

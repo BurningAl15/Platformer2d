@@ -13,10 +13,9 @@ public class StompBox : MonoBehaviour
     [Range(0,100)]
     [SerializeField] private float chanceToDrop;
     
-    
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Enemy"))
+        if (other.CompareTag(StringUtils.tag_Enemy))
         {
             Vector2 lastPos = other.transform.position;            
             other.gameObject.SetActive(false);

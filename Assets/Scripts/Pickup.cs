@@ -19,12 +19,19 @@ public class Pickup : MonoBehaviour
     
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag(StringUtils.tag_Player))
         {
             if (_pickupType == PickupType.Gem)
+            {
                 LevelManager._instance.UpdateGemsCollected();
-            if(_pickupType==PickupType.Health)
+                AudioMixerManager._instance.CallSFX(SFXType.Player_Pickup_Gem);
+            }
+
+            if (_pickupType == PickupType.Health)
+            {
                 PlayerHealth._instance.CureDamage();
+                AudioMixerManager._instance.CallSFX(SFXType.Player_Pickup_Health);
+            }
             // if(_pickupType==PickupType.Coin)
             
             if (GetComponent<Rigidbody2D>())

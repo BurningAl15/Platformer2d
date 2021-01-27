@@ -83,6 +83,7 @@ public class PlayerHealth : MonoBehaviour
     public void TurnOffPlayer()
     {                
         this.gameObject.SetActive(false);
+        AudioMixerManager._instance.CallSFX(SFXType.Player_Death);
     }
     
     public void CureDamage()
@@ -130,6 +131,7 @@ public class PlayerHealth : MonoBehaviour
             tempColor.b,
             1);
         gameObject.SetActive(true);
+        AudioMixerManager._instance.CallSFX(SFXType.Warp_Jingle);
     }
     
     IEnumerator BlinkEffect()

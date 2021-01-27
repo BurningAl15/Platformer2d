@@ -69,14 +69,18 @@ public class PlayerController2d : MonoBehaviour
 
     void Jump()
     {
-        if(isGrounded)
+        if (isGrounded)
+        {
             _rgb.velocity = new Vector2(_rgb.velocity.x, jumpForce);
+            AudioMixerManager._instance.CallSFX(SFXType.Player_Jump);            
+        }
         else
         {
             //Start this when you are on air
             if (canDoubleJump)
             {
                 _rgb.velocity = new Vector2(_rgb.velocity.x, jumpForce);
+                AudioMixerManager._instance.CallSFX(SFXType.Player_Jump);            
                 canDoubleJump = false;
             }
         }
@@ -115,6 +119,7 @@ public class PlayerController2d : MonoBehaviour
         knockBackCounter = knockBackLength;
         _rgb.velocity = new Vector2(0, knockBackForce.y);
         _anim.SetTrigger("Hurt");
+        AudioMixerManager._instance.CallSFX(SFXType.Player_Hurt);            
     }
     
     void FlipSprite()
@@ -128,6 +133,7 @@ public class PlayerController2d : MonoBehaviour
     public void Bounce()
     {
         _rgb.velocity = new Vector2(_rgb.velocity.x, bounceForce);
+        AudioMixerManager._instance.CallSFX(SFXType.Player_Jump);            
     }
     
     #endregion

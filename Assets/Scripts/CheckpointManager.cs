@@ -17,6 +17,7 @@ public class CheckpointManager : MonoBehaviour
 
     public void UpdateCurrentPosition(Transform _currentPosition)
     {
+        AudioMixerManager._instance.CallSFX(SFXType.Level_Selected);
         currentPosition = _currentPosition.position;
     }
     
