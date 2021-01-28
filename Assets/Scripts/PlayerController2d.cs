@@ -33,6 +33,10 @@ public class PlayerController2d : MonoBehaviour
 
     [Header("Enemy Effect Variabels")] 
     [SerializeField] private float bounceForce;
+
+    [SerializeField] private AnimationCurve animationCurve;
+    [SerializeField] private float endTimer = 1f;
+    
     
     private void Awake()
     {
@@ -45,26 +49,40 @@ public class PlayerController2d : MonoBehaviour
 
     void Update()
     {
-        if (!PauseMenu._instance.isPaused)
+        if (!LevelManager._instance.stopGame)
         {
-            if (knockBackCounter <= 0)
+            if (!PauseMenu._instance.isPaused)
             {
-                //Horizontal Movement
-                Movement();
+                if (knockBackCounter <= 0)
+                {
+                    //Horizontal Movement
+                    Movement();
 
-                //Flipping sprite by direction
-                FlipSprite();
+                    //Flipping sprite by direction
+                    FlipSprite();
 
-                //Checking ground and Jump
-                GroundCheck();
-                if (Input.GetButtonDown("Jump"))
-                    Jump();   
+                    //Checking ground and Jump
+                    GroundCheck();
+                    if (Input.GetButtonDown("Jump"))
+                        Jump();   
+                }
+                else
+                {
+                    knockBackCounter -= Time.deltaTime;
+                    _rgb.velocity = new Vector2(knockBackForce.x * -direction, _rgb.velocity.y);
+                }
             }
-            else
+        }
+        else
+        {
+            if (endTimer > 0)
             {
-                knockBackCounter -= Time.deltaTime;
-                _rgb.velocity = new Vector2(knockBackForce.x * -direction, _rgb.velocity.y);
+                float animValue = animationCurve.Evaluate(endTimer);
+                _rgb.velocity = new Vector2(_rgb.velocity.x*animValue, _rgb.velocity.y);
+                endTimer -= Time.deltaTime*2;
+                _anim.SetFloat("moveSpeed", Mathf.Abs(_rgb.velocity.x));
             }
+          
         }
     }
     

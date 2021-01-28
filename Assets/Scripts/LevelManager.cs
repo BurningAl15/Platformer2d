@@ -11,6 +11,8 @@ public class LevelManager : MonoBehaviour
     private Coroutine currentCoroutine = null;
 
     int gemsCollected = 0;
+
+    public bool stopGame = false;
     
     private void Awake()
     {
@@ -58,5 +60,18 @@ public class LevelManager : MonoBehaviour
         PlayerHealth._instance.ResetDeathEffect();
         FadeEffect._instance.Fade_In();
         currentCoroutine = null;
+    }
+
+    public void EndLevel()
+    {
+        if (currentCoroutine == null)
+            currentCoroutine = StartCoroutine(End_Level());
+    }
+
+    IEnumerator End_Level()
+    {
+        stopGame = true;
+        yield return new WaitForSeconds(.5f);
+        UIController._instance.Run_EndLevelAnimation();
     }
 }

@@ -44,7 +44,12 @@ public class UIController : MonoBehaviour
 
     [Header("Hearts")]
     [SerializeField] private List<HeartUI> hearts = new List<HeartUI>();
-    
+    /*
+       Heart stuff logic
+       x -> empty
+       x+1 -> half
+       x+2 -> full
+    */
     [Header("Heart Sprites")]
     [SerializeField] private Sprite heartEmpty;
     [SerializeField] private Sprite heartHalf;
@@ -52,19 +57,17 @@ public class UIController : MonoBehaviour
 
     [Header("Gems UI")] 
     [SerializeField] private TextMeshProUGUI gemsText;
+
+    [Header("End Level")] 
+    [SerializeField] private Animator endLevel_animator;
     
-    /*
-     Heart stuff logic
-     x -> empty
-     x+1 -> half
-     x+2 -> full
-    */
     void Awake()
     {
         _instance = this;
         
         for(int i=0;i<hearts.Count;i++)
             hearts[i].Init(heartEmpty,heartHalf,heartFull);
+        endLevel_animator.gameObject.SetActive(false);
     }
 
     private void Start()
@@ -94,5 +97,10 @@ public class UIController : MonoBehaviour
     public void UpdateGems_UI(int _currentGems)
     {
         gemsText.text = "" + _currentGems;
+    }
+
+    public void Run_EndLevelAnimation()
+    {
+        endLevel_animator.gameObject.SetActive(true);
     }
 }
