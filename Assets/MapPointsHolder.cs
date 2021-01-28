@@ -12,16 +12,32 @@ public class MapPointsHolder : MonoBehaviour
 
     private int mapIndex;
     [SerializeField] private MapPoint currentMapPoint;
+
+    [SerializeField] private int worldNumber;
     
     void Start()
     {
-        if (PlayerPrefs.HasKey("map_index"))
+        if (PlayerPrefs.HasKey("Level_1"))
         {
-            mapIndex = PlayerPrefs.GetInt("map_index");
+            for (int i = 1; i < _mapPoints.Count; i++)
+            {
+                int j = i + 1;
+                _mapPoints[i].isLocked = PlayerPrefs.GetInt(StringUtils.Get_Level(j)) != 1;
+            }
+            
+            mapIndex = PlayerPrefs.GetInt(StringUtils.playerPref_mapIndex);
             currentMapPoint = _mapPoints[mapIndex];
         }
         else
         {
+            for (int i = 0; i < _mapPoints.Count; i++)
+            {
+                int j = i + 1;
+                // string _name = "World_" + worldNumber + "Level_" + j;
+                PlayerPrefs.SetInt(StringUtils.Get_Level(j), 0);
+            }
+            PlayerPrefs.Save();
+            
             mapIndex = 0;
             currentMapPoint = _mapPoints[mapIndex];
         }

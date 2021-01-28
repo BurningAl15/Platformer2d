@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -38,5 +39,17 @@ public class SceneUtils : MonoBehaviour
    public static bool IsInGameplay()
    {
       return SceneManager.GetActiveScene().name.Contains("Level");
+   }
+
+   public static int GetLevelName()
+   {
+      int sceneNumber = 0;
+      string tempSceneName = SceneManager.GetActiveScene().name;
+      char[] separator = new char[] {'_'};
+      
+      string[] subs = tempSceneName.Split(separator);
+      sceneNumber=Int32.Parse(subs[1])+1;
+      
+      return sceneNumber;
    }
 }

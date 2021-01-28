@@ -13,7 +13,8 @@ public class LevelManager : MonoBehaviour
     int gemsCollected = 0;
 
     public bool stopGame = false;
-    
+
+    private string levelname;    
     private void Awake()
     {
         _instance = this;
@@ -62,6 +63,13 @@ public class LevelManager : MonoBehaviour
         currentCoroutine = null;
     }
 
+    void SetPlayerPrefsLevelToUnlock()
+    {
+        PlayerPrefs.SetInt(StringUtils.Get_Level(SceneUtils.GetLevelName()), 1);
+        PlayerPrefs.SetInt(StringUtils.playerPref_mapIndex, SceneUtils.GetLevelName() - 2);
+        PlayerPrefs.Save();
+    }
+
     public void EndLevel()
     {
         if (currentCoroutine == null)
@@ -76,6 +84,7 @@ public class LevelManager : MonoBehaviour
         UIController._instance.Run_EndLevelAnimation();
         yield return new WaitForSeconds(1.5f);
         FadeEffect._instance.Fade_Out();
+        SetPlayerPrefsLevelToUnlock();
         yield return new WaitUntil(() => FadeEffect._instance.endFade);
         yield return new WaitForSeconds(.25f);
         SceneUtils.ToSelectionScene();
