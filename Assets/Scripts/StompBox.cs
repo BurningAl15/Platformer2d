@@ -28,5 +28,11 @@ public class StompBox : MonoBehaviour
             if (dropSelect <= chanceToDrop)
                 Instantiate(collectible, lastPos, Quaternion.identity);
         }
+
+        if (other.CompareTag(StringUtils.tag_Bouncer))
+        {
+            PlayerController2d._instance.Bounce(1.5f);
+            other.GetComponent<Animator>().SetTrigger("Bounce");
+        }
     }
 }

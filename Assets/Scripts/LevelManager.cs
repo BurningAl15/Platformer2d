@@ -71,7 +71,13 @@ public class LevelManager : MonoBehaviour
     IEnumerator End_Level()
     {
         stopGame = true;
+        SimpleCameraController2d._instance.StopFollow();
         yield return new WaitForSeconds(.5f);
         UIController._instance.Run_EndLevelAnimation();
+        yield return new WaitForSeconds(1.5f);
+        FadeEffect._instance.Fade_Out();
+        yield return new WaitUntil(() => FadeEffect._instance.endFade);
+        yield return new WaitForSeconds(.25f);
+        SceneUtils.ToSelectionScene();
     }
 }

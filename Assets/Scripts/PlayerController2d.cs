@@ -7,18 +7,19 @@ using UnityEngine.Serialization;
 public class PlayerController2d : MonoBehaviour
 {
     public static PlayerController2d _instance;
-    
-    [Header("Components")] 
-    [SerializeField] private Rigidbody2D _rgb;
+
+    [Header("Components")] [SerializeField]
+    private Rigidbody2D _rgb;
+
     [SerializeField] private Animator _anim;
     [SerializeField] private SpriteRenderer _spriteRenderer;
     private int direction = 1;
 
-    [Header("Movement Variables")] 
-    [SerializeField] private float movementSpeed;
+    [Header("Movement Variables")] [SerializeField]
+    private float movementSpeed;
 
-    [Header("Jump Variables")] 
-    [SerializeField] private float jumpForce;
+    [Header("Jump Variables")] [SerializeField]
+    private float jumpForce;
 
     [SerializeField] private Transform groundCheckPoint;
     [SerializeField] private float radius;
@@ -26,18 +27,17 @@ public class PlayerController2d : MonoBehaviour
     private bool isGrounded = false;
     private bool canDoubleJump = true;
 
-    [Header("Knockback Effect Variables")]
-    public float knockBackLength;
+    [Header("Knockback Effect Variables")] public float knockBackLength;
     public Vector2 knockBackForce;
     public float knockBackCounter;
 
-    [Header("Enemy Effect Variabels")] 
-    [SerializeField] private float bounceForce;
+    [Header("Enemy Effect Variabels")] [SerializeField]
+    private float bounceForce;
 
     [SerializeField] private AnimationCurve animationCurve;
     [SerializeField] private float endTimer = 1f;
-    
-    
+    [SerializeField] private float growFactor;
+
     private void Awake()
     {
         _rgb = GetComponent<Rigidbody2D>();
@@ -64,7 +64,7 @@ public class PlayerController2d : MonoBehaviour
                     //Checking ground and Jump
                     GroundCheck();
                     if (Input.GetButtonDown("Jump"))
-                        Jump();   
+                        Jump();
                 }
                 else
                 {
@@ -75,17 +75,22 @@ public class PlayerController2d : MonoBehaviour
         }
         else
         {
-            if (endTimer > 0)
-            {
-                float animValue = animationCurve.Evaluate(endTimer);
-                _rgb.velocity = new Vector2(_rgb.velocity.x*animValue, _rgb.velocity.y);
-                endTimer -= Time.deltaTime*2;
-                _anim.SetFloat("moveSpeed", Mathf.Abs(_rgb.velocity.x));
-            }
-          
+            GroundCheck();
+            EndingLevel();
         }
     }
-    
+
+    void EndingLevel()
+    {
+        if (endTimer > 0)
+        {
+            float animValue = animationCurve.Evaluate(endTimer);
+            _rgb.velocity = new Vector2(_rgb.velocity.x * animValue, _rgb.velocity.y);
+            endTimer -= Time.deltaTime * growFactor;
+            _anim.SetFloat("moveSpeed", Mathf.Abs(_rgb.velocity.x));
+        }
+    }
+
     #region Interactions
 
     void Jump()
@@ -93,7 +98,7 @@ public class PlayerController2d : MonoBehaviour
         if (isGrounded)
         {
             _rgb.velocity = new Vector2(_rgb.velocity.x, jumpForce);
-            AudioMixerManager._instance.CallSFX(SFXType.Player_Jump);            
+            AudioMixerManager._instance.CallSFX(SFXType.Player_Jump);
         }
         else
         {
@@ -101,12 +106,12 @@ public class PlayerController2d : MonoBehaviour
             if (canDoubleJump)
             {
                 _rgb.velocity = new Vector2(_rgb.velocity.x, jumpForce);
-                AudioMixerManager._instance.CallSFX(SFXType.Player_Jump);            
+                AudioMixerManager._instance.CallSFX(SFXType.Player_Jump);
                 canDoubleJump = false;
             }
         }
     }
-    
+
     void Movement()
     {
         float horizontalMovement = Input.GetAxis("Horizontal") * movementSpeed;
@@ -126,13 +131,13 @@ public class PlayerController2d : MonoBehaviour
 
     void GroundCheck()
     {
-        isGrounded = Physics2D.OverlapCircle(groundCheckPoint.position,radius,whatIsGround);
-        
+        isGrounded = Physics2D.OverlapCircle(groundCheckPoint.position, radius, whatIsGround);
+
         //If we are in floor, then reset the doubleJump bool so you can double jump again.
         if (isGrounded)
             canDoubleJump = true;
-        
-        _anim.SetBool("isGrounded",isGrounded);
+
+        _anim.SetBool("isGrounded", isGrounded);
     }
 
     public void KnockBack()
@@ -141,7 +146,7 @@ public class PlayerController2d : MonoBehaviour
         _rgb.velocity = new Vector2(0, knockBackForce.y);
         _anim.SetTrigger("Hurt");
     }
-    
+
     void FlipSprite()
     {
         //By rotations
@@ -153,18 +158,25 @@ public class PlayerController2d : MonoBehaviour
     public void Bounce()
     {
         _rgb.velocity = new Vector2(_rgb.velocity.x, bounceForce);
-        AudioMixerManager._instance.CallSFX(SFXType.Player_Jump);            
+        AudioMixerManager._instance.CallSFX(SFXType.Player_Jump);
     }
     
+    public void Bounce(float _bounceFactor)
+    {
+        float bounceXfactor = bounceForce * _bounceFactor;
+        _rgb.velocity = new Vector2(_rgb.velocity.x, bounceXfactor);
+        AudioMixerManager._instance.CallSFX(SFXType.Player_Jump);
+    }
+
     #endregion
 
     //Gizmos
     private void OnDrawGizmos()
     {
-        if(isGrounded)
+        if (isGrounded)
             Gizmos.color = new Color(0, 1, 0);
         else
             Gizmos.color = new Color(1, 0, 0);
-        Gizmos.DrawSphere(groundCheckPoint.position,radius);
+        Gizmos.DrawSphere(groundCheckPoint.position, radius);
     }
 }
