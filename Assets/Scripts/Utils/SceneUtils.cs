@@ -19,6 +19,11 @@ public class SceneUtils : MonoBehaviour
    {
       SceneManager.LoadScene(_sceneNumber);
    }
+
+   public static void LoadGameplayScene(int _level)
+   {
+      SceneManager.LoadScene("Level_" + _level);
+   }
    
    public static void ToSelectionScene()
    {
