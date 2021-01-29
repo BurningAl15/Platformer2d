@@ -29,7 +29,6 @@ public class MapPointsHolder : MonoBehaviour
             {
                 int j = i + 1;
                 _mapPoints[i].gemsCollected = PlayerPrefs.GetInt(StringUtils.Get_GemsInLevel(j));
-                print(_mapPoints[i].name);
             }
             for (int i = 0; i < _mapPoints.Count; i++)
             {

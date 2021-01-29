@@ -71,13 +71,37 @@ public class LevelManager : MonoBehaviour
 
     void SetPlayerPrefsGems()
     {
-        PlayerPrefs.SetInt(StringUtils.Get_GemsInLevel(SceneUtils.Get_CurrentLevelName()), gemsCollected);
+        if (PlayerPrefs.HasKey(StringUtils.Get_GemsInLevel(SceneUtils.Get_CurrentLevelName())))
+        {
+            if(gemsCollected>PlayerPrefs.GetInt(StringUtils.Get_GemsInLevel(SceneUtils.Get_CurrentLevelName())))
+            {
+                print("Gems");
+                PlayerPrefs.SetInt(StringUtils.Get_GemsInLevel(SceneUtils.Get_CurrentLevelName()), gemsCollected);
+            }
+        }
+        else
+        {
+            PlayerPrefs.SetInt(StringUtils.Get_GemsInLevel(SceneUtils.Get_CurrentLevelName()), gemsCollected);
+        }
+        
         PlayerPrefs.Save();
     }
 
     void SetPlayerPrefsTime()
     {
-        PlayerPrefs.SetFloat(StringUtils.Get_TimeInLevel(SceneUtils.Get_CurrentLevelName()), timeInLevel);
+        if (PlayerPrefs.HasKey(StringUtils.Get_TimeInLevel(SceneUtils.Get_CurrentLevelName())))
+        {
+            if(timeInLevel<PlayerPrefs.GetFloat(StringUtils.Get_TimeInLevel(SceneUtils.Get_CurrentLevelName())))
+            {
+                print("Time");
+                PlayerPrefs.SetFloat(StringUtils.Get_TimeInLevel(SceneUtils.Get_CurrentLevelName()), timeInLevel);
+            }
+        }
+        else
+        {
+            PlayerPrefs.SetFloat(StringUtils.Get_TimeInLevel(SceneUtils.Get_CurrentLevelName()), timeInLevel);
+        }
+
         PlayerPrefs.Save();
     }
 
