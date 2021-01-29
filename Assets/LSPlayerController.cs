@@ -49,10 +49,16 @@ public class LSPlayerController : MonoBehaviour
             }
             if (currentDistance<=0.01f)
             {
-                if (Input.GetButtonDown("Jump"))
+                if (currentPoint.isLevel && !currentPoint.isLocked)
                 {
-                    if(currentPoint.isLevel && !currentPoint.isLocked)
+                    UI_SelectController._instance.Turn_On_Off(true);
+                    UI_SelectController._instance.RenderLevelData(currentPoint.levelName, currentPoint.gemsCollected,
+                        currentPoint.totalGems, currentPoint.bestTime, currentPoint.targetTime);
+    
+                    if (Input.GetButtonDown("Jump"))
+                    {
                         LevelSelectManager._instance.Loading_GameplayScene(currentPoint.currentLevel);
+                    }
                 }
             }
         } 
@@ -60,8 +66,9 @@ public class LSPlayerController : MonoBehaviour
 
 
     
-    public void SetNextPoint(MapPoint nextPoint)
+    void SetNextPoint(MapPoint nextPoint)
     {
         currentPoint = nextPoint;
+        UI_SelectController._instance.Turn_On_Off(false);
     }
 }

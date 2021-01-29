@@ -10,6 +10,11 @@ public class MapPoint : MonoBehaviour
    public bool isLocked;
 
    public int currentLevel;
+
+   public string levelName;
+
+   public int gemsCollected, totalGems;
+   public float bestTime, targetTime;
    
    private void OnDrawGizmos()
    {
