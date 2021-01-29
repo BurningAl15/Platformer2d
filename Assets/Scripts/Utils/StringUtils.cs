@@ -18,4 +18,13 @@ public class StringUtils : MonoBehaviour
     {
         return "Level_" + _levelNumber;
     }
+
+    public static string Get_GemsInLevel(int _levelNumber)
+    {
+        return "Level_" + _levelNumber + "_Gems";
+    }
+    public static string Get_TimeInLevel(int _levelNumber)
+    {
+        return "Level_" + _levelNumber + "_Time";
+    }
 }

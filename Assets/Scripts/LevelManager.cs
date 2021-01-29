@@ -14,7 +14,10 @@ public class LevelManager : MonoBehaviour
 
     public bool stopGame = false;
 
-    private string levelname;    
+    private string levelname;
+
+    public float timeInLevel;
+    
     private void Awake()
     {
         _instance = this;
@@ -23,17 +26,13 @@ public class LevelManager : MonoBehaviour
     private void Start()
     {
         UIController._instance.UpdateGems_UI(gemsCollected);
-
+        timeInLevel = 0f;
     }
 
-    // private void Update()
-    // {
-    //     if (!PlayerHealth._instance.IsAlive())
-    //     {
-    //         if (currentCoroutine == null)
-    //             currentCoroutine = StartCoroutine(Respawning());
-    //     }
-    // }
+    private void Update()
+    {
+        timeInLevel += Time.deltaTime;
+    }
 
     public void UpdateGemsCollected()
     {
@@ -65,8 +64,20 @@ public class LevelManager : MonoBehaviour
 
     void SetPlayerPrefsLevelToUnlock()
     {
-        PlayerPrefs.SetInt(StringUtils.Get_Level(SceneUtils.GetLevelName()), 1);
-        PlayerPrefs.SetInt(StringUtils.playerPref_mapIndex, SceneUtils.GetLevelName() - 2);
+        PlayerPrefs.SetInt(StringUtils.Get_Level(SceneUtils.Get_NextLevelName()), 1);
+        PlayerPrefs.SetInt(StringUtils.playerPref_mapIndex, SceneUtils.Get_NextLevelName() - 2);
+        PlayerPrefs.Save();
+    }
+
+    void SetPlayerPrefsGems()
+    {
+        PlayerPrefs.SetInt(StringUtils.Get_GemsInLevel(SceneUtils.Get_CurrentLevelName()), gemsCollected);
+        PlayerPrefs.Save();
+    }
+
+    void SetPlayerPrefsTime()
+    {
+        PlayerPrefs.SetFloat(StringUtils.Get_TimeInLevel(SceneUtils.Get_CurrentLevelName()), timeInLevel);
         PlayerPrefs.Save();
     }
 
@@ -85,6 +96,8 @@ public class LevelManager : MonoBehaviour
         yield return new WaitForSeconds(1.5f);
         FadeEffect._instance.Fade_Out();
         SetPlayerPrefsLevelToUnlock();
+        SetPlayerPrefsGems();
+        SetPlayerPrefsTime();
         yield return new WaitUntil(() => FadeEffect._instance.endFade);
         yield return new WaitForSeconds(.25f);
         SceneUtils.ToSelectionScene();

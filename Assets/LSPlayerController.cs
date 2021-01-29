@@ -52,8 +52,7 @@ public class LSPlayerController : MonoBehaviour
                 if (currentPoint.isLevel && !currentPoint.isLocked)
                 {
                     UI_SelectController._instance.Turn_On_Off(true);
-                    UI_SelectController._instance.RenderLevelData(currentPoint.levelName, currentPoint.gemsCollected,
-                        currentPoint.totalGems, currentPoint.bestTime, currentPoint.targetTime);
+                    UI_SelectController._instance.RenderLevelData(currentPoint);
     
                     if (Input.GetButtonDown("Jump"))
                     {

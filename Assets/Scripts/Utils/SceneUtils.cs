@@ -41,15 +41,28 @@ public class SceneUtils : MonoBehaviour
       return SceneManager.GetActiveScene().name.Contains("Level");
    }
 
-   public static int GetLevelName()
+   public static int Get_NextLevelName()
    {
       int sceneNumber = 0;
       string tempSceneName = SceneManager.GetActiveScene().name;
       char[] separator = new char[] {'_'};
       
       string[] subs = tempSceneName.Split(separator);
-      sceneNumber=Int32.Parse(subs[1])+1;
+      sceneNumber = Int32.Parse(subs[1]) + 1;
       
       return sceneNumber;
    }
+   
+   public static int Get_CurrentLevelName()
+   {
+      int sceneNumber = 0;
+      string tempSceneName = SceneManager.GetActiveScene().name;
+      char[] separator = new char[] {'_'};
+      
+      string[] subs = tempSceneName.Split(separator);
+      sceneNumber = Int32.Parse(subs[1]);
+      
+      return sceneNumber;
+   }
+
 }
