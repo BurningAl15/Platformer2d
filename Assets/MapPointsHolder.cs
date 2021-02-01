@@ -29,11 +29,13 @@ public class MapPointsHolder : MonoBehaviour
             {
                 int j = i + 1;
                 _mapPoints[i].gemsCollected = PlayerPrefs.GetInt(StringUtils.Get_GemsInLevel(j));
+                _mapPoints[i].CheckGems();
             }
             for (int i = 0; i < _mapPoints.Count; i++)
             {
                 int j = i + 1;
                 _mapPoints[i].bestTime = PlayerPrefs.GetFloat(StringUtils.Get_TimeInLevel(j));
+                _mapPoints[i].CheckTime();
             }
             
             mapIndex = PlayerPrefs.GetInt(StringUtils.playerPref_mapIndex);

@@ -15,6 +15,34 @@ public class MapPoint : MonoBehaviour
 
    public int gemsCollected, totalGems;
    public float bestTime, targetTime;
+
+   [SerializeField] private GameObject timeBadge, gemsBadge;
+
+   private void Awake()
+   {
+      if(timeBadge)
+         timeBadge.SetActive(false);
+      if(gemsBadge)
+         gemsBadge.SetActive(false);
+   }
+
+   public void CheckGems()
+   {
+      if (gemsBadge)
+      {
+         if(gemsCollected>=totalGems)
+            gemsBadge.SetActive(true);
+      }
+   }
+   
+   public void CheckTime()
+   {
+      if (timeBadge)
+      {
+         if(bestTime<=targetTime && bestTime!=0)
+            timeBadge.SetActive(true);
+      }
+   }
    
    private void OnDrawGizmos()
    {
