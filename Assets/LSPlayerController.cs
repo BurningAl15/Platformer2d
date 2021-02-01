@@ -69,5 +69,6 @@ public class LSPlayerController : MonoBehaviour
     {
         currentPoint = nextPoint;
         UI_SelectController._instance.Turn_On_Off(false);
+        AudioMixerManager._instance.CallSFX(SFXType.Map_Movement);
     }
 }

@@ -20,7 +20,7 @@ public class SceneUtils : MonoBehaviour
    {
       SceneManager.LoadScene(_sceneNumber);
    }
-
+   
    public static void LoadGameplayScene(int _level)
    {
       SceneManager.LoadScene("Level_" + _level);
@@ -38,7 +38,7 @@ public class SceneUtils : MonoBehaviour
 
    public static bool IsInGameplay()
    {
-      return SceneManager.GetActiveScene().name.Contains("Level");
+      return SceneManager.GetActiveScene().name.Contains("Level_");
    }
 
    public static int Get_NextLevelName()

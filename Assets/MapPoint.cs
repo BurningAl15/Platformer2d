@@ -39,7 +39,7 @@ public class MapPoint : MonoBehaviour
    {
       if (timeBadge)
       {
-         if(bestTime<=targetTime && bestTime!=0)
+         if(bestTime<=targetTime && bestTime != 99999)
             timeBadge.SetActive(true);
       }
    }

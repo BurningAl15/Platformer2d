@@ -212,7 +212,17 @@ public class AudioMixerManager : MonoBehaviour
         //
         // yield return new WaitUntil(() => !backgroundSource.isPlaying);
         yield return null;
-        backgroundSource.clip = background_MainLevel_Clip;
+        if (SceneUtils.IsInGameplay())
+        {
+            print("Gameplay");
+            backgroundSource.clip = background_MainLevel_Clip;
+        }
+        else
+        {
+            print("Selection");
+            backgroundSource.clip = background_LevelSelect_Clip;
+        }
+        
         backgroundSource.Play();
         backgroundSource.loop = true;
         currentCoroutine = null;
@@ -220,16 +230,16 @@ public class AudioMixerManager : MonoBehaviour
 
     public void PlayBackgroundSource(bool _end)
     {
-        //Make a fade effect
-        // if (currentCoroutine == null)
-        //     currentCoroutine = StartCoroutine(BackgroundFadeEffect(_end));
+        // Make a fade effect
+         if (currentCoroutine == null)
+             currentCoroutine = StartCoroutine(BackgroundFadeEffect(_end));
             
-        AudioClip tempClip = _end ? background_GameComplete_Clip : background_LevelVictory_Clip;
-
-        if (!_end)
-            backgroundSource.loop = false;
-        backgroundSource.clip = tempClip;
-        backgroundSource.Play();
+        // AudioClip tempClip = _end ? background_GameComplete_Clip : background_LevelVictory_Clip;
+        //
+        // if (!_end)
+        //     backgroundSource.loop = false;
+        // backgroundSource.clip = tempClip;
+        // backgroundSource.Play();
     }
 
     #region In case of changes

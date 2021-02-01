@@ -38,7 +38,7 @@ public class UI_SelectController : MonoBehaviour
         gemsTargetText.text = "IN LEVEL: "+ levelInfo.totalGems;
         timeTargetText.text = "TARGET: " + levelInfo.targetTime.ToString("F1") + "s";
 
-        if (levelInfo.bestTime == 0)
+        if (levelInfo.bestTime == 99999)
         {
             bestTimeText.text = "Best: ----";
         }

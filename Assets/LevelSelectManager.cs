@@ -20,6 +20,7 @@ public class LevelSelectManager : MonoBehaviour
     
     IEnumerator LoadingGameplayScene(int _level)
     {
+        AudioMixerManager._instance.CallSFX(SFXType.Level_Selected);
         FadeEffect._instance.Fade_Out();
         yield return new WaitUntil(() => FadeEffect._instance.endFade);
         yield return new WaitForSeconds(.25f);

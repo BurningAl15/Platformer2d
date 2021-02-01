@@ -64,6 +64,8 @@ public class LevelManager : MonoBehaviour
 
     void SetPlayerPrefsLevelToUnlock()
     {
+        // if (SceneUtils.Get_CurrentLevelName() == 1)
+        //     PlayerPrefs.SetInt(StringUtils.Get_Level(SceneUtils.Get_CurrentLevelName()), 1);
         PlayerPrefs.SetInt(StringUtils.Get_Level(SceneUtils.Get_NextLevelName()), 1);
         PlayerPrefs.SetInt(StringUtils.playerPref_mapIndex, SceneUtils.Get_NextLevelName() - 2);
         PlayerPrefs.Save();
@@ -77,6 +79,7 @@ public class LevelManager : MonoBehaviour
             {
                 print("Gems");
                 PlayerPrefs.SetInt(StringUtils.Get_GemsInLevel(SceneUtils.Get_CurrentLevelName()), gemsCollected);
+                print("Saved Gems: " + gemsCollected);
             }
         }
         else
@@ -91,14 +94,17 @@ public class LevelManager : MonoBehaviour
     {
         if (PlayerPrefs.HasKey(StringUtils.Get_TimeInLevel(SceneUtils.Get_CurrentLevelName())))
         {
-            if(timeInLevel<PlayerPrefs.GetFloat(StringUtils.Get_TimeInLevel(SceneUtils.Get_CurrentLevelName())))
+            print("Time 1 - Test");
+            if(timeInLevel < PlayerPrefs.GetFloat(StringUtils.Get_TimeInLevel(SceneUtils.Get_CurrentLevelName())))
             {
-                print("Time");
+                print("Time 2 - Test");
                 PlayerPrefs.SetFloat(StringUtils.Get_TimeInLevel(SceneUtils.Get_CurrentLevelName()), timeInLevel);
+                print("Saved Time: " + timeInLevel);
             }
         }
         else
         {
+            print("Time 3 - Test");
             PlayerPrefs.SetFloat(StringUtils.Get_TimeInLevel(SceneUtils.Get_CurrentLevelName()), timeInLevel);
         }
 
@@ -114,14 +120,18 @@ public class LevelManager : MonoBehaviour
     IEnumerator End_Level()
     {
         stopGame = true;
+        AudioMixerManager._instance.PlayBackgroundSource(false);
         SimpleCameraController2d._instance.StopFollow();
         yield return new WaitForSeconds(.5f);
         UIController._instance.Run_EndLevelAnimation();
         yield return new WaitForSeconds(1.5f);
         FadeEffect._instance.Fade_Out();
         SetPlayerPrefsLevelToUnlock();
-        SetPlayerPrefsGems();
-        SetPlayerPrefsTime();
+        if (SceneUtils.Get_CurrentLevelName() != 0)
+        {
+            SetPlayerPrefsGems();
+            SetPlayerPrefsTime();
+        }
         yield return new WaitUntil(() => FadeEffect._instance.endFade);
         yield return new WaitForSeconds(.25f);
         SceneUtils.ToSelectionScene();

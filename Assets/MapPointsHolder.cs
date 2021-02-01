@@ -37,30 +37,32 @@ public class MapPointsHolder : MonoBehaviour
                 _mapPoints[i].bestTime = PlayerPrefs.GetFloat(StringUtils.Get_TimeInLevel(j));
                 _mapPoints[i].CheckTime();
             }
-            
-            mapIndex = PlayerPrefs.GetInt(StringUtils.playerPref_mapIndex);
+
+            mapIndex = PlayerPrefs.GetInt(StringUtils.playerPref_mapIndex) <= 0
+                ? 0
+                : PlayerPrefs.GetInt(StringUtils.playerPref_mapIndex);
             currentMapPoint = _mapPoints[mapIndex];
         }
         else
         {
-            for (int i = 0; i < _mapPoints.Count; i++)
-            {
-                int j = i + 1;
-                // string _name = "World_" + worldNumber + "Level_" + j;
-                PlayerPrefs.SetInt(StringUtils.Get_Level(j), 0);
-            }
-            for (int i = 0; i < _mapPoints.Count; i++)
-            {
-                int j = i + 1;
-                PlayerPrefs.SetInt(StringUtils.Get_GemsInLevel(j), 0);
-            }
-            for (int i = 0; i < _mapPoints.Count; i++)
-            {
-                int j = i + 1;
-                PlayerPrefs.SetInt(StringUtils.Get_TimeInLevel(j), 0);
-            }
-
-            PlayerPrefs.Save();
+            // for (int i = 0; i < _mapPoints.Count; i++)
+            // {
+            //     int j = i + 1;
+            //     // string _name = "World_" + worldNumber + "Level_" + j;
+            //     PlayerPrefs.SetInt(StringUtils.Get_Level(j), 0);
+            // }
+            // for (int i = 0; i < _mapPoints.Count; i++)
+            // {
+            //     int j = i + 1;
+            //     PlayerPrefs.SetInt(StringUtils.Get_GemsInLevel(j), 0);
+            // }
+            // for (int i = 0; i < _mapPoints.Count; i++)
+            // {
+            //     int j = i + 1;
+            //     PlayerPrefs.SetInt(StringUtils.Get_TimeInLevel(j), 0);
+            // }
+            //
+            // PlayerPrefs.Save();
             
             mapIndex = 0;
             currentMapPoint = _mapPoints[mapIndex];
