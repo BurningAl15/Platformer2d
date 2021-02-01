@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Enemy
   - Bouncer
+  - Platform
   layers:
   - Default
   - TransparentFX

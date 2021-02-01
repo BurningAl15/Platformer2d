@@ -3,13 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-public class EnemyController : MonoBehaviour
+public class EnemyController : EnemyParent
 {
     [Header("Components")]
     [SerializeField] private Rigidbody2D rgb;
-    [SerializeField] private SpriteRenderer _spriteRenderer;
     [SerializeField] private Animator anim;
-    [SerializeField] private BoxCollider2D damageCollider2D;
     
     [Header("Movement Variables")]
     [SerializeField] private float moveSpeed;
@@ -22,17 +20,11 @@ public class EnemyController : MonoBehaviour
     [SerializeField] private float moveTime, waitTime;
     private float moveCount, waitCount;
 
-    [SerializeField] private GameObject deathEffect;
-
-    private bool isDeath = false;
-    private Coroutine currentCoroutine = null;
-
-    
     void Awake()
     {
         rgb = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
-        damageCollider2D = GetComponent<BoxCollider2D>();
+        _collider2D = GetComponent<Collider2D>();
         
         leftPoint.name = leftPoint.name + "- from -" + this.name;
         rightPoint.name = rightPoint.name + "- from -" + this.name;
@@ -89,22 +81,6 @@ public class EnemyController : MonoBehaviour
         _spriteRenderer.flipX=direction!=-1?true:false;
     }
 
-    public void Death()
-    {
-        if (currentCoroutine == null)
-            currentCoroutine = StartCoroutine(EnemyDie());
-    }
-
-    IEnumerator EnemyDie()
-    {
-        isDeath = true;
-        deathEffect.transform.position = _spriteRenderer.transform.position;
-        damageCollider2D.enabled = false;
-        deathEffect.SetActive(true);
-        yield return new WaitUntil(() => deathEffect.GetComponent<TurnOff_OnTime>().finish);
-        gameObject.SetActive(false);
-    }
-    
     private void OnDrawGizmos()
     {
         Gizmos.color = new Color(.5f, .5f, .5f);

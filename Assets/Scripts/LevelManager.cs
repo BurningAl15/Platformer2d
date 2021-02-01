@@ -94,17 +94,14 @@ public class LevelManager : MonoBehaviour
     {
         if (PlayerPrefs.HasKey(StringUtils.Get_TimeInLevel(SceneUtils.Get_CurrentLevelName())))
         {
-            print("Time 1 - Test");
             if(timeInLevel < PlayerPrefs.GetFloat(StringUtils.Get_TimeInLevel(SceneUtils.Get_CurrentLevelName())))
             {
-                print("Time 2 - Test");
                 PlayerPrefs.SetFloat(StringUtils.Get_TimeInLevel(SceneUtils.Get_CurrentLevelName()), timeInLevel);
                 print("Saved Time: " + timeInLevel);
             }
         }
         else
         {
-            print("Time 3 - Test");
             PlayerPrefs.SetFloat(StringUtils.Get_TimeInLevel(SceneUtils.Get_CurrentLevelName()), timeInLevel);
         }
 
