@@ -29,7 +29,7 @@ public class SimpleCameraController2d : MonoBehaviour
         lastPos = transform.position;
     }
 
-    void LateUpdate()
+    void Update()
     {
         if (!stopFollow)
         {
@@ -53,5 +53,10 @@ public class SimpleCameraController2d : MonoBehaviour
     public void StopFollow()
     {
         stopFollow = true;
+    }
+
+    public void Follow()
+    {
+        stopFollow = false;
     }
 }

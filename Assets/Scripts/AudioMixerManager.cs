@@ -23,7 +23,8 @@ public enum SFXType
      
     Level_Selected,
     Map_Movement,
-    Warp_Jingle
+    Warp_Jingle,
+    Smash_Impact
 }
 
 [Serializable]
@@ -77,6 +78,7 @@ public class AudioMixerManager : MonoBehaviour
     [SerializeField] private SFXElement levelSelected_Clip;
     [SerializeField] private SFXElement mapMovement_Clip;
     [SerializeField] private SFXElement warpJingle_Clip;
+    [SerializeField] private SFXElement SmashImpact_Clip;
 
     [Header("Boss SFX")] 
     [SerializeField] private SFXElement bossHit_Clip;
@@ -148,6 +150,10 @@ public class AudioMixerManager : MonoBehaviour
                 break;
             case SFXType.Warp_Jingle:
                 warpJingle_Clip.CallSFX();
+                warpJingle_Clip.SetPitch(1);
+                break;
+            case SFXType.Smash_Impact:
+                SmashImpact_Clip.CallSFX();
                 warpJingle_Clip.SetPitch(1);
                 break;
         }
