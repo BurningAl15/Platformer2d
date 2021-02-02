@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -60,6 +61,9 @@ public class UIController : MonoBehaviour
 
     [Header("End Level")] 
     [SerializeField] private Animator endLevel_animator;
+    [SerializeField] private Animator amazingJob_animator;
+
+    [CanBeNull] private Coroutine currentCoroutine = null;
     
     void Awake()
     {
@@ -68,6 +72,7 @@ public class UIController : MonoBehaviour
         for(int i=0;i<hearts.Count;i++)
             hearts[i].Init(heartEmpty,heartHalf,heartFull);
         endLevel_animator.gameObject.SetActive(false);
+        amazingJob_animator.gameObject.SetActive(false);
     }
 
     private void Start()
@@ -102,5 +107,19 @@ public class UIController : MonoBehaviour
     public void Run_EndLevelAnimation()
     {
         endLevel_animator.gameObject.SetActive(true);
+    }
+
+    public void Run_AmazingJobAnimation()
+    {
+        amazingJob_animator.gameObject.SetActive(true);
+        if (currentCoroutine == null)
+            currentCoroutine = StartCoroutine(TurnOff_AmazingJob(2));
+    }
+
+    IEnumerator TurnOff_AmazingJob(float _waitTime)
+    {
+        yield return new WaitForSeconds(_waitTime);
+        amazingJob_animator.gameObject.SetActive(false);
+        currentCoroutine = null;
     }
 }

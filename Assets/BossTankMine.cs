@@ -29,6 +29,7 @@ public class BossTankMine : MonoBehaviour
         {
             DestroyMine();
             PlayerHealth._instance.DealDamage();
+            ScreenShake._instance.StartShake(.6f,.5f);
         }
     }
 

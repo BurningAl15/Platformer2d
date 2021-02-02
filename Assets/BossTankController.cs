@@ -135,6 +135,7 @@ public class BossTankController : MonoBehaviour
                 AudioMixerManager._instance.StopBossBackground();
                 gameObject.SetActive(false);
                 Instantiate(explosion, transform.position, transform.rotation);
+                UIController._instance.Run_AmazingJobAnimation();
                 runOnce = true;
             }
         }
