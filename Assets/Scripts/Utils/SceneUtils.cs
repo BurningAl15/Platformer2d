@@ -40,6 +40,11 @@ public class SceneUtils : MonoBehaviour
    {
       return SceneManager.GetActiveScene().name.Contains("Level_");
    }
+   
+   public static bool IsInTitleScreen()
+   {
+      return SceneManager.GetActiveScene().name.Contains("MainMenu");
+   }
 
    public static int Get_NextLevelName()
    {

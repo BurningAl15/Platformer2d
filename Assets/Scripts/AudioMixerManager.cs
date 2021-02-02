@@ -68,6 +68,7 @@ public class AudioMixerManager : MonoBehaviour
     [SerializeField] private AudioClip background_TitleScreen_Clip;
     [SerializeField] private AudioSource backgroundSource;
     [SerializeField] private AudioSource background2Source;
+    [SerializeField] private AudioSource background3Source;
 
     [Header("SFX")]
     // [SerializeField] private AudioClip click_1_Clip ;
@@ -223,6 +224,10 @@ public class AudioMixerManager : MonoBehaviour
             print("Gameplay");
             backgroundSource.clip = background_MainLevel_Clip;
         }
+        else if (SceneUtils.IsInTitleScreen())
+        {
+            backgroundSource.clip = background_TitleScreen_Clip;
+        }
         else
         {
             print("Selection");
@@ -272,12 +277,63 @@ public class AudioMixerManager : MonoBehaviour
         currentCoroutine = null;
     }
 
-    public void PlayBackgroundSource2(bool _end)
+    public void PlayBossBackground()
     {
         if (currentCoroutine == null)
-            currentCoroutine = StartCoroutine(BackgroundFadeEffect(_end));
+            currentCoroutine = StartCoroutine(BackgroundBoss_FadeEffect());
+    }
+    
+    IEnumerator BackgroundBoss_FadeEffect()
+    {
+        float i = 0;
+        // float maxValue = _end ? .5f : .4f;
+        
+        float maxValue = .5f;
+        AudioClip tempClip = background_BossBattle_Clip;
+
+        background3Source.loop = true;
+        background3Source.clip = tempClip;
+        background3Source.Play();
+        
+        while (i < maxValue)
+        {
+            backgroundSource.volume = .5f - i;
+            i += Time.deltaTime;
+            yield return null;
+        }
+
+        currentCoroutine = null;
     }
 
+    public void StopBossBackground()
+    {
+        if (currentCoroutine == null)
+            currentCoroutine = StartCoroutine(BackgroundLevel_FadeEffect());
+    }
+    
+    IEnumerator BackgroundLevel_FadeEffect()
+    {
+        float i = 0;
+        // float maxValue = _end ? .5f : .4f;
+        
+        float maxValue = .5f;
+        AudioClip tempClip = background_MainLevel_Clip;
+
+        backgroundSource.loop = true;
+        backgroundSource.clip = tempClip;
+        backgroundSource.Play();
+        
+        while (i < maxValue)
+        {
+            background3Source.volume = .5f - i;
+            backgroundSource.volume = i*2;
+            i += Time.deltaTime;
+            yield return null;
+        }
+
+        currentCoroutine = null;
+    }
+    
     #endregion
     
     
