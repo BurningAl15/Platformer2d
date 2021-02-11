@@ -8,6 +8,8 @@ TagManager:
   - Bouncer
   - Platform
   - StompBox
+  - DeathZone
+  - EnemyContainer
   layers:
   - Default
   - TransparentFX
@@ -21,7 +23,7 @@ TagManager:
   - Player
   - StompBox
   - Bullets
-  - 
+  - NoCollideEnemy
   - 
   - 
   - 

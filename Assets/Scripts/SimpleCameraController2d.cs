@@ -19,6 +19,11 @@ public class SimpleCameraController2d : MonoBehaviour
 
     private bool stopFollow = false;
 
+    private float timer = 0;
+    [SerializeField] private AnimationCurve _animationCurve;
+
+    [SerializeField] private Camera cam;
+    
     private void Awake()
     {
         _instance = this;
@@ -48,6 +53,16 @@ public class SimpleCameraController2d : MonoBehaviour
         
             lastPos = transform.position;
         }
+        // else
+        // {
+        //     if (transform.position.y != target.position.y)
+        //     {
+        //         timer += Time.deltaTime;
+        //         float val = _animationCurve.Evaluate(timer);
+        //         float clampedY = Mathf.Lerp(transform.position.y, maxHeight,val);
+        //         transform.position = new Vector3(transform.position.x, clampedY, transform.position.z);
+        //     }
+        // }
     }
 
     public void StopFollow()
@@ -58,5 +73,25 @@ public class SimpleCameraController2d : MonoBehaviour
     public void Follow()
     {
         stopFollow = false;
+    }
+
+    private void OnDrawGizmos()
+    {
+        Matrix4x4 temp = Gizmos.matrix;
+        Gizmos.matrix = Matrix4x4.TRS(transform.position, transform.rotation, Vector3.one);
+        
+        if (cam.orthographic) {
+            float spread = cam.farClipPlane - cam.nearClipPlane;
+            float center = (cam.farClipPlane + cam.nearClipPlane)*0.5f;
+            Gizmos.color = new Color(0, 1, 0);
+            Gizmos.DrawWireCube(new Vector3(transform.position.x,minHeight,transform.position.z), new Vector3(cam.orthographicSize*2*cam.aspect, cam.orthographicSize*2, spread));
+            Gizmos.color = new Color(1, 0, 0);
+            Gizmos.DrawWireCube(new Vector3(transform.position.x,maxHeight,transform.position.z), new Vector3(cam.orthographicSize*2*cam.aspect, cam.orthographicSize*2, spread));
+        } else {
+            Gizmos.DrawFrustum(new Vector3(transform.position.x,minHeight,transform.position.z), cam.fieldOfView, cam.farClipPlane, cam.nearClipPlane, cam.aspect);
+            Gizmos.DrawFrustum(new Vector3(transform.position.x,maxHeight,transform.position.z), cam.fieldOfView, cam.farClipPlane, cam.nearClipPlane, cam.aspect);
+        }
+        Gizmos.matrix = temp;
+
     }
 }

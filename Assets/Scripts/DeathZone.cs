@@ -9,5 +9,7 @@ public class DeathZone : MonoBehaviour
   {
     if(other.CompareTag("Player"))
       LevelManager._instance.RespawnPlayer();
+    if(other.CompareTag("EnemyContainer"))
+      Destroy(other.gameObject);
   }
 }

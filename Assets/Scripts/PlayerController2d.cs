@@ -14,6 +14,7 @@ public class PlayerController2d : MonoBehaviour
     [SerializeField] private Animator _anim;
     [SerializeField] private SpriteRenderer _spriteRenderer;
     private int direction = 1;
+    private int prevDirection = 1;
 
     [Header("Movement Variables")] [SerializeField]
     private float movementSpeed;
@@ -38,6 +39,9 @@ public class PlayerController2d : MonoBehaviour
     [SerializeField] private float endTimer = 1f;
     [SerializeField] private float growFactor;
 
+    [SerializeField] private ParticleSystem dust;
+    [SerializeField] private ParticleSystem jumpDust;
+    
     private void Awake()
     {
         _rgb = GetComponent<Rigidbody2D>();
@@ -59,7 +63,7 @@ public class PlayerController2d : MonoBehaviour
                     Movement();
 
                     //Flipping sprite by direction
-                    FlipSprite();
+                    // FlipSprite();
 
                     //Checking ground and Jump
                     GroundCheck();
@@ -105,6 +109,7 @@ public class PlayerController2d : MonoBehaviour
             //Start this when you are on air
             if (canDoubleJump)
             {
+                CreateDust(1);
                 _rgb.velocity = new Vector2(_rgb.velocity.x, jumpForce);
                 AudioMixerManager._instance.CallSFX(SFXType.Player_Jump);
                 canDoubleJump = false;
@@ -117,9 +122,25 @@ public class PlayerController2d : MonoBehaviour
         float horizontalMovement = Input.GetAxis("Horizontal") * movementSpeed;
 
         if (horizontalMovement > 0)
+        {
             direction = 1;
+            // if(horizontalMovement <= 0.1f)
+            if (prevDirection != direction)
+            {
+                FlipSprite();
+                prevDirection = direction;
+            }
+        }
         else if (horizontalMovement < 0)
+        {
             direction = -1;
+            // if(horizontalMovement >= -0.1f)
+            if (prevDirection != direction)
+            {
+                FlipSprite();
+                prevDirection = direction;
+            }
+        }
 
         _rgb.velocity = new Vector2(horizontalMovement, _rgb.velocity.y);
         _anim.SetFloat("moveSpeed", Mathf.Abs(horizontalMovement));
@@ -150,9 +171,10 @@ public class PlayerController2d : MonoBehaviour
     void FlipSprite()
     {
         //By rotations
-        // transform.eulerAngles = new Vector3(0, direction == 1 ? 0 : 180, 0);
+        transform.eulerAngles = new Vector3(0, direction == 1 ? 0 : 180, 0);
         //By spriteRenderer
-        _spriteRenderer.flipX = direction != 1;
+        // _spriteRenderer.flipX = direction != 1;
+        CreateDust(0);
     }
 
     public void Bounce()
@@ -168,6 +190,15 @@ public class PlayerController2d : MonoBehaviour
         AudioMixerManager._instance.CallSFX(SFXType.Player_Jump);
     }
 
+    void CreateDust(int dustType)
+    {
+        if(dustType==0)
+            dust.Play();
+        else
+            jumpDust.Play();
+        // var vel = dust.velocityOverLifetime;
+        // vel.x = direction*-1 * .2f;
+    }
     #endregion
 
     //Gizmos
