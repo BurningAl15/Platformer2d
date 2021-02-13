@@ -44,6 +44,7 @@ public class Pickup : MonoBehaviour
         GetComponent<SpriteRenderer>().enabled = false;
         effect.SetActive(true);
         yield return new WaitUntil(() => effect.GetComponent<TurnOff_OnTime>().finish);
-        gameObject.SetActive(false);
+        // gameObject.SetActive(false);
+        Destroy(this.gameObject);
     }
 }

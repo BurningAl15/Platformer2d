@@ -91,17 +91,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67a86af0bceb71f4db8763a72fefba75, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rgb: {fileID: 0}
+  deathEffect: {fileID: 7622728731707092832}
+  _collider2D: {fileID: 0}
   _spriteRenderer: {fileID: 3434975376523658246}
+  rgb: {fileID: 0}
   anim: {fileID: 0}
-  damageCollider2D: {fileID: 0}
   moveSpeed: 5
   direction: -1
   leftPoint: {fileID: 3434975376635885055}
   rightPoint: {fileID: 3434975376842129130}
   moveTime: 3
   waitTime: 2
-  deathEffect: {fileID: 7622728731707092832}
 --- !u!61 &645676248
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -151,7 +151,7 @@ GameObject:
   - component: {fileID: 3434975376523658245}
   - component: {fileID: 3434975376523658246}
   - component: {fileID: 3434975376523658247}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: FrogSprite
   m_TagString: Enemy
   m_Icon: {fileID: 0}

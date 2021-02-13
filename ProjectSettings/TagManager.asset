@@ -23,8 +23,8 @@ TagManager:
   - Player
   - StompBox
   - Bullets
-  - NoCollideEnemy
-  - 
+  - Enemy
+  - NoCollideStompBox
   - 
   - 
   - 

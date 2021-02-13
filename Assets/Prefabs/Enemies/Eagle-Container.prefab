@@ -57,7 +57,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3078163061193203487}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 19.3, y: 1.64, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -179,7 +179,7 @@ GameObject:
   - component: {fileID: 3078163061939861454}
   - component: {fileID: 3078163061939861455}
   - component: {fileID: 3078163061939861456}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Eagle-Sprite
   m_TagString: Enemy
   m_Icon: {fileID: 0}

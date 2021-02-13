@@ -60,15 +60,15 @@ public class AudioMixerManager : MonoBehaviour
     [SerializeField] private Sprite sfxOn, sfxOff;
 
     [Header("Background Music")]
-    [FormerlySerializedAs("background_Intro_Clip")]  [SerializeField] private AudioClip background_MainLevel_Clip;
-    [FormerlySerializedAs("backgroundClip")] [SerializeField] private AudioClip background_BossBattle_Clip;
-    [FormerlySerializedAs("goodEndClip")] [SerializeField] private AudioClip background_GameComplete_Clip;
-    [FormerlySerializedAs("badEndClip")] [SerializeField] private AudioClip background_LevelVictory_Clip;
-    [SerializeField] private AudioClip background_LevelSelect_Clip;
-    [SerializeField] private AudioClip background_TitleScreen_Clip;
-    [SerializeField] private AudioSource backgroundSource;
-    [SerializeField] private AudioSource background2Source;
-    [SerializeField] private AudioSource background3Source;
+    public AudioClip background_MainLevel_Clip;
+    public AudioClip background_BossBattle_Clip;
+    public AudioClip background_GameComplete_Clip;
+    public AudioClip background_LevelVictory_Clip;
+    public AudioClip background_LevelSelect_Clip;
+    public AudioClip background_TitleScreen_Clip;
+    public AudioSource backgroundSource;
+    public AudioSource background2Source;
+    public AudioSource background3Source;
 
     [Header("SFX")]
     // [SerializeField] private AudioClip click_1_Clip ;
@@ -167,10 +167,12 @@ public class AudioMixerManager : MonoBehaviour
 
         initialPitch += growPitchRate;
         
+        ComboManager._instance.RunTimer();
+        
         if (initialPitch >= maxPitch)
             initialPitch = maxPitch;
     }
-
+    
     public void ResetPitch()
     {
         initialPitch = .5f;

@@ -24,6 +24,8 @@ public class PlayerHealth : MonoBehaviour
 
     [Header("Death Effect")] 
     [SerializeField] private GameObject deathEffect;
+
+    [SerializeField] private StompBox stompBox;
     
     void Awake()
     {
@@ -141,10 +143,11 @@ public class PlayerHealth : MonoBehaviour
         gameObject.SetActive(true);
         AudioMixerManager._instance.CallSFX(SFXType.Warp_Jingle);
     }
-    
+
     IEnumerator BlinkEffect()
     {
         Color tempColor = _spriteRenderer.color;
+        stompBox.TurnLayer_Inactive();
         while (isInvincible)
         {
             _spriteRenderer.color = new Color(tempColor.r,
@@ -158,6 +161,7 @@ public class PlayerHealth : MonoBehaviour
                 1);
             yield return new WaitForSeconds(.1f);
         }
+        stompBox.TurnLayer_Active();
         currentCoroutine = null;
     }
 

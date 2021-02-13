@@ -28,4 +28,11 @@ public class MovingPlatform : MonoBehaviour
                 currentPoint = 0;
         }
     }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = new Color(0, 0, 1);
+        for(int i=0;i<movingPoints.Count;i++)
+            Gizmos.DrawSphere(movingPoints[i].transform.position,1);
+    }
 }
