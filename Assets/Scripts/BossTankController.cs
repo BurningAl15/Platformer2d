@@ -70,56 +70,15 @@ public class BossTankController : MonoBehaviour
             switch (currentStates)
             {
                 case BossStates.SHOOTING:
-                    hitbox.SetActive(true);
-                    shootCounter -= Time.deltaTime;
-                    if (shootCounter <= 0)
-                    {
-                        shootCounter = timeBetweenShots;
-                        var newBullet = Instantiate(bullet, firePoint.position, firePoint.rotation);
-                        newBullet.transform.eulerAngles = new Vector3(0, moveRight ? 180 : 0, 0);
-                    }
+                    Shooting_State();
                     
                     break;
                 case BossStates.HURT:
-                    // hitbox.SetActive(false);
-                    if (hurtCounter > 0)
-                    {
-                        hurtCounter -= Time.deltaTime;
-                        if (hurtCounter <= 0)
-                        {
-                            currentStates = BossStates.MOVING;
-
-                            mineCounter = 0;
-                        }
-                    }
+                    Hurt_State();
+                    
                     break;
                 case BossStates.MOVING:
-                    hitbox.SetActive(false);
-                    if (moveRight)
-                    {
-                        boss.localPosition += new Vector3(moveSpeed * Time.deltaTime, 0f, 0f);
-                        if (boss.localPosition.x > rightPoint.localPosition.x)
-                        {
-                            moveRight = false;
-                            EndMovement();
-                        }
-                    }
-                    else
-                    {
-                        boss.localPosition -= new Vector3(moveSpeed * Time.deltaTime, 0f, 0f);
-                        if (boss.localPosition.x < leftPoint.localPosition.x)
-                        {
-                            moveRight = true;
-                            EndMovement();
-                        }
-                    }
-
-                    mineCounter -= Time.deltaTime;
-                    if (mineCounter <= 0)
-                    {
-                        mineCounter = timeBetweenMines;
-                        Instantiate(mine, minePoint.position, minePoint.rotation);
-                    }
+                    Moving_State();
                     
                     break;
             }
@@ -128,19 +87,78 @@ public class BossTankController : MonoBehaviour
         {
             if (!runOnce)
             {
-                //Activate win platform
-                winPlatform.transform.parent = null;
-                winPlatform.SetActive(true);
-                //Stop boss music (fade to main music again)
-                AudioMixerManager._instance.StopBossBackground();
-                gameObject.SetActive(false);
-                Instantiate(explosion, transform.position, transform.rotation);
-                UIController._instance.Run_AmazingJobAnimation();
-                runOnce = true;
+                End_State();
             }
         }
     }
 
+    void Shooting_State()
+    {
+        hitbox.SetActive(true);
+        shootCounter -= Time.deltaTime;
+        if (shootCounter <= 0)
+        {
+            shootCounter = timeBetweenShots;
+            var newBullet = Instantiate(bullet, firePoint.position, firePoint.rotation);
+            newBullet.transform.eulerAngles = new Vector3(0, moveRight ? 180 : 0, 0);
+        }
+    }
+
+    void Hurt_State()
+    {
+        if (hurtCounter > 0)
+        {
+            hurtCounter -= Time.deltaTime;
+            if (hurtCounter <= 0)
+            {
+                currentStates = BossStates.MOVING;
+                mineCounter = 0;
+            }
+        }
+    }
+    
+    void Moving_State()
+    {
+        hitbox.SetActive(false);
+        if (moveRight)
+        {
+            boss.localPosition += new Vector3(moveSpeed * Time.deltaTime, 0f, 0f);
+            if (boss.localPosition.x > rightPoint.localPosition.x)
+                EndMovement(false);
+        }
+        else
+        {
+            boss.localPosition -= new Vector3(moveSpeed * Time.deltaTime, 0f, 0f);
+            if (boss.localPosition.x < leftPoint.localPosition.x)
+                EndMovement(true);
+        }
+
+        MineTimer();
+    }
+
+    void End_State()
+    {
+        //Activate win platform
+        winPlatform.transform.parent = null;
+        winPlatform.SetActive(true);
+        //Stop boss music (fade to main music again)
+        AudioMixerManager._instance.StopBossBackground();
+        gameObject.SetActive(false);
+        Instantiate(explosion, transform.position, transform.rotation);
+        UIController._instance.Run_AmazingJobAnimation();
+        runOnce = true;
+    }
+    
+    void MineTimer()
+    {
+        mineCounter -= Time.deltaTime;
+        if (mineCounter <= 0)
+        {
+            mineCounter = timeBetweenMines;
+            Instantiate(mine, minePoint.position, minePoint.rotation);
+        }
+    }
+    
     public void TakeHit()
     {
         currentStates = BossStates.HURT;
@@ -180,14 +198,17 @@ public class BossTankController : MonoBehaviour
         boss.eulerAngles = new Vector3(0, moveRight ? 180 : 0, 0);
     }
 
-    void EndMovement()
+    void EndMovement(bool _moveRight)
     {
+        moveRight = _moveRight;
         currentStates = BossStates.SHOOTING;
         shootCounter = 0f;
         anim.SetTrigger("StopMoving");
         FLip();
         hitbox.SetActive(true);
     }
+
+ 
     
     IEnumerator BlinkEffect(float blinkTime)
     {
