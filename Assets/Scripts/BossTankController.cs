@@ -173,13 +173,14 @@ public class BossTankController : MonoBehaviour
         
         BossTankMine[] mines = FindObjectsOfType<BossTankMine>();
         if (mines.Length > 0)
-        {
             foreach (BossTankMine foundMine in mines)
-            {
                 foundMine.DestroyMine();
-            }
-        }
 
+        BossHealth();
+    }
+
+    void BossHealth()
+    {
         health--;
         if (health <= 0)
         {
