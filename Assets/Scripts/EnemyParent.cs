@@ -12,20 +12,24 @@ public class EnemyParent : MonoBehaviour
 
     [SerializeField] protected Collider2D _collider2D;
     [SerializeField] protected SpriteRenderer _spriteRenderer;
-    
-    public void Death()
+
+    public void Death(bool destroy = false)
     {
         if (currentCoroutine == null)
-            currentCoroutine = StartCoroutine(EnemyDie());
+            currentCoroutine = StartCoroutine(EnemyDie(destroy));
     }
 
-    IEnumerator EnemyDie()
+    IEnumerator EnemyDie(bool destroy)
     {
         isDeath = true;
         deathEffect.transform.position = _spriteRenderer.transform.position;
         _collider2D.enabled = false;
         deathEffect.SetActive(true);
         yield return new WaitUntil(() => deathEffect.GetComponent<TurnOff_OnTime>().finish);
-        gameObject.SetActive(false);
+        if(!destroy)
+            gameObject.SetActive(false);
+        else
+            Destroy(gameObject);            
+        currentCoroutine = null;
     }
 }

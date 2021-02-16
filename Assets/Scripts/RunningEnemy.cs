@@ -21,6 +21,12 @@ public class RunningEnemy : EnemyParent
         FlipSpriteRenderer();
     }
 
+    public void SetDirection(int _direction)
+    {
+        direction = _direction;
+        FlipSpriteRenderer();
+    }
+
     void Update()
     {
         if(!isDeath)
@@ -38,5 +44,4 @@ public class RunningEnemy : EnemyParent
     {
         _spriteRenderer.flipX=direction!=-1?true:false;
     }
-
 }

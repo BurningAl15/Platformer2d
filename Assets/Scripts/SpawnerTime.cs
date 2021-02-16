@@ -9,16 +9,18 @@ public class SpawnerTime : SpawnerParent
     public float maxWaitTimer;
 
     private bool spawnEnemy = false;
+
+    public int direction;
     
     private void Start()
     {
         // waitTimer = maxWaitTimer;
-        runSpawning = true;
     }
 
     public override void Spawn()
     {
-        Instantiate(enemy, transform.position, Quaternion.identity);
+        GameObject _enemy = Instantiate(enemy, transform.position, Quaternion.identity);
+        _enemy.GetComponent<RunningEnemy>().SetDirection(direction);
     }
 
     public override void ResetSpawner()
@@ -42,9 +44,15 @@ public class SpawnerTime : SpawnerParent
         waitTimer = 0;
         spawnEnemy = false;
     }
+
+    public void TurnOnSpawning()
+    {
+        runSpawning = true;
+        Spawn();
+    }
     
     //If Player is too far from the spawner, then change it to not spawn
-    void TurnOffSpawning()
+    public void TurnOffSpawning()
     {
         runSpawning = false;
     }
