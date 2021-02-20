@@ -2,19 +2,57 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
+using UnityEngine.UI;
 
 public class MainMenuManager : MonoBehaviour
 {
    public GameObject continueButton;
+
+   [SerializeField] private Image textImg;
+   [SerializeField] private CanvasGroup panelBG;
+   [SerializeField] private GameObject panelOptions;
+
+   [SerializeField] private float initPoint, endPoint;
+   [SerializeField] private AnimationCurve initCurve;
    
+   private void Awake()
+   {
+      DOTween.Init(true, true, LogBehaviour.Default);
+   }
+
    private void Start()
    {
       if(PlayerPrefs.HasKey("Level_1"))
          continueButton.SetActive(true);
       else
          continueButton.SetActive(false);
+
+      panelBG.alpha = 0;
+      panelBG.interactable = false;
+      panelBG.blocksRaycasts = false;
    }
 
+   public void DeactivatePanel()
+   {
+      panelOptions.transform.DOLocalMoveY(initPoint, .5f).SetEase(initCurve).OnComplete(()=>TurnOffPanel());
+   }
+
+   void TurnOffPanel()
+   {
+      panelBG.alpha = 0;
+      panelBG.interactable = false;
+      panelBG.blocksRaycasts = false;
+   }
+   
+   public void ActivatePanel()
+   {
+      panelBG.alpha = 1;
+      panelBG.interactable = true;
+      panelBG.blocksRaycasts = true;
+      panelOptions.transform.DOLocalMoveY(endPoint, .5f).SetEase(initCurve);
+   }
+   
    public void ToNextScene()
    {
       PlayerPrefs.DeleteAll();
