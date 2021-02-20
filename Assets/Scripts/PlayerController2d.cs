@@ -174,7 +174,8 @@ public class PlayerController2d : MonoBehaviour
         transform.eulerAngles = new Vector3(0, direction == 1 ? 0 : 180, 0);
         //By spriteRenderer
         // _spriteRenderer.flipX = direction != 1;
-        CreateDust(0);
+        if(isGrounded)
+            CreateDust(0);
     }
 
     public void Bounce()

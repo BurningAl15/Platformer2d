@@ -12,6 +12,8 @@ public class StompBox : MonoBehaviour
     [SerializeField] private GameObject collectible;
     [Range(0, 100)] [SerializeField] private float chanceToDrop;
 
+    private Bouncer tempBouncer = null;
+    
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag(StringUtils.tag_Enemy))
@@ -19,7 +21,12 @@ public class StompBox : MonoBehaviour
 
         if (other.CompareTag(StringUtils.tag_Bouncer))
         {
-            PlayerController2d._instance.Bounce(1.5f);
+            float bounceValue = 2f;
+            if (other.GetComponent<Bouncer>() != null)
+                tempBouncer = other.GetComponent<Bouncer>();
+
+            bounceValue = tempBouncer.bouncePower;
+            PlayerController2d._instance.Bounce(bounceValue);
             other.GetComponent<Animator>().SetTrigger("Bounce");
         }
     }

@@ -8,16 +8,16 @@ public class FlyingEnemyController : EnemyParent
     [SerializeField] private List<Transform> movingPoints = new List<Transform>();
     [SerializeField] private float moveSpeed;
 
-    int currentPoint;
+    private int currentPoint;
 
     [SerializeField] private float distanceToAttackPlayer;
     [SerializeField] private float chaseSpeed;
 
     private Vector3 attackTarget;
 
-    [SerializeField]private float waitingAfterAttack;
-    [SerializeField]private float attackCounter;
-    
+    [SerializeField] private float waitingAfterAttack;
+    [SerializeField] private float attackCounter;
+
     private void Awake()
     {
         _collider2D = GetComponent<Collider2D>();
@@ -25,7 +25,7 @@ public class FlyingEnemyController : EnemyParent
 
     private void Start()
     {
-        for (int i = 0; i < movingPoints.Count; i++)
+        for (var i = 0; i < movingPoints.Count; i++)
             movingPoints[i].parent = null;
         transform.position = movingPoints[currentPoint].position;
         FlipSprite(currentPoint);
@@ -39,7 +39,8 @@ public class FlyingEnemyController : EnemyParent
         }
         else
         {
-            if (Vector3.Distance(transform.position, PlayerController2d._instance.transform.position) > distanceToAttackPlayer)
+            if (Vector3.Distance(transform.position, PlayerController2d._instance.transform.position) >
+                distanceToAttackPlayer)
             {
                 if (attackTarget != Vector3.zero)
                 {
@@ -47,7 +48,9 @@ public class FlyingEnemyController : EnemyParent
                     FlipSprite();
                 }
 
-                transform.position = Vector3.MoveTowards(transform.position, movingPoints[currentPoint].position, moveSpeed*Time.deltaTime);
+                transform.position = Vector3.MoveTowards(transform.position,
+                    movingPoints[currentPoint].position, moveSpeed * Time.deltaTime);
+
                 if (Vector3.Distance(transform.position, movingPoints[currentPoint].position) <= Mathf.Epsilon)
                 {
                     currentPoint++;
@@ -61,34 +64,51 @@ public class FlyingEnemyController : EnemyParent
                 if (attackTarget == Vector3.zero)
                 {
                     attackTarget = PlayerController2d._instance.transform.position;
-                    FlipSprite();
+                    FlipSprite(attackTarget);
                 }
 
                 transform.position = Vector3.MoveTowards(transform.position,
-                    attackTarget, chaseSpeed*Time.deltaTime);
+                    attackTarget, chaseSpeed * Time.deltaTime);
 
                 if (Vector3.Distance(transform.position, attackTarget) <= Mathf.Epsilon)
                 {
+                    print("Attack");
                     attackCounter = waitingAfterAttack;
+                    FlipSprite(attackTarget);
                     attackTarget = Vector3.zero;
                 }
             }
         }
     }
-    
-    void FlipSprite()
+
+    private void FlipSprite()
     {
         //By rotations
         // transform.eulerAngles = new Vector3(0, direction == 1 ? 0 : 180, 0);
         //By spriteRenderer
-        _spriteRenderer.flipX = (movingPoints[currentPoint].position.x>transform.position.x);
+        _spriteRenderer.flipX = movingPoints[currentPoint].position.x > transform.position.x;
     }
-    
-    void FlipSprite(int _init)
+
+    private void FlipSprite(int _init)
     {
         //By rotations
         // transform.eulerAngles = new Vector3(0, direction == 1 ? 0 : 180, 0);
         //By spriteRenderer
-        _spriteRenderer.flipX = (movingPoints[_init+1].position.x>transform.position.x);
+        _spriteRenderer.flipX = movingPoints[_init + 1].position.x > transform.position.x;
+    }
+
+    void FlipSprite(Vector2 _player)
+    {
+        _spriteRenderer.flipX = _player.x > transform.position.x;
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = new Color(1, 0, 0, .25f);
+        for (var i = 0; i < movingPoints.Count; i++)
+            Gizmos.DrawSphere(movingPoints[i].transform.position, 1);
+
+        Gizmos.color = new Color(1, 1, 1, .25f);
+        Gizmos.DrawWireSphere(transform.position,distanceToAttackPlayer);
     }
 }

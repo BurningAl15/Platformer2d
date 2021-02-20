@@ -25,6 +25,7 @@ public class EnemyParent : MonoBehaviour
         deathEffect.transform.position = _spriteRenderer.transform.position;
         _collider2D.enabled = false;
         deathEffect.SetActive(true);
+        _spriteRenderer.enabled = false;
         yield return new WaitUntil(() => deathEffect.GetComponent<TurnOff_OnTime>().finish);
         if(!destroy)
             gameObject.SetActive(false);

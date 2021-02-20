@@ -1,0 +1,15 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!221 &22100000
+AnimatorOverrideController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: BigBouncer
+  m_Controller: {fileID: 9100000, guid: b247f43c0889ae048b160e36b1ebcf7b, type: 2}
+  m_Clips:
+  - m_OriginalClip: {fileID: 7400000, guid: 59c7181bf5dff6f49b9a8fd3f483b53f, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 6d92a969469f9e544aef65f5ecf6cb9d, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 93d385a42e9d60f4aa4aff889099a240, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: a38f1422b199ba241a1873351f64e6d8, type: 2}
