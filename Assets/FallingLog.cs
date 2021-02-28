@@ -10,7 +10,6 @@ public class FallingLog : MonoBehaviour
     private float timer=0;
     [SerializeField] private Rigidbody2D rgb;
     
-    // bool wait
     [SerializeField] private Transform initialPosition;
     void Start()
     {

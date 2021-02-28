@@ -145,7 +145,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   activateFalling: 0
-  waitingTime: 1.5
+  waitingTime: 0.2
   rgb: {fileID: 0}
   initialPosition: {fileID: 5847706712832626618}
 --- !u!1 &5847706711425058512
@@ -341,7 +341,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   activateFalling: 0
-  waitingTime: 1.5
+  waitingTime: 0.2
   rgb: {fileID: 0}
   initialPosition: {fileID: 5847706712605556186}
 --- !u!1 &5847706711506956420
@@ -489,7 +489,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   activateFalling: 0
-  waitingTime: 1.5
+  waitingTime: 0.2
   rgb: {fileID: 0}
   initialPosition: {fileID: 5847706711980431199}
 --- !u!1 &5847706711552834844
@@ -668,7 +668,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   activateFalling: 0
-  waitingTime: 1.5
+  waitingTime: 0.2
   rgb: {fileID: 0}
   initialPosition: {fileID: 5847706713046850521}
 --- !u!1 &5847706711864497700
@@ -847,7 +847,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   activateFalling: 0
-  waitingTime: 1.5
+  waitingTime: 0.2
   rgb: {fileID: 0}
   initialPosition: {fileID: 5847706712152703889}
 --- !u!1 &5847706711912988833
@@ -1150,7 +1150,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   activateFalling: 0
-  waitingTime: 1.5
+  waitingTime: 0.2
   rgb: {fileID: 0}
   initialPosition: {fileID: 5847706713369833517}
 --- !u!1 &5847706712391155458
@@ -1298,7 +1298,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   activateFalling: 0
-  waitingTime: 1.5
+  waitingTime: 0.2
   rgb: {fileID: 0}
   initialPosition: {fileID: 5847706713362388746}
 --- !u!1 &5847706712439445590
@@ -1508,7 +1508,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   activateFalling: 0
-  waitingTime: 1.5
+  waitingTime: 0.2
   rgb: {fileID: 0}
   initialPosition: {fileID: 5847706711864497701}
 --- !u!1 &5847706712605556189
@@ -1687,7 +1687,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   activateFalling: 0
-  waitingTime: 1.5
+  waitingTime: 0.2
   rgb: {fileID: 0}
   initialPosition: {fileID: 5847706712439445591}
 --- !u!1 &5847706712729482431
@@ -1866,7 +1866,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   activateFalling: 0
-  waitingTime: 1.5
+  waitingTime: 0.2
   rgb: {fileID: 0}
   initialPosition: {fileID: 5847706711972492923}
 --- !u!1 &5847706712832626621
@@ -2076,7 +2076,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   activateFalling: 0
-  waitingTime: 1.5
+  waitingTime: 0.2
   rgb: {fileID: 0}
   initialPosition: {fileID: 5847706712015180262}
 --- !u!1 &5847706713027985309
@@ -2224,7 +2224,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   activateFalling: 0
-  waitingTime: 1.5
+  waitingTime: 0.2
   rgb: {fileID: 0}
   initialPosition: {fileID: 5847706713232707916}
 --- !u!1 &5847706713046850520
@@ -2403,7 +2403,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   activateFalling: 0
-  waitingTime: 1.5
+  waitingTime: 0.2
   rgb: {fileID: 0}
   initialPosition: {fileID: 5847706711552834845}
 --- !u!1 &5847706713164834113
@@ -2551,7 +2551,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   activateFalling: 0
-  waitingTime: 1.5
+  waitingTime: 0.2
   rgb: {fileID: 0}
   initialPosition: {fileID: 5847706713287867804}
 --- !u!1 &5847706713184550267
@@ -2699,7 +2699,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   activateFalling: 0
-  waitingTime: 1.5
+  waitingTime: 0.2
   rgb: {fileID: 0}
   initialPosition: {fileID: 5847706711912988862}
 --- !u!1 &5847706713204752823
@@ -2847,7 +2847,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   activateFalling: 0
-  waitingTime: 1.5
+  waitingTime: 0.2
   rgb: {fileID: 0}
   initialPosition: {fileID: 5847706712914554183}
 --- !u!1 &5847706713232707919
@@ -3026,7 +3026,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   activateFalling: 0
-  waitingTime: 1.5
+  waitingTime: 0.2
   rgb: {fileID: 0}
   initialPosition: {fileID: 5847706712729482428}
 --- !u!1 &5847706713287867807
@@ -3205,7 +3205,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   activateFalling: 0
-  waitingTime: 1.5
+  waitingTime: 0.2
   rgb: {fileID: 0}
   initialPosition: {fileID: 5847706712542822507}
 --- !u!1 &5847706713362388749

@@ -7,7 +7,7 @@ public class FallingSpike : MonoBehaviour
 {
    private void OnTriggerEnter2D(Collider2D other)
    {
-      if (other.CompareTag("HangingLog"))
+      if (other.CompareTag("HangingLog") || other.CompareTag("FallingLog"))
       {
          Destroy(this.gameObject);
       }

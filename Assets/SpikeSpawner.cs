@@ -20,7 +20,7 @@ public class SpikeSpawner : SpawnerParent
     public override void ResetSpawner()
     {
         Spawn();
-        maxTimer = Random.Range(.5f, 2f);
+        maxTimer = Random.Range(1f, 3f);
         timer = 0;
     }
 }

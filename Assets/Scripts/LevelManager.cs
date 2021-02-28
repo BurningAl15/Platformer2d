@@ -21,6 +21,12 @@ public class LevelManager : MonoBehaviour
     private void Awake()
     {
         _instance = this;
+        #if UNITY_STANDALONE_WIN || UNITY_STANDALONE
+            // Sync framerate to monitors refresh rate
+            QualitySettings.vSyncCount = 1;
+            // Make the game run as fast as possible
+            Application.targetFrameRate = 60;
+        #endif
     }
 
     private void Start()
