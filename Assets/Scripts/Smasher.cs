@@ -36,7 +36,7 @@ public class Smasher : MonoBehaviour
             if (Vector3.Distance(smasher.position, _smasherSignal.transform.position) < Mathf.Epsilon)
             {
                 _particleSystem.Play();
-                ScreenShake._instance.StartShake(.4f,.6f);
+                ScreenShake._instance.StartShake(.25f,.5f);
                 AudioMixerManager._instance.CallSFX(SFXType.Smash_Impact);
                 _smasherSignal.smasherOn = false;
             }

@@ -21,7 +21,6 @@ public class ActivateSpawner : MonoBehaviour
    private void OnDrawGizmos()
    {
       Gizmos.color = new Color(0, 1, 0,.25f);
-    
       Gizmos.DrawCube(transform.position,_boxCollider.size);
    }
 }

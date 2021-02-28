@@ -642,7 +642,7 @@ PlayerSettings:
   cloudProjectId: eccdcd0c-7323-4c7f-9308-734912644c00
   framebufferDepthMemorylessMode: 0
   projectName: Fox's Tale
-  organizationId: fatcat-game-studio
+  organizationId: fatcat-game-studio-v2
   cloudEnabled: 0
   enableNativePlatformBackendsForNewInputSystem: 0
   disableOldInputManagerSupport: 0

@@ -31,6 +31,7 @@ public class SimpleCameraController2d : MonoBehaviour
 
     private void Start()
     {
+        target = PlayerController2d._instance.transform;
         lastPos = transform.position;
     }
 

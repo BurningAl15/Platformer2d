@@ -23,9 +23,11 @@ public class StompBox : MonoBehaviour
         {
             float bounceValue = 2f;
             if (other.GetComponent<Bouncer>() != null)
+            {
                 tempBouncer = other.GetComponent<Bouncer>();
+                bounceValue = tempBouncer.bouncePower;
+            }
 
-            bounceValue = tempBouncer.bouncePower;
             PlayerController2d._instance.Bounce(bounceValue);
             other.GetComponent<Animator>().SetTrigger("Bounce");
         }

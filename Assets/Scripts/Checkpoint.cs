@@ -13,6 +13,8 @@ public class Checkpoint : MonoBehaviour
 
     private bool isSelected = false;
 
+    [SerializeField] private ParticleSystem _particle;
+    
     void Start()
     {
         _spriteRenderer = GetComponent<SpriteRenderer>();
@@ -31,6 +33,7 @@ public class Checkpoint : MonoBehaviour
             CheckpointManager._instance.ResetAllCheckpoints();
             CheckpointManager._instance.UpdateCurrentPosition(this.transform);
             _spriteRenderer.sprite = checkpointSprite_On;
+            _particle.Play();
             isSelected = true;
         }
     }

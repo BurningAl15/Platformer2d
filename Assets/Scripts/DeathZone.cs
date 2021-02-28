@@ -19,6 +19,8 @@ public class DeathZone : MonoBehaviour
       LevelManager._instance.RespawnPlayer();
     if(other.CompareTag("EnemyContainer"))
       Destroy(other.gameObject);
+    if(other.CompareTag("FallingLog"))
+      other.GetComponent<FallingLog>().ResetLog();
   }
 
   private void OnDrawGizmos()

@@ -10,6 +10,8 @@ TagManager:
   - StompBox
   - DeathZone
   - EnemyContainer
+  - HangingLog
+  - FallingLog
   layers:
   - Default
   - TransparentFX
@@ -25,7 +27,7 @@ TagManager:
   - Bullets
   - Enemy
   - NoCollideStompBox
-  - 
+  - SpawningZone
   - 
   - 
   - 

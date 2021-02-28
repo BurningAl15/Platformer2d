@@ -41,6 +41,9 @@ public class PlayerController2d : MonoBehaviour
 
     [SerializeField] private ParticleSystem dust;
     [SerializeField] private ParticleSystem jumpDust;
+    [SerializeField] private ParticleSystem fallDust;
+    
+    bool hasCheckedGround=false;
     
     private void Awake()
     {
@@ -156,7 +159,18 @@ public class PlayerController2d : MonoBehaviour
 
         //If we are in floor, then reset the doubleJump bool so you can double jump again.
         if (isGrounded)
+        {
+            if (hasCheckedGround)
+            {
+                fallDust.Play();
+                hasCheckedGround = false;
+            }
             canDoubleJump = true;
+        }
+        else
+        {
+            hasCheckedGround = true;
+        }
 
         _anim.SetBool("isGrounded", isGrounded);
     }
