@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3930314477895908833}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: Waypoints
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -39,7 +39,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3930314478177903060}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: Waypoints (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -70,7 +70,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3930314478438206115}
   - component: {fileID: 3930314478438206044}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: DeathEdge-Movement 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -177,6 +177,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: DeathEdge-Rotating (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 3671835907142001521, guid: f391b00ab47ecd049a18ec62f4f98996,
+        type: 3}
+      propertyPath: m_Layer
+      value: 15
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f391b00ab47ecd049a18ec62f4f98996, type: 3}

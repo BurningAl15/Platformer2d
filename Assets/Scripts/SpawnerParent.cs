@@ -12,12 +12,15 @@ public class SpawnerParent : MonoBehaviour
 
     protected void Update()
     {
-        if (runSpawning)
+        if (!LevelManager._instance.stopGame)
         {
-            timer += Time.deltaTime;
-            if (timer >= maxTimer)
+            if (runSpawning)
             {
-                ResetSpawner();
+                timer += Time.deltaTime;
+                if (timer >= maxTimer)
+                {
+                    ResetSpawner();
+                }
             }
         }
     }

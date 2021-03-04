@@ -9,10 +9,10 @@ public class HoldingDamageBall : MonoBehaviour
 
     [SerializeField] private float speed;
 
-    [SerializeField] private HoldingDamageBall_Signal _signal;
+    // [SerializeField] private HoldingDamageBall_Signal _signal;
+    
     private void Update()
     {
-        holdingBall.RotateAround(this.transform.position, Vector3.forward, speed * _signal.Direction * Time.deltaTime);
+        holdingBall.RotateAround(this.transform.position, Vector3.forward,   speed * Mathf.Sin( Time.time));
     }
-
 }

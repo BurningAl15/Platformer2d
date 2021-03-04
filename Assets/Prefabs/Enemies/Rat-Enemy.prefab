@@ -150,7 +150,7 @@ GameObject:
   - component: {fileID: 545149910774653956}
   - component: {fileID: 545149910774653957}
   - component: {fileID: 545149910774653976}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Rat-Enemy
   m_TagString: EnemyContainer
   m_Icon: {fileID: 0}
@@ -286,6 +286,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5071656274757484029, guid: db5142f301e7c094e8a971e8dbbc961e,
+        type: 3}
+      propertyPath: m_Layer
+      value: 12
       objectReference: {fileID: 0}
     - target: {fileID: 5113304533049479127, guid: db5142f301e7c094e8a971e8dbbc961e,
         type: 3}
