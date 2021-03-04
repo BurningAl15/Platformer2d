@@ -6,6 +6,7 @@ using UnityEngine;
 public class DeathZone : MonoBehaviour
 {
   [SerializeField] private BoxCollider2D _boxCollider;
+  [SerializeField] private CircleCollider2D _circleCollider;
   private Vector3 position_Offset;
 
   private void Awake()
@@ -27,6 +28,9 @@ public class DeathZone : MonoBehaviour
   {
     Gizmos.color = new Color(1, 0, 0,.25f);
     
-    Gizmos.DrawCube(transform.position,_boxCollider.size);
+    if(_boxCollider != null)
+      Gizmos.DrawCube(transform.position,_boxCollider.size);
+    if(_circleCollider != null)
+      Gizmos.DrawSphere(transform.position,_circleCollider.radius);
   }
 }

@@ -27,4 +27,10 @@ public class StringUtils : MonoBehaviour
     {
         return "Level_" + _levelNumber + "_Time";
     }
+
+    public static string Get_GizmosIconNumbers(int _index)
+    {
+        string iconName = "GizmoIcon_128_";
+        return iconName + _index.ToString() +".png";
+    }
 }

@@ -12,6 +12,7 @@ TagManager:
   - EnemyContainer
   - HangingLog
   - FallingLog
+  - ChangeDirection
   layers:
   - Default
   - TransparentFX

@@ -32,7 +32,7 @@ public class MovingPlatform : MonoBehaviour
     private void OnDrawGizmos()
     {
         Gizmos.color = new Color(0, 0, 1);
-        for(int i=0;i<movingPoints.Count;i++)
-            Gizmos.DrawSphere(movingPoints[i].transform.position,1);
+        for (var i = 0; i < movingPoints.Count; i++)
+            Gizmos.DrawIcon(movingPoints[i].transform.position, StringUtils.Get_GizmosIconNumbers(i));
     }
 }

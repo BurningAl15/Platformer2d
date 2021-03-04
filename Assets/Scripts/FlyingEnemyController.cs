@@ -106,7 +106,7 @@ public class FlyingEnemyController : EnemyParent
     {
         Gizmos.color = new Color(1, 0, 0, .25f);
         for (var i = 0; i < movingPoints.Count; i++)
-            Gizmos.DrawSphere(movingPoints[i].transform.position, 1);
+            Gizmos.DrawIcon(movingPoints[i].transform.position, StringUtils.Get_GizmosIconNumbers(i));
 
         Gizmos.color = new Color(1, 1, 1, .25f);
         Gizmos.DrawWireSphere(transform.position,distanceToAttackPlayer);
