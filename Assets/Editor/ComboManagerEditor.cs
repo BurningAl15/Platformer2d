@@ -16,12 +16,12 @@ public class ComboManagerEditor : Editor
         GUILayout.BeginHorizontal();
         if (myComboManager.isRunning)
         {
-            GUILayout.Button(Resources.Load<Texture>("Thumbnails/Thumbnails_1"),
+            GUILayout.Box(Resources.Load<Texture>("Thumbnails/Thumbnails_1"),
                 GUILayout.Width(thumbnailWidth), GUILayout.Height(thumbnailHeight));
         }
         else
         {
-            GUILayout.Button(Resources.Load<Texture>("Thumbnails/Thumbnails_2"),
+            GUILayout.Box(Resources.Load<Texture>("Thumbnails/Thumbnails_2"),
                 GUILayout.Width(thumbnailWidth), GUILayout.Height(thumbnailHeight));
         }
         

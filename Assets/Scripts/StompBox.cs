@@ -37,7 +37,9 @@ public class StompBox : MonoBehaviour
     {
         Vector2 lastPos = other.transform.position;
         other.gameObject.SetActive(false);
-        other.transform.parent.gameObject.GetComponent<EnemyParent>().Death();
+        GameObject parent = other.transform.parent.gameObject;
+        parent.GetComponent<EnemyParent>().Death();
+        
         PlayerController2d._instance.Bounce();
         AudioMixerManager._instance.CallSFX(SFXType.Enemy_Death);
 

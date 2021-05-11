@@ -12,20 +12,33 @@ public class MovingPlatform : MonoBehaviour
     [SerializeField] int currentPoint;
 
     [SerializeField] Transform platform;
+    [SerializeField] private float timer;
+    [SerializeField] private float maxTimer;
 
+    [SerializeField] private Rigidbody2D rgb;
+    
     private void Start()
     {
         platform.position = movingPoints[currentPoint].position;
+        timer = maxTimer;
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
-        platform.position = Vector3.MoveTowards(platform.position, movingPoints[currentPoint].position, moveSpeed*Time.deltaTime);
+        Vector3 tempPos = Vector3.MoveTowards(platform.position, movingPoints[currentPoint].position, moveSpeed*Time.deltaTime);
+        rgb.MovePosition(tempPos);
+        // platform.position = Vector3.MoveTowards(platform.position, movingPoints[currentPoint].position, moveSpeed*Time.deltaTime);
         if (Vector3.Distance(platform.position, movingPoints[currentPoint].position) <= Mathf.Epsilon)
         {
-            currentPoint++;
-            if (currentPoint >= movingPoints.Count)
-                currentPoint = 0;
+            timer -= Time.deltaTime;
+            if (timer < 0)
+            {
+                currentPoint++;
+                if (currentPoint >= movingPoints.Count)
+                    currentPoint = 0;
+
+                timer = maxTimer;
+            }
         }
     }
 

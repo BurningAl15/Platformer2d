@@ -52,7 +52,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7623809859240958788}
   m_Layer: 0
-  m_Name: Managers
+  m_Name: LevelSelector-Managers
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -66,7 +66,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7623809859240958789}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 16.92688, y: -1.5586005, z: -2.2421875}
+  m_LocalPosition: {x: 16.92688, y: -1.5586005, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 7623809859294878375}
@@ -269,6 +269,7 @@ MonoBehaviour:
     type: 3}
   backgroundSource: {fileID: 7623809860150096140}
   background2Source: {fileID: 7623809859241220291}
+  background3Source: {fileID: 0}
   success_Clip: {fileID: 0}
   fail_Clip: {fileID: 0}
   levelSelected_Clip:

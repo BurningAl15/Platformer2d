@@ -158,6 +158,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _boxCollider: {fileID: 3179117422783820801}
+  _circleCollider: {fileID: 0}
 --- !u!61 &1790421229033705864
 BoxCollider2D:
   m_ObjectHideFlags: 0

@@ -47,10 +47,17 @@ public class MainMenuManager : MonoBehaviour
    
    public void ActivatePanel()
    {
-      panelBG.alpha = 1;
-      panelBG.interactable = true;
-      panelBG.blocksRaycasts = true;
-      panelOptions.transform.DOLocalMoveY(endPoint, .5f).SetEase(initCurve);
+      if (PlayerPrefs.HasKey("Level_1"))
+      {
+         panelBG.alpha = 1;
+         panelBG.interactable = true;
+         panelBG.blocksRaycasts = true;
+         panelOptions.transform.DOLocalMoveY(endPoint, .5f).SetEase(initCurve);
+      }
+      else
+      {
+         ToNextScene();
+      }
    }
    
    public void ToNextScene()

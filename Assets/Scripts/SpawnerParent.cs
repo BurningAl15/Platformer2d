@@ -32,6 +32,7 @@ public class SpawnerParent : MonoBehaviour
 
     
     public virtual void Spawn(){}
+    public virtual void Spawn(int _index){}
 
     public virtual void ResetSpawner() {}
 }

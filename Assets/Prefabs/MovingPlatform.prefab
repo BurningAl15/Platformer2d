@@ -112,6 +112,9 @@ MonoBehaviour:
   moveSpeed: 2.5
   currentPoint: 0
   platform: {fileID: 5267366401882088926}
+  timer: 0
+  maxTimer: 0
+  rgb: {fileID: 2799812590375203426}
 --- !u!1 &5267366401882088924
 GameObject:
   m_ObjectHideFlags: 0
@@ -124,6 +127,7 @@ GameObject:
   - component: {fileID: 5267366401882088927}
   - component: {fileID: 5267366401882088921}
   - component: {fileID: 5267366401882088920}
+  - component: {fileID: 2799812590375203426}
   m_Layer: 8
   m_Name: OneWay-Large
   m_TagString: Platform
@@ -240,3 +244,24 @@ PlatformEffector2D:
   m_UseSideFriction: 0
   m_UseSideBounce: 0
   m_SideArc: 1
+--- !u!50 &2799812590375203426
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5267366401882088924}
+  m_BodyType: 1
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 1
+  m_Constraints: 4

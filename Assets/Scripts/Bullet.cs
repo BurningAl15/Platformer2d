@@ -7,10 +7,9 @@ public class Bullet : MonoBehaviour
 {
     [SerializeField] private float speed;
 
-    private int direction;
+    [SerializeField] private int direction;
 
     [SerializeField] private GameObject smoke;
-    
     void Start()
     {
         AudioMixerManager._instance.CallSFX(SFXType.Boss_Shoot);
@@ -31,7 +30,6 @@ public class Bullet : MonoBehaviour
             Destroy(this.gameObject);
             ScreenShake._instance.StartShake(.3f,.5f);
         }
-
         Instantiate(smoke, transform.position, transform.rotation);
         AudioMixerManager._instance.CallSFX(SFXType.Boss_Impact);
     }

@@ -13,8 +13,8 @@ GameObject:
   - component: {fileID: 9079824059008693102}
   - component: {fileID: 9079824059008693103}
   m_Layer: 8
-  m_Name: Long-Platform
-  m_TagString: Untagged
+  m_Name: OneWay-Large
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

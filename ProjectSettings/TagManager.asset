@@ -13,6 +13,7 @@ TagManager:
   - HangingLog
   - FallingLog
   - ChangeDirection
+  - Ground
   layers:
   - Default
   - TransparentFX

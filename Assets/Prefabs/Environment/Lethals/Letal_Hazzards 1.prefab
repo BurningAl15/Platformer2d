@@ -239,6 +239,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _boxCollider: {fileID: 8434304028642689777}
+  _circleCollider: {fileID: 0}
 --- !u!1 &2742087553271738005
 GameObject:
   m_ObjectHideFlags: 0

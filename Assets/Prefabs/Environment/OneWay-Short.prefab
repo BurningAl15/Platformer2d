@@ -13,8 +13,8 @@ GameObject:
   - component: {fileID: 1329494713546683694}
   - component: {fileID: 1329494713546683689}
   m_Layer: 8
-  m_Name: Small-Platform
-  m_TagString: Untagged
+  m_Name: OneWay-Short
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

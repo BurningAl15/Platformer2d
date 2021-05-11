@@ -143,4 +143,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 10
+  direction: 0
   smoke: {fileID: 4070234274105366266, guid: 0095b017af5c45542a70d9e82ecd9523, type: 3}

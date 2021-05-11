@@ -122,6 +122,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _boxCollider: {fileID: 5281728409480695847}
+  _circleCollider: {fileID: 0}
 --- !u!1 &5281728409628067965
 GameObject:
   m_ObjectHideFlags: 0
@@ -244,6 +245,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _boxCollider: {fileID: 5281728409628067963}
+  _circleCollider: {fileID: 0}
 --- !u!1 &5281728410817866144
 GameObject:
   m_ObjectHideFlags: 0

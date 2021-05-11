@@ -536,7 +536,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   holdingBall: {fileID: 4519351308612297513}
   speed: 100
-  _signal: {fileID: 4519351308612297508}
 --- !u!1 &4519351309366544962
 GameObject:
   m_ObjectHideFlags: 0

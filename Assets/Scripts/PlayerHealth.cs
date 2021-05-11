@@ -167,13 +167,13 @@ public class PlayerHealth : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D other)
     {
-        if (other.gameObject.CompareTag("Platform"))
+        if (other.gameObject.CompareTag("Platform") && transform.parent == null && IsAlive())
             transform.parent = other.transform;
     }
     
     private void OnCollisionExit2D(Collision2D other)
     {
-        if (other.gameObject.CompareTag("Platform"))
+        if (other.gameObject.CompareTag("Platform") && transform.parent != null && IsAlive())
             transform.parent = null;
     }
 }

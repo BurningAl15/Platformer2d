@@ -47,4 +47,9 @@ public class Pickup : MonoBehaviour
         // gameObject.SetActive(false);
         Destroy(this.gameObject);
     }
+
+    public bool IsGem()
+    {
+        return _pickupType == PickupType.Gem;
+    }
 }

@@ -41,14 +41,24 @@ public class PauseMenu : MonoBehaviour
     public void Pause()
     {
         isPaused = !isPaused;
+        print("Is Paused State: "+ isPaused);
+
         if (isPaused)
             TurnCanvasGroup(true);
         else
             Time.timeScale = 1;
 
         float tempEndValue = isPaused ? endPoint : initPoint;
-        
+        print(tempEndValue);
         pauseScreen.transform.DOLocalMoveY(tempEndValue, .25f).SetEase(Ease.InOutBounce).OnComplete(TurnOffPause);
+    }
+
+    public void PauseAuxiliar()
+    {
+        print("Calling auxiliar");
+        isPaused = false;
+        Time.timeScale = 1;
+        pauseScreen.transform.DOLocalMoveY(initPoint, .25f).SetEase(Ease.InOutBounce).OnComplete(TurnOffPause);
     }
 
     void TurnOffPause()

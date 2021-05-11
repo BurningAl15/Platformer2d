@@ -52,6 +52,8 @@ MonoBehaviour:
   moveSpeed: 2
   currentPoint: 0
   platform: {fileID: 8290728299400176735}
+  timer: 0
+  maxTimer: 0
 --- !u!1 &206851498782165992
 GameObject:
   m_ObjectHideFlags: 0

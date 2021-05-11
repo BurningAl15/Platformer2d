@@ -21,7 +21,7 @@ public class SpawnerSwitch : SpawnerParent
 
     public override void Spawn()
     {
-        Instantiate(enemy, initialPosition.position, Quaternion.identity);
+        Instantiate(enemy, initialPosition.position, enemy.transform.rotation);
     }
 
     public override void ResetSpawner()
