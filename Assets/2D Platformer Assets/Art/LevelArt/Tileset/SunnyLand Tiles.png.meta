@@ -321,7 +321,7 @@ TextureImporter:
       213: -4720756422326308155
     second: sunnyland_tiles_relaid_Padded_105
   externalObjects: {}
-  serializedVersion: 10
+  serializedVersion: 12
   mipmaps:
     mipMapMode: 0
     enableMipMap: 0
@@ -338,9 +338,12 @@ TextureImporter:
     externalNormalMap: 0
     heightScale: 0.25
     normalMapFilter: 0
+    flipGreenChannel: 0
   isReadable: 0
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
   grayScaleToAlpha: 0
   generateCubemap: 6
   cubemapConvolution: 0
@@ -350,8 +353,8 @@ TextureImporter:
   textureSettings:
     serializedVersion: 2
     filterMode: 0
-    aniso: -1
-    mipBias: -100
+    aniso: 1
+    mipBias: 0
     wrapU: 1
     wrapV: 1
     wrapW: 1
@@ -372,9 +375,15 @@ TextureImporter:
   textureType: 8
   textureShape: 1
   singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
   maxTextureSizeSet: 0
   compressionQualitySet: 0
   textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 1
+  swizzle: 50462976
+  cookieLightType: 1
   platformSettings:
   - serializedVersion: 3
     buildTarget: DefaultTexturePlatform
@@ -386,6 +395,7 @@ TextureImporter:
     crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
+    ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 3
@@ -398,6 +408,7 @@ TextureImporter:
     crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
+    ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 3
@@ -410,6 +421,46 @@ TextureImporter:
     crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Server
+    maxTextureSize: 256
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Android
+    maxTextureSize: 256
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: iPhone
+    maxTextureSize: 256
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
@@ -2651,9 +2702,115 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-  spritePackingTag: 
+    nameFileIdTable:
+      sunnyland_tiles_relaid_Padded_0: 3287848783686573333
+      sunnyland_tiles_relaid_Padded_1: -5463897620222462305
+      sunnyland_tiles_relaid_Padded_10: 8094085342786833245
+      sunnyland_tiles_relaid_Padded_100: -8360313380473124850
+      sunnyland_tiles_relaid_Padded_101: 7055174951071241651
+      sunnyland_tiles_relaid_Padded_102: 5585058925386297065
+      sunnyland_tiles_relaid_Padded_103: 4408424401103002168
+      sunnyland_tiles_relaid_Padded_104: 3725969886059791864
+      sunnyland_tiles_relaid_Padded_105: -4720756422326308155
+      sunnyland_tiles_relaid_Padded_11: -6058667870394495525
+      sunnyland_tiles_relaid_Padded_12: -9010711683793018509
+      sunnyland_tiles_relaid_Padded_13: 2263835366627762799
+      sunnyland_tiles_relaid_Padded_14: -2829190401577792765
+      sunnyland_tiles_relaid_Padded_15: 8509411624465585454
+      sunnyland_tiles_relaid_Padded_16: -3308656922124667551
+      sunnyland_tiles_relaid_Padded_17: -3625294019864708782
+      sunnyland_tiles_relaid_Padded_18: 8374575800964509029
+      sunnyland_tiles_relaid_Padded_19: -5508730632566878883
+      sunnyland_tiles_relaid_Padded_2: -5011925379321002501
+      sunnyland_tiles_relaid_Padded_20: -7343194319107487810
+      sunnyland_tiles_relaid_Padded_21: 6596057819871119407
+      sunnyland_tiles_relaid_Padded_22: -8487978071452062827
+      sunnyland_tiles_relaid_Padded_23: 5028536095410433625
+      sunnyland_tiles_relaid_Padded_24: 1479855246544989178
+      sunnyland_tiles_relaid_Padded_25: -5478353912228968505
+      sunnyland_tiles_relaid_Padded_26: 5474732567577085688
+      sunnyland_tiles_relaid_Padded_27: 2770872720797276442
+      sunnyland_tiles_relaid_Padded_28: 3451207683902864821
+      sunnyland_tiles_relaid_Padded_29: -86548094060623698
+      sunnyland_tiles_relaid_Padded_3: 4769510759246532426
+      sunnyland_tiles_relaid_Padded_30: -4040271654678811182
+      sunnyland_tiles_relaid_Padded_31: 7919117916051223505
+      sunnyland_tiles_relaid_Padded_32: -6896215119654729947
+      sunnyland_tiles_relaid_Padded_33: -4051624116929229557
+      sunnyland_tiles_relaid_Padded_34: -1578002637858680105
+      sunnyland_tiles_relaid_Padded_35: 2391903256158459113
+      sunnyland_tiles_relaid_Padded_36: -6984389349450331940
+      sunnyland_tiles_relaid_Padded_37: 4099992945786891730
+      sunnyland_tiles_relaid_Padded_38: 4762811109085248275
+      sunnyland_tiles_relaid_Padded_39: -819770478092454269
+      sunnyland_tiles_relaid_Padded_4: -2568288569716644289
+      sunnyland_tiles_relaid_Padded_40: -6517990167705665613
+      sunnyland_tiles_relaid_Padded_41: -3549992386819286772
+      sunnyland_tiles_relaid_Padded_42: 6152210987012824989
+      sunnyland_tiles_relaid_Padded_43: -2158150261349277878
+      sunnyland_tiles_relaid_Padded_44: -4747976464273633042
+      sunnyland_tiles_relaid_Padded_45: 3481017475304765826
+      sunnyland_tiles_relaid_Padded_46: 6602050490782533828
+      sunnyland_tiles_relaid_Padded_47: 2863295938466745937
+      sunnyland_tiles_relaid_Padded_48: 352016367647806864
+      sunnyland_tiles_relaid_Padded_49: -4684210928468128388
+      sunnyland_tiles_relaid_Padded_5: -5977640497170313383
+      sunnyland_tiles_relaid_Padded_50: 1611911916459121689
+      sunnyland_tiles_relaid_Padded_51: -7833034605326932009
+      sunnyland_tiles_relaid_Padded_52: -1438087183151359869
+      sunnyland_tiles_relaid_Padded_53: -2675854310940276907
+      sunnyland_tiles_relaid_Padded_54: 3716335987078930344
+      sunnyland_tiles_relaid_Padded_55: -2422660224927285524
+      sunnyland_tiles_relaid_Padded_56: 4820590310190183951
+      sunnyland_tiles_relaid_Padded_57: 3368926228923298519
+      sunnyland_tiles_relaid_Padded_58: 599999878362292511
+      sunnyland_tiles_relaid_Padded_59: -4978596625328766961
+      sunnyland_tiles_relaid_Padded_6: 450984261578796788
+      sunnyland_tiles_relaid_Padded_60: -6399830510141787367
+      sunnyland_tiles_relaid_Padded_61: -4424641820440881072
+      sunnyland_tiles_relaid_Padded_62: -7685324929753469293
+      sunnyland_tiles_relaid_Padded_63: 7133049196151067418
+      sunnyland_tiles_relaid_Padded_64: -1735318775901381991
+      sunnyland_tiles_relaid_Padded_65: 3462851081454962194
+      sunnyland_tiles_relaid_Padded_66: -1355769806141176144
+      sunnyland_tiles_relaid_Padded_67: 4558023693749649806
+      sunnyland_tiles_relaid_Padded_68: 4925051398538972760
+      sunnyland_tiles_relaid_Padded_69: -7400878058381733343
+      sunnyland_tiles_relaid_Padded_7: 7717053868336373217
+      sunnyland_tiles_relaid_Padded_70: -4690361450939477526
+      sunnyland_tiles_relaid_Padded_71: -4249478758857973575
+      sunnyland_tiles_relaid_Padded_72: -6284603521810071621
+      sunnyland_tiles_relaid_Padded_73: -1803788779114843731
+      sunnyland_tiles_relaid_Padded_74: 959967150418131283
+      sunnyland_tiles_relaid_Padded_75: -4083445013284974895
+      sunnyland_tiles_relaid_Padded_76: -2852860250393895585
+      sunnyland_tiles_relaid_Padded_77: 1079386990057848044
+      sunnyland_tiles_relaid_Padded_78: -7261392599384591258
+      sunnyland_tiles_relaid_Padded_79: -637591438956848735
+      sunnyland_tiles_relaid_Padded_8: 2156064319916037527
+      sunnyland_tiles_relaid_Padded_80: 2660386541053383674
+      sunnyland_tiles_relaid_Padded_81: -5254040466317168315
+      sunnyland_tiles_relaid_Padded_82: 6793121149388053430
+      sunnyland_tiles_relaid_Padded_83: 9029955552964734725
+      sunnyland_tiles_relaid_Padded_84: 975524731512585727
+      sunnyland_tiles_relaid_Padded_85: -5333596765717956371
+      sunnyland_tiles_relaid_Padded_86: -2445172463988467035
+      sunnyland_tiles_relaid_Padded_87: 6569860270171340292
+      sunnyland_tiles_relaid_Padded_88: 5660519011557979360
+      sunnyland_tiles_relaid_Padded_89: -694883898685753805
+      sunnyland_tiles_relaid_Padded_9: 2742273679828636158
+      sunnyland_tiles_relaid_Padded_90: 7004577421244917104
+      sunnyland_tiles_relaid_Padded_91: 1132690918023620446
+      sunnyland_tiles_relaid_Padded_92: 5084253676859644242
+      sunnyland_tiles_relaid_Padded_93: -5084389760788781544
+      sunnyland_tiles_relaid_Padded_94: -1042356235912402248
+      sunnyland_tiles_relaid_Padded_95: 1629146187009164507
+      sunnyland_tiles_relaid_Padded_96: -7718649684423394501
+      sunnyland_tiles_relaid_Padded_97: -7451349381871421923
+      sunnyland_tiles_relaid_Padded_98: -7075712018548768697
+      sunnyland_tiles_relaid_Padded_99: -4759037963252122514
+  mipmapLimitGroupName: 
   pSDRemoveMatte: 0
-  pSDShowRemoveMatteOption: 0
   userData: 
   assetBundleName: 
   assetBundleVariant: 

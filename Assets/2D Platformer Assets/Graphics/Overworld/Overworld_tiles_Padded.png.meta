@@ -177,7 +177,7 @@ TextureImporter:
       213: 8672254683683649150
     second: Overworld_tiles_Padded_57
   externalObjects: {}
-  serializedVersion: 10
+  serializedVersion: 12
   mipmaps:
     mipMapMode: 0
     enableMipMap: 0
@@ -194,9 +194,12 @@ TextureImporter:
     externalNormalMap: 0
     heightScale: 0.25
     normalMapFilter: 0
+    flipGreenChannel: 0
   isReadable: 0
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
   grayScaleToAlpha: 0
   generateCubemap: 6
   cubemapConvolution: 0
@@ -206,8 +209,8 @@ TextureImporter:
   textureSettings:
     serializedVersion: 2
     filterMode: 0
-    aniso: -1
-    mipBias: -100
+    aniso: 1
+    mipBias: 0
     wrapU: 1
     wrapV: 1
     wrapW: 1
@@ -228,9 +231,15 @@ TextureImporter:
   textureType: 8
   textureShape: 1
   singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
   maxTextureSizeSet: 0
   compressionQualitySet: 0
   textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 1
+  swizzle: 50462976
+  cookieLightType: 1
   platformSettings:
   - serializedVersion: 3
     buildTarget: DefaultTexturePlatform
@@ -242,6 +251,7 @@ TextureImporter:
     crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
+    ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 3
@@ -254,6 +264,7 @@ TextureImporter:
     crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
+    ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 3
@@ -266,6 +277,46 @@ TextureImporter:
     crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Server
+    maxTextureSize: 256
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Android
+    maxTextureSize: 256
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: iPhone
+    maxTextureSize: 256
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
@@ -1499,9 +1550,67 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-  spritePackingTag: 
+    nameFileIdTable:
+      Overworld_tiles_Padded_0: 26611041478181320
+      Overworld_tiles_Padded_1: 6360791562956265931
+      Overworld_tiles_Padded_10: 3454965585411783540
+      Overworld_tiles_Padded_11: -3653324633249548027
+      Overworld_tiles_Padded_12: 8974448763599414359
+      Overworld_tiles_Padded_13: 8111260463962803842
+      Overworld_tiles_Padded_14: -2541274775063960520
+      Overworld_tiles_Padded_15: -8386999786659268273
+      Overworld_tiles_Padded_16: 3943662299482898878
+      Overworld_tiles_Padded_17: -5735413180438596998
+      Overworld_tiles_Padded_18: -4415888832166312393
+      Overworld_tiles_Padded_19: 7877854464640753583
+      Overworld_tiles_Padded_2: -7503422774715260232
+      Overworld_tiles_Padded_20: 2890712415135823617
+      Overworld_tiles_Padded_21: 4992875467205154274
+      Overworld_tiles_Padded_22: -6872188658994648082
+      Overworld_tiles_Padded_23: -952614798763752270
+      Overworld_tiles_Padded_24: -1205990787104333180
+      Overworld_tiles_Padded_25: -3370834184511229268
+      Overworld_tiles_Padded_26: -2599740592460166860
+      Overworld_tiles_Padded_27: 5354860675244818494
+      Overworld_tiles_Padded_28: -1977641748429351986
+      Overworld_tiles_Padded_29: 2103958626818693342
+      Overworld_tiles_Padded_3: -7165953389946146117
+      Overworld_tiles_Padded_30: 7598336935456722038
+      Overworld_tiles_Padded_31: -630427812260770608
+      Overworld_tiles_Padded_32: -8949581939412275507
+      Overworld_tiles_Padded_33: -8183491752701251012
+      Overworld_tiles_Padded_34: -7615024287630661631
+      Overworld_tiles_Padded_35: 6532992310030160296
+      Overworld_tiles_Padded_36: -7874457596446285988
+      Overworld_tiles_Padded_37: 8564128722588758612
+      Overworld_tiles_Padded_38: 3064649986541121047
+      Overworld_tiles_Padded_39: -1818766005876072063
+      Overworld_tiles_Padded_4: 6618991978134958024
+      Overworld_tiles_Padded_40: -4915579813416367921
+      Overworld_tiles_Padded_41: 1355534777916178771
+      Overworld_tiles_Padded_42: -3747767024937641969
+      Overworld_tiles_Padded_43: -8228791482166500415
+      Overworld_tiles_Padded_44: -6959109890863391186
+      Overworld_tiles_Padded_45: -496776632797168462
+      Overworld_tiles_Padded_46: 4747181332684429086
+      Overworld_tiles_Padded_47: 8814219002181569682
+      Overworld_tiles_Padded_48: 3666741056900688185
+      Overworld_tiles_Padded_49: 6073605119276332360
+      Overworld_tiles_Padded_5: 9165734286395081927
+      Overworld_tiles_Padded_50: 8735611706783463779
+      Overworld_tiles_Padded_51: 4374728085818625506
+      Overworld_tiles_Padded_52: 7665751549204839329
+      Overworld_tiles_Padded_53: -3651851468522387888
+      Overworld_tiles_Padded_54: -4152458595252767578
+      Overworld_tiles_Padded_55: 5467239109716484651
+      Overworld_tiles_Padded_56: -6493429056371492418
+      Overworld_tiles_Padded_57: 8672254683683649150
+      Overworld_tiles_Padded_6: -4297111156536679164
+      Overworld_tiles_Padded_7: 5150207389196830209
+      Overworld_tiles_Padded_8: -9156985852927889140
+      Overworld_tiles_Padded_9: 7056902524419691715
+  mipmapLimitGroupName: 
   pSDRemoveMatte: 0
-  pSDShowRemoveMatteOption: 0
   userData: 
   assetBundleName: 
   assetBundleVariant: 
