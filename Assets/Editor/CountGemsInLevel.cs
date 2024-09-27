@@ -7,6 +7,7 @@ using UnityEditor;
 public class CountGemsInLevel : EditorWindow
 {
     private int gems = 0;
+    private List<Pickup> gemsFound = new List<Pickup>();
     
     [SerializeField] private float thumbnailWidth = 50;
     [SerializeField] private float thumbnailHeight = 50;
@@ -27,7 +28,10 @@ public class CountGemsInLevel : EditorWindow
         for (int i = 0; i < tempPicks.Length; i++)
         {
             if (tempPicks[i].IsGem())
+            {
+                gemsFound.Add(tempPicks[i]);
                 gems++;
+            }
         }
     }
 
@@ -43,8 +47,17 @@ public class CountGemsInLevel : EditorWindow
         GUILayout.Box(Resources.Load<Texture>("Thumbnails/Gems"),
             GUILayout.Width(thumbnailWidth), GUILayout.Height(thumbnailHeight));
         EditorGUILayout.LabelField("", gems.ToString(),guiStyle);
+
         EditorGUILayout.EndHorizontal();
         EditorGUILayout.Space();
+        // EditorGUILayout.BeginHorizontal();
+        GUILayout.FlexibleSpace();
+        for (int i = 0; i < gemsFound.Count; i++)
+        {
+            // GUILayout.Box( gemsFound[i].PickupTransform.position.ToString(),GUILayout.Width(thumbnailWidth), GUILayout.Height(thumbnailHeight));
+            GUILayout.Label($"Gem {i+1} - {gemsFound[i].PickupTransform.position.ToString()}");
+        }
+        // EditorGUILayout.EndHorizontal();
 
 
         if (GUILayout.Button("Counting Gems"))
