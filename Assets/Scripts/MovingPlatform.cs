@@ -1,51 +1,53 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using Unity.Collections.LowLevel.Unsafe;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class MovingPlatform : MonoBehaviour
 {
     [SerializeField] private List<Transform> movingPoints = new List<Transform>();
     [SerializeField] private float moveSpeed;
-
-    [SerializeField] int currentPoint;
-
-    [SerializeField] Transform platform;
-    [SerializeField] private float timer;
     [SerializeField] private float maxTimer;
-
     [SerializeField] private Rigidbody2D rgb;
-    
-    private void Start()
+
+    private int currentPoint;
+    private float timer;
+
+    private Vector2 lastPosition;
+    private Vector2 currentPosition;
+    private Vector2 platformVelocity;
+
+    void Start()
     {
-        platform.position = movingPoints[currentPoint].position;
+        rgb.position = movingPoints[currentPoint].position;
+        currentPosition = rgb.position;
+        lastPosition = currentPosition;
         timer = maxTimer;
     }
 
-    private void FixedUpdate()
+    void FixedUpdate()
     {
-        Vector3 tempPos = Vector3.MoveTowards(platform.position, movingPoints[currentPoint].position, moveSpeed*Time.deltaTime);
-        rgb.MovePosition(tempPos);
-        // platform.position = Vector3.MoveTowards(platform.position, movingPoints[currentPoint].position, moveSpeed*Time.deltaTime);
-        if (Vector3.Distance(platform.position, movingPoints[currentPoint].position) <= Mathf.Epsilon)
-        {
-            timer -= Time.deltaTime;
-            if (timer < 0)
-            {
-                currentPoint++;
-                if (currentPoint >= movingPoints.Count)
-                    currentPoint = 0;
+        Vector2 targetPos = movingPoints[currentPoint].position;
+        Vector2 newPos = Vector2.MoveTowards(currentPosition, targetPos, moveSpeed * Time.fixedDeltaTime);
+        rgb.MovePosition(newPos);
 
+        // Compute platform velocity
+        currentPosition = newPos;
+        platformVelocity = (currentPosition - lastPosition) / Time.fixedDeltaTime;
+        lastPosition = currentPosition;
+
+        // Check if reached the waypoint
+        if (Vector2.Distance(currentPosition, targetPos) <= Mathf.Epsilon)
+        {
+            timer -= Time.fixedDeltaTime;
+            if (timer < 0f)
+            {
+                currentPoint = (currentPoint + 1) % movingPoints.Count;
                 timer = maxTimer;
             }
         }
     }
 
-    private void OnDrawGizmos()
+    public Vector2 GetVelocity()
     {
-        Gizmos.color = new Color(0, 0, 1);
-        for (var i = 0; i < movingPoints.Count; i++)
-            Gizmos.DrawIcon(movingPoints[i].transform.position, StringUtils.Get_GizmosIconNumbers(i));
+        return platformVelocity;
     }
 }
