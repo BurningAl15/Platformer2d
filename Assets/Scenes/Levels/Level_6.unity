@@ -1286,12 +1286,12 @@ PrefabInstance:
     - target: {fileID: 8076263144561595476, guid: deb6116dedf59496ebe00eb730675543,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 99.59
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8076263144561595476, guid: deb6116dedf59496ebe00eb730675543,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -75.024994
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8076263144561595476, guid: deb6116dedf59496ebe00eb730675543,
         type: 3}
@@ -1306,17 +1306,17 @@ PrefabInstance:
     - target: {fileID: 8076263144561595476, guid: deb6116dedf59496ebe00eb730675543,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8076263144561595476, guid: deb6116dedf59496ebe00eb730675543,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8076263144561595476, guid: deb6116dedf59496ebe00eb730675543,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8076263144561595476, guid: deb6116dedf59496ebe00eb730675543,
         type: 3}
@@ -1534,12 +1534,12 @@ PrefabInstance:
     - target: {fileID: 8076263144561595476, guid: deb6116dedf59496ebe00eb730675543,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 101.409996
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8076263144561595476, guid: deb6116dedf59496ebe00eb730675543,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -51.774998
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8076263144561595476, guid: deb6116dedf59496ebe00eb730675543,
         type: 3}
@@ -1554,17 +1554,17 @@ PrefabInstance:
     - target: {fileID: 8076263144561595476, guid: deb6116dedf59496ebe00eb730675543,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8076263144561595476, guid: deb6116dedf59496ebe00eb730675543,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8076263144561595476, guid: deb6116dedf59496ebe00eb730675543,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8076263144561595476, guid: deb6116dedf59496ebe00eb730675543,
         type: 3}
@@ -2379,7 +2379,7 @@ BoxCollider2D:
   m_Offset: {x: 0, y: 0.9730662}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0}
+    pivot: {x: 0.5, y: 0.5}
     oldSize: {x: 2, y: 1}
     newSize: {x: 2, y: 1}
     adaptiveTilingThreshold: 0.5
@@ -4695,7 +4695,7 @@ BoxCollider2D:
   m_Offset: {x: 0, y: 0.9730662}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0}
+    pivot: {x: 0.5, y: 0.5}
     oldSize: {x: 2, y: 1}
     newSize: {x: 2, y: 1}
     adaptiveTilingThreshold: 0.5
@@ -5122,7 +5122,7 @@ BoxCollider2D:
   m_Offset: {x: 0, y: 0.9730662}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0}
+    pivot: {x: 0.5, y: 0.5}
     oldSize: {x: 2, y: 1}
     newSize: {x: 2, y: 1}
     adaptiveTilingThreshold: 0.5
@@ -6092,12 +6092,12 @@ PrefabInstance:
     - target: {fileID: 8076263144561595476, guid: deb6116dedf59496ebe00eb730675543,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 95.92
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8076263144561595476, guid: deb6116dedf59496ebe00eb730675543,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -68.335
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8076263144561595476, guid: deb6116dedf59496ebe00eb730675543,
         type: 3}
@@ -6112,17 +6112,17 @@ PrefabInstance:
     - target: {fileID: 8076263144561595476, guid: deb6116dedf59496ebe00eb730675543,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8076263144561595476, guid: deb6116dedf59496ebe00eb730675543,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8076263144561595476, guid: deb6116dedf59496ebe00eb730675543,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8076263144561595476, guid: deb6116dedf59496ebe00eb730675543,
         type: 3}
@@ -9178,12 +9178,12 @@ PrefabInstance:
     - target: {fileID: 8076263144561595476, guid: deb6116dedf59496ebe00eb730675543,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 97.45
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8076263144561595476, guid: deb6116dedf59496ebe00eb730675543,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -89.604996
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8076263144561595476, guid: deb6116dedf59496ebe00eb730675543,
         type: 3}
@@ -9198,17 +9198,17 @@ PrefabInstance:
     - target: {fileID: 8076263144561595476, guid: deb6116dedf59496ebe00eb730675543,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8076263144561595476, guid: deb6116dedf59496ebe00eb730675543,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8076263144561595476, guid: deb6116dedf59496ebe00eb730675543,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8076263144561595476, guid: deb6116dedf59496ebe00eb730675543,
         type: 3}
@@ -9338,7 +9338,7 @@ BoxCollider2D:
   m_Offset: {x: 0, y: 0.9730662}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0}
+    pivot: {x: 0.5, y: 0.5}
     oldSize: {x: 2, y: 1}
     newSize: {x: 2, y: 1}
     adaptiveTilingThreshold: 0.5
@@ -9523,7 +9523,7 @@ BoxCollider2D:
   m_Offset: {x: 0, y: 0.9730662}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0}
+    pivot: {x: 0.5, y: 0.5}
     oldSize: {x: 2, y: 1}
     newSize: {x: 2, y: 1}
     adaptiveTilingThreshold: 0.5
@@ -9638,12 +9638,12 @@ PrefabInstance:
     - target: {fileID: 8076263144561595476, guid: deb6116dedf59496ebe00eb730675543,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 98.2
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8076263144561595476, guid: deb6116dedf59496ebe00eb730675543,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -81.835
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8076263144561595476, guid: deb6116dedf59496ebe00eb730675543,
         type: 3}
@@ -9658,17 +9658,17 @@ PrefabInstance:
     - target: {fileID: 8076263144561595476, guid: deb6116dedf59496ebe00eb730675543,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8076263144561595476, guid: deb6116dedf59496ebe00eb730675543,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8076263144561595476, guid: deb6116dedf59496ebe00eb730675543,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8076263144561595476, guid: deb6116dedf59496ebe00eb730675543,
         type: 3}
@@ -9927,12 +9927,12 @@ PrefabInstance:
     - target: {fileID: 8076263144561595476, guid: deb6116dedf59496ebe00eb730675543,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 98.25
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8076263144561595476, guid: deb6116dedf59496ebe00eb730675543,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -59.434998
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8076263144561595476, guid: deb6116dedf59496ebe00eb730675543,
         type: 3}
@@ -9947,17 +9947,17 @@ PrefabInstance:
     - target: {fileID: 8076263144561595476, guid: deb6116dedf59496ebe00eb730675543,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8076263144561595476, guid: deb6116dedf59496ebe00eb730675543,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8076263144561595476, guid: deb6116dedf59496ebe00eb730675543,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8076263144561595476, guid: deb6116dedf59496ebe00eb730675543,
         type: 3}
@@ -10775,7 +10775,7 @@ BoxCollider2D:
   m_Offset: {x: 0, y: 0.9312763}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0}
+    pivot: {x: 0.5, y: 0.5}
     oldSize: {x: 2, y: 1}
     newSize: {x: 2, y: 1}
     adaptiveTilingThreshold: 0.5

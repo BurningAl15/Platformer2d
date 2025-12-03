@@ -26,7 +26,7 @@ public class PlatformRider : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
     }
     
-    private void FixedUpdate()
+    private void LateFixedUpdate()
     {
         if (isAttached && currentPlatform != null)
         {
@@ -37,6 +37,11 @@ public class PlatformRider : MonoBehaviour
                 ApplyPlatformMovement();
             }
         }
+    }
+    
+    private void FixedUpdate()
+    {
+        LateFixedUpdate();
     }
     
     private void OnCollisionEnter2D(Collision2D collision)
@@ -172,8 +177,7 @@ public class PlatformRider : MonoBehaviour
         
         if (platformDelta.sqrMagnitude > 0.0001f)
         {
-            Vector2 newPosition = rb.position + platformDelta;
-            rb.position = newPosition;
+            transform.position += (Vector3)platformDelta;
         }
         
         lastPlatformPosition = currentPlatformPosition;

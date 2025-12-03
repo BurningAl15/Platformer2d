@@ -1743,12 +1743,12 @@ PrefabInstance:
     - target: {fileID: 8076263144561595476, guid: deb6116dedf59496ebe00eb730675543,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 86.12
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8076263144561595476, guid: deb6116dedf59496ebe00eb730675543,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 2.3149998
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8076263144561595476, guid: deb6116dedf59496ebe00eb730675543,
         type: 3}
@@ -1763,17 +1763,17 @@ PrefabInstance:
     - target: {fileID: 8076263144561595476, guid: deb6116dedf59496ebe00eb730675543,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8076263144561595476, guid: deb6116dedf59496ebe00eb730675543,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8076263144561595476, guid: deb6116dedf59496ebe00eb730675543,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8076263144561595476, guid: deb6116dedf59496ebe00eb730675543,
         type: 3}
@@ -49578,7 +49578,7 @@ BoxCollider2D:
   m_Offset: {x: 0, y: 0.9730662}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0}
+    pivot: {x: 0.5, y: 0.5}
     oldSize: {x: 2, y: 1}
     newSize: {x: 2, y: 1}
     adaptiveTilingThreshold: 0.5
