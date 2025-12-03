@@ -111,7 +111,6 @@ GameObject:
   - component: {fileID: 8508318025138696214}
   - component: {fileID: 5095216838073669765}
   - component: {fileID: 300581264351761903}
-  - component: {fileID: 5384472181552038804}
   - component: {fileID: 2553311172584959945}
   - component: {fileID: 4661132488971207570}
   - component: {fileID: 4269510202304547291}
@@ -301,29 +300,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ea4e9308888fe04b8599851040cac0d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _rgb: {fileID: 0}
-  _anim: {fileID: 0}
-  _spriteRenderer: {fileID: 0}
-  platformRider: {fileID: 0}
-  movementSpeed: 10
-  acceleration: 50
-  deceleration: 50
-  airAcceleration: 30
-  airDeceleration: 30
-  jumpForce: 14
-  jumpCutMultiplier: 0.5
-  groundCheckPoint: {fileID: 8508318025355734901}
-  radius: 0.15
-  whatIsGround:
-    serializedVersion: 2
-    m_Bits: 256
-  coyoteTime: 0.15
-  jumpBufferTime: 0.15
-  knockBackLength: 0.25
-  knockBackForce: {x: 3, y: 5}
-  knockBackCounter: 0
-  bounceForce: 10
-  animationCurve:
+  levelEndCurve:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
@@ -347,11 +324,8 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  endTimer: 1
-  growFactor: 0.1
-  dust: {fileID: 7325780443926661529}
-  jumpDust: {fileID: 157101813930697718}
-  fallDust: {fileID: 8351164106526625649}
+  levelEndDuration: 1
+  levelEndGrowFactor: 0.1
 --- !u!114 &8508318025138696214
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -386,7 +360,7 @@ MonoBehaviour:
   inheritVelocityOnJump: 1
   platformLayers:
     serializedVersion: 2
-    m_Bits: 256
+    m_Bits: 65536
   showDebugGizmos: 1
 --- !u!114 &300581264351761903
 MonoBehaviour:
@@ -404,26 +378,8 @@ MonoBehaviour:
   checkRadius: 0.2
   groundLayers:
     serializedVersion: 2
-    m_Bits: 256
+    m_Bits: 65792
   coyoteTime: 0.15
---- !u!114 &5384472181552038804
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8508318025138696209}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 251bb4bc4c9e04adf84cd9ac73030f35, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
-  movementSpeed: 7
-  acceleration: 50
-  deceleration: 50
-  airAcceleration: 30
-  airDeceleration: 30
-  flipUsingScale: 0
 --- !u!114 &2553311172584959945
 MonoBehaviour:
   m_ObjectHideFlags: 0

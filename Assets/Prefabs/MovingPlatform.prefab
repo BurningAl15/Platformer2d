@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4091809381784926996}
-  m_Layer: 8
+  m_Layer: 16
   m_Name: Point1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -40,7 +40,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4091809383148669544}
-  m_Layer: 8
+  m_Layer: 16
   m_Name: Point2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -72,7 +72,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4091809383307305833}
   - component: {fileID: 4091809383307305832}
-  m_Layer: 8
+  m_Layer: 16
   m_Name: MovingPlatform
   m_TagString: Untagged
   m_Icon: {fileID: -5442936267250999957, guid: 0000000000000000d000000000000000, type: 0}
@@ -188,6 +188,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: OneWay-Large
+      objectReference: {fileID: 0}
+    - target: {fileID: 8076263144561595478, guid: deb6116dedf59496ebe00eb730675543,
+        type: 3}
+      propertyPath: m_Layer
+      value: 16
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

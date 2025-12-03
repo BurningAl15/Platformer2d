@@ -69,6 +69,11 @@ public class MovingPlatform : MonoBehaviour
     {
         return currentVelocity;
     }
+    
+    public Transform GetPlatformTransform()
+    {
+        return platformTransform;
+    }
 
     private void OnDrawGizmos()
     {
