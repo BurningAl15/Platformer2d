@@ -1,11 +1,13 @@
-﻿using BgTools.Extensions;
-using BgTools.Utils;
+﻿// Copyright 2025 Cyber Chaos Games. All Rights Reserved.
+
+using CCG.Extensions;
+using CCG.Utils;
 using System;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-namespace BgTools.Dialogs
+namespace CCG.Dialogs
 {
     public class TextFieldDialog : EditorWindow
     {

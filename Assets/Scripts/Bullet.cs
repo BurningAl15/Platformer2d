@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
@@ -17,7 +14,7 @@ public class Bullet : MonoBehaviour
 
     void Update()
     {
-        direction = transform.eulerAngles.y == 180 ? -1 : 1;
+        direction = Mathf.Approximately(transform.eulerAngles.y, 180) ? -1 : 1;
         transform.position += new Vector3(-speed * direction * Time.deltaTime, 0f);
     }
 

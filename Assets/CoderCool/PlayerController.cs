@@ -23,11 +23,11 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        input = new Vector2(Input.GetAxis("Horizontal") * moveSpeed, _rigidbody.velocity.y);
-        _rigidbody.velocity = input*moveSpeed;
+        input = new Vector2(Input.GetAxis("Horizontal") * moveSpeed, _rigidbody.linearVelocity.y);
+        _rigidbody.linearVelocity = input*moveSpeed;
         
         if(Input.GetButtonDown("Jump"))
-            _rigidbody.velocity = new Vector2(_rigidbody.velocity.x, jumpForce);
+            _rigidbody.linearVelocity = new Vector2(_rigidbody.linearVelocity.x, jumpForce);
         
         // GroundCheck();
         // if (Input.GetButtonDown("Jump"))

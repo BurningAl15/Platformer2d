@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using UnityEngine.EventSystems;
 using DG.Tweening;
 using UnityEngine.UI;
 
@@ -16,6 +14,18 @@ public class MainMenuManager : MonoBehaviour
    [SerializeField] private float initPoint, endPoint;
    [SerializeField] private AnimationCurve initCurve;
    
+   [Header("First Selected Buttons")]
+   [Tooltip("Primer botón a seleccionar cuando el jugador YA jugó (Continue visible)")]
+   [SerializeField] private GameObject continueFirstButton;
+   
+   [Tooltip("Primer botón a seleccionar cuando el jugador NUNCA jugó (Continue oculto)")]
+   [SerializeField] private GameObject newGameFirstButton;
+   
+   [Tooltip("Primer botón del panel de confirmación")]
+   [SerializeField] private GameObject panelFirstButton;
+   
+   private bool hasPlayedBefore = false;
+   
    private void Awake()
    {
       DOTween.Init(true, true, LogBehaviour.Default);
@@ -23,14 +33,36 @@ public class MainMenuManager : MonoBehaviour
 
    private void Start()
    {
-      if(PlayerPrefs.HasKey("Level_1"))
+      hasPlayedBefore = PlayerPrefs.HasKey("Level_1");
+      
+      if(hasPlayedBefore)
+      {
          continueButton.SetActive(true);
+         SelectButton(continueFirstButton);
+      }
       else
+      {
          continueButton.SetActive(false);
+         SelectButton(newGameFirstButton);
+      }
 
       panelBG.alpha = 0;
       panelBG.interactable = false;
       panelBG.blocksRaycasts = false;
+   }
+
+   private void SelectButton(GameObject button)
+   {
+      if (button != null && EventSystem.current != null)
+      {
+         EventSystem.current.SetSelectedGameObject(null);
+         EventSystem.current.SetSelectedGameObject(button);
+         Debug.Log($"Selected button: {button.name}");
+      }
+      else
+      {
+         Debug.LogWarning("Cannot select button: button is null or EventSystem is missing");
+      }
    }
 
    public void DeactivatePanel()
@@ -43,16 +75,25 @@ public class MainMenuManager : MonoBehaviour
       panelBG.alpha = 0;
       panelBG.interactable = false;
       panelBG.blocksRaycasts = false;
+      
+      if (hasPlayedBefore)
+      {
+         SelectButton(continueFirstButton);
+      }
+      else
+      {
+         SelectButton(newGameFirstButton);
+      }
    }
    
    public void ActivatePanel()
    {
-      if (PlayerPrefs.HasKey("Level_1"))
+      if (hasPlayedBefore)
       {
          panelBG.alpha = 1;
          panelBG.interactable = true;
          panelBG.blocksRaycasts = true;
-         panelOptions.transform.DOLocalMoveY(endPoint, .5f).SetEase(initCurve);
+         panelOptions.transform.DOLocalMoveY(endPoint, .5f).SetEase(initCurve).OnComplete(() => SelectButton(panelFirstButton));
       }
       else
       {
@@ -63,14 +104,9 @@ public class MainMenuManager : MonoBehaviour
    public void ToNextScene()
    {
       PlayerPrefs.DeleteAll();
-      //We create 3 playerprefs per level:
-      //Level_Number
-      //Level_Number_Gems
-      //Level_Number_Time
       for (int i = 0; i < 10; i++)
       {
          int j = i + 1;
-         // string _name = "World_" + worldNumber + "Level_" + j;
          PlayerPrefs.SetInt(StringUtils.Get_Level(j), 0);
          PlayerPrefs.SetInt(StringUtils.Get_GemsInLevel(j), 0);
          PlayerPrefs.SetFloat(StringUtils.Get_TimeInLevel(j), 99999);

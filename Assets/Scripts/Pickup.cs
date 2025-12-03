@@ -16,7 +16,15 @@ public class Pickup : MonoBehaviour
     [SerializeField] private GameObject effect;
 
     private Coroutine currentCoroutine = null;
-    
+
+    [SerializeField] private Transform pickupTransform;
+    public Transform PickupTransform => pickupTransform;
+
+    private void Awake()
+    {
+        pickupTransform = transform;
+    }
+
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag(StringUtils.tag_Player))

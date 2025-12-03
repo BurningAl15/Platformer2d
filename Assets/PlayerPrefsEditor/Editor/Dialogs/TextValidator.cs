@@ -1,7 +1,9 @@
-﻿using System;
+﻿// Copyright 2025 Cyber Chaos Games. All Rights Reserved.
+
+using System;
 using System.Text.RegularExpressions;
 
-namespace BgTools.Dialogs
+namespace CCG.Dialogs
 {
     public class TextValidator
     {

@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Dart : MonoBehaviour
 {
@@ -15,12 +13,12 @@ public class Dart : MonoBehaviour
     {
         rgb = GetComponent<Rigidbody2D>();
         AudioMixerManager._instance.CallSFX(SFXType.Boss_Shoot);
-        rgb.velocity = Vector2.zero;
+        rgb.linearVelocity = Vector2.zero;
     }
 
     void Update()
     {
-        rgb.velocity += speed * direction * Time.deltaTime * Vector2.right;
+        rgb.linearVelocity += speed * direction * Time.deltaTime * Vector2.right;
     }
     
     private void OnTriggerEnter2D(Collider2D other)

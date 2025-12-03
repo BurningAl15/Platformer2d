@@ -1,51 +1,102 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using Unity.Collections.LowLevel.Unsafe;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class MovingPlatform : MonoBehaviour
 {
+    [Header("Movement Setup")]
     [SerializeField] private List<Transform> movingPoints = new List<Transform>();
-    [SerializeField] private float moveSpeed;
+    [SerializeField] private float moveSpeed = 3f;
+    [SerializeField] private float waitTime = 0f;
 
-    [SerializeField] int currentPoint;
+    [Header("References")]
+    [SerializeField] private Transform platformTransform;
+    [SerializeField] private Rigidbody2D platformRb;
 
-    [SerializeField] Transform platform;
-    [SerializeField] private float timer;
-    [SerializeField] private float maxTimer;
+    private int currentPointIndex = 0;
+    private float waitTimer = 0f;
+    private Vector2 lastPosition;
+    private Vector2 currentVelocity;
 
-    [SerializeField] private Rigidbody2D rgb;
-    
     private void Start()
     {
-        platform.position = movingPoints[currentPoint].position;
-        timer = maxTimer;
+        if (platformTransform == null)
+            platformTransform = transform;
+            
+        platformTransform.position = movingPoints[currentPointIndex].position;
+        lastPosition = platformTransform.position;
+        waitTimer = waitTime;
     }
 
     private void FixedUpdate()
     {
-        Vector3 tempPos = Vector3.MoveTowards(platform.position, movingPoints[currentPoint].position, moveSpeed*Time.deltaTime);
-        rgb.MovePosition(tempPos);
-        // platform.position = Vector3.MoveTowards(platform.position, movingPoints[currentPoint].position, moveSpeed*Time.deltaTime);
-        if (Vector3.Distance(platform.position, movingPoints[currentPoint].position) <= Mathf.Epsilon)
-        {
-            timer -= Time.deltaTime;
-            if (timer < 0)
-            {
-                currentPoint++;
-                if (currentPoint >= movingPoints.Count)
-                    currentPoint = 0;
+        lastPosition = platformTransform.position;
 
-                timer = maxTimer;
+        if (movingPoints.Count == 0) return;
+
+        Vector2 targetPos = movingPoints[currentPointIndex].position;
+        Vector2 currentPos = platformTransform.position;
+    
+        float distance = Vector2.Distance(currentPos, targetPos);
+
+        if (distance > 0.01f)
+        {
+            Vector2 newPos = Vector2.MoveTowards(currentPos, targetPos, moveSpeed * Time.fixedDeltaTime);
+            platformRb.MovePosition(newPos);
+        
+            currentVelocity = (newPos - lastPosition) / Time.fixedDeltaTime;
+        }
+        else
+        {
+            currentVelocity = Vector2.zero;
+        
+            if (waitTimer > 0)
+            {
+                waitTimer -= Time.fixedDeltaTime;
+            }
+            else
+            {
+                currentPointIndex++;
+                if (currentPointIndex >= movingPoints.Count)
+                {
+                    currentPointIndex = 0;
+                }
+                waitTimer = waitTime;
             }
         }
     }
 
+    public Vector2 GetVelocity()
+    {
+        return currentVelocity;
+    }
+
     private void OnDrawGizmos()
     {
-        Gizmos.color = new Color(0, 0, 1);
-        for (var i = 0; i < movingPoints.Count; i++)
-            Gizmos.DrawIcon(movingPoints[i].transform.position, StringUtils.Get_GizmosIconNumbers(i));
+        if (movingPoints == null || movingPoints.Count == 0) return;
+
+        Gizmos.color = Color.cyan;
+        for (int i = 0; i < movingPoints.Count; i++)
+        {
+            if (movingPoints[i] != null)
+            {
+                Gizmos.DrawWireSphere(movingPoints[i].position, 0.3f);
+                
+                if (i < movingPoints.Count - 1 && movingPoints[i + 1] != null)
+                {
+                    Gizmos.DrawLine(movingPoints[i].position, movingPoints[i + 1].position);
+                }
+                else if (i == movingPoints.Count - 1 && movingPoints[0] != null)
+                {
+                    Gizmos.color = Color.yellow;
+                    Gizmos.DrawLine(movingPoints[i].position, movingPoints[0].position);
+                }
+            }
+        }
+        
+        if (Application.isPlaying)
+        {
+            Gizmos.color = Color.green;
+            Gizmos.DrawSphere(transform.position, 0.2f);
+        }
     }
 }

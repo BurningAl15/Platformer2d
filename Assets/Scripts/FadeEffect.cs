@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections;
 using UnityEngine;
-using UnityEngine.Assertions.Must;
 using UnityEngine.UI;
 
 public class FadeEffect : MonoBehaviour
@@ -95,5 +92,4 @@ public class FadeEffect : MonoBehaviour
         endFade = true;
         currentCoroutine = null;
     }
-
 }

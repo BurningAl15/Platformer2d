@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿// Copyright 2025 Cyber Chaos Games. All Rights Reserved.
+
+using UnityEngine;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 using UnityEditorInternal;
@@ -6,22 +8,29 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Collections.Generic;
-using BgTools.Utils;
-using BgTools.Dialogs;
+using CCG.Utils;
+using CCG.Dialogs;
 
 #if (UNITY_EDITOR_LINUX || UNITY_EDITOR_OSX)
 using System.Text;
 using System.Globalization;
 #endif
 
-namespace BgTools.PlayerPrefsEditor
+namespace CCG.PlayerPrefsEditor
 {
     public class PreferencesEditorWindow : EditorWindow
     {
 #region ErrorValues
         private readonly int ERROR_VALUE_INT = int.MinValue;
-        private readonly string ERROR_VALUE_STR = "<bgTool_error_24072017>";
-#endregion //ErrorValues
+        private readonly string ERROR_VALUE_STR = "<ccgTools_error_24072017>";
+        #endregion //ErrorValues
+
+        private enum PreferencesEntrySortOrder
+        {
+            None = 0,
+            Asscending = 1,
+            Descending = 2
+        }
 
         private static string pathToPrefs = String.Empty;
         private static string platformPathPrefix = @"~";
@@ -30,9 +39,13 @@ namespace BgTools.PlayerPrefsEditor
         private string[] unityDef;
         private bool showSystemGroup = false;
 
+        private PreferencesEntrySortOrder sortOrder = PreferencesEntrySortOrder.None;
+
         private SerializedObject serializedObject;
         private ReorderableList userDefList;
         private ReorderableList unityDefList;
+
+        private SerializedProperty[] userDefListCache = new SerializedProperty[0];
 
         private PreferenceEntryHolder prefEntryHolder;
 
@@ -42,7 +55,7 @@ namespace BgTools.PlayerPrefsEditor
 
         private PreferanceStorageAccessor entryAccessor;
 
-        private SearchField searchfield;
+        private MySearchField searchfield;
         private string searchTxt;
         private int loadingSpinnerFrame;
 
@@ -52,7 +65,7 @@ namespace BgTools.PlayerPrefsEditor
 
         private readonly List<TextValidator> prefKeyValidatorList = new List<TextValidator>()
         {
-            new TextValidator(TextValidator.ErrorType.Error, @"Invalid character detected. Only letters, numbers, space and _!§$%&/()=?*+~#-]+$ are allowed", @"(^$)|(^[a-zA-Z0-9 _!§$%&/()=?*+~#-]+$)"),
+            new TextValidator(TextValidator.ErrorType.Error, @"Invalid character detected. Only letters, numbers, space and ,.;:<>_|!§$%&/()=?*+~#-]+$ are allowed", @"(^$)|(^[a-zA-Z0-9 ,.;:<>_|!§$%&/()=?*+~#-]+$)"),
             new TextValidator(TextValidator.ErrorType.Warning, @"The given key already exist. The existing entry would be overwritten!", (key) => { return !PlayerPrefs.HasKey(key); })
         };
 
@@ -61,7 +74,7 @@ namespace BgTools.PlayerPrefsEditor
 #elif UNITY_EDITOR_OSX
         private readonly char[] invalidFilenameChars = { '$', '%', '&', '\\', '/', ':', '<', '>', '|', '~' };
 #endif
-        [MenuItem("Tools/BG Tools/PlayerPrefs Editor", false, 1)]
+        [MenuItem("Tools/CCG-Tools/PlayerPrefs Editor", false, 1)]
         static void ShowWindow()
         {
             PreferencesEditorWindow window = EditorWindow.GetWindow<PreferencesEditorWindow>(false, "Prefs Editor");
@@ -90,11 +103,13 @@ namespace BgTools.PlayerPrefsEditor
 #endif
             entryAccessor.PrefEntryChangedDelegate = () => { updateView = true; };
 
-            monitoring = EditorPrefs.GetBool("BGTools.PlayerPrefsEditor.WatchingForChanges", true);
+            monitoring = EditorPrefs.GetBool("CCG.PlayerPrefsEditor.WatchingForChanges", true);
             if(monitoring)
                 entryAccessor.StartMonitoring();
 
-            searchfield = new SearchField();
+            sortOrder = (PreferencesEntrySortOrder) EditorPrefs.GetInt("CCG.PlayerPrefsEditor.SortOrder", 0);
+            searchfield = new MySearchField();
+            searchfield.DropdownSelectionDelegate = () => { PrepareData(); };
 
             // Fix for serialisation issue of static fields
             if (userDefList == null)
@@ -151,7 +166,7 @@ namespace BgTools.PlayerPrefsEditor
             userDefList = new ReorderableList(serializedObject, serializedObject.FindProperty("userDefList"), false, true, true, true);
             unityDefList = new ReorderableList(serializedObject, serializedObject.FindProperty("unityDefList"), false, true, false, false);
 
-            relSpliterPos = EditorPrefs.GetFloat("BGTools.PlayerPrefsEditor.RelativeSpliterPosition", 100 / position.width);
+            relSpliterPos = EditorPrefs.GetFloat("CCG.PlayerPrefsEditor.RelativeSpliterPosition", 100 / position.width);
 
             userDefList.drawHeaderCallback = (Rect rect) =>
             {
@@ -160,31 +175,49 @@ namespace BgTools.PlayerPrefsEditor
             userDefList.drawElementBackgroundCallback = OnDrawElementBackgroundCallback;
             userDefList.drawElementCallback = (Rect rect, int index, bool isActive, bool isFocused) =>
             {
-                var element = userDefList.serializedProperty.GetArrayElementAtIndex(index);
+                SerializedProperty element = GetUserDefListElementAtIndex(index, userDefList.serializedProperty);
+
                 SerializedProperty key = element.FindPropertyRelative("m_key");
                 SerializedProperty type = element.FindPropertyRelative("m_typeSelection");
-                SerializedProperty strValue = element.FindPropertyRelative("m_strValue");
-                SerializedProperty intValue = element.FindPropertyRelative("m_intValue");
-                SerializedProperty floatValue = element.FindPropertyRelative("m_floatValue");
-                float spliterPos = relSpliterPos * rect.width;
 
+                SerializedProperty value;
+
+                // Load only necessary type
+                switch ((PreferenceEntry.PrefTypes)type.enumValueIndex)
+                {
+                    case PreferenceEntry.PrefTypes.Float:
+                        value = element.FindPropertyRelative("m_floatValue");
+                        break;
+                    case PreferenceEntry.PrefTypes.Int:
+                        value = element.FindPropertyRelative("m_intValue");
+                        break;
+                    case PreferenceEntry.PrefTypes.String:
+                        value = element.FindPropertyRelative("m_strValue");
+                        break;
+                    default:
+                        value = element.FindPropertyRelative("This should never happen");
+                        break;
+                }
+
+                float spliterPos = relSpliterPos * rect.width;
                 rect.y += 2;
 
                 EditorGUI.BeginChangeCheck();
-                EditorGUI.LabelField(new Rect(rect.x, rect.y, spliterPos - 1, EditorGUIUtility.singleLineHeight), new GUIContent(key.stringValue, key.stringValue));
+                string prefKeyName = key.stringValue;
+                EditorGUI.LabelField(new Rect(rect.x, rect.y, spliterPos - 1, EditorGUIUtility.singleLineHeight), new GUIContent(prefKeyName, prefKeyName));
                 GUI.enabled = false;
-                EditorGUI.PropertyField(new Rect(rect.x + spliterPos + 1, rect.y, 60, EditorGUIUtility.singleLineHeight), type, GUIContent.none);
+                EditorGUI.EnumPopup(new Rect(rect.x + spliterPos + 1, rect.y, 60, EditorGUIUtility.singleLineHeight), (PreferenceEntry.PrefTypes)type.enumValueIndex);
                 GUI.enabled = !showLoadingIndicatorOverlay;
                 switch ((PreferenceEntry.PrefTypes)type.enumValueIndex)
                 {
                     case PreferenceEntry.PrefTypes.Float:
-                        EditorGUI.DelayedFloatField(new Rect(rect.x + spliterPos + 62, rect.y, rect.width - spliterPos - 60, EditorGUIUtility.singleLineHeight), floatValue, GUIContent.none);
+                        EditorGUI.DelayedFloatField(new Rect(rect.x + spliterPos + 62, rect.y, rect.width - spliterPos - 60, EditorGUIUtility.singleLineHeight), value, GUIContent.none);
                         break;
                     case PreferenceEntry.PrefTypes.Int:
-                        EditorGUI.DelayedIntField(new Rect(rect.x + spliterPos + 62, rect.y, rect.width - spliterPos - 60, EditorGUIUtility.singleLineHeight), intValue, GUIContent.none);
+                        EditorGUI.DelayedIntField(new Rect(rect.x + spliterPos + 62, rect.y, rect.width - spliterPos - 60, EditorGUIUtility.singleLineHeight), value, GUIContent.none);
                         break;
                     case PreferenceEntry.PrefTypes.String:
-                        EditorGUI.DelayedTextField(new Rect(rect.x + spliterPos + 62, rect.y, rect.width - spliterPos - 60, EditorGUIUtility.singleLineHeight), strValue, GUIContent.none);
+                        EditorGUI.DelayedTextField(new Rect(rect.x + spliterPos + 62, rect.y, rect.width - spliterPos - 60, EditorGUIUtility.singleLineHeight), value, GUIContent.none);
                         break;
                 }
                 if (EditorGUI.EndChangeCheck())
@@ -194,13 +227,13 @@ namespace BgTools.PlayerPrefsEditor
                     switch ((PreferenceEntry.PrefTypes)type.enumValueIndex)
                     {
                         case PreferenceEntry.PrefTypes.Float:
-                            PlayerPrefs.SetFloat(key.stringValue, floatValue.floatValue);
+                            PlayerPrefs.SetFloat(key.stringValue, value.floatValue);
                             break;
                         case PreferenceEntry.PrefTypes.Int:
-                            PlayerPrefs.SetInt(key.stringValue, intValue.intValue);
+                            PlayerPrefs.SetInt(key.stringValue, value.intValue);
                             break;
                         case PreferenceEntry.PrefTypes.String:
-                            PlayerPrefs.SetString(key.stringValue, strValue.stringValue);
+                            PlayerPrefs.SetString(key.stringValue, value.stringValue);
                             break;
                     }
 
@@ -212,11 +245,12 @@ namespace BgTools.PlayerPrefsEditor
                 userDefList.ReleaseKeyboardFocus();
                 unityDefList.ReleaseKeyboardFocus();
 
-                if (EditorUtility.DisplayDialog("Warning!", "Are you sure you want to delete this entry from PlayerPrefs? ", "Yes", "No"))
+                string prefKey = l.serializedProperty.GetArrayElementAtIndex(l.index).FindPropertyRelative("m_key").stringValue;
+                if (EditorUtility.DisplayDialog("Warning!", $"Are you sure you want to delete this entry from PlayerPrefs?\n\nEntry: {prefKey}", "Yes", "No"))
                 {
                     entryAccessor.IgnoreNextChange();
 
-                    PlayerPrefs.DeleteKey(l.serializedProperty.GetArrayElementAtIndex(l.index).FindPropertyRelative("m_key").stringValue);
+                    PlayerPrefs.DeleteKey(prefKey);
                     PlayerPrefs.Save();
 
                     ReorderableList.defaultBehaviours.DoRemoveButton(l);
@@ -268,27 +302,44 @@ namespace BgTools.PlayerPrefsEditor
                 var element = unityDefList.serializedProperty.GetArrayElementAtIndex(index);
                 SerializedProperty key = element.FindPropertyRelative("m_key");
                 SerializedProperty type = element.FindPropertyRelative("m_typeSelection");
-                SerializedProperty strValue = element.FindPropertyRelative("m_strValue");
-                SerializedProperty intValue = element.FindPropertyRelative("m_intValue");
-                SerializedProperty floatValue = element.FindPropertyRelative("m_floatValue");
-                float spliterPos = relSpliterPos * rect.width;
 
+                SerializedProperty value;
+
+                // Load only necessary type
+                switch ((PreferenceEntry.PrefTypes)type.enumValueIndex)
+                {
+                    case PreferenceEntry.PrefTypes.Float:
+                        value = element.FindPropertyRelative("m_floatValue");
+                        break;
+                    case PreferenceEntry.PrefTypes.Int:
+                        value = element.FindPropertyRelative("m_intValue");
+                        break;
+                    case PreferenceEntry.PrefTypes.String:
+                        value = element.FindPropertyRelative("m_strValue");
+                        break;
+                    default:
+                        value = element.FindPropertyRelative("This should never happen");
+                        break;
+                }
+
+                float spliterPos = relSpliterPos * rect.width;
                 rect.y += 2;
 
                 GUI.enabled = false;
-                EditorGUI.LabelField(new Rect(rect.x, rect.y, spliterPos - 1, EditorGUIUtility.singleLineHeight), new GUIContent(key.stringValue, key.stringValue));
-                EditorGUI.PropertyField(new Rect(rect.x + spliterPos + 1, rect.y, 60, EditorGUIUtility.singleLineHeight), type, GUIContent.none);
+                string prefKeyName = key.stringValue;
+                EditorGUI.LabelField(new Rect(rect.x, rect.y, spliterPos - 1, EditorGUIUtility.singleLineHeight), new GUIContent(prefKeyName, prefKeyName));
+                EditorGUI.EnumPopup(new Rect(rect.x + spliterPos + 1, rect.y, 60, EditorGUIUtility.singleLineHeight), (PreferenceEntry.PrefTypes)type.enumValueIndex);
 
                 switch ((PreferenceEntry.PrefTypes)type.enumValueIndex)
                 {
                     case PreferenceEntry.PrefTypes.Float:
-                        EditorGUI.DelayedFloatField(new Rect(rect.x + spliterPos + 62, rect.y, rect.width - spliterPos - 60, EditorGUIUtility.singleLineHeight), floatValue, GUIContent.none);
+                        EditorGUI.DelayedFloatField(new Rect(rect.x + spliterPos + 62, rect.y, rect.width - spliterPos - 60, EditorGUIUtility.singleLineHeight), value, GUIContent.none);
                         break;
                     case PreferenceEntry.PrefTypes.Int:
-                        EditorGUI.DelayedIntField(new Rect(rect.x + spliterPos + 62, rect.y, rect.width - spliterPos - 60, EditorGUIUtility.singleLineHeight), intValue, GUIContent.none);
+                        EditorGUI.DelayedIntField(new Rect(rect.x + spliterPos + 62, rect.y, rect.width - spliterPos - 60, EditorGUIUtility.singleLineHeight), value, GUIContent.none);
                         break;
                     case PreferenceEntry.PrefTypes.String:
-                        EditorGUI.DelayedTextField(new Rect(rect.x + spliterPos + 62, rect.y, rect.width - spliterPos - 60, EditorGUIUtility.singleLineHeight), strValue, GUIContent.none);
+                        EditorGUI.DelayedTextField(new Rect(rect.x + spliterPos + 62, rect.y, rect.width - spliterPos - 60, EditorGUIUtility.singleLineHeight), value, GUIContent.none);
                         break;
                 }
                 GUI.enabled = !showLoadingIndicatorOverlay;
@@ -323,7 +374,7 @@ namespace BgTools.PlayerPrefsEditor
             if (Event.current.type == EventType.MouseUp)
             {
                 moveSplitterPos = false;
-                EditorPrefs.SetFloat("BGTools.PlayerPrefsEditor.RelativeSpliterPosition", relSpliterPos);
+                EditorPrefs.SetFloat("CCG.PlayerPrefsEditor.RelativeSpliterPosition", relSpliterPos);
             }
         }
 
@@ -357,12 +408,40 @@ namespace BgTools.PlayerPrefsEditor
                 GUILayout.FlexibleSpace();
 
                 EditorGUIUtility.SetIconSize(new Vector2(14.0f, 14.0f));
-                GUIContent watcherContent = (entryAccessor.IsMonitoring()) ? new GUIContent(ImageManager.Watching, "Watch changes") : new GUIContent(ImageManager.NotWatching, "Not watching changes");
+
+                GUIContent sortOrderContent;
+                switch (sortOrder)
+                {
+                    case PreferencesEntrySortOrder.Asscending:
+                        sortOrderContent = new GUIContent(ImageManager.SortAsscending, "Ascending sorted");
+                        break;
+                    case PreferencesEntrySortOrder.Descending:
+                        sortOrderContent = new GUIContent(ImageManager.SortDescending, "Descending sorted");
+                        break;
+                    case PreferencesEntrySortOrder.None:
+                    default:
+                        sortOrderContent = new GUIContent(ImageManager.SortDisabled, "Not sorted");
+                        break;
+                }
+
+                if (GUILayout.Button(sortOrderContent, EditorStyles.toolbarButton))
+                {
+                    
+                    sortOrder++;
+                    if((int) sortOrder >= Enum.GetValues(typeof(PreferencesEntrySortOrder)).Length)
+                    {
+                        sortOrder = 0;
+                    }
+                    EditorPrefs.SetInt("CCG.PlayerPrefsEditor.SortOrder", (int) sortOrder);
+                    PrepareData(false);
+                }
+
+                GUIContent watcherContent = (entryAccessor.IsMonitoring()) ? new GUIContent(ImageManager.Watching, "Watching changes") : new GUIContent(ImageManager.NotWatching, "Not watching changes");
                 if (GUILayout.Button(watcherContent, EditorStyles.toolbarButton))
                 {
                     monitoring = !monitoring;
 
-                    EditorPrefs.SetBool("BGTools.PlayerPrefsEditor.WatchingForChanges", monitoring);
+                    EditorPrefs.SetBool("CCG.PlayerPrefsEditor.WatchingForChanges", monitoring);
 
                     if (monitoring)
                         entryAccessor.StartMonitoring();
@@ -446,15 +525,18 @@ namespace BgTools.PlayerPrefsEditor
 
             LoadKeys(out userDef, out unityDef, reloadKeys);
 
-            CreatePrefEntries(userDef, prefEntryHolder.userDefList);
-            CreatePrefEntries(unityDef, prefEntryHolder.unityDefList);
+            CreatePrefEntries(userDef, ref prefEntryHolder.userDefList);
+            CreatePrefEntries(unityDef, ref prefEntryHolder.unityDefList);
+
+            // Clear cache
+            userDefListCache = new SerializedProperty[prefEntryHolder.userDefList.Count];
         }
 
-        private void CreatePrefEntries(string[] keySource, List<PreferenceEntry> listDest)
+        private void CreatePrefEntries(string[] keySource, ref List<PreferenceEntry> listDest)
         {
-            if (!string.IsNullOrEmpty(searchTxt))
+            if (!string.IsNullOrEmpty(searchTxt) && searchfield.SearchMode == MySearchField.SearchModePreferencesEditorWindow.Key)
             {
-                keySource = keySource.Where((a) => a.ToLower().Contains(searchTxt.ToLower())).ToArray();
+                keySource = keySource.Where((keyEntry) => keyEntry.ToLower().Contains(searchTxt.ToLower())).ToArray();
             }
 
             foreach (string key in keySource)
@@ -490,13 +572,28 @@ namespace BgTools.PlayerPrefsEditor
                     continue;
                 }
             }
+
+            if (!string.IsNullOrEmpty(searchTxt) && searchfield.SearchMode == MySearchField.SearchModePreferencesEditorWindow.Value)
+            {
+                listDest = listDest.Where((preferenceEntry) => preferenceEntry.ValueAsString().ToLower().Contains(searchTxt.ToLower())).ToList<PreferenceEntry>();
+            }
+
+            switch(sortOrder)
+            {
+                case PreferencesEntrySortOrder.Asscending:
+                    listDest.Sort((PreferenceEntry x, PreferenceEntry y) => { return x.m_key.CompareTo(y.m_key); });
+                    break;
+                case PreferencesEntrySortOrder.Descending:
+                    listDest.Sort((PreferenceEntry x, PreferenceEntry y) => { return y.m_key.CompareTo(x.m_key); });
+                    break;
+            }
         }
 
         private void LoadKeys(out string[] userDef, out string[] unityDef, bool reloadKeys)
         {
             string[] keys = entryAccessor.GetKeys(reloadKeys);
 
-            // keys.ToList().ForEach( e => { Debug.Log(e); } );
+            //keys.ToList().ForEach( e => { Debug.Log(e); } );
 
             // Seperate keys int unity defined and user defined
             Dictionary<bool, List<string>> groups = keys
@@ -505,6 +602,17 @@ namespace BgTools.PlayerPrefsEditor
 
             unityDef = (groups.ContainsKey(true)) ? groups[true].ToArray() : new string[0];
             userDef = (groups.ContainsKey(false)) ? groups[false].ToArray() : new string[0];
+        }
+
+        private SerializedProperty GetUserDefListElementAtIndex(int index, SerializedProperty ListProperty)
+        {
+            UnityEngine.Assertions.Assert.IsTrue(ListProperty.isArray, "Given 'ListProperts' is not type of array");
+
+            if (userDefListCache[index] == null)
+            {
+                userDefListCache[index] = ListProperty.GetArrayElementAtIndex(index);
+            }
+            return userDefListCache[index];
         }
 
 #if (UNITY_EDITOR_LINUX || UNITY_EDITOR_OSX)
@@ -531,4 +639,64 @@ namespace BgTools.PlayerPrefsEditor
         }
 #endif
     }
+}
+
+public class MySearchField : SearchField
+{
+    public enum SearchModePreferencesEditorWindow { Key, Value }
+
+    public SearchModePreferencesEditorWindow SearchMode { get; private set; }
+
+    public Action DropdownSelectionDelegate;
+
+    public new string OnGUI(
+        Rect rect,
+        string text,
+        GUIStyle style,
+        GUIStyle cancelButtonStyle,
+        GUIStyle emptyCancelButtonStyle)
+    {
+        style.padding.left = 17;
+        Rect ContextMenuRect = new Rect(rect.x, rect.y, 10, rect.height);
+
+        // Add interactive area
+        EditorGUIUtility.AddCursorRect(ContextMenuRect, MouseCursor.Text);
+        if (Event.current.type == EventType.MouseDown && ContextMenuRect.Contains(Event.current.mousePosition))
+        {
+            void OnDropdownSelection(object parameter)
+            {
+                SearchMode = (SearchModePreferencesEditorWindow) Enum.Parse(typeof(SearchModePreferencesEditorWindow), parameter.ToString());
+                DropdownSelectionDelegate();
+            }
+
+            GenericMenu menu = new GenericMenu();
+            foreach(SearchModePreferencesEditorWindow EnumIt in Enum.GetValues(typeof(SearchModePreferencesEditorWindow)))
+            {
+                String EnumName = Enum.GetName(typeof(SearchModePreferencesEditorWindow), EnumIt);
+                menu.AddItem(new GUIContent(EnumName), SearchMode == EnumIt, OnDropdownSelection, EnumName);
+            }
+
+            menu.DropDown(rect);
+        }
+
+        // Render original search field
+        String result = base.OnGUI(rect, text, style, cancelButtonStyle, emptyCancelButtonStyle);
+
+        // Render additional images
+        GUIStyle ContexMenuOverlayStyle = GUIStyle.none;
+        ContexMenuOverlayStyle.contentOffset = new Vector2(9, 5);
+        GUI.Box(new Rect(rect.x, rect.y, 5, 5), EditorGUIUtility.IconContent("d_ProfilerTimelineDigDownArrow@2x"), ContexMenuOverlayStyle);
+
+        if (!HasFocus() && String.IsNullOrEmpty(text))
+        {
+            GUI.enabled = false;
+            GUI.Label(new Rect(rect.x + 14, rect.y, 40, rect.height), Enum.GetName(typeof(SearchModePreferencesEditorWindow), SearchMode));
+            GUI.enabled = true;
+        }
+        ContexMenuOverlayStyle.contentOffset = new Vector2();
+        return result;
+    }
+
+    public new string OnToolbarGUI(string text, params GUILayoutOption[] options) => this.OnToolbarGUI(GUILayoutUtility.GetRect(29f, 200f, 18f, 18f, EditorStyles.toolbarSearchField, options), text);
+    public new string OnToolbarGUI(Rect rect, string text) => this.OnGUI(rect, text, EditorStyles.toolbarSearchField, EditorStyles.toolbarButton, EditorStyles.toolbarButton);
 }

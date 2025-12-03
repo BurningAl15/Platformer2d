@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿// Copyright 2025 Cyber Chaos Games. All Rights Reserved.
+
+using System.Collections.Generic;
 using UnityEngine;
 
-namespace BgTools.PlayerPrefsEditor
+namespace CCG.PlayerPrefsEditor
 {
     [System.Serializable]
     public class PreferenceEntryHolder : ScriptableObject

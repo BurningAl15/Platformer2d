@@ -32,12 +32,12 @@ public class RunningEnemy : EnemyParent
         if(!isDeath)
             Movement();
         else
-            rgb.velocity = Vector2.zero;
+            rgb.linearVelocity = Vector2.zero;
     }
 
     void Movement()
     {
-        rgb.velocity = new Vector2(moveSpeed * direction, rgb.velocity.y);
+        rgb.linearVelocity = new Vector2(moveSpeed * direction, rgb.linearVelocity.y);
     }
     
     void FlipSpriteRenderer()

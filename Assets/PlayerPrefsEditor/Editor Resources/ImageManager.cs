@@ -1,15 +1,43 @@
-﻿#if UNITY_EDITOR
+﻿// Copyright 2025 Cyber Chaos Games. All Rights Reserved.
+
+#if UNITY_EDITOR
+using System;
+using System.IO;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
-namespace BgTools.Utils
+namespace CCG.Utils
 {
     public class ImageManager
     {
-        private static string GetAssetDir() {
+        // Keep this ID unique
+        private static readonly string ID = "[PlayerPrefsEditor] com.bgtools.playerprefseditor";
 
-            string pathOfFile = AssetDatabase.GUIDToAssetPath(AssetDatabase.FindAssets("ImageManager")[0]);
-            return pathOfFile.Substring(0, pathOfFile.IndexOf("ImageManager.cs"));
+        private static string imageManagerPath;
+        private static string GetAssetDir()
+        {
+            if (imageManagerPath != null)
+            {
+                return imageManagerPath;
+            }
+
+            foreach (string assetGuid in AssetDatabase.FindAssets("ImageManager"))
+            {
+                string assetPath = AssetDatabase.GUIDToAssetPath(assetGuid);
+                string fileName = Path.GetFileName(assetPath);
+
+                if (fileName.Equals("ImageManager.cs"))
+                {
+                    // Check ID if it's the correct ImageManager
+                    if (File.ReadLines(Path.GetFullPath(assetPath)).Any(line => line.Contains(ID)))
+                    {
+                        imageManagerPath = Path.GetDirectoryName(assetPath) + Path.DirectorySeparatorChar;
+                        return imageManagerPath;
+                    }
+                }
+            }
+            throw new Exception("Cannot find ImageManager.cs in the project. Are sure all the files in place?");
         }
 
         public static Texture2D GetOsIcon()
@@ -152,6 +180,45 @@ namespace BgTools.Utils
                     notWatching = (Texture2D)AssetDatabase.LoadAssetAtPath(GetAssetDir() + "not_watching.png", typeof(Texture2D));
                 }
                 return notWatching;
+            }
+        }
+
+        private static Texture2D sortDisabled;
+        public static Texture2D SortDisabled
+        {
+            get
+            {
+                if (sortDisabled == null)
+                {
+                    sortDisabled = (Texture2D)AssetDatabase.LoadAssetAtPath(GetAssetDir() + "sort.png", typeof(Texture2D));
+                }
+                return sortDisabled;
+            }
+        }
+
+        private static Texture2D sortAsscending;
+        public static Texture2D SortAsscending
+        {
+            get
+            {
+                if (sortAsscending == null)
+                {
+                    sortAsscending = (Texture2D)AssetDatabase.LoadAssetAtPath(GetAssetDir() + "sort_asc.png", typeof(Texture2D));
+                }
+                return sortAsscending;
+            }
+        }
+
+        private static Texture2D sortDescending;
+        public static Texture2D SortDescending
+        {
+            get
+            {
+                if (sortDescending == null)
+                {
+                    sortDescending = (Texture2D)AssetDatabase.LoadAssetAtPath(GetAssetDir() + "sort_desc.png", typeof(Texture2D));
+                }
+                return sortDescending;
             }
         }
     }

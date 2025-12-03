@@ -44,7 +44,6 @@ public class PlayerResetEditor : EditorWindow
 
         tempGameobject = GameObject.Find("InitialPoint");
         initialPosition_T = tempGameobject.transform;
-        
     }
 
     void InitializeData_Checkpoint()
@@ -58,6 +57,7 @@ public class PlayerResetEditor : EditorWindow
         
         _checkpoints=FindObjectsOfType<Checkpoint>();
         checkpointsInScene = _checkpoints.Length;
+        index = Mathf.Clamp(index, 0, _checkpoints.Length-1);
         currentCheckpointPos = _checkpoints[index].transform;
     }
 

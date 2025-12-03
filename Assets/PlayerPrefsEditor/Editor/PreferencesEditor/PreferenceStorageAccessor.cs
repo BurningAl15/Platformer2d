@@ -1,9 +1,13 @@
-﻿using System;
+﻿// Copyright 2025 Cyber Chaos Games. All Rights Reserved.
+
+using System;
 using System.Linq;
 
 #if UNITY_EDITOR_WIN
 using Microsoft.Win32;
+using System.Text;
 #elif UNITY_EDITOR_OSX
+using System.Diagnostics;
 using System.IO;
 using System.Text.RegularExpressions;
 #elif UNITY_EDITOR_LINUX
@@ -12,7 +16,7 @@ using System.Xml;
 using System.Xml.Linq;
 #endif
 
-namespace BgTools.PlayerPrefsEditor
+namespace CCG.PlayerPrefsEditor
 {
     public abstract class PreferanceStorageAccessor
     {
@@ -94,7 +98,9 @@ namespace BgTools.PlayerPrefsEditor
             }
 
             // Clean <key>_h3320113488 nameing
-            cachedData = cachedData.Select((key) => { return key.Substring(0, key.IndexOf("_h")); }).ToArray();
+            cachedData = cachedData.Select((key) => { return key.Substring(0, key.LastIndexOf("_h", StringComparison.Ordinal)); }).ToArray();
+
+            EncodeAnsiInPlace();
         }
 
         public override void StartMonitoring()
@@ -112,6 +118,16 @@ namespace BgTools.PlayerPrefsEditor
             return monitor.IsMonitoring;
         }
 
+        private void EncodeAnsiInPlace()
+        {
+            Encoding utf8 = Encoding.UTF8;
+            Encoding ansi = Encoding.GetEncoding(1252);
+
+            for (int i = 0; i < cachedData.Length; i++)
+            {
+                cachedData[i] = utf8.GetString(ansi.GetBytes(cachedData[i]));
+            }
+        }
     }
 
 #elif UNITY_EDITOR_LINUX
@@ -209,18 +225,26 @@ namespace BgTools.PlayerPrefsEditor
                 string fixedPrefsPath = prefPath.Replace("\"", "\\\"").Replace("'", "\\'").Replace("`", "\\`");
                 var cmdStr = string.Format(@"-p '{0}'", fixedPrefsPath);
 
+                string stdOut = String.Empty;
+                string errOut = String.Empty;
+
                 var process = new System.Diagnostics.Process();
                 process.StartInfo.UseShellExecute = false;
-                process.StartInfo.RedirectStandardOutput = true;
-                process.StartInfo.RedirectStandardError = true;
                 process.StartInfo.FileName = "plutil";
                 process.StartInfo.Arguments = cmdStr;
+                process.StartInfo.RedirectStandardOutput = true;
+                process.StartInfo.RedirectStandardError = true;
+                process.OutputDataReceived += new DataReceivedEventHandler((sender, evt) => { stdOut += evt.Data + "\n"; });
+                process.ErrorDataReceived += new DataReceivedEventHandler((sender, evt) => { errOut += evt.Data + "\n"; });
+
                 process.Start();
 
-                process.WaitForExit();
-                string plist = process.StandardOutput.ReadToEnd();
+                process.BeginOutputReadLine();
+                process.BeginErrorReadLine();
 
-                MatchCollection matches = Regex.Matches(plist, @"(?: "")(.*)(?:"" =>.*)");
+                process.WaitForExit();
+
+                MatchCollection matches = Regex.Matches(stdOut, @"(?: "")(.*)(?:"" =>.*)");
                 cachedData = matches.Cast<Match>().Select((e) => e.Groups[1].Value).ToArray();
             }
         }

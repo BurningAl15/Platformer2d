@@ -39,7 +39,7 @@ public class EnemyController : EnemyParent
         if(!isDeath)
             Movement();
         else
-            rgb.velocity = Vector2.zero;
+            rgb.linearVelocity = Vector2.zero;
     }
 
     void Movement()
@@ -48,7 +48,7 @@ public class EnemyController : EnemyParent
         {
             moveCount -= Time.deltaTime;
             anim.SetBool("Moving", true);
-            rgb.velocity = new Vector2(moveSpeed * direction, rgb.velocity.y);
+            rgb.linearVelocity = new Vector2(moveSpeed * direction, rgb.linearVelocity.y);
 
             if (transform.position.x > rightPoint.position.x)
                 direction = -1;
@@ -67,7 +67,7 @@ public class EnemyController : EnemyParent
             waitCount -= Time.deltaTime;
 
             anim.SetBool("Moving", false);
-            rgb.velocity = new Vector2(0, rgb.velocity.y);
+            rgb.linearVelocity = new Vector2(0, rgb.linearVelocity.y);
 
             if (waitCount <= 0)
             {

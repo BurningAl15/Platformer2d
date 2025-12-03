@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 public class PlayerHealth : MonoBehaviour
 {
@@ -165,15 +162,15 @@ public class PlayerHealth : MonoBehaviour
         currentCoroutine = null;
     }
 
-    private void OnCollisionEnter2D(Collision2D other)
-    {
-        if (other.gameObject.CompareTag("Platform") && transform.parent == null && IsAlive())
-            transform.parent = other.transform;
-    }
-    
-    private void OnCollisionExit2D(Collision2D other)
-    {
-        if (other.gameObject.CompareTag("Platform") && transform.parent != null && IsAlive())
-            transform.parent = null;
-    }
+    // private void OnCollisionEnter2D(Collision2D other)
+    // {
+    //     if (other.gameObject.CompareTag("Platform") && transform.parent == null && IsAlive())
+    //         transform.parent = other.transform;
+    // }
+    //
+    // private void OnCollisionExit2D(Collision2D other)
+    // {
+    //     if (other.gameObject.CompareTag("Platform") && transform.parent != null && IsAlive())
+    //         transform.parent = null;
+    // }
 }

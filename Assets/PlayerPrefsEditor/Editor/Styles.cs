@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿// Copyright 2025 Cyber Chaos Games. All Rights Reserved.
+
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-namespace BgTools.Utils
+namespace CCG.Utils
 {
     public class Styles
     {
