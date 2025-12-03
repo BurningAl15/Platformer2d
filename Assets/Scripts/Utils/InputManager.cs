@@ -7,12 +7,14 @@ public class InputManager : MonoBehaviour
 
     private PlayerInputSystem inputActions;
 
-    public Vector2 MoveInput => inputActions.Player.Move.ReadValue<Vector2>();
-    
     public System.Action OnJumpPressed;
     public System.Action OnJumpReleased;
     public System.Action OnPausePressed;
     public System.Action OnSubmitPressed;
+    
+    [SerializeField] private MobileInputProvider mobileInput;
+    
+    public Vector2 MoveInput => inputActions.Player.Move.ReadValue<Vector2>();
 
     private void Awake()
     {
