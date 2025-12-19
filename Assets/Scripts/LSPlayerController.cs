@@ -13,11 +13,6 @@ public class LSPlayerController : MonoBehaviour
     private float cooldownTimer = 0f;
     private Vector2 previousMoveInput;
     
-    void Start()
-    {
-        
-    }
-
     private void OnEnable()
     {
         if (InputManager.Instance != null)
