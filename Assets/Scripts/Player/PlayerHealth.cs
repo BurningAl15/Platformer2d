@@ -47,6 +47,14 @@ public class PlayerHealth : MonoBehaviour
             if (currentHealth <= 0)
             {
                 currentHealth = 0;
+                
+                if (AnalyticsManager.Instance != null)
+                    AnalyticsManager.Instance.TrackPlayerDeath(
+                        SceneUtils.Get_CurrentLevelName(),
+                        transform.position,
+                        "damage" 
+                    );
+                
                 LevelManager._instance.RespawnPlayer();
                 AudioMixerManager._instance.ResetPitch();
             }

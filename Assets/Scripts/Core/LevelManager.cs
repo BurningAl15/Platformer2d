@@ -33,6 +33,9 @@ public class LevelManager : MonoBehaviour
     {
         UIController._instance.UpdateGems_UI(gemsCollected);
         timeInLevel = 0f;
+        
+        if (AnalyticsManager.Instance != null)
+            AnalyticsManager.Instance.TrackLevelStart(SceneUtils.Get_CurrentLevelName());
     }
 
     private void Update()
@@ -44,6 +47,9 @@ public class LevelManager : MonoBehaviour
     {
         gemsCollected++;
         UIController._instance.UpdateGems_UI(gemsCollected);
+        
+        if (AnalyticsManager.Instance != null)
+            AnalyticsManager.Instance.TrackGemCollected(SceneUtils.Get_CurrentLevelName(), gemsCollected);
     }
     
     public void RespawnPlayer()
@@ -134,6 +140,13 @@ public class LevelManager : MonoBehaviour
         {
             SetPlayerPrefsGems();
             SetPlayerPrefsTime();
+        
+            if (AnalyticsManager.Instance != null)
+                AnalyticsManager.Instance.TrackLevelComplete(
+                    SceneUtils.Get_CurrentLevelName(), 
+                    timeInLevel, 
+                    gemsCollected
+                );
         }
         yield return new WaitUntil(() => FadeEffect._instance.endFade);
         yield return new WaitForSeconds(.25f);

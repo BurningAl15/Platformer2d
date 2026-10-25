@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Serialization;
 
 public class Checkpoint : MonoBehaviour
@@ -15,15 +12,12 @@ public class Checkpoint : MonoBehaviour
 
     [SerializeField] private ParticleSystem _particle;
     
+    [SerializeField] private int checkpointIndex = 0;
+    
     void Start()
     {
         _spriteRenderer = GetComponent<SpriteRenderer>();
         _spriteRenderer.sprite = checkpointSprite_Off;
-    }
-
-    void Update()
-    {
-        
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -35,6 +29,12 @@ public class Checkpoint : MonoBehaviour
             _spriteRenderer.sprite = checkpointSprite_On;
             _particle.Play();
             isSelected = true;
+            
+            if (AnalyticsManager.Instance != null)
+                AnalyticsManager.Instance.TrackCheckpointReached(
+                    SceneUtils.Get_CurrentLevelName(),
+                    checkpointIndex
+                );
         }
     }
 
