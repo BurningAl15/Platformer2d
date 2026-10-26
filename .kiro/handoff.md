@@ -213,9 +213,9 @@ Esto crea y conecta: `AppBootstrap`, `SceneTransitionManager`, paneles de Game O
 | 1 | `.kiro/fase-1-reporte.md` |
 | 2 | `.kiro/fase-2-reporte.md` |
 | 3 | `.kiro/fase-3-reporte.md` |
-| 4 | `.kiro/fase-4-reporte.md` *(se crea al terminar)* |
+| 4 | `.kiro/fase-4-reporte.md` |
 | 5 | `.kiro/fase-5-reporte.md` |
-| 6 | `.kiro/fase-6-reporte.md` *(se crea al terminar)* |
+| 6 | `.kiro/fase-6-reporte.md` |
 
 ---
 
@@ -225,20 +225,32 @@ Esto crea y conecta: `AppBootstrap`, `SceneTransitionManager`, paneles de Game O
 
 | Criterio | Estado | Evidencia |
 |---|---|---|
-| **Integridad del código** | **APROBADO** | Todos los scripts de las Fases 0, 1, 2, 3 y 5 están escritos, vinculados e integrados. C# limpio, deduplicado (`SaveManager.cs`) y sin advertencias de dependencias faltantes. |
-| **Pipeline de Build** | **APROBADO** | `Assets/Editor/BuildAutomation.cs` implementado con comandos de menú y soporte CLI para APK, AAB e iOS. Target API 34+ y arquitecturas ARM64 configuradas. |
-| **Arquitectura y Persistencia** | **APROBADO** | `SaveManager` centraliza todo el estado (niveles, vidas, tréboles, fragmentos de dado, tiempo, gemas, audio). No hay llamadas dispersas a `PlayerPrefs`. |
-| **Controles (Mobile & Gamepad)** | **APROBADO** | `GamepadDetector`, `OnScreenControlsSetup`, y `PlatformDetector` listos para input dual (touchscreen + mando físico). |
-| **Economía de Juego (GDD)** | **APROBADO** | Loop de Game Over implementado con opción de ver Ad (simulado) o gastar Trébol 🍀. `DiceRollController` listo para tiradas Normal/Mejorado/Secreto. Gemas HUD en formato `X / Total`. |
+| **Integridad del código** | **APROBADO** | Todos los scripts de Fases 0-6 + IAP escritos, vinculados e integrados. C# limpio. |
+| **Pipeline de Build** | **APROBADO** | `BuildAutomation.cs` con menú y CLI para APK, AAB e iOS. |
+| **Arquitectura y Persistencia** | **APROBADO** | `SaveManager` centraliza todo. `ResetProgress` preserva `IAP_NoAds_Purchased`. |
+| **Controles (Mobile & Gamepad)** | **APROBADO** | `GamepadDetector`, `OnScreenControlsSetup`, `PlatformDetector` listos. |
+| **Economía de Juego** | **APROBADO** | Game Over completo: Ad / Trébol / Gemas / Mapa. Dado Normal/Mejorado/Secreto. |
+| **Ads (Unity LevelPlay)** | **APROBADO** | `AdsManager.cs` con Rewarded + Interstitial, cooldowns, modo simulación. Desactivado automáticamente si NoAds está activo. |
+| **IAP NoAds (RevenueCat)** | **APROBADO** | `RevenueCatManager.cs` + `NoAdsPurchaseButton.cs` creados. Cache PlayerPrefs para modo offline. Simulación funciona sin SDK. |
 
-#### ⚠️ Acciones pendientes obligatorias en Unity Editor antes de compilar APK final:
-1. **Escena `MainMenu`:**
-   - Crear GameObject `AppBootstrap` y asignarle el script `AppBootstrap.cs`. (Se agregan automáticamente `SaveManager`, `GamepadDetector`, `LivesManager` vía `[RequireComponent]`).
-   - Crear GameObject `SceneTransitionManager` con `SceneTransitionManager.cs`.
-2. **Escena de Gameplay:**
-   - Crear panel de Game Over en el Canvas y asignar el script `GameOverController.cs` con sus botones (Ad, Trébol, Mapa) y textos.
-   - En `UIController`: vincular `trebolCountText`, `gemsLevelText`, y sprites de estrellas (`starFull`, `starEmpty`).
-3. **Escena `LevelSelection`:**
-   - Asignar en cada `MapPoint` el `trebolBadge` (ícono o GameObject de trébol desactivado por defecto).
-4. **Android Build:**
-   - Generar Keystore para producción (guardar fuera de git) o usar debug keystore para pruebas locales vía `BuildAutomation.BuildAndroidAPK()`.
+#### ⚠️ Acciones pendientes antes del APK final:
+
+##### En Unity Editor (manual):
+1. **Escena `MainMenu`:** Crear `AppBootstrap` GameObject. Se agregan automáticamente via `[RequireComponent]`: `SaveManager`, `GamepadDetector`, `LivesManager`, `AdsManager`, `RevenueCatManager`, `WorldProgressManager`.
+2. **Escena de Gameplay:** Crear panel de GameOver en Canvas con `GameOverController.cs` y sus botones (Ad, Trébol, Gemas, Mapa).
+3. **Settings / PauseMenu:** Agregar botón con `NoAdsPurchaseButton.cs` para la compra de NoAds (y botón Restaurar).
+4. **Escena `LevelSelection`:** Asignar `trebolBadge` en cada `MapPoint`.
+
+##### SDK — instalar antes del build final:
+5. **Unity LevelPlay:** `Window → Package Manager → buscar "LevelPlay"`. Asignar App Keys de Android/iOS en Inspector del `AdsManager`.
+6. **RevenueCat SDK:** Descargar `.unitypackage` desde https://github.com/RevenueCat/purchases-unity/releases — importar. Asignar API Keys de Android/iOS en `RevenueCatManager`. Configurar entitlement "NoAds" en el Dashboard de RevenueCat.
+
+##### Información que el usuario debe proveer:
+- RevenueCat API Key (Android): `goog_XXXXXXXXXX`
+- RevenueCat API Key (iOS): `appl_XXXXXXXXXX`
+- SKU del producto: `com.fatcatgamestudio.foxstale.noads` (confirmar en tiendas)
+- Unity LevelPlay App Key (Android e iOS)
+- Bundle ID / Application ID definitivo
+
+##### Android Build:
+7. Generar Keystore para producción o usar debug keystore vía `BuildAutomation.BuildAndroidAPK()`.

@@ -16,6 +16,7 @@ using UnityEngine;
 [RequireComponent(typeof(SaveManager))]
 [RequireComponent(typeof(LivesManager))]
 [RequireComponent(typeof(AdsManager))]
+[RequireComponent(typeof(RevenueCatManager))]
 [RequireComponent(typeof(WorldProgressManager))]
 public class AppBootstrap : MonoBehaviour
 {

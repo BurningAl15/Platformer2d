@@ -15,10 +15,16 @@ using UnityEngine;
 ///    (obtenidas desde el dashboard de LevelPlay / ironSource).
 /// 3. En Dashboard: configurar Ad Units para Rewarded e Interstitial.
 ///
+/// INTEGRACIÓN RevenueCat NoAds:
+///   Si RevenueCatManager.Instance.IsNoAdsPurchased() == true,
+///   NINGÚN ad se muestra (rewarded ni interstitial).
+///   El método OnNoAdsStatusChanged() actualiza este estado en tiempo real.
+///
 /// USO:
 ///   AdsManager.Instance.ShowRewarded(AdsManager.AdContext.GameOver, onSuccess, onFail);
 ///   AdsManager.Instance.ShowInterstitial(AdsManager.AdContext.ReturnToMap);
 ///   AdsManager.Instance.IsRewardedReady() → bool
+///   AdsManager.Instance.IsNoAdsActive()   → bool
 /// </summary>
 public class AdsManager : MonoBehaviour
 {
@@ -63,6 +69,9 @@ public class AdsManager : MonoBehaviour
     private float sessionStartTime;
     private float lastInterstitialTime = -999f;
 
+    // Estado NoAds (sincronizado desde RevenueCatManager)
+    private bool _noAdsActive = false;
+
     // Callbacks activos
     private Action onRewardedSuccess;
     private Action onRewardedFail;
@@ -86,6 +95,13 @@ public class AdsManager : MonoBehaviour
     private void Start()
     {
         sessionStartTime = Time.realtimeSinceStartup;
+
+        // Leer el estado de NoAds desde el cache local (sincrónico, inmediato).
+        // RevenueCatManager actualizará este valor vía OnNoAdsStatusChanged() al iniciar.
+        _noAdsActive = RevenueCatManager.Instance != null
+            ? RevenueCatManager.Instance.IsNoAdsPurchased()
+            : PlayerPrefs.GetInt("IAP_NoAds_Purchased", 0) == 1;
+
         Initialize();
     }
 
@@ -156,6 +172,14 @@ public class AdsManager : MonoBehaviour
     /// </summary>
     public void ShowRewarded(AdContext context, Action onSuccess, Action onFail = null)
     {
+        // Si el jugador tiene NoAds, dar la recompensa directamente sin ad.
+        if (IsNoAdsActive())
+        {
+            LogAd($"NoAds activo — recompensa otorgada directamente. Contexto: {context}");
+            onSuccess?.Invoke();
+            return;
+        }
+
         currentContext = context;
         onRewardedSuccess = onSuccess;
         onRewardedFail = onFail;
@@ -196,11 +220,19 @@ public class AdsManager : MonoBehaviour
 
     /// <summary>
     /// Muestra un interstitial si las condiciones se cumplen:
+    /// - El jugador NO tiene NoAds activo.
     /// - Han pasado más de interstitialCooldownOnStart segundos desde que inició la sesión.
     /// - Han pasado más de interstitialMinInterval desde el último interstitial.
     /// </summary>
     public void ShowInterstitial(AdContext context)
     {
+        // Bloquear si tiene NoAds
+        if (IsNoAdsActive())
+        {
+            LogAd($"Interstitial bloqueado — NoAds activo. Contexto: {context}");
+            return;
+        }
+
         float now = Time.realtimeSinceStartup;
 
         if (now - sessionStartTime < interstitialCooldownOnStart)
@@ -313,6 +345,26 @@ public class AdsManager : MonoBehaviour
         IronSource.Agent.onApplicationPause(isPaused);
     }
 #endif
+
+    // ─────────────────────────────────────────────────────────────────────────
+    //  API PÚBLICA — NoAds (integración con RevenueCat)
+    // ─────────────────────────────────────────────────────────────────────────
+
+    /// <summary>
+    /// Retorna true si el jugador tiene NoAds activo.
+    /// Los ads quedan completamente desactivados cuando esto es true.
+    /// </summary>
+    public bool IsNoAdsActive() => _noAdsActive;
+
+    /// <summary>
+    /// Llamado por RevenueCatManager cuando el estado de NoAds cambia
+    /// (compra exitosa o restauración). Actualiza el estado en tiempo real.
+    /// </summary>
+    public void OnNoAdsStatusChanged(bool isPurchased)
+    {
+        _noAdsActive = isPurchased;
+        LogAd($"Estado NoAds actualizado: {(isPurchased ? "ACTIVO — ads desactivados" : "INACTIVO — ads activos")}");
+    }
 
     // ─────────────────────────────────────────────────────────────────────────
     //  Simulación (sin SDK instalado)

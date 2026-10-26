@@ -21,6 +21,9 @@ public class SaveManager : MonoBehaviour
     private const int    DEFAULT_LIVES   = 3;
     private const int    MAX_LIVES       = 9;
 
+    // Clave de IAP NoAds (gestionada por RevenueCatManager; solo se lee aquí)
+    private const string KEY_NO_ADS = "IAP_NoAds_Purchased";
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -192,10 +195,16 @@ public class SaveManager : MonoBehaviour
         bool music = LoadMusicEnabled();
         bool sfx   = LoadSFXEnabled();
 
+        // Preservar el estado de NoAds — la compra IAP NO se borra al resetear el progreso
+        int noAdsPurchased = PlayerPrefs.GetInt(KEY_NO_ADS, 0);
+
         PlayerPrefs.DeleteAll();
 
         SaveMusicEnabled(music);
         SaveSFXEnabled(sfx);
+
+        // Restaurar NoAds después del borrado
+        PlayerPrefs.SetInt(KEY_NO_ADS, noAdsPurchased);
 
         // Vidas iniciales
         SaveLives(DEFAULT_LIVES);
