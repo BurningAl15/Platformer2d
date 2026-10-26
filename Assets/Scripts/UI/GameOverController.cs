@@ -141,18 +141,39 @@ public class GameOverController : MonoBehaviour
     // ─────────────────────────────────────────────────────────────────────────
 
     /// <summary>
-    /// Botón "Ver Ad" — otorga vidas y continúa el juego.
-    /// La integración real del ad se hace en Fase 4.
-    /// Por ahora simula el rewarded directamente.
+    /// Botón "Ver Ad" — muestra rewarded ad a través de AdsManager.
+    /// Si el ad no está disponible (sin SDK o sin conexión) simula la recompensa.
     /// </summary>
     public void OnWatchAdPressed()
     {
         if (LivesManager.Instance == null) return;
 
-        // TODO (Fase 4): Reemplazar con llamada real al SDK de ads.
-        // Por ahora simulamos la recompensa directamente.
-        LivesManager.Instance.AddLivesFromAd();
-        ContinueGame();
+        // Deshabilitar botón para evitar doble tap
+        if (watchAdButton != null) watchAdButton.interactable = false;
+
+        if (AdsManager.Instance != null && AdsManager.Instance.IsRewardedReady())
+        {
+            AdsManager.Instance.ShowRewarded(
+                AdsManager.AdContext.GameOver,
+                onSuccess: () =>
+                {
+                    // Éxito: el jugador vio el ad completo
+                    LivesManager.Instance.AddLivesFromAd();
+                    ContinueGame();
+                },
+                onFail: () =>
+                {
+                    // Fallo o cierre anticipado: restaurar botón
+                    if (watchAdButton != null) watchAdButton.interactable = true;
+                }
+            );
+        }
+        else
+        {
+            // Sin AdsManager o sin conexión: fallback directo (modo desarrollo)
+            LivesManager.Instance.AddLivesFromAd();
+            ContinueGame();
+        }
     }
 
     /// <summary>
@@ -224,17 +245,21 @@ public class GameOverController : MonoBehaviour
     }
 
     /// <summary>
-    /// Botón "Volver al mapa" — resetea vidas para siguiente sesión y carga selección.
+    /// Botón "Volver al mapa" — resetea vidas y carga selección.
+    /// Muestra un interstitial si las condiciones se cumplen (no en primeros 2 min).
     /// </summary>
     public void OnReturnToMapPressed()
     {
-        // Restaurar las vidas al valor por defecto para que el jugador pueda volver a jugar
         if (SaveManager.Instance != null)
             SaveManager.Instance.SaveLives(SaveManager.Instance.GetDefaultLives());
 
         Time.timeScale = 1f;
         InputManager.Instance?.EnablePlayerInput();
         HideInstant();
+
+        // Interstitial al volver al mapa (controlado por AdsManager — no muestra si es muy pronto)
+        AdsManager.Instance?.ShowInterstitial(AdsManager.AdContext.ReturnToMap);
+
         SceneUtils.ToSelectionScene();
     }
 

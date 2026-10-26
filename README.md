@@ -118,9 +118,9 @@ Toda la documentación del proyecto vive en la carpeta `.kiro/`:
 | 1 | Controles (mobile on-screen + gamepad físico) | ✅ Código listo |
 | 2 | Refactorización (SaveManager, limpieza God Classes) | ✅ Código listo |
 | 3 | Economía (vidas, estrellas, trébol, dado de vidas) | ✅ Código completo |
-| 4 | Monetización (Ads — rewarded en Game Over) | 🔲 No iniciada — ad simulado funcional |
+| 4 | Monetización (Ads — Unity LevelPlay) | ✅ Código listo — pendiente instalar SDK y App Keys |
 | 5 | Builds automáticos (Android AAB + iOS Xcode) | ✅ Código listo |
-| 6 | Expansión de contenido (múltiples mundos) | 🔲 No iniciada |
+| 6 | Múltiples mundos (WorldData, WorldProgressManager) | ✅ Arquitectura base lista |
 
 ### Herramientas de editor disponibles (`CustomEditorTools` en Unity)
 - `Setup Missing Scene Elements & Placeholders` — configura automáticamente toda la UI, prefabs y escenas

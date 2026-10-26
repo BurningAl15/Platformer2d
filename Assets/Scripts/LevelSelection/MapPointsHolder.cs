@@ -4,12 +4,26 @@ using UnityEngine;
 /// <summary>
 /// Lee el progreso guardado (vía SaveManager) y configura el estado
 /// de cada MapPoint al cargar la pantalla de selección de niveles.
+///
+/// MODOS:
+/// - Modo legacy (worldData = null): usa la lista manual de _mapPoints con índices secuenciales.
+/// - Modo WorldData: lee la definición de niveles desde el ScriptableObject WorldData.
+///   Permite múltiples mundos sin tocar código.
+///
+/// Para el MVP actual (1 mundo), dejar worldData vacío y usar el modo legacy.
+/// Para múltiples mundos, asignar el WorldData en el Inspector.
 /// </summary>
 public class MapPointsHolder : MonoBehaviour
 {
+    [Header("Modo legacy (1 mundo)")]
     [SerializeField] private List<MapPoint> _mapPoints = new List<MapPoint>();
+
+    [Header("Modo multi-mundo (asignar WorldData del mundo actual)")]
+    [Tooltip("Si se asigna, los datos de niveles se leen desde el ScriptableObject WorldData.")]
+    [SerializeField] private WorldData worldData;
+
+    [Header("Jugador")]
     [SerializeField] private LSPlayerController player;
-    [SerializeField] private int worldNumber;
 
     private void Start()
     {
@@ -27,7 +41,9 @@ public class MapPointsHolder : MonoBehaviour
 
         for (int i = 0; i < _mapPoints.Count; i++)
         {
-            int levelNumber = i + 1;
+            // Obtener el número de nivel: desde WorldData si está asignado, o secuencial
+            int levelNumber = GetLevelNumber(i);
+            if (levelNumber < 0) continue;
 
             // Estado de bloqueo (el primer nivel siempre está desbloqueado)
             if (i > 0)
@@ -65,5 +81,28 @@ public class MapPointsHolder : MonoBehaviour
 
         mapIndex = Mathf.Clamp(mapIndex, 0, _mapPoints.Count - 1);
         player.SetCurrentPoint(_mapPoints[mapIndex]);
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    //  Helper — número de nivel por índice
+    // ─────────────────────────────────────────────────────────────────────────
+
+    private int GetLevelNumber(int index)
+    {
+        if (worldData != null && index < worldData.LevelCount)
+        {
+            // Extraer número del nombre de escena (ej. "Level_3" → 3)
+            string sceneName = worldData.GetLevelScene(index);
+            if (!string.IsNullOrEmpty(sceneName))
+            {
+                string[] parts = sceneName.Split('_');
+                if (parts.Length >= 2 && int.TryParse(parts[1], out int n))
+                    return n;
+            }
+            return -1;
+        }
+
+        // Modo legacy: índice + 1 (niveles 1, 2, 3...)
+        return index + 1;
     }
 }

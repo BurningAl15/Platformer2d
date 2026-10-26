@@ -14,10 +14,10 @@
 | 0 | Estabilización | ✅ Código listo — pendiente pasos en Unity Editor |
 | 1 | Controles (mobile + gamepad) | ✅ Código listo — pendiente pasos en Unity Editor |
 | 2 | Refactorización de arquitectura | ✅ Código listo — pendiente pasos en Unity Editor |
-| 3 | Economía (vidas, gemas, tréboles, dados) | ✅ Código completo — `SceneElementSetup.cs` automatiza el setup en Unity Editor |
-| 4 | Monetización (Ads) | 🔲 No iniciada — ad simulado funcional en `GameOverController` |
-| 5 | Builds automáticos (Android / iOS) | ✅ Código listo (`BuildAutomation.cs`) |
-| 6 | Expansión de contenido (múltiples mundos) | 🔲 No iniciada |
+| 3 | Economía (vidas, gemas, tréboles, dados) | ✅ Código completo |
+| 4 | Monetización (Ads) | ✅ Código listo — pendiente instalar SDK LevelPlay y configurar App Keys |
+| 5 | Builds automáticos (Android / iOS) | ✅ Código listo |
+| 6 | Expansión de contenido (múltiples mundos) | ✅ Arquitectura base lista — pendiente crear WorldData y escenas |
 
 ---
 
@@ -145,53 +145,51 @@ Esto crea y conecta: `AppBootstrap`, `SceneTransitionManager`, paneles de Game O
 
 ---
 
-## FASE 4 — Monetización / Ads [NO INICIADA]
+## FASE 4 — Monetización / Ads ✅ CÓDIGO LISTO
 
-### Qué hay que hacer
+### Lo que se hizo (código)
+- ✅ `AdsManager.cs` — nuevo en `Assets/Scripts/Managers/`. Wrapper sobre Unity LevelPlay SDK con modo simulación.
+- ✅ `GameOverController.cs` — `OnWatchAdPressed()` usa `AdsManager.ShowRewarded()` con callbacks. `OnReturnToMapPressed()` agrega interstitial controlado.
+- ✅ `AppBootstrap.cs` — `[RequireComponent(typeof(AdsManager))]` agregado.
 
-- [ ] **Elegir SDK de ads.** Opciones: Unity LevelPlay (recomendado, nativo) o Google AdMob.
+### ⚠️ Pendiente — PARA ACTIVAR ADS REALES
 
-- [ ] **Tipos de ads a implementar (según diseño del GDD):**
-  1. **Rewarded Video en Game Over** → ganar 1-2 vidas → continuar desde donde murió (prioridad alta)
-  2. **Rewarded Video en fin de nivel** → duplicar gemas obtenidas *(pendiente de confirmar si aplica, ya que las gemas no son currency)*
-  3. Interstitial al volver al mapa tras Game Over (controlado, no en primeros 2 min de sesión)
-  4. Banner en mapa / menú principal (prioridad baja)
-
-- [ ] **Reemplazar el ad simulado en `GameOverController.OnWatchAdPressed()`** con llamada real al SDK.
-
-- [ ] **Reglas de implementación (no negociables):**
-  - Nunca mostrar ads durante gameplay.
-  - Rewarded siempre opcional — el jugador elige.
-  - Respetar COPPA si el juego tiene audiencia menor.
+- [ ] **Instalar SDK:** Unity → Package Manager → buscar "LevelPlay" e instalar.
+- [ ] **Símbolo de compilación:** Project Settings → Player → Scripting Define Symbols → agregar `UNITY_LEVELPLAY`.
+- [ ] **App Keys:** Obtener desde [dashboard.is.com](https://dashboard.is.com) y asignar en el Inspector del `AppBootstrap` (campos `androidAppKey` e `iosAppKey`).
+- [ ] **Ad Units:** Configurar placements Rewarded e Interstitial en el dashboard.
+- [ ] **Test Mode:** Mantener `enableTestMode = true` en desarrollo. Cambiar a `false` antes de publicar.
+- [ ] **COPPA:** Si audiencia menor de 13 años, agregar `IronSource.Agent.setMetaData("is_coppa", "true")` en `AdsManager.Initialize()`.
 
 ---
 
-## FASE 5 — Builds automáticos
+## FASE 5 — Builds automáticos ✅ LISTO
 
 ### Lo que se hizo (código)
-- ✅ `Assets/Editor/BuildAutomation.cs` — nuevo. Métodos:
-  - `BuildAndroidAPK()` → genera APK para pruebas directas en dispositivo.
-  - `BuildAndroidAAB()` → genera AAB optimizado para Google Play Store.
-  - `BuildiOS()` → genera proyecto Xcode para iOS.
-  - Ejecutable desde CLI (batchmode) y accesible desde menú `CustomEditorTools/Builds/...`.
-  - Configuración automática de `PlayerSettings`: `com.fatcatgamestudio.foxstale`, Target API 34+, ARM64/ARMv7, IL2CPP e Internet Permission.
+- ✅ `Assets/Editor/BuildAutomation.cs` — APK, AAB e iOS desde menú `CustomEditorTools/Builds/...` y CLI.
+- ✅ `Assets/Editor/SceneElementSetup.cs` — configura automáticamente escenas y prefabs faltantes.
 
-### ⚠️ Pendiente — Configuración de firma / Tiendas
-- [ ] Configurar Keystore para release en Android.
+### ⚠️ Pendiente — Configuración de firma
+- [ ] Configurar Keystore para Android release (guardar fuera de git).
 - [ ] Configurar Team ID y Provisioning Profile para iOS en Xcode.
 
 ---
 
-## FASE 6 — Expansión de contenido / Múltiples mundos [NO INICIADA]
+## FASE 6 — Múltiples mundos ✅ ARQUITECTURA BASE LISTA
 
-### Qué hay que hacer
+### Lo que se hizo (código)
+- ✅ `WorldData.cs` — ScriptableObject. Crear con Assets → Create → Fox's Tale → World Data.
+- ✅ `WorldProgressManager.cs` — Singleton. Calcula estrellas, desbloqueo y progreso por mundo.
+- ✅ `MapPointsHolder.cs` — soporta modo legacy (MVP actual) y modo `WorldData` (multi-mundo).
+- ✅ `AppBootstrap.cs` — `[RequireComponent(typeof(WorldProgressManager))]` agregado.
 
-- [ ] **Diseñar `WorldData` ScriptableObject** con: nombre del mundo, lista de escenas, condición de desbloqueo (ej. X estrellas del mundo anterior).
+### ⚠️ Pendiente — Para agregar el Mundo 2
 
-- [ ] **Refactorizar `MapPointsHolder`** para leer `WorldData[]` y construir el mapa dinámicamente en lugar de hardcodear los niveles.
-
-- [ ] **Pantalla de "Mundo completado"** antes de mostrar el siguiente mundo.  
-  Requiere que las estrellas estén implementadas (Fase 3).
+- [ ] Assets → Create → Fox's Tale → World Data → configurar Mundo 1 con las escenas actuales.
+- [ ] Al crear el Mundo 2: crear `WorldData_World2`, asignar escenas nuevas, definir `starsRequiredToUnlock`.
+- [ ] Asignar el `WorldData` en el `MapPointsHolder` del mundo correspondiente.
+- [ ] Crear escenas `Level_11`, `Level_12`... y agregarlas en Build Settings.
+- [ ] Pantalla de "Mundo completado" — pendiente de diseño (ver GDD sección 13).
 
 ---
 
