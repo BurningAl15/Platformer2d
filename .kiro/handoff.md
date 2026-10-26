@@ -15,7 +15,7 @@
 | 1 | Controles (mobile + gamepad) | ✅ Código listo — pendiente pasos en Unity Editor |
 | 2 | Refactorización de arquitectura | ✅ Código listo — pendiente pasos en Unity Editor |
 | 3 | Economía (vidas, gemas, tréboles, dados) | ✅ Código completo |
-| 4 | Monetización (Ads) | ✅ Código listo — pendiente instalar SDK LevelPlay y configurar App Keys |
+| 4 | Monetización (Ads + IAP NoAds) | ✅ Código listo — pendiente instalar SDKs y configurar keys |
 | 5 | Builds automáticos (Android / iOS) | ✅ Código listo |
 | 6 | Expansión de contenido (múltiples mundos) | ✅ Arquitectura base lista — pendiente crear WorldData y escenas |
 
@@ -149,18 +149,35 @@ Esto crea y conecta: `AppBootstrap`, `SceneTransitionManager`, paneles de Game O
 ## FASE 4 — Monetización / Ads ✅ CÓDIGO LISTO
 
 ### Lo que se hizo (código)
-- ✅ `AdsManager.cs` — nuevo en `Assets/Scripts/Managers/`. Wrapper sobre Unity LevelPlay SDK con modo simulación.
-- ✅ `GameOverController.cs` — `OnWatchAdPressed()` usa `AdsManager.ShowRewarded()` con callbacks. `OnReturnToMapPressed()` agrega interstitial controlado.
-- ✅ `AppBootstrap.cs` — `[RequireComponent(typeof(AdsManager))]` agregado.
+- ✅ `AdsManager.cs` — wrapper sobre Unity LevelPlay SDK con modo simulación sin SDK. Rewarded + Interstitial con cooldowns. Se desactiva automáticamente si `RevenueCatManager.IsNoAdsPurchased()` es true.
+- ✅ `RevenueCatManager.cs` — wrapper sobre RevenueCat SDK (IAP "Sin Anuncios"). Singleton con DontDestroyOnLoad. Cache en PlayerPrefs para modo offline. Modo simulación sin SDK.
+- ✅ `NoAdsPurchaseButton.cs` — componente de botón listo para colocar en Settings/PauseMenu. Maneja compra y restauración de compras. Se deshabilita si ya está comprado.
+- ✅ `GameOverController.cs` — `OnWatchAdPressed()` usa `AdsManager` con callbacks reales.
+- ✅ `SaveManager.cs` — preserva `IAP_NoAds_Purchased` al resetear el progreso del juego.
+- ✅ `AppBootstrap.cs` — `[RequireComponent(typeof(AdsManager))]` y `[RequireComponent(typeof(RevenueCatManager))]` agregados.
 
-### ⚠️ Pendiente — PARA ACTIVAR ADS REALES
+### ⚠️ Pendiente — PARA ACTIVAR ADS E IAP REALES
 
-- [ ] **Instalar SDK:** Unity → Package Manager → buscar "LevelPlay" e instalar.
-- [ ] **Símbolo de compilación:** Project Settings → Player → Scripting Define Symbols → agregar `UNITY_LEVELPLAY`.
-- [ ] **App Keys:** Obtener desde [dashboard.is.com](https://dashboard.is.com) y asignar en el Inspector del `AppBootstrap` (campos `androidAppKey` e `iosAppKey`).
-- [ ] **Ad Units:** Configurar placements Rewarded e Interstitial en el dashboard.
-- [ ] **Test Mode:** Mantener `enableTestMode = true` en desarrollo. Cambiar a `false` antes de publicar.
-- [ ] **COPPA:** Si audiencia menor de 13 años, agregar `IronSource.Agent.setMetaData("is_coppa", "true")` en `AdsManager.Initialize()`.
+**Ads (Unity LevelPlay):**
+- [ ] Instalar SDK: Unity → Package Manager → buscar "LevelPlay" e instalar.
+- [ ] Símbolo de compilación: Project Settings → Player → Scripting Define Symbols → agregar `UNITY_LEVELPLAY`.
+- [ ] App Keys: obtener desde [dashboard.is.com](https://dashboard.is.com) y asignar en el Inspector de `AppBootstrap` (campos `androidAppKey` e `iosAppKey` en `AdsManager`).
+- [ ] Configurar Ad Units (placements Rewarded e Interstitial) en el dashboard.
+- [ ] Mantener `enableTestMode = true` en desarrollo. Cambiar a `false` antes de publicar.
+
+**IAP NoAds (RevenueCat):**
+- [ ] Descargar SDK desde https://github.com/RevenueCat/purchases-unity/releases → importar `.unitypackage`.
+- [ ] Símbolo de compilación: agregar `REVENUE_CAT` en Scripting Define Symbols.
+- [ ] Asignar API Keys en el Inspector de `AppBootstrap` (campos `androidApiKey` e `iosApiKey` en `RevenueCatManager`).
+- [ ] Crear producto "Sin Anuncios" en Google Play Console y App Store Connect con SKU: `com.fatcatgamestudio.foxstale.noads`.
+- [ ] Configurar entitlement `NoAds` en el dashboard de RevenueCat apuntando al SKU anterior.
+- [ ] Agregar botón `NoAdsPurchaseButton.cs` en la pantalla de Settings/PauseMenu.
+
+**Información que el usuario debe proveer:**
+- RevenueCat API Key Android: `goog_XXXXXXXXXX`
+- RevenueCat API Key iOS: `appl_XXXXXXXXXX`
+- Unity LevelPlay App Key Android e iOS
+- Bundle ID definitivo: `com.fatcatgamestudio.foxstale` (confirmar)
 
 ---
 

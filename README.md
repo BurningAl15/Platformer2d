@@ -117,8 +117,8 @@ Toda la documentación del proyecto vive en la carpeta `.kiro/`:
 | 0 | Estabilización (transiciones, singletons, DOTween, mapa) | ✅ Código listo |
 | 1 | Controles (mobile on-screen + gamepad físico) | ✅ Código listo |
 | 2 | Refactorización (SaveManager, limpieza God Classes) | ✅ Código listo |
-| 3 | Economía (vidas, estrellas, trébol, dado de vidas) | ✅ Código completo |
-| 4 | Monetización (Ads — Unity LevelPlay) | ✅ Código listo — pendiente instalar SDK y App Keys |
+| 3 | Economía (vidas, estrellas, trébol, dado de vidas, corazón extra) | ✅ Código completo |
+| 4 | Monetización (Ads Unity LevelPlay + IAP NoAds RevenueCat) | ✅ Código listo — pendiente instalar SDKs |
 | 5 | Builds automáticos (Android AAB + iOS Xcode) | ✅ Código listo |
 | 6 | Múltiples mundos (WorldData, WorldProgressManager) | ✅ Arquitectura base lista |
 
@@ -145,7 +145,8 @@ Lo siguiente requiere **assets visuales** antes de poder implementarse en pantal
 | Pantalla del dado | Fondo, animación de números girando, resultado, celebración de vidas | Nueva escena/overlay |
 | Animación: cambio de dado | Al gastar un Trébol, el dado cambia visualmente | Pantalla del dado |
 | Animación: ensamblado del Dado Secreto | Al reunir todos los fragmentos del mundo | Overlay/notificación |
-| Pantalla de Game Over | Layout completo con 3 botones: Ad / Trébol-Dado / Volver al mapa | Overlay en gameplay |
+| ❤️ Ícono de corazón extra | Efecto visual temporal en HUD al activar el Dado Secreto | HUD de gameplay |
+| Pantalla de Game Over | Layout completo con 4 botones: Ad / Trébol / Gemas / Mapa | Overlay en gameplay |
 | HUD actualizado | Contador de vidas (x3) + contador de tréboles (🍀 x5) | HUD de gameplay |
 | Badge 🍀 en MapPoint | Indicador visual de trébol obtenido en el mapa de selección | Escena LevelSelection |
 | Estrellas en MapPoint | Sprites de estrella llena y vacía para los 3 slots | Escena LevelSelection |
@@ -153,20 +154,23 @@ Lo siguiente requiere **assets visuales** antes de poder implementarse en pantal
 ### Lógica lista esperando assets
 
 - `UIController.cs` — campos `livesText`, `trebolCountText`, `starImages`, `starFull`, `starEmpty` declarados, solo falta asignarlos en el Inspector
-- `GameOverController.cs` — pantalla de Game Over con lógica completa, le falta la opción del trébol y los sprites
+- `GameOverController.cs` — lógica completa, le falta el layout visual de los 4 botones
+- `DiceRollController.cs` — animación lista, falta el fondo visual y sprites de dados
 - `LevelRatingSystem.cs` — calcula estrellas, `GetStarStates()` listo para alimentar UI
 
 ### Setup pendiente en Unity Editor
 
 Ver `.kiro/handoff.md` para la lista completa. Los más críticos:
 
-1. **Ejecutar setup automático:** En Unity, ir a `CustomEditorTools → Setup Missing Scene Elements & Placeholders`. Esto configura automáticamente: `AppBootstrap`, `SceneTransitionManager`, paneles de Game Over y Dado, HUD de vidas y tréboles, badges en `MapPoint`, y `TrebolPickup` en cada nivel.
+1. **Ejecutar setup automático:** En Unity, ir a `CustomEditorTools → Setup Missing Scene Elements & Placeholders`. Configura automáticamente: `AppBootstrap`, `SceneTransitionManager`, paneles de Game Over y Dado, HUD de vidas y tréboles, badges en `MapPoint`, y `TrebolPickup` en cada nivel.
 
 2. **Controles on-screen:** Agregar `OnScreenStick` al joystick (Control Path: `<Gamepad>/leftStick`) y `OnScreenButton` al botón de salto (Control Path: `<Gamepad>/buttonSouth`).
 
 3. **En `AudioMixerManager`:** Reasignar `pickup_health_clip` (renombrado desde `pickup_helth_clip`).
 
-4. **Assets pendientes de Antigravity:** Sprites de estrella, trébol, fragmento de dado y tipos de dado. Ver sección "Pendiente para Antigravity" arriba.
+4. **IAP NoAds:** Agregar botón `NoAdsPurchaseButton.cs` en la pantalla de Settings/PauseMenu. Ver sección de pendientes de Fase 4 en el handoff.
+
+5. **Assets pendientes de Antigravity:** Sprites de estrella, trébol, fragmento de dado y tipos de dado. Ver tabla arriba.
 
 ---
 

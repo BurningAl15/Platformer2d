@@ -198,10 +198,12 @@ Volver al mapa
 
 ---
 
-## 10. Monetización — Ads
+## 10. Monetización — Ads e IAP
 
-**SDK:** Unity LevelPlay (antes ironSource).
-**Tipos implementados:**
+**SDK Ads:** Unity LevelPlay (antes ironSource).
+**SDK IAP:** RevenueCat.
+
+### Ads
 
 | Tipo | Dónde | Condición |
 |------|-------|-----------|
@@ -212,7 +214,18 @@ Volver al mapa
 - Nunca durante gameplay
 - Rewarded siempre opcional
 - Cooldown de inicio de sesión: 120 segundos
-- Respetar COPPA si hay audiencia menor de 13 años
+- Si `NoAds` está comprado: `AdsManager` no muestra ads automáticamente
+
+### IAP — Sin Anuncios
+
+| Producto | SKU | Precio |
+|----------|-----|--------|
+| Sin Anuncios (NoAds) | `com.fatcatgamestudio.foxstale.noads` | A definir |
+
+- Compra única (one-time purchase)
+- Al comprar: desactiva permanentemente todos los ads
+- Se preserva al resetear el progreso del juego
+- Implementado en `RevenueCatManager.cs` + `NoAdsPurchaseButton.cs`
 
 ---
 
@@ -304,7 +317,8 @@ El código está listo y esperando. Solo faltan los assets:
 | Vidas globales | `LivesManager.cs` | ✅ |
 | Respawn | `LevelManager.cs` | ✅ |
 | Game Over | `GameOverController.cs` | ✅ (ad real en Fase 4) |
-| Ads | `AdsManager.cs` | ✅ (falta instalar SDK) |
+| Ads (Unity LevelPlay) | `AdsManager.cs` | ✅ (falta instalar SDK + keys) |
+| IAP NoAds (RevenueCat) | `RevenueCatManager.cs`, `NoAdsPurchaseButton.cs` | ✅ (falta instalar SDK + keys) |
 | Gemas por nivel | `LevelManager.cs` | ✅ |
 | Rating de estrellas | `LevelRatingSystem.cs` | ✅ |
 | Persistencia | `SaveManager.cs` | ✅ |
