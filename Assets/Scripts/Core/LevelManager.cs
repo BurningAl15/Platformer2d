@@ -1,71 +1,119 @@
-﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Orquesta el ciclo de vida de un nivel de gameplay:
+/// - Respawn del jugador.
+/// - Fin de nivel (secuencia de animación, guardado, transición).
+/// - Conteo de gemas y tiempo de juego.
+///
+/// El guardado de datos delega a SaveManager.
+/// Las analíticas delegan a AnalyticsManager.
+/// </summary>
 public class LevelManager : MonoBehaviour
 {
     public static LevelManager _instance;
-    [SerializeField] private float respawnMaxTime;
+
+    [Header("Respawn")]
+    [SerializeField] private float respawnHoldTime = 0.5f;
+
+    [Header("Estado del nivel")]
+    public bool stopGame = false;
+    [Tooltip("Total de gemas del nivel. Si es 0, se detecta automáticamente al iniciar buscando Pickups de tipo Gema.")]
+    [SerializeField] private int totalGemsInLevel = 0;
+
+    private int gemsCollected = 0;
+    public float timeInLevel { get; private set; }
 
     private Coroutine currentCoroutine = null;
 
-    int gemsCollected = 0;
+    // ───────────────────────────────────────────────
+    //  Ciclo de vida
+    // ───────────────────────────────────────────────
 
-    public bool stopGame = false;
-
-    private string levelname;
-
-    public float timeInLevel;
-    
     private void Awake()
     {
+        if (_instance != null && _instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
         _instance = this;
-        #if UNITY_STANDALONE_WIN || UNITY_STANDALONE
-            // Sync framerate to monitors refresh rate
-            QualitySettings.vSyncCount = 1;
-            // Make the game run as fast as possible
-            Application.targetFrameRate = 60;
-        #endif
     }
 
     private void Start()
     {
-        UIController._instance.UpdateGems_UI(gemsCollected);
         timeInLevel = 0f;
-        
+
+        if (totalGemsInLevel <= 0)
+        {
+            Pickup[] pickups = FindObjectsOfType<Pickup>();
+            for (int i = 0; i < pickups.Length; i++)
+            {
+                if (pickups[i] != null && pickups[i].IsGem())
+                    totalGemsInLevel++;
+            }
+        }
+
+        UIController._instance?.UpdateGems_UI(gemsCollected, totalGemsInLevel);
+
         if (AnalyticsManager.Instance != null)
             AnalyticsManager.Instance.TrackLevelStart(SceneUtils.Get_CurrentLevelName());
     }
 
     private void Update()
     {
-        timeInLevel += Time.deltaTime;
+        if (!stopGame)
+            timeInLevel += Time.deltaTime;
     }
+
+    // ───────────────────────────────────────────────
+    //  Gemas
+    // ───────────────────────────────────────────────
 
     public void UpdateGemsCollected()
     {
         gemsCollected++;
-        UIController._instance.UpdateGems_UI(gemsCollected);
-        
+        UIController._instance?.UpdateGems_UI(gemsCollected, totalGemsInLevel);
+
         if (AnalyticsManager.Instance != null)
             AnalyticsManager.Instance.TrackGemCollected(SceneUtils.Get_CurrentLevelName(), gemsCollected);
     }
-    
+
+    public int GetGemsCollected() => gemsCollected;
+    public int GetTotalGemsInLevel() => totalGemsInLevel;
+
+    // ───────────────────────────────────────────────
+    //  Respawn
+    // ───────────────────────────────────────────────
+
+    /// <summary>
+    /// Llamado cuando el jugador muere (currentHealth = 0).
+    /// Consulta LivesManager: si quedan vidas respawnea; si no, activa Game Over.
+    /// </summary>
     public void RespawnPlayer()
     {
-        if (currentCoroutine == null)
-            currentCoroutine = StartCoroutine(Respawning());
+        if (currentCoroutine != null) return;
+
+        // Consumir una vida y verificar si el jugador puede continuar
+        bool canContinue = LivesManager.Instance == null || LivesManager.Instance.ConsumeLifeAndCheck();
+
+        if (canContinue)
+        {
+            currentCoroutine = StartCoroutine(RespawnRoutine());
+        }
+        // Si no puede continuar, LivesManager dispara OnGameOver y
+        // GameOverController lo maneja. No iniciamos la coroutine.
     }
 
-    IEnumerator Respawning()
+    private IEnumerator RespawnRoutine()
     {
         PlayerHealth._instance.DeathEffect();
         PlayerHealth._instance.TurnOffPlayer();
         yield return new WaitUntil(() => PlayerHealth._instance.isDeathEffectEnd());
         FadeEffect._instance.Fade_Out();
         yield return new WaitUntil(() => FadeEffect._instance.endFade);
-        yield return new WaitForSeconds(respawnMaxTime);
+        yield return new WaitForSeconds(respawnHoldTime);
         PlayerHealth._instance.ResetHealth();
         UIController._instance.ResetHearts();
         PlayerHealth._instance.ResetPlayer();
@@ -74,82 +122,78 @@ public class LevelManager : MonoBehaviour
         currentCoroutine = null;
     }
 
-    void SetPlayerPrefsLevelToUnlock()
-    {
-        // if (SceneUtils.Get_CurrentLevelName() == 1)
-        //     PlayerPrefs.SetInt(StringUtils.Get_Level(SceneUtils.Get_CurrentLevelName()), 1);
-        PlayerPrefs.SetInt(StringUtils.Get_Level(SceneUtils.Get_NextLevelName()), 1);
-        PlayerPrefs.SetInt(StringUtils.playerPref_mapIndex, SceneUtils.Get_NextLevelName() - 2);
-        PlayerPrefs.Save();
-    }
-
-    void SetPlayerPrefsGems()
-    {
-        if (PlayerPrefs.HasKey(StringUtils.Get_GemsInLevel(SceneUtils.Get_CurrentLevelName())))
-        {
-            if(gemsCollected>PlayerPrefs.GetInt(StringUtils.Get_GemsInLevel(SceneUtils.Get_CurrentLevelName())))
-            {
-                print("Gems");
-                PlayerPrefs.SetInt(StringUtils.Get_GemsInLevel(SceneUtils.Get_CurrentLevelName()), gemsCollected);
-                print("Saved Gems: " + gemsCollected);
-            }
-        }
-        else
-        {
-            PlayerPrefs.SetInt(StringUtils.Get_GemsInLevel(SceneUtils.Get_CurrentLevelName()), gemsCollected);
-        }
-        
-        PlayerPrefs.Save();
-    }
-
-    void SetPlayerPrefsTime()
-    {
-        if (PlayerPrefs.HasKey(StringUtils.Get_TimeInLevel(SceneUtils.Get_CurrentLevelName())))
-        {
-            if(timeInLevel < PlayerPrefs.GetFloat(StringUtils.Get_TimeInLevel(SceneUtils.Get_CurrentLevelName())))
-            {
-                PlayerPrefs.SetFloat(StringUtils.Get_TimeInLevel(SceneUtils.Get_CurrentLevelName()), timeInLevel);
-                print("Saved Time: " + timeInLevel);
-            }
-        }
-        else
-        {
-            PlayerPrefs.SetFloat(StringUtils.Get_TimeInLevel(SceneUtils.Get_CurrentLevelName()), timeInLevel);
-        }
-
-        PlayerPrefs.Save();
-    }
+    // ───────────────────────────────────────────────
+    //  Fin de nivel
+    // ───────────────────────────────────────────────
 
     public void EndLevel()
     {
         if (currentCoroutine == null)
-            currentCoroutine = StartCoroutine(End_Level());
+            currentCoroutine = StartCoroutine(EndLevelRoutine());
     }
 
-    IEnumerator End_Level()
+    private IEnumerator EndLevelRoutine()
     {
         stopGame = true;
+
         AudioMixerManager._instance.PlayBackgroundSource(false);
         SimpleCameraController2d._instance.StopFollow();
-        yield return new WaitForSeconds(.5f);
+
+        yield return new WaitForSeconds(0.5f);
         UIController._instance.Run_EndLevelAnimation();
         yield return new WaitForSeconds(1.5f);
+
         FadeEffect._instance.Fade_Out();
-        SetPlayerPrefsLevelToUnlock();
-        if (SceneUtils.Get_CurrentLevelName() != 0)
-        {
-            SetPlayerPrefsGems();
-            SetPlayerPrefsTime();
-        
-            if (AnalyticsManager.Instance != null)
-                AnalyticsManager.Instance.TrackLevelComplete(
-                    SceneUtils.Get_CurrentLevelName(), 
-                    timeInLevel, 
-                    gemsCollected
-                );
-        }
+
+        // Guardar progreso (delegado a SaveManager)
+        SaveProgress();
+
         yield return new WaitUntil(() => FadeEffect._instance.endFade);
-        yield return new WaitForSeconds(.25f);
+        yield return new WaitForSeconds(0.25f);
+
         SceneUtils.ToSelectionScene();
+    }
+
+    private void SaveProgress()
+    {
+        int levelNumber = SceneUtils.Get_CurrentLevelName();
+
+        // Siempre desbloquear el siguiente nivel
+        if (SaveManager.Instance != null)
+            SaveManager.Instance.UnlockNextLevel(levelNumber);
+
+        // Guardar gemas y tiempo solo en niveles reales (no el nivel 0 que es el tutorial)
+        if (levelNumber > 0 && SaveManager.Instance != null)
+        {
+            SaveManager.Instance.SaveGemsIfBetter(levelNumber, gemsCollected);
+            SaveManager.Instance.SaveTimeIfBetter(levelNumber, timeInLevel);
+
+            // Acumular gemas al wallet global
+            SaveManager.Instance.AddGlobalGems(gemsCollected);
+        }
+
+        // Calcular y guardar rating de estrellas
+        LevelRating rating = LevelRating.OneStar;
+        if (LevelRatingSystem._instance != null)
+        {
+            var req = new LevelRatingSystem.LevelRequirements
+            {
+                targetTime = SaveManager.Instance != null
+                    ? SaveManager.Instance.LoadBestTime(levelNumber)
+                    : 99999f,
+                totalGems = totalGemsInLevel > 0 ? totalGemsInLevel : gemsCollected
+            };
+            rating = LevelRatingSystem._instance.CalculateRating(timeInLevel, gemsCollected, req);
+            SaveManager.Instance?.SaveRatingIfBetter(levelNumber, (int)rating);
+        }
+
+        // Mostrar estrellas en UI
+        UIController._instance?.ShowLevelRating(rating);
+
+        // Analíticas
+        if (levelNumber > 0 && AnalyticsManager.Instance != null)
+        {
+            AnalyticsManager.Instance.TrackLevelComplete(levelNumber, timeInLevel, gemsCollected);
+        }
     }
 }

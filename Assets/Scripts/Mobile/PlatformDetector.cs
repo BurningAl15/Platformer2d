@@ -133,10 +133,23 @@ public class PlatformDetector : MonoBehaviour
         ConfigureMobileUIForCurrentScene();
     }
     
-    // Método público para activar/desactivar manualmente (útil para casos especiales)
+    /// <summary>
+    /// Activa/desactiva la UI mobile respetando la plataforma actual.
+    /// Si IsMobile() es false, nunca activa ninguna UI mobile.
+    /// </summary>
     public void SetMobileUIActive(bool gameplay, bool levelSelector)
     {
         SetGameplayUI(gameplay && IsMobile());
         SetLevelSelectorUI(levelSelector && IsMobile());
+    }
+
+    /// <summary>
+    /// Fuerza el estado de la UI mobile independientemente de la plataforma.
+    /// Usar cuando GamepadDetector necesita ocultar controles en mobile.
+    /// </summary>
+    public void ForceSetMobileUIActive(bool gameplay, bool levelSelector)
+    {
+        SetGameplayUI(gameplay);
+        SetLevelSelectorUI(levelSelector);
     }
 }

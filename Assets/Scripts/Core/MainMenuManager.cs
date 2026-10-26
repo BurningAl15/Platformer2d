@@ -3,126 +3,121 @@ using UnityEngine.EventSystems;
 using DG.Tweening;
 using UnityEngine.UI;
 
+/// <summary>
+/// Gestiona la pantalla del menú principal.
+/// - Muestra/oculta el botón "Continue" según si hay partida guardada.
+/// - "Nueva partida": borra progreso (vía SaveManager) y carga el nivel tutorial.
+/// - "Continuar": va a la pantalla de selección de niveles.
+/// </summary>
 public class MainMenuManager : MonoBehaviour
 {
-   public GameObject continueButton;
+    [Header("UI")]
+    public GameObject continueButton;
+    [SerializeField] private Image textImg;
+    [SerializeField] private CanvasGroup panelBG;
+    [SerializeField] private GameObject panelOptions;
+    [SerializeField] private float initPoint, endPoint;
+    [SerializeField] private AnimationCurve initCurve;
 
-   [SerializeField] private Image textImg;
-   [SerializeField] private CanvasGroup panelBG;
-   [SerializeField] private GameObject panelOptions;
+    [Header("Botones de selección")]
+    [Tooltip("Primer botón cuando el jugador YA jugó (Continue visible)")]
+    [SerializeField] private GameObject continueFirstButton;
+    [Tooltip("Primer botón cuando el jugador NUNCA jugó (Continue oculto)")]
+    [SerializeField] private GameObject newGameFirstButton;
+    [Tooltip("Primer botón del panel de confirmación de nueva partida")]
+    [SerializeField] private GameObject panelFirstButton;
 
-   [SerializeField] private float initPoint, endPoint;
-   [SerializeField] private AnimationCurve initCurve;
-   
-   [Header("First Selected Buttons")]
-   [Tooltip("Primer botón a seleccionar cuando el jugador YA jugó (Continue visible)")]
-   [SerializeField] private GameObject continueFirstButton;
-   
-   [Tooltip("Primer botón a seleccionar cuando el jugador NUNCA jugó (Continue oculto)")]
-   [SerializeField] private GameObject newGameFirstButton;
-   
-   [Tooltip("Primer botón del panel de confirmación")]
-   [SerializeField] private GameObject panelFirstButton;
-   
-   private bool hasPlayedBefore = false;
-   
-   private void Awake()
-   {
-      DOTween.Init(true, true, LogBehaviour.Default);
-   }
+    private bool hasPlayedBefore = false;
 
-   private void Start()
-   {
-      hasPlayedBefore = PlayerPrefs.HasKey("Level_1");
-      
-      if(hasPlayedBefore)
-      {
-         continueButton.SetActive(true);
-         SelectButton(continueFirstButton);
-      }
-      else
-      {
-         continueButton.SetActive(false);
-         SelectButton(newGameFirstButton);
-      }
+    private void Awake()
+    {
+        // DOTween inicializado en AppBootstrap
+    }
 
-      panelBG.alpha = 0;
-      panelBG.interactable = false;
-      panelBG.blocksRaycasts = false;
-   }
+    private void Start()
+    {
+        hasPlayedBefore = SaveManager.Instance != null
+            ? SaveManager.Instance.HasSaveData()
+            : PlayerPrefs.HasKey("Level_1");
 
-   private void SelectButton(GameObject button)
-   {
-      if (button != null && EventSystem.current != null)
-      {
-         EventSystem.current.SetSelectedGameObject(null);
-         EventSystem.current.SetSelectedGameObject(button);
-         Debug.Log($"Selected button: {button.name}");
-      }
-      else
-      {
-         Debug.LogWarning("Cannot select button: button is null or EventSystem is missing");
-      }
-   }
+        continueButton.SetActive(hasPlayedBefore);
+        SelectButton(hasPlayedBefore ? continueFirstButton : newGameFirstButton);
 
-   public void DeactivatePanel()
-   {
-      panelOptions.transform.DOLocalMoveY(initPoint, .5f).SetEase(initCurve).OnComplete(()=>TurnOffPanel());
-   }
+        panelBG.alpha = 0;
+        panelBG.interactable = false;
+        panelBG.blocksRaycasts = false;
+    }
 
-   void TurnOffPanel()
-   {
-      panelBG.alpha = 0;
-      panelBG.interactable = false;
-      panelBG.blocksRaycasts = false;
-      
-      if (hasPlayedBefore)
-      {
-         SelectButton(continueFirstButton);
-      }
-      else
-      {
-         SelectButton(newGameFirstButton);
-      }
-   }
-   
-   public void ActivatePanel()
-   {
-      if (hasPlayedBefore)
-      {
-         panelBG.alpha = 1;
-         panelBG.interactable = true;
-         panelBG.blocksRaycasts = true;
-         panelOptions.transform.DOLocalMoveY(endPoint, .5f).SetEase(initCurve).OnComplete(() => SelectButton(panelFirstButton));
-      }
-      else
-      {
-         ToNextScene();
-      }
-   }
-   
-   public void ToNextScene()
-   {
-      PlayerPrefs.DeleteAll();
-      for (int i = 0; i < 10; i++)
-      {
-         int j = i + 1;
-         PlayerPrefs.SetInt(StringUtils.Get_Level(j), 0);
-         PlayerPrefs.SetInt(StringUtils.Get_GemsInLevel(j), 0);
-         PlayerPrefs.SetFloat(StringUtils.Get_TimeInLevel(j), 99999);
-      }
+    // ───────────────────────────────────────────────
+    //  Acciones de botones
+    // ───────────────────────────────────────────────
 
-      PlayerPrefs.Save();
-      SceneUtils.LoadGameplayScene(0);
-   }
+    /// <summary>
+    /// Botón "Nueva partida". Si hay partida guardada, muestra confirmación.
+    /// Si no hay partida, inicia directamente.
+    /// </summary>
+    public void ActivatePanel()
+    {
+        if (hasPlayedBefore)
+        {
+            panelBG.alpha = 1;
+            panelBG.interactable = true;
+            panelBG.blocksRaycasts = true;
+            panelOptions.transform
+                .DOLocalMoveY(endPoint, 0.5f)
+                .SetEase(initCurve)
+                .OnComplete(() => SelectButton(panelFirstButton));
+        }
+        else
+        {
+            StartNewGame();
+        }
+    }
 
-   public void ContinueScene()
-   {
-       SceneUtils.ToSelectionScene();
-   }
+    /// <summary>
+    /// Confirma y cancela el panel de nueva partida.
+    /// </summary>
+    public void DeactivatePanel()
+    {
+        panelOptions.transform
+            .DOLocalMoveY(initPoint, 0.5f)
+            .SetEase(initCurve)
+            .OnComplete(TurnOffPanel);
+    }
 
-   public void QuitGame()
-   {
-      Application.Quit();
-   }
+    /// <summary>
+    /// Inicia el nivel 0 (tutorial) borrando el progreso anterior.
+    /// </summary>
+    public void ToNextScene() => StartNewGame();
+
+    public void ContinueScene() => SceneUtils.ToSelectionScene();
+
+    public void QuitGame() => Application.Quit();
+
+    // ───────────────────────────────────────────────
+    //  Helpers privados
+    // ───────────────────────────────────────────────
+
+    private void StartNewGame()
+    {
+        if (SaveManager.Instance != null)
+            SaveManager.Instance.ResetProgress();
+
+        SceneUtils.LoadGameplayScene(0);
+    }
+
+    private void TurnOffPanel()
+    {
+        panelBG.alpha = 0;
+        panelBG.interactable = false;
+        panelBG.blocksRaycasts = false;
+        SelectButton(hasPlayedBefore ? continueFirstButton : newGameFirstButton);
+    }
+
+    private void SelectButton(GameObject button)
+    {
+        if (button == null || EventSystem.current == null) return;
+        EventSystem.current.SetSelectedGameObject(null);
+        EventSystem.current.SetSelectedGameObject(button);
+    }
 }

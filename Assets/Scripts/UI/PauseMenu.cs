@@ -2,37 +2,46 @@
 using UnityEngine.EventSystems;
 using DG.Tweening;
 
+/// <summary>
+/// Gestiona la pausa del juego.
+/// - Se suscribe a InputManager.OnPausePressed.
+/// - Usa DOTween con SetUpdate(true) para animar aunque Time.timeScale = 0.
+/// - DOTween.Init se hace en AppBootstrap, no aquí.
+/// </summary>
 public class PauseMenu : MonoBehaviour
 {
     public static PauseMenu _instance;
-    
+
     [SerializeField] private CanvasGroup pauseBG;
-    public GameObject pauseScreen;
+    [SerializeField] private GameObject pauseScreen;
     public bool isPaused;
 
-    [SerializeField] private float initPoint, endPoint;
+    [Tooltip("Posición Y oculta del panel (fuera de pantalla)")]
+    [SerializeField] private float initPoint;
+    [Tooltip("Posición Y visible del panel")]
+    [SerializeField] private float endPoint;
     [SerializeField] private GameObject firstSelectedButton;
-    
+
     private void Awake()
     {
+        if (_instance != null && _instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
         _instance = this;
-        DOTween.Init(true, true, LogBehaviour.Default);
     }
 
     private void OnEnable()
     {
         if (InputManager.Instance != null)
-        {
             InputManager.Instance.OnPausePressed += Pause;
-        }
     }
 
     private void OnDisable()
     {
         if (InputManager.Instance != null)
-        {
             InputManager.Instance.OnPausePressed -= Pause;
-        }
     }
 
     private void Start()
@@ -40,79 +49,98 @@ public class PauseMenu : MonoBehaviour
         TurnCanvasGroup(false);
     }
 
+    // ───────────────────────────────────────────────
+    //  API pública
+    // ───────────────────────────────────────────────
+
     public void Pause()
     {
         isPaused = !isPaused;
-        print("Is Paused State: " + isPaused);
 
         if (isPaused)
         {
+            // Congelar el juego INMEDIATAMENTE, antes de animar el panel
+            Time.timeScale = 0;
             TurnCanvasGroup(true);
             InputManager.Instance.EnableUIOnlyInput();
-            
-            if (firstSelectedButton != null && EventSystem.current != null)
-            {
-                EventSystem.current.SetSelectedGameObject(null);
-                EventSystem.current.SetSelectedGameObject(firstSelectedButton);
-                print("Selected button: " + firstSelectedButton.name);
-            }
+            SelectFirstButton(firstSelectedButton);
+
+            pauseScreen.transform.DOKill();
+            pauseScreen.transform.DOLocalMoveY(endPoint, 0.25f)
+                .SetEase(Ease.OutBack)
+                .SetUpdate(true);
         }
         else
         {
-            Time.timeScale = 1;
-            InputManager.Instance.EnablePlayerInput();
-            
-            if (EventSystem.current != null)
-            {
-                EventSystem.current.SetSelectedGameObject(null);
-            }
+            ResumeGame();
         }
-
-        float tempEndValue = isPaused ? endPoint : initPoint;
-        print(tempEndValue);
-        pauseScreen.transform.DOLocalMoveY(tempEndValue, .25f).SetEase(Ease.InOutBounce).SetUpdate(true).OnComplete(TurnOffPause);
     }
 
+    /// <summary>
+    /// Reanuda el juego desde un botón externo (e.g. botón de continuar en el panel).
+    /// </summary>
     public void PauseAuxiliar()
     {
-        print("Calling auxiliar");
         isPaused = false;
-        Time.timeScale = 1;
-        InputManager.Instance.EnablePlayerInput();
-        
-        if (EventSystem.current != null)
-        {
-            EventSystem.current.SetSelectedGameObject(null);
-        }
-        
-        pauseScreen.transform.DOLocalMoveY(initPoint, .25f).SetEase(Ease.InOutBounce).SetUpdate(true).OnComplete(TurnOffPause);
-    }
-
-    void TurnOffPause()
-    {
-        Time.timeScale = isPaused ? 0 : 1;
-        if (!isPaused)
-            TurnCanvasGroup(false);
+        ResumeGame();
     }
 
     public void LevelSelection()
     {
+        ForceResume();
         SceneUtils.ToSelectionScene();
-        Time.timeScale = 1;
-        InputManager.Instance.EnablePlayerInput();
     }
 
     public void MainMenu()
     {
+        ForceResume();
         SceneUtils.ToMainScene();
-        Time.timeScale = 1;
-        InputManager.Instance.EnablePlayerInput();
     }
 
-    void TurnCanvasGroup(bool _)
+    // ───────────────────────────────────────────────
+    //  Helpers privados
+    // ───────────────────────────────────────────────
+
+    private void ResumeGame()
     {
-        pauseBG.interactable = _;
-        pauseBG.blocksRaycasts = _;
-        pauseBG.alpha = _ ? 1 : 0;
+        pauseScreen.transform.DOKill();
+        pauseScreen.transform.DOLocalMoveY(initPoint, 0.25f)
+            .SetEase(Ease.InBack)
+            .SetUpdate(true)
+            .OnComplete(() =>
+            {
+                TurnCanvasGroup(false);
+                Time.timeScale = 1;
+                InputManager.Instance?.EnablePlayerInput();
+
+                if (EventSystem.current != null)
+                    EventSystem.current.SetSelectedGameObject(null);
+            });
+    }
+
+    /// <summary>
+    /// Resetea el estado de pausa sin animación (para transiciones de escena).
+    /// </summary>
+    private void ForceResume()
+    {
+        isPaused = false;
+        Time.timeScale = 1;
+        pauseScreen.transform.DOKill();
+        TurnCanvasGroup(false);
+        InputManager.Instance?.EnablePlayerInput();
+    }
+
+    private void TurnCanvasGroup(bool active)
+    {
+        pauseBG.interactable = active;
+        pauseBG.blocksRaycasts = active;
+        pauseBG.alpha = active ? 1f : 0f;
+    }
+
+    private void SelectFirstButton(GameObject button)
+    {
+        if (button == null || EventSystem.current == null) return;
+        EventSystem.current.SetSelectedGameObject(null);
+        EventSystem.current.SetSelectedGameObject(button);
     }
 }

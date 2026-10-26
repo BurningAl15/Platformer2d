@@ -33,6 +33,9 @@ public class Pickup : MonoBehaviour
             {
                 LevelManager._instance.UpdateGemsCollected();
                 AudioMixerManager._instance.CallSFX_Gems();
+                // Nota: las gemas globales se acumulan al COMPLETAR el nivel
+                // (en LevelManager.SaveProgress), no al recolectarlas una a una.
+                // Así se incentiva terminar el nivel para obtener las gemas.
                 if (currentCoroutine == null)
                     currentCoroutine = StartCoroutine(CollectEffect());
             }

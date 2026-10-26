@@ -1,32 +1,32 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Timers;
 using UnityEngine;
 using UnityEngine.Audio;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
+// ─────────────────────────────────────────────────────────────────────────────
+//  Tipos de SFX disponibles en el juego
+// ─────────────────────────────────────────────────────────────────────────────
 public enum SFXType
 {
     Player_Jump,
     Player_Pickup_Health,
     Player_Hurt,
     Player_Death,
-        
     Enemy_Death,
-        
     Boss_Hit,
     Boss_Impact,
     Boss_Shoot,
-     
     Level_Selected,
     Map_Movement,
     Warp_Jingle,
     Smash_Impact
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+//  Elemento de SFX: clip + source + helpers de reproducción
+// ─────────────────────────────────────────────────────────────────────────────
 [Serializable]
 public class SFXElement
 {
@@ -35,6 +35,7 @@ public class SFXElement
 
     public void CallSFX()
     {
+        if (source == null || clip == null) return;
         source.Stop();
         source.clip = clip;
         source.Play();
@@ -42,428 +43,338 @@ public class SFXElement
 
     public void SetPitch(float pitch)
     {
-        source.pitch = pitch;
+        if (source != null)
+            source.pitch = pitch;
     }
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+//  AudioMixerManager
+// ─────────────────────────────────────────────────────────────────────────────
+/// <summary>
+/// Manager central de audio. Gestiona:
+/// - Reproducción de SFX por tipo (SFXType).
+/// - Música de fondo con crossfade entre pistas.
+/// - Pitch creciente para el combo de gemas.
+/// - Configuración de volumen (música / SFX) persistida en SaveManager.
+/// </summary>
 public class AudioMixerManager : MonoBehaviour
 {
     public static AudioMixerManager _instance;
+
+    [Header("Audio Mixer")]
     [SerializeField] private AudioMixer mixer;
 
-    private bool isMusicOn = true;
-    private bool isSFXOn = true;
+    // ─────────────────────────────
+    //  Música de fondo
+    // ─────────────────────────────
+    [Header("Pistas de música")]
+    [SerializeField] private AudioClip background_MainLevel_Clip;
+    [SerializeField] private AudioClip background_BossBattle_Clip;
+    [SerializeField] private AudioClip background_GameComplete_Clip;
+    [SerializeField] private AudioClip background_LevelVictory_Clip;
+    [SerializeField] private AudioClip background_LevelSelect_Clip;
+    [SerializeField] private AudioClip background_TitleScreen_Clip;
 
-    [Header("Music Sprites and Images")]
-    
-    [SerializeField] private Image musicButton, sfxButton;
-    [SerializeField] private Sprite musicOn, musicOff;
-    [SerializeField] private Sprite sfxOn, sfxOff;
+    [Header("Fuentes de audio de música")]
+    [SerializeField] private AudioSource backgroundSource;    // pista principal
+    [SerializeField] private AudioSource background2Source;   // victoria / fin de juego
+    [SerializeField] private AudioSource background3Source;   // boss
 
-    [Header("Background Music")]
-    public AudioClip background_MainLevel_Clip;
-    public AudioClip background_BossBattle_Clip;
-    public AudioClip background_GameComplete_Clip;
-    public AudioClip background_LevelVictory_Clip;
-    public AudioClip background_LevelSelect_Clip;
-    public AudioClip background_TitleScreen_Clip;
-    public AudioSource backgroundSource;
-    public AudioSource background2Source;
-    public AudioSource background3Source;
+    // ─────────────────────────────
+    //  SFX — Jugador
+    // ─────────────────────────────
+    [Header("SFX — Jugador")]
+    [SerializeField] private SFXElement jump_Clip;
+    [SerializeField] private SFXElement hurt_Clip;
+    [SerializeField] private SFXElement deathEffect_Player_Clip;
+    [SerializeField] private SFXElement pickup_health_clip;
+    [SerializeField] private SFXElement pickup_gem_clip;
 
-    [Header("SFX")]
-    // [SerializeField] private AudioClip click_1_Clip ;
-    // [SerializeField] private AudioClip click_2_Clip;
-    [SerializeField] private AudioClip success_Clip;
-    [SerializeField] private AudioClip fail_Clip;
+    // ─────────────────────────────
+    //  SFX — Enemigos / Boss
+    // ─────────────────────────────
+    [Header("SFX — Enemigos")]
+    [SerializeField] private SFXElement deathEffect_Enemy_Clip;
 
-    [SerializeField] private SFXElement levelSelected_Clip;
-    [SerializeField] private SFXElement mapMovement_Clip;
-    [SerializeField] private SFXElement warpJingle_Clip;
-    [SerializeField] private SFXElement SmashImpact_Clip;
-
-    [Header("Boss SFX")] 
+    [Header("SFX — Boss")]
     [SerializeField] private SFXElement bossHit_Clip;
     [SerializeField] private SFXElement bossImpact_Clip;
     [SerializeField] private SFXElement bossShoot_Clip;
-    
-    [Header("Death Effect SFX")]
-    [SerializeField] private SFXElement deathEffect_Enemy_Clip;
-    
-    [Header("Player SFX")]
-    [SerializeField] private SFXElement deathEffect_Player_Clip;
-    [SerializeField] private SFXElement pickup_gem_clip;
-    [SerializeField] private SFXElement pickup_helth_clip;
-    [SerializeField] private SFXElement jump_Clip;
-    [SerializeField] private SFXElement hurt_Clip;
-    
 
-    [Header("Pitch Growing Variables")]
-    private float initialPitch=.5f;
-    private float growPitchRate = .05f;
-    private float maxPitch = 1.5f;
+    // ─────────────────────────────
+    //  SFX — Mundo / UI
+    // ─────────────────────────────
+    [Header("SFX — Mundo / UI")]
+    [SerializeField] private SFXElement levelSelected_Clip;
+    [SerializeField] private SFXElement mapMovement_Clip;
+    [SerializeField] private SFXElement warpJingle_Clip;
+    [SerializeField] private SFXElement smashImpact_Clip;
+
+    // ─────────────────────────────
+    //  UI de botones de volumen
+    // ─────────────────────────────
+    [Header("Botones de configuración de audio")]
+    [SerializeField] private Image musicButton;
+    [SerializeField] private Image sfxButton;
+    [SerializeField] private Sprite musicOn;
+    [SerializeField] private Sprite musicOff;
+    [SerializeField] private Sprite sfxOn;
+    [SerializeField] private Sprite sfxOff;
+
+    // ─────────────────────────────
+    //  Estado interno
+    // ─────────────────────────────
+    private bool isMusicOn = true;
+    private bool isSFXOn   = true;
+
+    // Pitch de combo de gemas
+    private float gemPitch    = 0.5f;
+    private const float GemPitchStart = 0.5f;
+    private const float GemPitchStep  = 0.05f;
+    private const float GemPitchMax   = 1.5f;
 
     private Coroutine currentCoroutine = null;
-    
-    public void CallSFX(SFXType sfxType)
-    {
-        AudioClip clip = null;
-        switch (sfxType)
-        {
-            case SFXType.Player_Pickup_Health:
-                pickup_helth_clip.CallSFX();
-                pickup_helth_clip.SetPitch(1);
-                break;
-            case SFXType.Player_Jump:
-                jump_Clip.CallSFX();
-                jump_Clip.SetPitch(Random.Range(.8f, 1.2f));
-                break;          
-            case SFXType.Player_Hurt:
-                hurt_Clip.CallSFX();
-                hurt_Clip.SetPitch(Random.Range(.8f, 1.2f));
-                break;
-            case SFXType.Player_Death:
-                deathEffect_Player_Clip.CallSFX();
-                deathEffect_Player_Clip.SetPitch(Random.Range(.8f, 1.2f));
-                break;
-            case SFXType.Enemy_Death:
-                deathEffect_Enemy_Clip.CallSFX();
-                deathEffect_Enemy_Clip.SetPitch(Random.Range(.8f, 1.2f));
-                break;
-            case SFXType.Boss_Hit:
-                bossHit_Clip.CallSFX();
-                bossHit_Clip.SetPitch(1);
-                break;
-            case SFXType.Boss_Impact:
-                bossImpact_Clip.CallSFX();
-                bossImpact_Clip.SetPitch(1);
-                break;
-            case SFXType.Boss_Shoot:
-                bossShoot_Clip.CallSFX();
-                bossShoot_Clip.SetPitch(1);
-                break;
-            case SFXType.Level_Selected:
-                levelSelected_Clip.CallSFX();
-                levelSelected_Clip.SetPitch(1);
-                break;
-            case SFXType.Map_Movement:
-                mapMovement_Clip.CallSFX();
-                mapMovement_Clip.SetPitch(1);
-                break;
-            case SFXType.Warp_Jingle:
-                warpJingle_Clip.CallSFX();
-                warpJingle_Clip.SetPitch(1);
-                break;
-            case SFXType.Smash_Impact:
-                SmashImpact_Clip.CallSFX();
-                warpJingle_Clip.SetPitch(1);
-                break;
-        }
-    }
 
-    public void CallSFX_Gems()
-    {
-        pickup_gem_clip.SetPitch(initialPitch);
-        pickup_gem_clip.CallSFX();
-
-        initialPitch += growPitchRate;
-        
-        ComboManager._instance.RunTimer();
-        
-        if (initialPitch >= maxPitch)
-            initialPitch = maxPitch;
-    }
-    
-    public void ResetPitch()
-    {
-        initialPitch = .5f;
-    }
+    // ─────────────────────────────────────────────────────────────────────────
+    //  Ciclo de vida
+    // ─────────────────────────────────────────────────────────────────────────
 
     private void Awake()
     {
-        if (_instance == null)
-            _instance = this;
-        else if(_instance!=null)
-            Destroy(this.gameObject);
+        if (_instance != null && _instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        _instance = this;
     }
 
     private void Start()
     {
-        // if (!PlayerPrefs.HasKey("MusicLevel"))
-        //     PlayerPrefs.SetInt("MusicLevel", 1);
-        //
-        // if (!PlayerPrefs.HasKey("SFXLevel"))
-        //     PlayerPrefs.SetInt("SFXLevel", 1);
-        //
-        // isMusicOn = PlayerPrefs.GetInt("MusicLevel") == 1;
-        // isSFXOn = PlayerPrefs.GetInt("SFXLevel") == 1;
+        // Cargar configuración de audio desde SaveManager
+        if (SaveManager.Instance != null)
+        {
+            isMusicOn = SaveManager.Instance.LoadMusicEnabled();
+            isSFXOn   = SaveManager.Instance.LoadSFXEnabled();
+        }
 
-        // isMusicOn = SaveDataManager._instance.gameData.musicLevel;
-        // isSFXOn = SaveDataManager._instance.gameData.sfxLevel;
-        
-        // CheckSFXValue();
-        // CheckBackgroundValue();
-        //
-        // CheckButton_Music();
-        // CheckButton_SFX();
+        ApplyMusicVolume();
+        ApplySFXVolume();
+        RefreshAudioButtons();
 
-        // if (SceneUtils.IsInGameplay())
-        // {
         if (currentCoroutine == null)
-            currentCoroutine = StartCoroutine(InitBackground());
-        // }
+            currentCoroutine = StartCoroutine(InitBackgroundMusic());
     }
 
-    IEnumerator InitBackground()
+    // ─────────────────────────────────────────────────────────────────────────
+    //  SFX
+    // ─────────────────────────────────────────────────────────────────────────
+
+    /// <summary>Reproduce un SFX por tipo.</summary>
+    public void CallSFX(SFXType sfxType)
     {
-        // backgroundSource.loop = false;
-        // backgroundSource.clip = background_MainLevel_Clip;
-        // backgroundSource.Play();
-        //
-        // yield return new WaitUntil(() => !backgroundSource.isPlaying);
-        yield return null;
+        switch (sfxType)
+        {
+            case SFXType.Player_Jump:
+                jump_Clip.CallSFX();
+                jump_Clip.SetPitch(Random.Range(0.8f, 1.2f));
+                break;
+            case SFXType.Player_Hurt:
+                hurt_Clip.CallSFX();
+                hurt_Clip.SetPitch(Random.Range(0.8f, 1.2f));
+                break;
+            case SFXType.Player_Death:
+                deathEffect_Player_Clip.CallSFX();
+                deathEffect_Player_Clip.SetPitch(Random.Range(0.8f, 1.2f));
+                break;
+            case SFXType.Player_Pickup_Health:
+                pickup_health_clip.CallSFX();
+                pickup_health_clip.SetPitch(1f);
+                break;
+            case SFXType.Enemy_Death:
+                deathEffect_Enemy_Clip.CallSFX();
+                deathEffect_Enemy_Clip.SetPitch(Random.Range(0.8f, 1.2f));
+                break;
+            case SFXType.Boss_Hit:
+                bossHit_Clip.CallSFX();
+                bossHit_Clip.SetPitch(1f);
+                break;
+            case SFXType.Boss_Impact:
+                bossImpact_Clip.CallSFX();
+                bossImpact_Clip.SetPitch(1f);
+                break;
+            case SFXType.Boss_Shoot:
+                bossShoot_Clip.CallSFX();
+                bossShoot_Clip.SetPitch(1f);
+                break;
+            case SFXType.Level_Selected:
+                levelSelected_Clip.CallSFX();
+                levelSelected_Clip.SetPitch(1f);
+                break;
+            case SFXType.Map_Movement:
+                mapMovement_Clip.CallSFX();
+                mapMovement_Clip.SetPitch(1f);
+                break;
+            case SFXType.Warp_Jingle:
+                warpJingle_Clip.CallSFX();
+                warpJingle_Clip.SetPitch(1f);
+                break;
+            case SFXType.Smash_Impact:
+                smashImpact_Clip.CallSFX();
+                smashImpact_Clip.SetPitch(1f);
+                break;
+        }
+    }
+
+    /// <summary>Reproduce el SFX de gema con pitch creciente (combo).</summary>
+    public void CallSFX_Gems()
+    {
+        pickup_gem_clip.SetPitch(gemPitch);
+        pickup_gem_clip.CallSFX();
+
+        gemPitch = Mathf.Min(gemPitch + GemPitchStep, GemPitchMax);
+        ComboManager._instance?.RunTimer();
+    }
+
+    /// <summary>Reinicia el pitch del combo de gemas al valor inicial.</summary>
+    public void ResetPitch()
+    {
+        gemPitch = GemPitchStart;
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    //  Música de fondo
+    // ─────────────────────────────────────────────────────────────────────────
+
+    private IEnumerator InitBackgroundMusic()
+    {
+        yield return null; // esperar un frame para que la escena termine de cargar
+
         if (SceneUtils.IsInGameplay())
-        {
-            print("Gameplay");
             backgroundSource.clip = background_MainLevel_Clip;
-        }
         else if (SceneUtils.IsInTitleScreen())
-        {
             backgroundSource.clip = background_TitleScreen_Clip;
-        }
         else
-        {
-            print("Selection");
             backgroundSource.clip = background_LevelSelect_Clip;
-        }
-        
-        backgroundSource.Play();
+
         backgroundSource.loop = true;
+        backgroundSource.Play();
         currentCoroutine = null;
     }
 
-    public void PlayBackgroundSource(bool _end)
+    /// <summary>Cambia a la música de victoria o fin de juego con fade.</summary>
+    public void PlayBackgroundSource(bool isGameComplete)
     {
-        // Make a fade effect
-         if (currentCoroutine == null)
-             currentCoroutine = StartCoroutine(BackgroundFadeEffect(_end));
-            
-        // AudioClip tempClip = _end ? background_GameComplete_Clip : background_LevelVictory_Clip;
-        //
-        // if (!_end)
-        //     backgroundSource.loop = false;
-        // backgroundSource.clip = tempClip;
-        // backgroundSource.Play();
+        if (currentCoroutine == null)
+            currentCoroutine = StartCoroutine(FadeToVictoryMusic(isGameComplete));
     }
 
-    #region In case of changes
-
-    IEnumerator BackgroundFadeEffect(bool _end)
+    private IEnumerator FadeToVictoryMusic(bool isGameComplete)
     {
-        float i = 0;
-        // float maxValue = _end ? .5f : .4f;
-        
-        float maxValue = .4f;
-        AudioClip tempClip = _end ? background_GameComplete_Clip : background_LevelVictory_Clip;
-
-        background2Source.loop = _end;
-        background2Source.clip = tempClip;
+        AudioClip clip = isGameComplete ? background_GameComplete_Clip : background_LevelVictory_Clip;
+        background2Source.loop = isGameComplete;
+        background2Source.clip = clip;
         background2Source.Play();
-        
-        while (i < maxValue)
+
+        float t = 0f;
+        while (t < 0.4f)
         {
-            backgroundSource.volume = .5f - i;
-            i += Time.deltaTime;
+            backgroundSource.volume = 0.5f - t;
+            t += Time.deltaTime;
             yield return null;
         }
-
         currentCoroutine = null;
     }
 
+    /// <summary>Transiciona a la música del boss con fade.</summary>
     public void PlayBossBackground()
     {
         if (currentCoroutine == null)
-            currentCoroutine = StartCoroutine(BackgroundBoss_FadeEffect());
+            currentCoroutine = StartCoroutine(FadeToBossMusic());
     }
-    
-    IEnumerator BackgroundBoss_FadeEffect()
-    {
-        float i = 0;
-        // float maxValue = _end ? .5f : .4f;
-        
-        float maxValue = .5f;
-        AudioClip tempClip = background_BossBattle_Clip;
 
+    private IEnumerator FadeToBossMusic()
+    {
         background3Source.loop = true;
-        background3Source.clip = tempClip;
+        background3Source.clip = background_BossBattle_Clip;
         background3Source.Play();
-        
-        while (i < maxValue)
+
+        float t = 0f;
+        while (t < 0.5f)
         {
-            backgroundSource.volume = .5f - i;
-            i += Time.deltaTime;
+            backgroundSource.volume = 0.5f - t;
+            t += Time.deltaTime;
             yield return null;
         }
-
         currentCoroutine = null;
     }
 
+    /// <summary>Regresa a la música del nivel principal con fade.</summary>
     public void StopBossBackground()
     {
         if (currentCoroutine == null)
-            currentCoroutine = StartCoroutine(BackgroundLevel_FadeEffect());
+            currentCoroutine = StartCoroutine(FadeFromBossMusic());
     }
-    
-    IEnumerator BackgroundLevel_FadeEffect()
-    {
-        float i = 0;
-        // float maxValue = _end ? .5f : .4f;
-        
-        float maxValue = .5f;
-        AudioClip tempClip = background_MainLevel_Clip;
 
+    private IEnumerator FadeFromBossMusic()
+    {
         backgroundSource.loop = true;
-        backgroundSource.clip = tempClip;
+        backgroundSource.clip = background_MainLevel_Clip;
         backgroundSource.Play();
-        
-        while (i < maxValue)
+
+        float t = 0f;
+        while (t < 0.5f)
         {
-            background3Source.volume = .5f - i;
-            backgroundSource.volume = i*2;
-            i += Time.deltaTime;
+            background3Source.volume = 0.5f - t;
+            backgroundSource.volume  = t * 2f;
+            t += Time.deltaTime;
             yield return null;
         }
-
         currentCoroutine = null;
     }
-    
-    #endregion
-    
-    
-    private void CheckButton_Music()
-    {
-        if (PlayerPrefs.GetInt("MusicLevel") > .5f)
-            musicButton.sprite = musicOn;
-        else
-            musicButton.sprite = musicOff;
 
-        // musicButton.sprite = SaveDataManager._instance.gameData.musicLevel ? musicOn : musicOff;
-    }
-
-    private void CheckButton_SFX()
-    {
-        if (PlayerPrefs.GetInt("SFXLevel") > .5f)
-            sfxButton.sprite = sfxOn;
-        else
-            sfxButton.sprite = sfxOff;
-
-        // sfxButton.sprite = SaveDataManager._instance.gameData.sfxLevel ? sfxOn : sfxOff;
-    }
+    // ─────────────────────────────────────────────────────────────────────────
+    //  Configuración de volumen (toggling)
+    // ─────────────────────────────────────────────────────────────────────────
 
     public void SetBackgroundMusicVolume()
     {
         isMusicOn = !isMusicOn;
-        var _soundLevel = 0.0001f;
-        if (isMusicOn)
-            _soundLevel = 1;
-        mixer.SetFloat("MusicVol", Mathf.Log10(_soundLevel) * 20);
-
-        // SaveDataManager._instance.gameData.musicLevel = isMusicOn;
-        // SaveDataManager._instance.SaveData();
-        var value = isMusicOn ? 1 : 0;
-        PlayerPrefs.SetInt("MusicLevel", value);
-        CheckButton_Music();
+        ApplyMusicVolume();
+        SaveManager.Instance?.SaveMusicEnabled(isMusicOn);
+        RefreshAudioButtons();
     }
 
     public void SetBSFXMusicVolume()
     {
         isSFXOn = !isSFXOn;
-        var _soundLevel = 0.0001f;
-        if (isSFXOn)
-            _soundLevel = 1;
-        mixer.SetFloat("SFXVol", Mathf.Log10(_soundLevel) * 20);
-
-        // SaveDataManager._instance.gameData.sfxLevel = isSFXOn;
-        // SaveDataManager._instance.SaveData();
-        var value = isSFXOn ? 1 : 0;
-        PlayerPrefs.SetInt("SFXLevel", value);
-        CheckButton_SFX();
+        ApplySFXVolume();
+        SaveManager.Instance?.SaveSFXEnabled(isSFXOn);
+        RefreshAudioButtons();
     }
 
-    private void CheckSFXValue()
+    // ─────────────────────────────────────────────────────────────────────────
+    //  Helpers privados
+    // ─────────────────────────────────────────────────────────────────────────
+
+    private void ApplyMusicVolume()
     {
-        var _soundLevel = 0.0001f;
-        if (isSFXOn)
-            _soundLevel = 1;
-        mixer.SetFloat("SFXVol", Mathf.Log10(_soundLevel) * 20);
+        float level = isMusicOn ? 1f : 0.0001f;
+        mixer.SetFloat("MusicVol", Mathf.Log10(level) * 20f);
     }
 
-    private void CheckBackgroundValue()
+    private void ApplySFXVolume()
     {
-        var _soundLevel = 0.0001f;
-        if (isMusicOn)
-            _soundLevel = 1;
-        mixer.SetFloat("MusicVol", Mathf.Log10(_soundLevel) * 20);
+        float level = isSFXOn ? 1f : 0.0001f;
+        mixer.SetFloat("SFXVol", Mathf.Log10(level) * 20f);
     }
 
-
-    // public void CallButtonClick(int clickSound)
-    // {
-    //     AudioClip clip = null;
-    //     switch (clickSound)
-    //     {
-    //         case 0:
-    //             clip = click_1_Clip;
-    //             break;
-    //         case 1:
-    //             clip = click_2_Clip;
-    //             break;
-    //     }
-    //     
-    //     sfxSource.PlayOneShot(clip);
-    // }
-    
-    // public void CallButtonClick()
-    // {
-    //     AudioClip clip = null;
-    //     int tempRand = Random.Range(0, 2);
-    //     switch (tempRand)
-    //     {
-    //         case 0:
-    //             clip = click_1_Clip;
-    //             break;
-    //         case 1:
-    //             clip = click_2_Clip;
-    //             break;
-    //     }
-    //     
-    //     sfxSource.PlayOneShot(clip);
-    // }
-
-    // public void SuccessSound()
-    // {
-    //     sfxSource.PlayOneShot(success_Clip);
-    // }
-    //
-    // public void FailSound()
-    // {
-    //     sfxSource.PlayOneShot(fail_Clip);
-    // }
-    
-    #region Not Used
-
-    public void SetBackgroundMusicVolume(float _soundLevel)
+    private void RefreshAudioButtons()
     {
-        print(_soundLevel);
-        mixer.SetFloat("MusicVol", Mathf.Log10(_soundLevel) * 20);
-        CheckButton_Music();
+        if (musicButton != null)
+            musicButton.sprite = isMusicOn ? musicOn : musicOff;
+        if (sfxButton != null)
+            sfxButton.sprite = isSFXOn ? sfxOn : sfxOff;
     }
-
-    public void SetBSFXMusicVolume(float _soundLevel)
-    {
-        print(_soundLevel);
-        mixer.SetFloat("SFXVol", Mathf.Log10(_soundLevel) * 20);
-        CheckButton_SFX();
-    }
-
-    #endregion
 }

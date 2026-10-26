@@ -2,259 +2,222 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Registra eventos de gameplay para análisis.
+///
+/// BACKEND: usa Unity Analytics (compilación condicional UNITY_ANALYTICS).
+/// DEBUG:   loguea en consola cuando enableDebugLogs = true.
+/// FALLBACK: ya NO guarda en PlayerPrefs para evitar acumulación indefinida.
+///           Si se necesita persistencia local de eventos, implementar
+///           un sistema de cola con límite de entradas.
+/// </summary>
 public class AnalyticsManager : MonoBehaviour
 {
     public static AnalyticsManager Instance { get; private set; }
 
-    [Header("Session Data")]
-    [SerializeField] private string sessionId;
-    [SerializeField] private DateTime sessionStartTime;
-    
-    [Header("Current Level Data")]
-    [SerializeField] private int currentLevelNumber;
-    [SerializeField] private int deathsInCurrentLevel;
-    [SerializeField] private int checkpointsReachedInCurrentLevel;
-    [SerializeField] private float levelStartTime;
-    
-    [Header("Debug Mode")]
+    [Header("Configuración")]
     [SerializeField] private bool enableDebugLogs = true;
-    
+
+    // Estado de sesión
+    private string sessionId;
+    private DateTime sessionStartTime;
+
+    // Estado del nivel actual
+    private int currentLevelNumber;
+    private int deathsInCurrentLevel;
+    private int checkpointsReachedInCurrentLevel;
+    private float levelStartTime;
+
     private Dictionary<string, object> sessionData = new Dictionary<string, object>();
-    
+
+    // ─────────────────────────────────────────────────────────────────────────
+    //  Ciclo de vida
+    // ─────────────────────────────────────────────────────────────────────────
+
     private void Awake()
     {
-        if (Instance == null)
-        {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-            InitializeSession();
-        }
-        else
+        if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
+            return;
         }
+
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
+        InitializeSession();
     }
 
     private void InitializeSession()
     {
-        sessionId = System.Guid.NewGuid().ToString();
+        sessionId        = Guid.NewGuid().ToString();
         sessionStartTime = DateTime.Now;
-        
-        sessionData["session_id"] = sessionId;
-        sessionData["device_model"] = SystemInfo.deviceModel;
-        sessionData["device_type"] = SystemInfo.deviceType.ToString();
+
+        sessionData["session_id"]       = sessionId;
+        sessionData["device_model"]     = SystemInfo.deviceModel;
+        sessionData["device_type"]      = SystemInfo.deviceType.ToString();
         sessionData["operating_system"] = SystemInfo.operatingSystem;
-        sessionData["unity_version"] = Application.unityVersion;
-        sessionData["game_version"] = Application.version;
-        sessionData["platform"] = Application.platform.ToString();
-        sessionData["is_mobile"] = Application.isMobilePlatform;
-        
-        LogDebug("Analytics Session Initialized", sessionData);
-    }
+        sessionData["game_version"]     = Application.version;
+        sessionData["platform"]         = Application.platform.ToString();
+        sessionData["is_mobile"]        = Application.isMobilePlatform;
 
-    public void TrackLevelStart(int levelNumber)
-    {
-        currentLevelNumber = levelNumber;
-        deathsInCurrentLevel = 0;
-        checkpointsReachedInCurrentLevel = 0;
-        levelStartTime = Time.time;
-        
-        var eventData = new Dictionary<string, object>
-        {
-            { "level_number", levelNumber },
-            { "timestamp", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") },
-            { "session_id", sessionId }
-        };
-        
-        LogDebug($"Level {levelNumber} Started", eventData);
-        SendAnalyticsEvent("level_start", eventData);
-    }
-
-    public void TrackLevelComplete(int levelNumber, float completionTime, int gemsCollected)
-    {
-        var eventData = new Dictionary<string, object>
-        {
-            { "level_number", levelNumber },
-            { "completion_time", completionTime },
-            { "gems_collected", gemsCollected },
-            { "deaths", deathsInCurrentLevel },
-            { "checkpoints_used", checkpointsReachedInCurrentLevel },
-            { "timestamp", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") },
-            { "session_id", sessionId }
-        };
-        
-        LogDebug($"Level {levelNumber} Completed", eventData);
-        SendAnalyticsEvent("level_complete", eventData);
-        
-        ResetLevelStats();
-    }
-
-    public void TrackPlayerDeath(int levelNumber, Vector2 position, string cause)
-    {
-        deathsInCurrentLevel++;
-        
-        var eventData = new Dictionary<string, object>
-        {
-            { "level_number", levelNumber },
-            { "death_count", deathsInCurrentLevel },
-            { "position_x", position.x },
-            { "position_y", position.y },
-            { "cause_of_death", cause },
-            { "time_alive", Time.time - levelStartTime },
-            { "timestamp", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") },
-            { "session_id", sessionId }
-        };
-        
-        LogDebug($"Player Death #{deathsInCurrentLevel} in Level {levelNumber}", eventData);
-        SendAnalyticsEvent("player_death", eventData);
-    }
-
-    public void TrackCheckpointReached(int levelNumber, int checkpointIndex)
-    {
-        checkpointsReachedInCurrentLevel++;
-        
-        var eventData = new Dictionary<string, object>
-        {
-            { "level_number", levelNumber },
-            { "checkpoint_index", checkpointIndex },
-            { "time_to_checkpoint", Time.time - levelStartTime },
-            { "timestamp", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") },
-            { "session_id", sessionId }
-        };
-        
-        LogDebug($"Checkpoint {checkpointIndex} Reached in Level {levelNumber}", eventData);
-        SendAnalyticsEvent("checkpoint_reached", eventData);
-    }
-
-    public void TrackGemCollected(int levelNumber, int totalGemsCollected)
-    {
-        var eventData = new Dictionary<string, object>
-        {
-            { "level_number", levelNumber },
-            { "gems_collected", totalGemsCollected },
-            { "timestamp", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") },
-            { "session_id", sessionId }
-        };
-        
-        LogDebug($"Gem Collected (Total: {totalGemsCollected})", eventData);
-        SendAnalyticsEvent("gem_collected", eventData);
-    }
-
-    public void TrackEnemyKilled(int levelNumber, string enemyType)
-    {
-        var eventData = new Dictionary<string, object>
-        {
-            { "level_number", levelNumber },
-            { "enemy_type", enemyType },
-            { "timestamp", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") },
-            { "session_id", sessionId }
-        };
-        
-        LogDebug($"Enemy Killed: {enemyType}", eventData);
-        SendAnalyticsEvent("enemy_killed", eventData);
-    }
-
-    public void TrackLevelAbandoned(int levelNumber, float timeSpent)
-    {
-        var eventData = new Dictionary<string, object>
-        {
-            { "level_number", levelNumber },
-            { "time_spent", timeSpent },
-            { "deaths_before_quit", deathsInCurrentLevel },
-            { "timestamp", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") },
-            { "session_id", sessionId }
-        };
-        
-        LogDebug($"Level {levelNumber} Abandoned", eventData);
-        SendAnalyticsEvent("level_abandoned", eventData);
-        
-        ResetLevelStats();
-    }
-
-    private void SendAnalyticsEvent(string eventName, Dictionary<string, object> eventData)
-    {
-        #if UNITY_ANALYTICS || UNITY_CLOUD_BUILD
-        try
-        {
-            Analytics.CustomEvent(eventName, eventData);
-        }
-        catch (Exception e)
-        {
-            Debug.LogWarning($"Analytics event '{eventName}' could not be sent: {e.Message}");
-        }
-        #endif
-        
-        SaveAnalyticsToPlayerPrefs(eventName, eventData);
-    }
-
-    private void SaveAnalyticsToPlayerPrefs(string eventName, Dictionary<string, object> eventData)
-    {
-        string key = $"Analytics_{eventName}_{DateTime.Now:yyyyMMdd_HHmmss}";
-        string jsonData = JsonUtility.ToJson(new AnalyticsEventWrapper(eventName, eventData));
-        PlayerPrefs.SetString(key, jsonData);
-        PlayerPrefs.Save();
-    }
-
-    private void LogDebug(string message, Dictionary<string, object> data)
-    {
-        if (!enableDebugLogs) return;
-        
-        string dataString = "{\n";
-        foreach (var kvp in data)
-        {
-            dataString += $"  {kvp.Key}: {kvp.Value}\n";
-        }
-        dataString += "}";
-        
-        Debug.Log($"<color=cyan>[ANALYTICS]</color> {message}\n{dataString}");
-    }
-
-    private void ResetLevelStats()
-    {
-        currentLevelNumber = 0;
-        deathsInCurrentLevel = 0;
-        checkpointsReachedInCurrentLevel = 0;
-        levelStartTime = 0f;
-    }
-
-    public int GetDeathsInCurrentLevel()
-    {
-        return deathsInCurrentLevel;
-    }
-
-    public int GetCheckpointsReachedInCurrentLevel()
-    {
-        return checkpointsReachedInCurrentLevel;
+        LogDebug("Session initialized", sessionData);
     }
 
     private void OnApplicationQuit()
     {
         if (currentLevelNumber > 0)
-        {
             TrackLevelAbandoned(currentLevelNumber, Time.time - levelStartTime);
-        }
-        
-        var sessionEndData = new Dictionary<string, object>
-        {
-            { "session_duration", (DateTime.Now - sessionStartTime).TotalMinutes },
-            { "timestamp", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") },
-            { "session_id", sessionId }
-        };
-        
-        LogDebug("Session Ended", sessionEndData);
-        SendAnalyticsEvent("session_end", sessionEndData);
-    }
-}
 
-[Serializable]
-public class AnalyticsEventWrapper
-{
-    public string eventName;
-    public string eventDataJson;
-    
-    public AnalyticsEventWrapper(string name, Dictionary<string, object> data)
+        var data = new Dictionary<string, object>
+        {
+            { "session_duration_minutes", (DateTime.Now - sessionStartTime).TotalMinutes },
+            { "session_id", sessionId },
+            { "timestamp", Timestamp() }
+        };
+        LogDebug("Session ended", data);
+        SendEvent("session_end", data);
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    //  Eventos de tracking
+    // ─────────────────────────────────────────────────────────────────────────
+
+    public void TrackLevelStart(int levelNumber)
     {
-        eventName = name;
-        eventDataJson = JsonUtility.ToJson(data);
+        currentLevelNumber              = levelNumber;
+        deathsInCurrentLevel            = 0;
+        checkpointsReachedInCurrentLevel = 0;
+        levelStartTime                  = Time.time;
+
+        var data = BuildData(levelNumber);
+        LogDebug($"Level {levelNumber} started", data);
+        SendEvent("level_start", data);
+    }
+
+    public void TrackLevelComplete(int levelNumber, float completionTime, int gemsCollected)
+    {
+        var data = BuildData(levelNumber);
+        data["completion_time"] = completionTime;
+        data["gems_collected"]  = gemsCollected;
+        data["deaths"]          = deathsInCurrentLevel;
+        data["checkpoints"]     = checkpointsReachedInCurrentLevel;
+
+        LogDebug($"Level {levelNumber} completed in {completionTime:F1}s", data);
+        SendEvent("level_complete", data);
+        ResetLevelState();
+    }
+
+    public void TrackPlayerDeath(int levelNumber, Vector2 position, string cause)
+    {
+        deathsInCurrentLevel++;
+        var data = BuildData(levelNumber);
+        data["death_count"]  = deathsInCurrentLevel;
+        data["position_x"]   = position.x;
+        data["position_y"]   = position.y;
+        data["cause"]        = cause;
+        data["time_alive"]   = Time.time - levelStartTime;
+
+        LogDebug($"Player death #{deathsInCurrentLevel} (cause: {cause})", data);
+        SendEvent("player_death", data);
+    }
+
+    public void TrackCheckpointReached(int levelNumber, int checkpointIndex)
+    {
+        checkpointsReachedInCurrentLevel++;
+        var data = BuildData(levelNumber);
+        data["checkpoint_index"]   = checkpointIndex;
+        data["time_to_checkpoint"] = Time.time - levelStartTime;
+
+        LogDebug($"Checkpoint {checkpointIndex} reached", data);
+        SendEvent("checkpoint_reached", data);
+    }
+
+    public void TrackGemCollected(int levelNumber, int totalGems)
+    {
+        var data = BuildData(levelNumber);
+        data["total_gems"] = totalGems;
+
+        LogDebug($"Gem collected (total: {totalGems})", data);
+        SendEvent("gem_collected", data);
+    }
+
+    public void TrackEnemyKilled(int levelNumber, string enemyType)
+    {
+        var data = BuildData(levelNumber);
+        data["enemy_type"] = enemyType;
+
+        LogDebug($"Enemy killed: {enemyType}", data);
+        SendEvent("enemy_killed", data);
+    }
+
+    public void TrackLevelAbandoned(int levelNumber, float timeSpent)
+    {
+        var data = BuildData(levelNumber);
+        data["time_spent"]           = timeSpent;
+        data["deaths_before_quit"]   = deathsInCurrentLevel;
+
+        LogDebug($"Level {levelNumber} abandoned after {timeSpent:F1}s", data);
+        SendEvent("level_abandoned", data);
+        ResetLevelState();
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    //  Getters de estado
+    // ─────────────────────────────────────────────────────────────────────────
+
+    public int GetDeathsInCurrentLevel()             => deathsInCurrentLevel;
+    public int GetCheckpointsReachedInCurrentLevel() => checkpointsReachedInCurrentLevel;
+
+    // ─────────────────────────────────────────────────────────────────────────
+    //  Helpers privados
+    // ─────────────────────────────────────────────────────────────────────────
+
+    private void SendEvent(string eventName, Dictionary<string, object> data)
+    {
+#if UNITY_ANALYTICS
+        try
+        {
+            Unity.Services.Analytics.AnalyticsService.Instance.CustomData(eventName, data);
+        }
+        catch (Exception e)
+        {
+            Debug.LogWarning($"[AnalyticsManager] No se pudo enviar evento '{eventName}': {e.Message}");
+        }
+#endif
+        // Sin guardado en PlayerPrefs — eliminado para evitar acumulación ilimitada de claves.
+    }
+
+    private Dictionary<string, object> BuildData(int levelNumber)
+    {
+        return new Dictionary<string, object>
+        {
+            { "level_number", levelNumber },
+            { "session_id",   sessionId },
+            { "timestamp",    Timestamp() }
+        };
+    }
+
+    private void ResetLevelState()
+    {
+        currentLevelNumber              = 0;
+        deathsInCurrentLevel            = 0;
+        checkpointsReachedInCurrentLevel = 0;
+        levelStartTime                  = 0f;
+    }
+
+    private string Timestamp() => DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+
+    private void LogDebug(string message, Dictionary<string, object> data)
+    {
+        if (!enableDebugLogs) return;
+
+        var sb = new System.Text.StringBuilder();
+        sb.AppendLine($"<color=cyan>[ANALYTICS]</color> {message}");
+        sb.Append("{");
+        foreach (var kvp in data)
+            sb.Append($" {kvp.Key}: {kvp.Value},");
+        sb.Append(" }");
+
+        Debug.Log(sb.ToString());
     }
 }

@@ -1,18 +1,23 @@
 ﻿using UnityEngine;
 
+/// <summary>
+/// Controlador del jugador en la pantalla de selección de niveles.
+/// Navega entre MapPoints con el InputManager y proporciona feedback
+/// visual (Select/Deselect en MapPoint) y sonoro.
+/// </summary>
 public class LSPlayerController : MonoBehaviour
 {
     public MapPoint currentPoint;
     public float moveSpeed = 10f;
-    
+
     [Header("Input Settings")]
     [Tooltip("Tiempo mínimo entre movimientos (en segundos)")]
     public float inputCooldown = 0.3f;
-    
+
     private bool hasProcessedInput = false;
     private float cooldownTimer = 0f;
     private Vector2 previousMoveInput;
-    
+
     private void OnEnable()
     {
         if (InputManager.Instance != null)
@@ -31,129 +36,115 @@ public class LSPlayerController : MonoBehaviour
         }
     }
 
-    public void SetCurrentPoint(MapPoint _currentMapPoint)
+    public void SetCurrentPoint(MapPoint newPoint)
     {
-        currentPoint = _currentMapPoint;
+        // Deseleccionar el punto anterior si había uno
+        if (currentPoint != null)
+            currentPoint.Deselect();
+
+        currentPoint = newPoint;
         transform.position = currentPoint.transform.position;
+        currentPoint.Select();
     }
-    
-    void Update()
+
+    private void Update()
     {
-        transform.position = Vector3.MoveTowards(transform.position, currentPoint.transform.position,
+        transform.position = Vector3.MoveTowards(
+            transform.position,
+            currentPoint.transform.position,
             moveSpeed * Time.deltaTime);
 
         float currentDistance = Vector3.Distance(transform.position, currentPoint.transform.position);
-        
+
+        // Actualizar cooldown
         if (cooldownTimer > 0)
-        {
             cooldownTimer -= Time.deltaTime;
-        }
         else
-        {
             hasProcessedInput = false;
-        }
-        
-        if (currentDistance < .025f)
+
+        // Procesar navegación solo al estar cerca del nodo
+        if (currentDistance < 0.025f)
         {
             HandleNavigation();
-            
+
+            // Mostrar panel de info solo cuando estamos exactamente sobre el nodo
             if (currentDistance <= 0.01f)
             {
                 if (currentPoint.isLevel && !currentPoint.isLocked)
-                {
                     UI_SelectController._instance.Turn_On_Off(true);
-                    UI_SelectController._instance.RenderLevelData(currentPoint);
-                }
             }
         }
     }
 
-    void HandleNavigation()
+    private void HandleNavigation()
     {
-        if (InputManager.Instance == null)
-            return;
+        if (InputManager.Instance == null) return;
 
         Vector2 moveInput = InputManager.Instance.MoveInput;
-        
+
         if (moveInput.magnitude < 0.1f)
         {
             previousMoveInput = Vector2.zero;
             return;
         }
-        
-        if (hasProcessedInput || cooldownTimer > 0)
-            return;
 
-        bool inputChanged = Vector2.Dot(moveInput.normalized, previousMoveInput.normalized) < 0.9f;
-        
+        if (hasProcessedInput || cooldownTimer > 0) return;
+
+        MapPoint nextPoint = null;
+
         if (moveInput.x > 0.5f)
-        {
-            if (currentPoint.right != null)
-            {
-                SetNextPoint(currentPoint.right);
-                hasProcessedInput = true;
-                cooldownTimer = inputCooldown;
-                previousMoveInput = moveInput;
-            }
-        }
+            nextPoint = currentPoint.right;
         else if (moveInput.x < -0.5f)
-        {
-            if (currentPoint.left != null)
-            {
-                SetNextPoint(currentPoint.left);
-                hasProcessedInput = true;
-                cooldownTimer = inputCooldown;
-                previousMoveInput = moveInput;
-            }
-        }
+            nextPoint = currentPoint.left;
         else if (moveInput.y > 0.5f)
-        {
-            if (currentPoint.up != null)
-            {
-                SetNextPoint(currentPoint.up);
-                hasProcessedInput = true;
-                cooldownTimer = inputCooldown;
-                previousMoveInput = moveInput;
-            }
-        }
+            nextPoint = currentPoint.up;
         else if (moveInput.y < -0.5f)
+            nextPoint = currentPoint.down;
+
+        if (nextPoint != null)
         {
-            if (currentPoint.down != null)
-            {
-                SetNextPoint(currentPoint.down);
-                hasProcessedInput = true;
-                cooldownTimer = inputCooldown;
-                previousMoveInput = moveInput;
-            }
+            SetNextPoint(nextPoint);
+            hasProcessedInput = true;
+            cooldownTimer = inputCooldown;
+            previousMoveInput = moveInput;
         }
     }
 
-    void HandleLevelSelect()
+    private void HandleLevelSelect()
     {
-        if (currentPoint == null)
-            return;
-            
-        float currentDistance = Vector3.Distance(transform.position, currentPoint.transform.position);
-        
-        if (currentDistance <= 0.01f)
+        if (currentPoint == null) return;
+
+        float dist = Vector3.Distance(transform.position, currentPoint.transform.position);
+        if (dist > 0.01f) return;
+
+        if (currentPoint.isLevel && !currentPoint.isLocked)
         {
-            if (currentPoint.isLevel && !currentPoint.isLocked)
-            {
-                Debug.Log($"Selecting level: {currentPoint.currentLevel}");
-                LevelSelectManager._instance.Loading_GameplayScene(currentPoint.currentLevel);
-            }
-            else
-            {
-                Debug.Log($"Cannot select: isLevel={currentPoint.isLevel}, isLocked={currentPoint.isLocked}");
-            }
+            AudioMixerManager._instance.CallSFX(SFXType.Level_Selected);
+            LevelSelectManager._instance.Loading_GameplayScene(currentPoint.currentLevel);
+        }
+        else if (currentPoint.isLocked)
+        {
+            // Feedback sonoro de nivel bloqueado (usa Warp_Jingle como sonido de "no disponible")
+            // Cuando tengamos un SFX dedicado, reemplazar aquí.
+            AudioMixerManager._instance.CallSFX(SFXType.Warp_Jingle);
+            Debug.Log($"[LSPlayerController] Nivel bloqueado: {currentPoint.levelName}");
         }
     }
 
-    void SetNextPoint(MapPoint nextPoint)
+    private void SetNextPoint(MapPoint nextPoint)
     {
-        currentPoint = nextPoint;
+        // Deseleccionar el punto actual
+        currentPoint.Deselect();
+
+        // Ocultar panel de info
         UI_SelectController._instance.Turn_On_Off(false);
+
+        // Reproducir sonido de navegación
         AudioMixerManager._instance.CallSFX(SFXType.Map_Movement);
-        Debug.Log($"Moving to point: {nextPoint.name}");
+
+        currentPoint = nextPoint;
+        currentPoint.Select();
+
+        Debug.Log($"[LSPlayerController] Navegando a: {nextPoint.name}");
     }
 }

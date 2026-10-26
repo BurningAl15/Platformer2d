@@ -1,73 +1,69 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Lee el progreso guardado (vía SaveManager) y configura el estado
+/// de cada MapPoint al cargar la pantalla de selección de niveles.
+/// </summary>
 public class MapPointsHolder : MonoBehaviour
 {
-    //Here we save the lock or unlock of levels
     [SerializeField] private List<MapPoint> _mapPoints = new List<MapPoint>();
-
-    //Set the current position of the player too
     [SerializeField] private LSPlayerController player;
-
-    private int mapIndex;
-    [SerializeField] private MapPoint currentMapPoint;
-
     [SerializeField] private int worldNumber;
-    
-    void Start()
+
+    private void Start()
     {
-        if (PlayerPrefs.HasKey("Level_1"))
-        {
-            for (int i = 1; i < _mapPoints.Count; i++)
-            {
-                int j = i + 1;
-                _mapPoints[i].isLocked = PlayerPrefs.GetInt(StringUtils.Get_Level(j)) != 1;
-            }
-
-            for (int i = 0; i < _mapPoints.Count; i++)
-            {
-                int j = i + 1;
-                _mapPoints[i].gemsCollected = PlayerPrefs.GetInt(StringUtils.Get_GemsInLevel(j));
-                _mapPoints[i].CheckGems();
-            }
-            for (int i = 0; i < _mapPoints.Count; i++)
-            {
-                int j = i + 1;
-                _mapPoints[i].bestTime = PlayerPrefs.GetFloat(StringUtils.Get_TimeInLevel(j));
-                _mapPoints[i].CheckTime();
-            }
-
-            mapIndex = PlayerPrefs.GetInt(StringUtils.playerPref_mapIndex) <= 0
-                ? 0
-                : PlayerPrefs.GetInt(StringUtils.playerPref_mapIndex);
-            currentMapPoint = _mapPoints[mapIndex];
-        }
-        else
-        {
-            // for (int i = 0; i < _mapPoints.Count; i++)
-            // {
-            //     int j = i + 1;
-            //     // string _name = "World_" + worldNumber + "Level_" + j;
-            //     PlayerPrefs.SetInt(StringUtils.Get_Level(j), 0);
-            // }
-            // for (int i = 0; i < _mapPoints.Count; i++)
-            // {
-            //     int j = i + 1;
-            //     PlayerPrefs.SetInt(StringUtils.Get_GemsInLevel(j), 0);
-            // }
-            // for (int i = 0; i < _mapPoints.Count; i++)
-            // {
-            //     int j = i + 1;
-            //     PlayerPrefs.SetInt(StringUtils.Get_TimeInLevel(j), 0);
-            // }
-            //
-            // PlayerPrefs.Save();
-            
-            mapIndex = 0;
-            currentMapPoint = _mapPoints[mapIndex];
-        }
-        player.SetCurrentPoint(currentMapPoint);
+        ConfigureMapPoints();
+        PositionPlayer();
     }
-    
-    //When finish level then check current level and unlock next
+
+    private void ConfigureMapPoints()
+    {
+        bool hasSaveData = SaveManager.Instance != null
+            ? SaveManager.Instance.HasSaveData()
+            : PlayerPrefs.HasKey("Level_1");
+
+        if (!hasSaveData) return;
+
+        for (int i = 0; i < _mapPoints.Count; i++)
+        {
+            int levelNumber = i + 1;
+
+            // Estado de bloqueo (el primer nivel siempre está desbloqueado)
+            if (i > 0)
+            {
+                _mapPoints[i].isLocked = SaveManager.Instance != null
+                    ? !SaveManager.Instance.IsLevelUnlocked(levelNumber)
+                    : PlayerPrefs.GetInt(StringUtils.Get_Level(levelNumber), 0) != 1;
+            }
+
+            // Gemas recolectadas
+            _mapPoints[i].gemsCollected = SaveManager.Instance != null
+                ? SaveManager.Instance.LoadGems(levelNumber)
+                : PlayerPrefs.GetInt(StringUtils.Get_GemsInLevel(levelNumber), 0);
+            _mapPoints[i].CheckGems();
+
+            // Mejor tiempo
+            _mapPoints[i].bestTime = SaveManager.Instance != null
+                ? SaveManager.Instance.LoadBestTime(levelNumber)
+                : PlayerPrefs.GetFloat(StringUtils.Get_TimeInLevel(levelNumber), 99999f);
+            _mapPoints[i].CheckTime();
+
+            // Trébol 🍀
+            _mapPoints[i].hasTrebol = SaveManager.Instance != null
+                ? SaveManager.Instance.HasTrebol(levelNumber)
+                : PlayerPrefs.GetInt($"Trebol_Level_{levelNumber}", 0) == 1;
+            _mapPoints[i].CheckTrebol();
+        }
+    }
+
+    private void PositionPlayer()
+    {
+        int mapIndex = SaveManager.Instance != null
+            ? SaveManager.Instance.LoadMapIndex()
+            : Mathf.Max(0, PlayerPrefs.GetInt(StringUtils.playerPref_mapIndex, 0));
+
+        mapIndex = Mathf.Clamp(mapIndex, 0, _mapPoints.Count - 1);
+        player.SetCurrentPoint(_mapPoints[mapIndex]);
+    }
 }
