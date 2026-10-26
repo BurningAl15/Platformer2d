@@ -14,8 +14,8 @@
 | 0 | Estabilización | ✅ Código listo — pendiente pasos en Unity Editor |
 | 1 | Controles (mobile + gamepad) | ✅ Código listo — pendiente pasos en Unity Editor |
 | 2 | Refactorización de arquitectura | ✅ Código listo — pendiente pasos en Unity Editor |
-| 3 | Economía (vidas, gemas, tréboles, dados) | ✅ Código completo — pendiente asignación de assets en Inspector |
-| 4 | Monetización (Ads) | 🔲 No iniciada (Ad simulado funcional en Game Over) |
+| 3 | Economía (vidas, gemas, tréboles, dados) | ✅ Código completo — `SceneElementSetup.cs` automatiza el setup en Unity Editor |
+| 4 | Monetización (Ads) | 🔲 No iniciada — ad simulado funcional en `GameOverController` |
 | 5 | Builds automáticos (Android / iOS) | ✅ Código listo (`BuildAutomation.cs`) |
 | 6 | Expansión de contenido (múltiples mundos) | 🔲 No iniciada |
 
@@ -120,15 +120,16 @@
 - ✅ `MapPointsHolder.cs` — carga trébol desde `SaveManager` por nivel
 - ✅ `LevelRatingSystem.cs` — Singleton, `GetStarStates()`, integrado al fin de nivel
 
-### ⚠️ Pendiente — HACER EN UNITY EDITOR (no requiere código)
+### ⚠️ Pendiente — HACER EN UNITY EDITOR
 
-- [ ] **`AppBootstrap`:** Verificar que `LivesManager` se agrega automáticamente al abrir en Unity
-- [ ] **Panel Game Over:** Crear en Canvas de gameplay. Asignar `GameOverController` con: `panelGroup`, `panelRect`, 4 botones (`watchAdButton`, `spendGemsButton`, `useTrebolButton`, `returnToMapButton`), textos (`gemCostText`, `currentGemsText`, `trebolAvailableText`), `firstSelectedButton`
-- [ ] **Pantalla del dado:** Agregar `DiceRollController` a un Canvas de gameplay. Asignar: `panelGroup`, `panelRect`, `diceNumberText`, `diceStatusText`, `trebolAvailableText`, `rollButton`, `stopButton`, `upgradeWithTrebolButton`, `closeButton`
-- [ ] **`UIController`:** Asignar en Inspector: `livesText`, `trebolCountText`, `starImages` (3 imágenes), `starFull`, `starEmpty`
-- [ ] **`MapPoint`:** Asignar `trebolBadge` (GameObject del ícono 🍀, desactivado por defecto) en cada MapPoint de `LevelSelection`
-- [ ] **Niveles:** Colocar prefab `TrebolPickup` en cada nivel (en lugar de difícil acceso)
-- [ ] **Niveles:** Colocar prefab `DiceFragmentPickup` en zonas secretas (cuando estén diseñadas)
+**La mayoría se puede hacer automáticamente con `SceneElementSetup.cs`:**
+En Unity, ir a menú `CustomEditorTools → Setup Missing Scene Elements & Placeholders`.
+Esto crea y conecta: `AppBootstrap`, `SceneTransitionManager`, paneles de Game Over y Dado, textos de HUD, badges de trébol en MapPoints y coloca un `TrebolPickup` en cada nivel.
+
+**Lo que el script NO hace y hay que hacer manualmente:**
+- [ ] Asignar sprites de estrellas en `UIController` (`starFull`, `starEmpty`, `starImages`) — **bloqueado hasta assets de Antigravity**
+- [ ] Ajustar la posición del `TrebolPickup` en cada nivel (el setup lo coloca cerca del Goal como placeholder — debe moverse a un lugar que requiera exploración)
+- [ ] Crear prefab `DiceFragmentPickup` y colocarlo en zonas secretas cuando estén diseñadas
 
 ### 🎨 Pendiente para ANTIGRAVITY (assets visuales — el código está listo y esperando)
 

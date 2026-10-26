@@ -117,10 +117,17 @@ Toda la documentación del proyecto vive en la carpeta `.kiro/`:
 | 0 | Estabilización (transiciones, singletons, DOTween, mapa) | ✅ Código listo |
 | 1 | Controles (mobile on-screen + gamepad físico) | ✅ Código listo |
 | 2 | Refactorización (SaveManager, limpieza God Classes) | ✅ Código listo |
-| 3 | Economía (vidas, estrellas, Game Over, dado — parcial) | ⚠️ Parcial — pendientes de diseño y assets |
-| 4 | Monetización (Ads — rewarded en Game Over) | 🔲 No iniciada |
-| 5 | Builds automáticos (Android AAB + iOS Xcode) | 🔲 No iniciada |
+| 3 | Economía (vidas, estrellas, trébol, dado de vidas) | ✅ Código completo |
+| 4 | Monetización (Ads — rewarded en Game Over) | 🔲 No iniciada — ad simulado funcional |
+| 5 | Builds automáticos (Android AAB + iOS Xcode) | ✅ Código listo |
 | 6 | Expansión de contenido (múltiples mundos) | 🔲 No iniciada |
+
+### Herramientas de editor disponibles (`CustomEditorTools` en Unity)
+- `Setup Missing Scene Elements & Placeholders` — configura automáticamente toda la UI, prefabs y escenas
+- `Builds → Build Android APK` — genera APK para testing
+- `Builds → Build Android AAB` — genera bundle para Google Play
+- `Builds → Build iOS` — genera proyecto Xcode
+- `Get Gems in Level` — cuenta gemas en la escena abierta
 
 ---
 
@@ -153,10 +160,13 @@ Lo siguiente requiere **assets visuales** antes de poder implementarse en pantal
 
 Ver `.kiro/handoff.md` para la lista completa. Los más críticos:
 
-1. Crear GameObject `AppBootstrap` en escena `MainMenu` con el componente `AppBootstrap`
-2. Crear GameObject `SceneTransitionManager` en escena `MainMenu` con el componente `SceneTransitionManager`
-3. En controles on-screen: agregar `OnScreenStick` al joystick (Control Path: `<Gamepad>/leftStick`) y `OnScreenButton` al botón de salto (Control Path: `<Gamepad>/buttonSouth`)
-4. En `AudioMixerManager`: reasignar `pickup_health_clip` (renombrado desde `pickup_helth_clip`)
+1. **Ejecutar setup automático:** En Unity, ir a `CustomEditorTools → Setup Missing Scene Elements & Placeholders`. Esto configura automáticamente: `AppBootstrap`, `SceneTransitionManager`, paneles de Game Over y Dado, HUD de vidas y tréboles, badges en `MapPoint`, y `TrebolPickup` en cada nivel.
+
+2. **Controles on-screen:** Agregar `OnScreenStick` al joystick (Control Path: `<Gamepad>/leftStick`) y `OnScreenButton` al botón de salto (Control Path: `<Gamepad>/buttonSouth`).
+
+3. **En `AudioMixerManager`:** Reasignar `pickup_health_clip` (renombrado desde `pickup_helth_clip`).
+
+4. **Assets pendientes de Antigravity:** Sprites de estrella, trébol, fragmento de dado y tipos de dado. Ver sección "Pendiente para Antigravity" arriba.
 
 ---
 
