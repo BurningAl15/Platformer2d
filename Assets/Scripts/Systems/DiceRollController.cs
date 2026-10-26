@@ -45,6 +45,7 @@ public class DiceRollController : MonoBehaviour
     private DiceType currentDiceType = DiceType.Normal;
     private bool isRolling = false;
     private Coroutine rollRoutine;
+    private int lastRollResult = 1;
 
     private void Awake()
     {
@@ -67,10 +68,35 @@ public class DiceRollController : MonoBehaviour
         }
     }
 
+    private void Start()
+    {
+        if (rollButton != null) rollButton.onClick.AddListener(OnRollPressed);
+        if (stopButton != null) stopButton.onClick.AddListener(OnStopPressed);
+        if (upgradeWithTrebolButton != null) upgradeWithTrebolButton.onClick.AddListener(OnUpgradeWithTrebolPressed);
+        if (closeButton != null) closeButton.onClick.AddListener(OnClosePressed);
+    }
+
+    private System.Action<int> onGameOverComplete;
+
     public void Show(DiceType startingType = DiceType.Normal)
     {
-        currentDiceType = startingType;
-        isRolling = false;
+        ShowInternal(startingType, null);
+    }
+
+    /// <summary>
+    /// Muestra el dado desde el Game Over. Al cerrarse, llama onComplete con las vidas ganadas
+    /// y respawnea al jugador en lugar de ir al mapa.
+    /// </summary>
+    public void ShowFromGameOver(DiceType startingType, System.Action<int> onComplete)
+    {
+        ShowInternal(startingType, onComplete);
+    }
+
+    private void ShowInternal(DiceType startingType, System.Action<int> onComplete)
+    {
+        currentDiceType   = startingType;
+        isRolling         = false;
+        onGameOverComplete = onComplete;
 
         RefreshUI();
 
@@ -152,6 +178,16 @@ public class DiceRollController : MonoBehaviour
     public void OnClosePressed()
     {
         Hide();
+        if (onGameOverComplete != null)
+        {
+            var cb = onGameOverComplete;
+            onGameOverComplete = null;
+            cb.Invoke(lastRollResult);
+        }
+        else
+        {
+            SceneUtils.ToSelectionScene();
+        }
     }
 
     private IEnumerator RollSequence()
@@ -176,6 +212,7 @@ public class DiceRollController : MonoBehaviour
 
         isRolling = false;
         int finalResult = GetRandomValueForType(currentDiceType);
+        lastRollResult = finalResult;
 
         if (diceNumberText != null)
         {

@@ -146,15 +146,28 @@ public class LevelManager : MonoBehaviour
         FadeEffect._instance.Fade_Out();
 
         // Guardar progreso (delegado a SaveManager)
-        SaveProgress();
+        LevelRating rating = SaveProgress();
 
         yield return new WaitUntil(() => FadeEffect._instance.endFade);
         yield return new WaitForSeconds(0.25f);
 
+        // Si recolectó todas las gemas → mostrar pantalla del dado antes de ir al mapa
+        bool allGemsCollected = totalGemsInLevel > 0 && gemsCollected >= totalGemsInLevel;
+        if (allGemsCollected && DiceRollController.Instance != null)
+        {
+            FadeEffect._instance.Fade_In();
+            yield return new WaitUntil(() => FadeEffect._instance.endFade);
+            DiceRollController.Instance.Show(DiceType.Normal);
+            // El flujo continúa cuando DiceRollController llame SceneUtils.ToSelectionScene()
+            // via su botón "Continuar". El LevelManager cede el control aquí.
+            currentCoroutine = null;
+            yield break;
+        }
+
         SceneUtils.ToSelectionScene();
     }
 
-    private void SaveProgress()
+    private LevelRating SaveProgress()
     {
         int levelNumber = SceneUtils.Get_CurrentLevelName();
 
@@ -162,18 +175,17 @@ public class LevelManager : MonoBehaviour
         if (SaveManager.Instance != null)
             SaveManager.Instance.UnlockNextLevel(levelNumber);
 
+        LevelRating rating = LevelRating.OneStar;
+
         // Guardar gemas y tiempo solo en niveles reales (no el nivel 0 que es el tutorial)
         if (levelNumber > 0 && SaveManager.Instance != null)
         {
             SaveManager.Instance.SaveGemsIfBetter(levelNumber, gemsCollected);
             SaveManager.Instance.SaveTimeIfBetter(levelNumber, timeInLevel);
-
-            // Acumular gemas al wallet global
             SaveManager.Instance.AddGlobalGems(gemsCollected);
         }
 
         // Calcular y guardar rating de estrellas
-        LevelRating rating = LevelRating.OneStar;
         if (LevelRatingSystem._instance != null)
         {
             var req = new LevelRatingSystem.LevelRequirements
@@ -187,13 +199,12 @@ public class LevelManager : MonoBehaviour
             SaveManager.Instance?.SaveRatingIfBetter(levelNumber, (int)rating);
         }
 
-        // Mostrar estrellas en UI
         UIController._instance?.ShowLevelRating(rating);
 
         // Analíticas
         if (levelNumber > 0 && AnalyticsManager.Instance != null)
-        {
             AnalyticsManager.Instance.TrackLevelComplete(levelNumber, timeInLevel, gemsCollected);
-        }
+
+        return rating;
     }
 }

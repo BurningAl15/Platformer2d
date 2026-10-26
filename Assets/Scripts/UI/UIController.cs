@@ -184,16 +184,7 @@ public class UIController : MonoBehaviour
         gemsGlobalText.text = SaveManager.Instance.LoadGlobalGems().ToString();
     }
 
-    /// <summary>Refresca el contador de tréboles en el HUD.</summary>
-    public void RefreshTrebolUI()
-    {
-        if (livesText == null || SaveManager.Instance == null) return;
-        // livesText se comparte con el contador de tréboles si no hay campo separado.
-        // Cuando Antigravity entregue el asset, agregar un campo trebolCountText independiente.
-        // Por ahora se actualiza solo si el campo de vidas tiene un sibling para tréboles.
-    }
-
-    /// <summary>Refresca el texto de tréboles acumulados.</summary>
+    /// <summary>Refresca el contador de tréboles acumulados en el HUD.</summary>
     public void RefreshTrebolUI()
     {
         if (trebolCountText == null || SaveManager.Instance == null) return;

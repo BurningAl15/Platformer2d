@@ -54,6 +54,18 @@ public class GameOverController : MonoBehaviour
         HideInstant();
     }
 
+    private void Start()
+    {
+        if (watchAdButton != null)
+            watchAdButton.onClick.AddListener(OnWatchAdPressed);
+        if (useTrebolButton != null)
+            useTrebolButton.onClick.AddListener(OnUseTrebolPressed);
+        if (spendGemsButton != null)
+            spendGemsButton.onClick.AddListener(OnSpendGemsPressed);
+        if (returnToMapButton != null)
+            returnToMapButton.onClick.AddListener(OnReturnToMapPressed);
+    }
+
     private void OnEnable()
     {
         if (LivesManager.Instance != null)
@@ -165,7 +177,7 @@ public class GameOverController : MonoBehaviour
     }
 
     /// <summary>
-    /// Botón "Gastar Trébol" — gasta 1 trébol, lanza dado mejorado (2-6 o 3-5) y continúa.
+    /// Botón "Gastar Trébol" — gasta 1 trébol, abre la pantalla del dado mejorado y continúa.
     /// </summary>
     public void OnUseTrebolPressed()
     {
@@ -173,17 +185,30 @@ public class GameOverController : MonoBehaviour
 
         if (SaveManager.Instance.SpendTrebol())
         {
-            // Tirada de dado mejorado (3-5 ó 2-6) según el GDD
-            int livesWon = UnityEngine.Random.value > 0.5f
-                ? UnityEngine.Random.Range(3, 6)
-                : UnityEngine.Random.Range(2, 7);
+            // Ocultar el Game Over y pasar al DiceRollController con dado mejorado
+            // El tipo es aleatorio entre Upgraded_3_5 y Upgraded_2_6 (GDD)
+            DiceType upgradedType = UnityEngine.Random.value > 0.5f
+                ? DiceType.Upgraded_3_5
+                : DiceType.Upgraded_2_6;
 
-            SaveManager.Instance.AddLives(livesWon);
+            HideInstant();
+            Time.timeScale = 1f;
+            InputManager.Instance?.EnablePlayerInput();
 
-            if (AudioMixerManager._instance != null)
-                AudioMixerManager._instance.CallSFX(SFXType.Player_Pickup_Health);
-
-            ContinueGame();
+            if (DiceRollController.Instance != null)
+            {
+                // El DiceRollController en modo Game Over otorga vidas y luego respawnea
+                DiceRollController.Instance.ShowFromGameOver(upgradedType, OnDiceGameOverComplete);
+            }
+            else
+            {
+                // Fallback si no hay DiceRollController: dar vidas directamente
+                int livesWon = UnityEngine.Random.value > 0.5f
+                    ? UnityEngine.Random.Range(3, 6)
+                    : UnityEngine.Random.Range(2, 7);
+                SaveManager.Instance.AddLives(livesWon);
+                ContinueGame();
+            }
         }
         else
         {
@@ -191,6 +216,11 @@ public class GameOverController : MonoBehaviour
                 useTrebolButton.transform.DOShakePosition(0.3f, 8f, 20).SetUpdate(true);
             RefreshEconomyUI();
         }
+    }
+
+    private void OnDiceGameOverComplete(int livesWon)
+    {
+        ContinueGame();
     }
 
     /// <summary>
