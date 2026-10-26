@@ -19,7 +19,9 @@ public class SaveManager : MonoBehaviour
     private const string KEY_GLOBAL_GEMS = "GlobalGems";
     private const string KEY_LIVES       = "PlayerLives";
     private const int    DEFAULT_LIVES   = 3;
-    private const int    MAX_LIVES       = 9;
+    // GDD: "sin límite máximo de vidas acumuladas"
+    // Se mantiene un tope de seguridad alto (999) solo para evitar desbordamientos de PlayerPrefs.
+    private const int    MAX_LIVES       = 999;
 
     // Clave de IAP NoAds (gestionada por RevenueCatManager; solo se lee aquí)
     private const string KEY_NO_ADS = "IAP_NoAds_Purchased";
@@ -135,7 +137,7 @@ public class SaveManager : MonoBehaviour
     //  Economía: Vidas
     // ───────────────────────────────────────────────
 
-    /// <summary>Vidas disponibles del jugador. Siempre entre 0 y MAX_LIVES.</summary>
+    /// <summary>Vidas disponibles del jugador. Mínimo 0, sin límite práctico (GDD).</summary>
     public int LoadLives()
         => PlayerPrefs.GetInt(KEY_LIVES, DEFAULT_LIVES);
 
@@ -154,7 +156,7 @@ public class SaveManager : MonoBehaviour
         return lives;
     }
 
-    /// <summary>Agrega vidas (ej. desde un rewarded ad). No supera MAX_LIVES.</summary>
+    /// <summary>Agrega vidas (ej. desde un rewarded ad o dado de vidas). Sin límite máximo práctico.</summary>
     public void AddLives(int amount)
     {
         int lives = Mathf.Min(MAX_LIVES, LoadLives() + amount);

@@ -226,6 +226,14 @@ public class DiceRollController : MonoBehaviour
             SaveManager.Instance.AddLives(finalResult);
         }
 
+        // Dado Secreto: además de vidas, otorga 1 corazón extra temporal (GDD sección 7)
+        if (currentDiceType == DiceType.Secret && PlayerHealth._instance != null)
+        {
+            PlayerHealth._instance.AddBonusHeart();
+            if (diceStatusText != null)
+                diceStatusText.text = $"¡Ganaste +{finalResult} vidas y +1 ❤️ extra!";
+        }
+
         // Notificar cambio de vidas a LivesManager para que dispare OnLivesChanged
         if (LivesManager.Instance != null)
             LivesManager.Instance.NotifyLivesChanged();

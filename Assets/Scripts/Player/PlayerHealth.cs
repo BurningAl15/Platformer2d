@@ -23,6 +23,11 @@ public class PlayerHealth : MonoBehaviour
     [SerializeField] private GameObject deathEffect;
 
     [SerializeField] private StompBox stompBox;
+
+    // ─────────────────────────────────────────────────────────────────────────
+    //  Corazones bonus (Dado Secreto 🎲)
+    // ─────────────────────────────────────────────────────────────────────────
+    private int bonusHearts = 0;
     
     void Awake()
     {
@@ -153,6 +158,50 @@ public class PlayerHealth : MonoBehaviour
         gameObject.SetActive(true);
         AudioMixerManager._instance.CallSFX(SFXType.Warp_Jingle);
     }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    //  Corazones bonus — otorgados por el Dado Secreto
+    // ─────────────────────────────────────────────────────────────────────────
+
+    /// <summary>
+    /// Agrega 1 corazón bonus temporal (aumenta maxHealth por esta sesión).
+    /// Efecto del Dado Secreto según el GDD.
+    /// </summary>
+    public void AddBonusHeart()
+    {
+        bonusHearts++;
+        maxHealth += 2; // 1 corazón = 2 unidades de salud (mitades)
+        CureDamage();   // Llenar la nueva salud máxima
+        UIController._instance?.ResetHearts();
+    }
+
+    /// <summary>
+    /// Quita 1 corazón bonus. Usado al iniciar una nueva partida o Game Over.
+    /// </summary>
+    public void RemoveBonusHeart()
+    {
+        if (bonusHearts <= 0) return;
+        bonusHearts--;
+        maxHealth = Mathf.Max(maxHealth - 2, 2); // mínimo 1 corazón base
+        currentHealth = Mathf.Min(currentHealth, maxHealth);
+        UIController._instance?.ResetHearts();
+    }
+
+    /// <summary>
+    /// Resetea todos los corazones bonus (al iniciar nueva partida o Game Over definitivo).
+    /// </summary>
+    public void ResetBonusHearts()
+    {
+        if (bonusHearts <= 0) return;
+        maxHealth -= bonusHearts * 2;
+        maxHealth = Mathf.Max(maxHealth, 2);
+        bonusHearts = 0;
+        currentHealth = Mathf.Min(currentHealth, maxHealth);
+        UIController._instance?.ResetHearts();
+    }
+
+    /// <summary>Retorna cuántos corazones bonus están activos.</summary>
+    public int GetBonusHearts() => bonusHearts;
 
     IEnumerator BlinkEffect()
     {

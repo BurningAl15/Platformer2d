@@ -123,8 +123,9 @@ Volver al mapa
 
 ### Efecto al lanzar el Dado Secreto
 - **Vidas:** rango premium (4-6) — mayor que el dado mejorado
-- **Corazón extra:** +1 corazón de salud máximo (temporal, hasta fin de sesión)
+- **Corazón extra:** +1 corazón de salud máximo temporal (hasta volver al mapa o Game Over definitivo)
 - El corazón extra es acumulable con múltiples dados secretos
+- Implementado en `PlayerHealth.AddBonusHeart()` / `ResetBonusHearts()`
 
 ### Diseño de zonas secretas *(pendiente — no implementado en niveles)*
 - Paredes falsas atravesables
@@ -311,6 +312,7 @@ El código está listo y esperando. Solo faltan los assets:
 | Trébol — persistencia | `SaveManager.HasTrebol()` etc. | ✅ |
 | Fragmento de Dado | `DiceFragmentPickup.cs` | ✅ |
 | Dado de vidas — UI | `DiceRollController.cs` | ✅ (falta assets Antigravity) |
+| Corazón extra (Dado Secreto) | `PlayerHealth.AddBonusHeart()` | ✅ |
 | HUD | `UIController.cs` | ⚠️ Falta asignar campos en Inspector |
 | MapPoint badge trébol | `MapPoint.trebolBadge` | ⚠️ Falta asignar sprite en Inspector |
 | Múltiples mundos | `WorldData.cs`, `WorldProgressManager.cs` | ✅ |

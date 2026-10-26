@@ -130,6 +130,7 @@ Esto crea y conecta: `AppBootstrap`, `SceneTransitionManager`, paneles de Game O
 - [ ] Asignar sprites de estrellas en `UIController` (`starFull`, `starEmpty`, `starImages`) — **bloqueado hasta assets de Antigravity**
 - [ ] Ajustar la posición del `TrebolPickup` en cada nivel (el setup lo coloca cerca del Goal como placeholder — debe moverse a un lugar que requiera exploración)
 - [ ] Crear prefab `DiceFragmentPickup` y colocarlo en zonas secretas cuando estén diseñadas
+- [ ] Ícono/animación del corazón extra cuando se activa el Dado Secreto (efecto visual temporal en HUD)
 
 ### 🎨 Pendiente para ANTIGRAVITY (assets visuales — el código está listo y esperando)
 

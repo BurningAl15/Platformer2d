@@ -253,6 +253,10 @@ public class GameOverController : MonoBehaviour
         if (SaveManager.Instance != null)
             SaveManager.Instance.SaveLives(SaveManager.Instance.GetDefaultLives());
 
+        // Resetear corazones bonus al salir al mapa (son temporales por sesión)
+        if (PlayerHealth._instance != null)
+            PlayerHealth._instance.ResetBonusHearts();
+
         Time.timeScale = 1f;
         InputManager.Instance?.EnablePlayerInput();
         HideInstant();
