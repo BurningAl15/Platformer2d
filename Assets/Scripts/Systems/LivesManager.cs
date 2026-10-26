@@ -112,4 +112,14 @@ public class LivesManager : MonoBehaviour
 
     public int GetGemCostPerLife() => gemCostPerLife;
     public int GetLivesPerAd()     => livesPerAd;
+
+    /// <summary>
+    /// Dispara OnLivesChanged manualmente (ej. después de que SaveManager agrega vidas
+    /// desde el dado o desde un ad).
+    /// </summary>
+    public void NotifyLivesChanged()
+    {
+        int lives = SaveManager.Instance != null ? SaveManager.Instance.LoadLives() : 0;
+        OnLivesChanged?.Invoke(lives);
+    }
 }

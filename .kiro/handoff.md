@@ -105,46 +105,42 @@
 
 ---
 
-## FASE 3 — Economía del juego
+## FASE 3 — Economía del juego ✅ CÓDIGO COMPLETO
 
 ### Lo que se hizo (código)
-- ✅ `LivesManager.cs` — nuevo en `Assets/Scripts/Systems/`. Vidas globales con eventos `OnGameOver` / `OnLivesChanged`.
-- ✅ `GameOverController.cs` — nuevo en `Assets/Scripts/UI/`. Pantalla de Game Over con 3 opciones (ad / gemas / mapa). Ad simulado hasta Fase 4.
-- ✅ `SaveManager.cs` — extendido con gemas globales, vidas, rating por nivel.
-- ✅ `LevelManager.cs` — `RespawnPlayer()` consulta `LivesManager` antes de respawnear. `SaveProgress()` acumula gemas globales y calcula/guarda rating.
-- ✅ `LevelRatingSystem.cs` — ahora tiene Singleton y `GetStarStates()` para UI.
-- ✅ `UIController.cs` — nuevos campos para vidas, gemas globales y estrellas. Método `ShowLevelRating()`.
-- ✅ `AppBootstrap.cs` — `[RequireComponent(typeof(LivesManager))]` agregado.
+- ✅ `LivesManager.cs` — vidas globales con `OnGameOver` / `OnLivesChanged` / `NotifyLivesChanged()`
+- ✅ `GameOverController.cs` — 4 opciones: Ad (simulado) / Trébol+Dado / Volver al mapa
+- ✅ `TrebolPickup.cs` — coleccionable trébol persistente por nivel
+- ✅ `DiceFragmentPickup.cs` — fragmento de dado secreto por mundo
+- ✅ `DiceRollController.cs` — dado animado 4 tipos (Normal 1-3, Mejorado A 3-5, B 2-6, Secreto 4-6). Dos modos: fin de nivel (→ mapa) y Game Over (→ respawn)
+- ✅ `SaveManager.cs` — tréboles, fragmentos, rating, vidas, gemas globales
+- ✅ `LevelManager.cs` — auto-detecta total de gemas, conecta dado al fin de nivel con 10/10 gemas
+- ✅ `UIController.cs` — gemas `X/Total`, tréboles, vidas, estrellas. Bug `RefreshTrebolUI` duplicado corregido
+- ✅ `MapPoint.cs` — campo `hasTrebol` + `trebolBadge` + `CheckTrebol()`
+- ✅ `MapPointsHolder.cs` — carga trébol desde `SaveManager` por nivel
+- ✅ `LevelRatingSystem.cs` — Singleton, `GetStarStates()`, integrado al fin de nivel
 
-### ⚠️ Pendiente — HACER EN UNITY EDITOR
+### ⚠️ Pendiente — HACER EN UNITY EDITOR (no requiere código)
 
-- [ ] Verificar que `LivesManager` se agrega automáticamente al GameObject de `AppBootstrap`.
-- [ ] **Crear panel de Game Over** en la escena de gameplay con el script `GameOverController`. Asignar: `panelGroup`, `panelRect`, 3 botones (Ad / Gemas / Mapa), `gemCostText`, `currentGemsText`, `firstSelectedButton`.
-- [ ] Asignar `gemsGlobalText`, `livesText` en `UIController` (textos opcionales del HUD).
-- [ ] Crear sprites de estrella llena/vacía. Asignarlos en `UIController` (`starFull`, `starEmpty`, `starImages`).
-- [ ] Agregar `LevelRatingSystem` a algún GameObject de la escena de gameplay.
+- [ ] **`AppBootstrap`:** Verificar que `LivesManager` se agrega automáticamente al abrir en Unity
+- [ ] **Panel Game Over:** Crear en Canvas de gameplay. Asignar `GameOverController` con: `panelGroup`, `panelRect`, 4 botones (`watchAdButton`, `spendGemsButton`, `useTrebolButton`, `returnToMapButton`), textos (`gemCostText`, `currentGemsText`, `trebolAvailableText`), `firstSelectedButton`
+- [ ] **Pantalla del dado:** Agregar `DiceRollController` a un Canvas de gameplay. Asignar: `panelGroup`, `panelRect`, `diceNumberText`, `diceStatusText`, `trebolAvailableText`, `rollButton`, `stopButton`, `upgradeWithTrebolButton`, `closeButton`
+- [ ] **`UIController`:** Asignar en Inspector: `livesText`, `trebolCountText`, `starImages` (3 imágenes), `starFull`, `starEmpty`
+- [ ] **`MapPoint`:** Asignar `trebolBadge` (GameObject del ícono 🍀, desactivado por defecto) en cada MapPoint de `LevelSelection`
+- [ ] **Niveles:** Colocar prefab `TrebolPickup` en cada nivel (en lugar de difícil acceso)
+- [ ] **Niveles:** Colocar prefab `DiceFragmentPickup` en zonas secretas (cuando estén diseñadas)
 
-### 🎯 Decisiones de diseño resueltas (ver GDD completo en `.kiro/game-design-document.md`)
-- ✅ Gemas: solo métrica de rendimiento — no son currency, no se acumulan globalmente
-- ✅ 10/10 gemas en un nivel → activa pantalla del dado de vidas
-- ✅ Vidas: 3 por defecto, sin límite máximo, reset a 3 al volver al mapa tras Game Over
-- ✅ Game Over con trébol → lanzar dado mejorado → continuar desde donde murió
-- ✅ Game Over sin trébol → ver ad (1-2 vidas) ó volver al mapa (reset a 3, reiniciar nivel)
-- ✅ Trébol 🍀: 1 por nivel, persiste permanentemente, gasta 1 para mejorar dado
-- ✅ Dado Normal: 1-3 vidas
-- ✅ Dado Mejorado: aleatorio entre 3-5 ó 2-6 (el tipo se determina al gastar el trébol)
-- ✅ Dado Secreto: ~3 fragmentos por mundo en zonas secretas, ensambla dado premium + corazón extra
-- ✅ No hay límite de tréboles ni de vidas acumuladas
+### 🎨 Pendiente para ANTIGRAVITY (assets visuales — el código está listo y esperando)
 
-### ✅ Implementado (continuación Fase 3)
-
-- [x] **Nuevo coleccionable `Trébol`** — `TrebolPickup.cs` con persistencia en `SaveManager`: `HasTrebol(int level)`, `SetTrebolCollected(int level)`, `LoadTotalTrebols()`, `SpendTrebol()`. Badge `trebolBadge` en `MapPoint.cs`. Verificación y carga en `MapPointsHolder.cs`.
-- [x] **Nuevo coleccionable `Fragmento de Dado Secreto`** — `DiceFragmentPickup.cs`. Contador de fragmentos por mundo en `SaveManager`: `HasDiceFragment()`, `SetDiceFragmentCollected()`, `GetDiceFragmentsCount()`, `IsSecretDiceUnlocked()`.
-- [x] **Pantalla del dado** — `DiceRollController.cs`: animación de números girando con DOTween, botón de parar, lógica de dados (Normal 1-3, Mejorados 3-5 ó 2-6, Secreto 4-6), tirada y premio de vidas.
-- [x] **HUD:** `trebolCountText` en `UIController.cs`. Método `RefreshTrebolUI()`.
-- [x] **MapPoint:** campo `hasTrebol` y badge visual 🍀 (`trebolBadge`). Carga desde `SaveManager` en `MapPointsHolder.cs`.
-- [x] **Gemas HUD:** Formato `X / Total` en lugar de solo `X`. `LevelManager.cs` auto-detecta `totalGemsInLevel` al iniciar buscando Pickups de gema y lo pasa a UI y cálculo de estrellas.
-- [x] **GameOverController:** Agregada opción de gastar trébol (`OnUseTrebolPressed()`). Conectado con `SaveManager` y tirada de dado mejorado.
+- [ ] Sprite del Trébol 🍀: normal, translúcido "ya obtenido", efecto de recolección diferente a la gema
+- [ ] Sprite del Fragmento de Dado 🎲 (en nivel y en HUD/inventario)
+- [ ] Sprites de los 3 tipos de dado (Normal, Mejorado, Secreto) con distinción visual
+- [ ] Animación de números girando en la pantalla del dado
+- [ ] Layout visual del panel del dado (fondo, celebración de resultado)
+- [ ] Layout visual del panel de Game Over (4 botones claramente diferenciados)
+- [ ] Sprites de estrella llena / vacía (para `UIController.starFull` y `starEmpty`)
+- [ ] Badge del trébol para `MapPoint` en el mapa de selección
+- [ ] HUD actualizado con slots visuales de vidas y tréboles
 
 ---
 

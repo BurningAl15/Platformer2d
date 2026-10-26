@@ -1,143 +1,123 @@
-# Fase 3 — Economía del juego: Reporte de cambios
+# Fase 3 — Economía del juego: Reporte de cambios (COMPLETO)
 
-**Fecha:** 25/10/2026  
+**Fecha:** 26/10/2026
 **Depende de:** Fase 0, 1 y 2 completadas.
 
 ---
 
 ## Resumen ejecutivo
 
-Se implementó la economía completa del juego:
-1. **Sistema de vidas global** — persiste entre niveles, se consume al morir.
-2. **Wallet de gemas globales** — se acumula al completar niveles.
-3. **Pantalla de Game Over** — con opciones de continuar (ad simulado / gemas / volver al mapa).
-4. **Sistema de estrellas integrado** — `LevelRatingSystem` ahora se llama al fin de nivel.
-5. **UIController ampliado** — HUD de vidas, gemas globales y estrellas.
+Sistema de economía completo implementado:
+1. **Vidas globales** — 3 por defecto, persist entre niveles, Game Over al agotar
+2. **Game Over con 3 opciones** — ad (simulado), trébol+dado, volver al mapa
+3. **Trébol 🍀** — 1 por nivel, persiste permanentemente, mejora el dado
+4. **Fragmento de Dado Secreto 🎲** — en zonas secretas, se ensambla por mundo
+5. **DiceRollController** — dado animado con 4 tipos (Normal/Mejorado A-B/Secreto)
+6. **Estrellas por nivel** — integradas al fin de nivel y al `MapPoint`
+7. **HUD completo** — gemas `X/Total`, vidas, tréboles
 
 ---
 
 ## Archivos creados
 
-### `Assets/Scripts/Systems/LivesManager.cs` (NUEVO)
-**Qué hace:** Singleton con DontDestroyOnLoad. Gestiona vidas globales del jugador.
+### `Assets/Scripts/Systems/LivesManager.cs`
+Singleton con DontDestroyOnLoad. Vidas globales. Eventos `OnGameOver` / `OnLivesChanged`.
+Métodos: `ConsumeLifeAndCheck()`, `AddLivesFromAd()`, `SpendGemsForLife()`, `CanAffordLife()`, `NotifyLivesChanged()`.
 
-**API:**
-```csharp
-LivesManager.Instance.CurrentLives                   // vidas actuales
-LivesManager.Instance.ConsumeLifeAndCheck()          // consume vida → retorna true si puede continuar
-LivesManager.Instance.AddLivesFromAd()               // +2 vidas (rewarded ad)
-LivesManager.Instance.SpendGemsForLife()             // gasta gemas → +1 vida
-LivesManager.Instance.CanAffordLife()                // ¿tiene gemas suficientes?
-event OnGameOver                                     // disparado cuando vidas = 0
-event OnLivesChanged(int)                            // disparado al cambiar vidas
-```
+### `Assets/Scripts/UI/GameOverController.cs`
+Pantalla Game Over con slide DOTween. 3 opciones:
+- Ad (simulado, TODO Fase 4)
+- Trébol → `DiceRollController.ShowFromGameOver()` → respawn tras tirada
+- Volver al mapa → reset a 3 vidas
 
-**Configuración en Inspector:**
-- `gemCostPerLife` = 10 (ajustar según diseño)
-- `livesPerAd` = 2 (ajustar según diseño)
+### `Assets/Scripts/Environment/Interactables/TrebolPickup.cs`
+Coleccionable trébol. Aparece translúcido si ya fue recogido. Llama `SaveManager.SetTrebolCollected()` y `UIController.RefreshTrebolUI()`.
 
-**⚠️ Acción requerida en Unity:** `AppBootstrap` ahora tiene `[RequireComponent(typeof(LivesManager))]`. Se agrega automáticamente.
+### `Assets/Scripts/Environment/Interactables/DiceFragmentPickup.cs`
+Coleccionable fragmento de dado secreto. Cuenta fragmentos por mundo en `SaveManager`. Aparece translúcido si ya fue recogido.
 
----
+### `Assets/Scripts/Systems/DiceRollController.cs`
+Controlador de la pantalla del dado. Animación de números girando con `WaitForSecondsRealtime`. Botón de parar. Dos modos:
+- `Show()` → desde fin de nivel → al cerrar va al mapa
+- `ShowFromGameOver(type, callback)` → desde Game Over → al cerrar llama callback y respawnea
 
-### `Assets/Scripts/UI/GameOverController.cs` (NUEVO)
-**Qué hace:** Pantalla de Game Over con animación DOTween slide in/out.
-
-**Opciones al jugador:**
-1. "Ver Ad" → `LivesManager.AddLivesFromAd()` → continuar. *(Ad simulado — real en Fase 4)*
-2. "Usar gemas" → `LivesManager.SpendGemsForLife()` → continuar. El botón se deshabilita si no hay gemas suficientes.
-3. "Volver al mapa" → resetea vidas al valor por defecto → carga `LevelSelection`.
-
-**⚠️ Acción requerida en Unity:**
-- Crear un Canvas/CanvasGroup en la escena de gameplay con el panel de Game Over.
-- Agregar este script al panel.
-- Asignar en Inspector: `panelGroup`, `panelRect`, 3 botones, `gemCostText`, `currentGemsText`.
-- El panel debe empezar con `alpha = 0`, `interactable = false`.
-- `firstSelectedButton` debe apuntar al botón de "Ver Ad" para accesibilidad con gamepad.
+### `Assets/Scripts/Data/SaveManager.cs` (extendido)
+Secciones nuevas: vidas, gemas globales, rating de estrellas, tréboles, fragmentos de dado secreto.
+API de tréboles: `HasTrebol()`, `SetTrebolCollected()`, `LoadTotalTrebols()`, `AddTrebols()`, `SpendTrebol()`.
+API de fragmentos: `HasDiceFragment()`, `SetDiceFragmentCollected()`, `GetDiceFragmentsCount()`, `IsSecretDiceUnlocked()`.
 
 ---
 
 ## Archivos modificados
 
-### `Assets/Scripts/Data/SaveManager.cs`
-**Cambios:**
-- Nuevas constantes: `KEY_GLOBAL_GEMS`, `KEY_LIVES`, `DEFAULT_LIVES = 3`, `MAX_LIVES = 9`.
-- Nuevos métodos de **gemas globales**: `LoadGlobalGems()`, `AddGlobalGems(int)`, `SpendGlobalGems(int)`.
-- Nuevos métodos de **vidas**: `LoadLives()`, `SaveLives(int)`, `ConsumeLife()`, `AddLives(int)`, `GetMaxLives()`, `GetDefaultLives()`.
-- Nuevo método de **rating**: `LoadRating(int)`, `SaveRatingIfBetter(int, int)`.
-- `ResetProgress()` ahora también inicializa `SaveLives(DEFAULT_LIVES)` y `GlobalGems = 0`.
-
----
-
 ### `Assets/Scripts/Core/LevelManager.cs`
-**Cambios en `RespawnPlayer()`:**
-- Antes: siempre iniciaba la coroutine de respawn.
-- Ahora: llama `LivesManager.Instance.ConsumeLifeAndCheck()`. Si retorna `false`, no respawnea (LivesManager disparó `OnGameOver` y GameOverController lo maneja).
-
-**Cambios en `SaveProgress()`:**
-- Agrega las gemas del nivel al wallet global: `SaveManager.Instance.AddGlobalGems(gemsCollected)`.
-- Calcula rating con `LevelRatingSystem._instance.CalculateRating(...)`.
-- Guarda el rating con `SaveManager.Instance.SaveRatingIfBetter(...)`.
-- Llama `UIController._instance.ShowLevelRating(rating)`.
-
-**⚠️ Pendiente (nota de diseño):** El cálculo del rating usa `totalGems = gemsCollected` como placeholder. Para que 2 estrellas requiera recolectar TODAS las gemas del nivel, `LevelManager` necesita saber cuántas hay en total. Por ahora el rating de 2 estrellas solo se alcanza si `gemsCollected >= totalGems` donde `totalGems` viene del `MapPoint`. En el futuro conectar esto con el `Editor/CountGemsInLevel.cs` que ya existe.
-
----
-
-### `Assets/Scripts/Systems/LevelRatingSystem.cs`
-**Cambios:**
-- Agregado Singleton `_instance`.
-- Nuevo método estático `GetStarStates(LevelRating, int)` que retorna un array de bools para renderizar en UI.
-- Null checks en `CalculateRating` para `req.totalGems = 0` y `req.targetTime = 0`.
-
----
+- Auto-detecta total de gemas con `FindObjectsOfType<Pickup>()` si no está configurado manualmente
+- `UpdateGems_UI(collected, total)` — formato `X / Total`
+- `EndLevelRoutine` — si `gemsCollected >= totalGemsInLevel` muestra el dado antes de ir al mapa
+- `SaveProgress()` retorna `LevelRating` para pasarlo al contexto del dado
+- `RespawnPlayer()` consulta `LivesManager.ConsumeLifeAndCheck()` antes de respawnear
 
 ### `Assets/Scripts/UI/UIController.cs`
-**Cambios:**
-- Nuevo campo `gemsGlobalText` — texto del wallet de gemas en el HUD (opcional).
-- Nuevo campo `livesText` — texto de vidas restantes en el HUD (opcional).
-- Nuevos campos `starImages`, `starFull`, `starEmpty` — para las 3 estrellas al fin de nivel.
-- Nuevo método `ShowLevelRating(LevelRating)` — actualiza los sprites de estrellas.
-- Nuevo método `RefreshLivesUI()` — actualiza el contador de vidas.
-- Nuevo método `RefreshGlobalGemsUI()` — actualiza el wallet de gemas.
-- Se suscribe a `LivesManager.OnLivesChanged` en `Start()` para actualización automática.
+- `UpdateGems_UI(int current, int total)` — acepta total como parámetro opcional
+- Campo `trebolCountText` (TextMeshProUGUI, opcional)
+- `RefreshTrebolUI()` — actualiza contador de tréboles
+- `ShowLevelRating(LevelRating)` — muestra estrellas al fin de nivel
+- Eliminado método `RefreshTrebolUI()` duplicado (bug de compilación)
 
-**⚠️ Acción requerida en Unity:** Asignar en el Inspector los nuevos campos opcionales (`gemsGlobalText`, `livesText`, `starImages`, `starFull`, `starEmpty`). El juego funciona sin asignarlos, pero el HUD no mostrará esos elementos.
+### `Assets/Scripts/Systems/LivesManager.cs`
+- `NotifyLivesChanged()` — dispara `OnLivesChanged` manualmente (usado por `DiceRollController`)
 
----
+### `Assets/Scripts/LevelSelection/MapPoint.cs`
+- Campo `hasTrebol` (bool)
+- Campo `trebolBadge` (GameObject, serializado)
+- Método `CheckTrebol()` activa/desactiva el badge
 
-### `Assets/Scripts/Environment/Interactables/Pickup.cs`
-**Cambios:**
-- Comentario explicativo: las gemas se acumulan al COMPLETAR el nivel (en `LevelManager.SaveProgress()`), no al recolectarlas. Esto es intencional: incentiva terminar el nivel.
-
----
+### `Assets/Scripts/LevelSelection/MapPointsHolder.cs`
+- Carga `hasTrebol` desde `SaveManager` y llama `CheckTrebol()` por cada MapPoint
 
 ### `Assets/Scripts/Core/AppBootstrap.cs`
-**Cambios:**
-- `[RequireComponent(typeof(LivesManager))]` agregado.
+- `[RequireComponent(typeof(LivesManager))]` agregado
 
 ---
 
-## Acciones requeridas en el Editor de Unity
+## Tipos de dado implementados
+
+| Tipo | Rango | Cómo se obtiene |
+|------|-------|----------------|
+| `DiceType.Normal` | 1–3 | Por defecto (10/10 gemas) |
+| `DiceType.Upgraded_3_5` | 3–5 | Gasto de trébol (50% probabilidad) |
+| `DiceType.Upgraded_2_6` | 2–6 | Gasto de trébol (50% probabilidad) |
+| `DiceType.Secret` | 4–6 | Fragmentos ensamblados (TBD en niveles) |
+
+---
+
+## Acciones requeridas en Unity Editor (para que funcione)
 
 | Acción | Dónde |
 |--------|-------|
-| Verificar que `LivesManager` se agrega automáticamente a `AppBootstrap` | Escena `MainMenu` |
-| Crear panel de Game Over con `GameOverController` | Escena de gameplay |
-| Asignar `panelGroup`, `panelRect`, botones, textos de economía en `GameOverController` | Inspector |
-| Asignar `gemCostPerLife` y `livesPerAd` en `LivesManager` según diseño | Inspector de `AppBootstrap` |
-| Asignar `gemsGlobalText`, `livesText`, `starImages` en `UIController` (opcional) | Inspector |
-| Crear sprites de estrella llena y vacía, asignarlos en `UIController` | Assets/Sprites |
-| Agregar `LevelRatingSystem` a algún GameObject de la escena de gameplay | Escena de gameplay |
+| Verificar `LivesManager` en `AppBootstrap` (auto por `[RequireComponent]`) | Escena `MainMenu` |
+| Crear panel Game Over + asignar `GameOverController` con 4 botones y textos | Escena gameplay |
+| Agregar `DiceRollController` a un GameObject del Canvas en gameplay | Escena gameplay |
+| Asignar `trebolCountText`, `livesText` en `UIController` | Inspector gameplay |
+| Asignar `starFull`, `starEmpty`, `starImages` (3 imágenes) en `UIController` | Inspector gameplay |
+| Asignar `trebolBadge` en cada `MapPoint` (GameObject de ícono, desactivado por defecto) | Escena `LevelSelection` |
+| Agregar prefab `TrebolPickup` en los niveles | Escenas `Level_N` |
+| Agregar prefab `DiceFragmentPickup` en zonas secretas (cuando estén diseñadas) | Escenas `Level_N` difíciles |
+| Crear prefabs de `TrebolPickup` y `DiceFragmentPickup` con sprites propios | Assets → Antigravity |
 
 ---
 
-## Decisiones de diseño pendientes
+## Pendiente para Antigravity (solo assets, el código está listo)
 
-- [ ] **Coste de vida en gemas:** actualmente `gemCostPerLife = 10`. Revisar y ajustar.
-- [ ] **Vidas iniciales:** actualmente `DEFAULT_LIVES = 3`. Revisar.
-- [ ] **Total de gemas por nivel:** `LevelRatingSystem` necesita el `totalGems` de cada nivel para el rating de 2 estrellas. Conectar con `CountGemsInLevel.cs` (editor) o con el campo `totalGems` de `MapPoint`.
-- [ ] **Ad simulado:** `GameOverController.OnWatchAdPressed()` tiene un `// TODO Fase 4`. Al implementar ads, reemplazar la llamada directa con el SDK real.
+- Sprite del Trébol 🍀 (normal, translúcido "ya obtenido", efecto de recolección)
+- Sprite del Fragmento de Dado 🎲 (en nivel y en HUD)
+- Sprites de los 3 dados (Normal, Mejorado, Secreto)
+- Animación de números girando en la pantalla del dado
+- Layout visual completo del panel del dado
+- Layout visual del panel de Game Over
+- Sprites de estrella llena / vacía
+- Badge de trébol para `MapPoint`
+- HUD actualizado con slots de vidas y tréboles
 
 ---
 
@@ -145,13 +125,7 @@ event OnLivesChanged(int)                            // disparado al cambiar vid
 
 ```bash
 git diff HEAD --name-only
-git checkout HEAD -- Assets/Scripts/Core/LevelManager.cs
-git checkout HEAD -- Assets/Scripts/Data/SaveManager.cs
-git checkout HEAD -- Assets/Scripts/Systems/LevelRatingSystem.cs
-git checkout HEAD -- Assets/Scripts/UI/UIController.cs
-git checkout HEAD -- Assets/Scripts/Environment/Interactables/Pickup.cs
-git checkout HEAD -- Assets/Scripts/Core/AppBootstrap.cs
-# Eliminar nuevos:
-# rm Assets/Scripts/Systems/LivesManager.cs
-# rm Assets/Scripts/UI/GameOverController.cs
+git log --oneline -5
+git revert <commit-hash>  # o
+git reset --soft HEAD~1   # solo si no fue pusheado
 ```

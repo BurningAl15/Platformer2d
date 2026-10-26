@@ -225,11 +225,10 @@ public class DiceRollController : MonoBehaviour
         {
             SaveManager.Instance.AddLives(finalResult);
         }
-        if (LivesManager.Instance != null && SaveManager.Instance != null)
-        {
-            // Notificar cambio
-            SaveManager.Instance.SaveLives(SaveManager.Instance.LoadLives());
-        }
+
+        // Notificar cambio de vidas a LivesManager para que dispare OnLivesChanged
+        if (LivesManager.Instance != null)
+            LivesManager.Instance.NotifyLivesChanged();
 
         if (diceStatusText != null)
             diceStatusText.text = $"¡Ganaste +{finalResult} vidas!";
