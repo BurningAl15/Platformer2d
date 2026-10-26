@@ -3,7 +3,7 @@
 > Este archivo es la fuente de verdad del proyecto.
 > Se actualiza al terminar cada fase. Si hay duda sobre qué falta, leer esto primero.
 >
-> **Última actualización:** 26/10/2026 — Fases 0, 1, 2, 3 y 5 completadas en código
+> **Última actualización:** 26/10/2026 — Fases 0-6 completadas en código
 
 ---
 
