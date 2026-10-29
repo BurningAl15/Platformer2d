@@ -3,6 +3,8 @@
 **Fecha:** 26/10/2026
 **Depende de:** Fases 0-3 completadas.
 
+> **Nota de vigencia (27/10/2026):** este reporte registra la implementación inicial y contiene instrucciones/comportamientos que ya no son actuales (simulación de éxito, recompensa gratuita con NoAds, setup manual de símbolos y entitlement propuesto). No usarlo para integrar ni publicar. La auditoría y checklist vigentes están en `.kiro/handoff.md`.
+
 ---
 
 ## Resumen ejecutivo

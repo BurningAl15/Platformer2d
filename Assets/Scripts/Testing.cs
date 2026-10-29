@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class Testing : MonoBehaviour
 {
@@ -8,7 +9,7 @@ public class Testing : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame)
             Instantiate(instanceObj, transform.position, Quaternion.identity);
     }
 }

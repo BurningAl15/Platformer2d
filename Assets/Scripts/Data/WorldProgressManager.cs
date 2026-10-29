@@ -103,6 +103,24 @@ public class WorldProgressManager : MonoBehaviour
         return total;
     }
 
+    /// <summary>
+    /// Suma los mejores tiempos guardados de los niveles del mundo.
+    /// Solo cuenta niveles con progreso registrado.
+    /// </summary>
+    public float GetBestTimesTotalInWorld(WorldData world)
+    {
+        if (world == null || SaveManager.Instance == null) return 0f;
+
+        float total = 0f;
+        foreach (string sceneName in world.levelSceneNames)
+        {
+            int levelNumber = ParseLevelNumber(sceneName);
+            if (levelNumber >= 0 && SaveManager.Instance.LoadRating(levelNumber) > 0)
+                total += SaveManager.Instance.LoadBestTime(levelNumber);
+        }
+        return total;
+    }
+
     // ─────────────────────────────────────────────────────────────────────────
     //  Helper privado
     // ─────────────────────────────────────────────────────────────────────────

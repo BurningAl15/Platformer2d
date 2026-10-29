@@ -6,6 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/FatCatStudio/Splash/FatCatSplash.unity
+    guid: 1dc66e07fab2643faae7173ede78f494
+  - enabled: 1
     path: Assets/Scenes/MainMenu.unity
     guid: 5ed3170b2bcd0c04a907d3e69dc6d0a0
   - enabled: 1

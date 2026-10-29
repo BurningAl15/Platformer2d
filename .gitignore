@@ -203,6 +203,9 @@ PublishScripts/
 **/[Pp]ackages/*
 # except build/, which is used as an MSBuild target.
 !**/[Pp]ackages/build/
+# Unity package configuration must be versioned so SDK dependencies resolve for the project.
+!**/[Pp]ackages/manifest.json
+!**/[Pp]ackages/packages-lock.json
 # Uncomment if necessary however generally it will be regenerated when needed
 #!**/[Pp]ackages/repositories.config
 # NuGet v3's project.json files produces more ignorable files
@@ -371,6 +374,18 @@ MigrationBackup/
 /[Oo]bj/
 /[Bb]uild/
 /[Bb]uilds/
+/fastlane/report.xml
+/fastlane/Preview.html
+/fastlane/screenshots/
+/fastlane/test_output/
+/.env
+/.env.*
+*.p8
+*.jks
+*.keystore
+*.mobileprovision
+/Assets/Resources/RevenueCatPublicKeys.local.json
+/Assets/Resources/RevenueCatPublicKeys.local.json.meta
 /[Ll]ogs/
 /[Mm]emoryCaptures/
 

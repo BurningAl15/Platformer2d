@@ -19,6 +19,9 @@ public class PlayerHealth : MonoBehaviour
     private Coroutine currentCoroutine = null;
     private bool isInvincible = false;
 
+    public int CurrentHealth => currentHealth;
+    public int MaxHealth => maxHealth;
+
     [Header("Death Effect")] 
     [SerializeField] private GameObject deathEffect;
 
@@ -80,7 +83,7 @@ public class PlayerHealth : MonoBehaviour
                 if (currentCoroutine == null)
                     currentCoroutine = StartCoroutine(BlinkEffect());
             }
-            UIController._instance.UpdateHealthDisplay_Damage(currentHealth);
+            UIController._instance?.RefreshHealthDisplay();
         }
     }
 
@@ -113,9 +116,6 @@ public class PlayerHealth : MonoBehaviour
     
     public void CureDamage()
     {
-        if(currentHealth!=maxHealth)
-            UIController._instance.UpdateHealthDisplay_Cure(currentHealth);
-    
         currentHealth++;
         
         //Validating
@@ -123,6 +123,8 @@ public class PlayerHealth : MonoBehaviour
         {
             currentHealth = maxHealth;            
         }
+
+        UIController._instance?.RefreshHealthDisplay();
     }
     
     private void Update()
@@ -146,6 +148,7 @@ public class PlayerHealth : MonoBehaviour
     public void ResetHealth()
     {
         currentHealth = maxHealth;
+        UIController._instance?.RefreshHealthDisplay();
     }
     public void ResetPlayer()
     {
@@ -172,7 +175,6 @@ public class PlayerHealth : MonoBehaviour
         bonusHearts++;
         maxHealth += 2; // 1 corazón = 2 unidades de salud (mitades)
         CureDamage();   // Llenar la nueva salud máxima
-        UIController._instance?.ResetHearts();
     }
 
     /// <summary>
@@ -184,7 +186,7 @@ public class PlayerHealth : MonoBehaviour
         bonusHearts--;
         maxHealth = Mathf.Max(maxHealth - 2, 2); // mínimo 1 corazón base
         currentHealth = Mathf.Min(currentHealth, maxHealth);
-        UIController._instance?.ResetHearts();
+        UIController._instance?.RefreshHealthDisplay();
     }
 
     /// <summary>
@@ -197,7 +199,7 @@ public class PlayerHealth : MonoBehaviour
         maxHealth = Mathf.Max(maxHealth, 2);
         bonusHearts = 0;
         currentHealth = Mathf.Min(currentHealth, maxHealth);
-        UIController._instance?.ResetHearts();
+        UIController._instance?.RefreshHealthDisplay();
     }
 
     /// <summary>Retorna cuántos corazones bonus están activos.</summary>

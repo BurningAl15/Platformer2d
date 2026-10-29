@@ -30,6 +30,8 @@ public class GameOverController : MonoBehaviour
     [SerializeField] private Button watchAdButton;
     [SerializeField] private Button spendGemsButton;
     [SerializeField] private Button useTrebolButton;
+    [Tooltip("Botón opcional para usar el Dado Secreto si está desbloqueado")]
+    [SerializeField] private Button useSecretDiceButton;
     [SerializeField] private Button returnToMapButton;
     [SerializeField] private GameObject firstSelectedButton;
 
@@ -37,6 +39,8 @@ public class GameOverController : MonoBehaviour
     [SerializeField] private TextMeshProUGUI gemCostText;
     [SerializeField] private TextMeshProUGUI currentGemsText;
     [SerializeField] private TextMeshProUGUI trebolAvailableText;
+    [Tooltip("Feedback visible si el rewarded no está disponible.")]
+    [SerializeField] private TextMeshProUGUI adFeedbackText;
 
     [Header("Animación")]
     [SerializeField] private float animDuration = 0.4f;
@@ -60,6 +64,8 @@ public class GameOverController : MonoBehaviour
             watchAdButton.onClick.AddListener(OnWatchAdPressed);
         if (useTrebolButton != null)
             useTrebolButton.onClick.AddListener(OnUseTrebolPressed);
+        if (useSecretDiceButton != null)
+            useSecretDiceButton.onClick.AddListener(OnUseSecretDicePressed);
         if (spendGemsButton != null)
             spendGemsButton.onClick.AddListener(OnSpendGemsPressed);
         if (returnToMapButton != null)
@@ -90,6 +96,10 @@ public class GameOverController : MonoBehaviour
 
         // Actualizar textos de economía
         RefreshEconomyUI();
+        if (adFeedbackText != null)
+            adFeedbackText.text = string.Empty;
+        if (watchAdButton != null)
+            watchAdButton.gameObject.SetActive(AdsManager.Instance == null || !AdsManager.Instance.IsNoAdsActive());
 
         // Mostrar panel con animación
         panelGroup.interactable  = true;
@@ -142,7 +152,7 @@ public class GameOverController : MonoBehaviour
 
     /// <summary>
     /// Botón "Ver Ad" — muestra rewarded ad a través de AdsManager.
-    /// Si el ad no está disponible (sin SDK o sin conexión) simula la recompensa.
+    /// Solo concede la recompensa cuando el SDK confirma que el rewarded se completó.
     /// </summary>
     public void OnWatchAdPressed()
     {
@@ -165,14 +175,15 @@ public class GameOverController : MonoBehaviour
                 {
                     // Fallo o cierre anticipado: restaurar botón
                     if (watchAdButton != null) watchAdButton.interactable = true;
+                    ShowAdUnavailableFeedback();
                 }
             );
         }
         else
         {
-            // Sin AdsManager o sin conexión: fallback directo (modo desarrollo)
-            LivesManager.Instance.AddLivesFromAd();
-            ContinueGame();
+            // No conceder la recompensa si el SDK no pudo presentar y completar el anuncio.
+            if (watchAdButton != null) watchAdButton.interactable = true;
+            ShowAdUnavailableFeedback();
         }
     }
 
@@ -236,6 +247,29 @@ public class GameOverController : MonoBehaviour
             if (useTrebolButton != null)
                 useTrebolButton.transform.DOShakePosition(0.3f, 8f, 20).SetUpdate(true);
             RefreshEconomyUI();
+        }
+    }
+
+    /// <summary>
+    /// Botón opcional "Dado Secreto" — tira el dado secreto (4-6 vidas) y continúa.
+    /// </summary>
+    public void OnUseSecretDicePressed()
+    {
+        if (SaveManager.Instance == null) return;
+        if (!SaveManager.Instance.IsSecretDiceUnlocked(1)) return;
+
+        HideInstant();
+        Time.timeScale = 1f;
+        InputManager.Instance?.EnablePlayerInput();
+
+        if (DiceRollController.Instance != null)
+        {
+            DiceRollController.Instance.ShowFromGameOver(DiceType.Secret, OnDiceGameOverComplete);
+        }
+        else
+        {
+            SaveManager.Instance.AddLives(4);
+            ContinueGame();
         }
     }
 
@@ -307,6 +341,22 @@ public class GameOverController : MonoBehaviour
         // Deshabilitar botón de trébol si no tiene
         if (useTrebolButton != null)
             useTrebolButton.interactable = trebols > 0;
+
+        // Mostrar u ocultar botón de dado secreto según si está desbloqueado
+        if (useSecretDiceButton != null)
+        {
+            bool secretUnlocked = SaveManager.Instance.IsSecretDiceUnlocked(1);
+            useSecretDiceButton.gameObject.SetActive(secretUnlocked);
+        }
+    }
+
+    private void ShowAdUnavailableFeedback()
+    {
+        const string message = "Anuncio no disponible. Inténtalo de nuevo más tarde.";
+        if (adFeedbackText != null)
+            adFeedbackText.text = message;
+        else
+            Debug.LogWarning($"[GameOverController] {message}");
     }
 
     private void SelectFirstButton()

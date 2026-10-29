@@ -4,6 +4,7 @@ using TMPro;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.InputSystem.OnScreen;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -171,6 +172,15 @@ public static class SceneElementSetup
             Debug.Log("[SceneElementSetup] SceneTransitionManager creado en MainMenu.");
         }
 
+        // StorePanel & StoreButton en MainMenu Canvas
+        Canvas canvas = Object.FindObjectOfType<Canvas>();
+        if (canvas != null && canvas.transform.Find("StorePanel") == null)
+        {
+            CreateStorePanel(canvas.gameObject, true);
+            modified = true;
+            Debug.Log("[SceneElementSetup] StorePanel y Botón Quitar Anuncios creados en MainMenu.");
+        }
+
         if (modified)
         {
             EditorSceneManager.MarkSceneDirty(scene);
@@ -321,9 +331,23 @@ public static class SceneElementSetup
             CreateDiceRollPanel(root);
         }
 
+        // 4. MobileControls (Controles táctiles móviles serializados)
+        Transform existingMobileControls = root.transform.Find("MobileControls");
+        if (existingMobileControls == null)
+        {
+            CreateMobileControls(root);
+        }
+
+        // 5. StorePanel (Panel de Quitar Anuncios)
+        Transform existingStorePanel = root.transform.Find("StorePanel");
+        if (existingStorePanel == null)
+        {
+            CreateStorePanel(root, false);
+        }
+
         PrefabUtility.SaveAsPrefabAsset(root, prefabPath);
         PrefabUtility.UnloadPrefabContents(root);
-        Debug.Log("[SceneElementSetup] UI-Canvas.prefab configurado con HUD, GameOverPanel y DiceRollPanel.");
+        Debug.Log("[SceneElementSetup] UI-Canvas.prefab configurado con HUD, GameOverPanel, DiceRollPanel, MobileControls y StorePanel.");
     }
 
     private static void CreateGameOverPanel(GameObject canvasRoot)
@@ -439,6 +463,164 @@ public static class SceneElementSetup
         soDRC.ApplyModifiedProperties();
     }
 
+    private static void CreateMobileControls(GameObject canvasRoot)
+    {
+        GameObject controlsObj = new GameObject("MobileControls");
+        controlsObj.transform.SetParent(canvasRoot.transform, false);
+
+        var rect = controlsObj.AddComponent<RectTransform>();
+        rect.anchorMin = Vector2.zero;
+        rect.anchorMax = Vector2.one;
+        rect.offsetMin = Vector2.zero;
+        rect.offsetMax = Vector2.zero;
+
+        var cg = controlsObj.AddComponent<CanvasGroup>();
+        cg.alpha = 1f;
+        cg.interactable = true;
+        cg.blocksRaycasts = true;
+
+        var mgc = controlsObj.AddComponent<MobileGameplayControls>();
+
+        // Joystick (Move Stick)
+        GameObject stickObj = new GameObject("MoveStick");
+        stickObj.transform.SetParent(controlsObj.transform, false);
+        var stickRect = stickObj.AddComponent<RectTransform>();
+        stickRect.anchorMin = Vector2.zero;
+        stickRect.anchorMax = Vector2.zero;
+        stickRect.pivot = new Vector2(0.5f, 0.5f);
+        stickRect.anchoredPosition = new Vector2(160f, 150f);
+        stickRect.sizeDelta = new Vector2(200f, 200f);
+
+        var stickImg = stickObj.AddComponent<Image>();
+        stickImg.color = new Color(0.06f, 0.13f, 0.17f, 0.48f);
+
+        var stick = stickObj.AddComponent<OnScreenStick>();
+        stick.controlPath = "<Gamepad>/leftStick";
+        stick.behaviour = OnScreenStick.Behaviour.RelativePositionWithStaticOrigin;
+        stick.movementRange = 60f;
+        stick.useIsolatedInputActions = true;
+
+        // Knob
+        GameObject knobObj = new GameObject("StickKnob");
+        knobObj.transform.SetParent(stickObj.transform, false);
+        var knobRect = knobObj.AddComponent<RectTransform>();
+        knobRect.anchorMin = new Vector2(0.5f, 0.5f);
+        knobRect.anchorMax = new Vector2(0.5f, 0.5f);
+        knobRect.pivot = new Vector2(0.5f, 0.5f);
+        knobRect.anchoredPosition = Vector2.zero;
+        knobRect.sizeDelta = new Vector2(80f, 80f);
+
+        var knobImg = knobObj.AddComponent<Image>();
+        knobImg.color = new Color(0.85f, 0.94f, 0.92f, 0.62f);
+        knobImg.raycastTarget = false;
+
+        // Jump Button
+        GameObject jumpObj = new GameObject("JumpButton");
+        jumpObj.transform.SetParent(controlsObj.transform, false);
+        var jumpRect = jumpObj.AddComponent<RectTransform>();
+        jumpRect.anchorMin = new Vector2(1f, 0f);
+        jumpRect.anchorMax = new Vector2(1f, 0f);
+        jumpRect.pivot = new Vector2(0.5f, 0.5f);
+        jumpRect.anchoredPosition = new Vector2(-160f, 150f);
+        jumpRect.sizeDelta = new Vector2(150f, 150f);
+
+        var jumpImg = jumpObj.AddComponent<Image>();
+        jumpImg.color = new Color(0.88f, 0.25f, 0.17f, 0.72f);
+
+        var jumpBtn = jumpObj.AddComponent<OnScreenButton>();
+        jumpBtn.controlPath = "<Gamepad>/buttonSouth";
+
+        CreateTMPText(jumpObj, "Label", "A", 48, Vector2.zero);
+
+        // Pause Button
+        GameObject pauseObj = new GameObject("PauseButton");
+        pauseObj.transform.SetParent(controlsObj.transform, false);
+        var pauseRect = pauseObj.AddComponent<RectTransform>();
+        pauseRect.anchorMin = new Vector2(0.5f, 1f);
+        pauseRect.anchorMax = new Vector2(0.5f, 1f);
+        pauseRect.pivot = new Vector2(0.5f, 0.5f);
+        pauseRect.anchoredPosition = new Vector2(0f, -70f);
+        pauseRect.sizeDelta = new Vector2(80f, 80f);
+
+        var pauseImg = pauseObj.AddComponent<Image>();
+        pauseImg.color = new Color(0.06f, 0.13f, 0.17f, 0.5f);
+
+        var pauseBtn = pauseObj.AddComponent<OnScreenButton>();
+        pauseBtn.controlPath = "<Gamepad>/start";
+
+        CreateTMPText(pauseObj, "Label", "II", 32, Vector2.zero);
+
+        SerializedObject soMGC = new SerializedObject(mgc);
+        soMGC.FindProperty("controlsCanvasGroup").objectReferenceValue = cg;
+        soMGC.FindProperty("onScreenStick").objectReferenceValue = stick;
+        soMGC.FindProperty("jumpButton").objectReferenceValue = jumpBtn;
+        soMGC.FindProperty("pauseButton").objectReferenceValue = pauseBtn;
+        soMGC.ApplyModifiedProperties();
+    }
+
+    private static void CreateStorePanel(GameObject canvasRoot, bool createOpenButton)
+    {
+        GameObject panelObj = new GameObject("StorePanel");
+        panelObj.transform.SetParent(canvasRoot.transform, false);
+
+        var rect = panelObj.AddComponent<RectTransform>();
+        rect.anchorMin = Vector2.zero;
+        rect.anchorMax = Vector2.one;
+        rect.offsetMin = Vector2.zero;
+        rect.offsetMax = Vector2.zero;
+
+        var cg = panelObj.AddComponent<CanvasGroup>();
+        cg.alpha = 0f;
+        cg.interactable = false;
+        cg.blocksRaycasts = false;
+
+        var img = panelObj.AddComponent<Image>();
+        img.color = new Color(0.04f, 0.04f, 0.08f, 0.95f);
+
+        var noAds = panelObj.AddComponent<NoAdsPurchaseButton>();
+        SerializedObject soNoAds = new SerializedObject(noAds);
+        soNoAds.FindProperty("storePanelGroup").objectReferenceValue = cg;
+
+        // Título
+        CreateTMPText(panelObj, "StoreTitle", "TIENDA / QUITAR ANUNCIOS", 38, new Vector2(0f, 180f));
+
+        // Descripción
+        CreateTMPText(panelObj, "StoreDesc", "¡Juega sin interrupciones!\nElimina todos los anuncios permanentemente.", 22, new Vector2(0f, 100f));
+
+        // Botón Compra
+        Button btnPurchase = CreateUIButton(panelObj, "PurchaseButton", "Sin Anuncios", new Vector2(0f, 10f), new Color(0.2f, 0.75f, 0.35f));
+        soNoAds.FindProperty("purchaseButton").objectReferenceValue = btnPurchase;
+        TextMeshProUGUI purchaseLabel = btnPurchase.GetComponentInChildren<TextMeshProUGUI>();
+        soNoAds.FindProperty("purchaseButtonLabel").objectReferenceValue = purchaseLabel;
+
+        // Botón Restaurar
+        Button btnRestore = CreateUIButton(panelObj, "RestoreButton", "Restaurar Compras", new Vector2(0f, -60f), new Color(0.3f, 0.5f, 0.8f));
+        soNoAds.FindProperty("restoreButton").objectReferenceValue = btnRestore;
+
+        // Indicador activo (cuando ya está comprado)
+        GameObject indicatorObj = CreateTMPText(panelObj, "ActiveIndicator", "✓ Sin Anuncios Activo", 24, new Vector2(0f, 10f));
+        indicatorObj.GetComponent<TextMeshProUGUI>().color = new Color(0.3f, 1f, 0.4f);
+        indicatorObj.SetActive(false);
+        soNoAds.FindProperty("noAdsActiveIndicator").objectReferenceValue = indicatorObj;
+
+        // Status text
+        GameObject statusObj = CreateTMPText(panelObj, "StatusText", "", 18, new Vector2(0f, -120f));
+        soNoAds.FindProperty("statusText").objectReferenceValue = statusObj.GetComponent<TextMeshProUGUI>();
+
+        // Botón Cerrar
+        Button btnClose = CreateUIButton(panelObj, "CloseButton", "Cerrar", new Vector2(0f, -180f), new Color(0.5f, 0.5f, 0.5f));
+        soNoAds.FindProperty("closeStoreButton").objectReferenceValue = btnClose;
+
+        // Botón para abrir la tienda (si se solicita, ej. en MainMenu)
+        if (createOpenButton)
+        {
+            Button btnOpen = CreateUIButton(canvasRoot, "OpenStoreButton", "🛒 Quitar Anuncios", new Vector2(0f, -180f), new Color(0.9f, 0.6f, 0.1f));
+            soNoAds.FindProperty("openStoreButton").objectReferenceValue = btnOpen;
+        }
+
+        soNoAds.ApplyModifiedProperties();
+    }
+
     private static GameObject CreateTMPText(GameObject parent, string name, string text, float fontSize, Vector2 anchoredPos)
     {
         GameObject go = new GameObject(name);
@@ -496,15 +678,15 @@ public static class SceneElementSetup
 
     private static void SetupGameplayLevels(GameObject trebolPrefab)
     {
-        if (trebolPrefab == null) return;
-
         for (int i = 0; i <= 10; i++)
         {
             string scenePath = $"Assets/Scenes/Levels/Level_{i}.unity";
             if (!File.Exists(scenePath)) continue;
 
             Scene scene = EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Single);
-            if (Object.FindObjectOfType<TrebolPickup>() == null)
+            bool sceneDirty = false;
+
+            if (trebolPrefab != null && Object.FindObjectOfType<TrebolPickup>() == null)
             {
                 GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(trebolPrefab);
                 
@@ -519,9 +701,24 @@ public static class SceneElementSetup
                     instance.transform.position = new Vector3(5f, 2f, 0f);
                 }
 
+                sceneDirty = true;
+                Debug.Log($"[SceneElementSetup] TrebolPickup agregado a {scenePath}");
+            }
+
+            // Fondo y encuadre: fijar color de cielo #47F3FF en la cámara para eliminar cualquier corte cian/azul
+            Camera cam = Object.FindObjectOfType<Camera>();
+            Color skyColor = new Color(0.2784f, 0.9529f, 1f, 1f);
+            if (cam != null && cam.backgroundColor != skyColor)
+            {
+                cam.backgroundColor = skyColor;
+                sceneDirty = true;
+                Debug.Log($"[SceneElementSetup] Cámara de {scenePath} configurada con color de cielo #47F3FF.");
+            }
+
+            if (sceneDirty)
+            {
                 EditorSceneManager.MarkSceneDirty(scene);
                 EditorSceneManager.SaveScene(scene);
-                Debug.Log($"[SceneElementSetup] TrebolPickup agregado a {scenePath}");
             }
         }
     }

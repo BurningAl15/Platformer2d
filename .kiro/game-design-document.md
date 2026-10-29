@@ -3,7 +3,7 @@
 > Documento vivo. Actualizar cada vez que se tomen decisiones de diseño.
 > Consultar antes de implementar cualquier feature nuevo.
 >
-> **Última actualización:** 26/10/2026 — Fases 0-6 implementadas en código
+> **Última actualización:** 27/10/2026 — audiencia objetivo aclarada: adolescentes y adultos; excluye niños
 
 ---
 
@@ -13,6 +13,7 @@ Plataformero 2D de aventura por mundos. El loop central es exploración + habili
 
 **MVP actual:** 1 mundo, ~10 niveles.
 **Plataformas objetivo:** Android, iOS.
+**Audiencia objetivo para tiendas:** adolescentes y adultos; el producto no se dirige a niños. La preferencia actual es no añadir una pantalla de edad adicional. Si una exigencia concreta de la tienda hiciera necesaria una pantalla adicional, el dueño prefiere cambiar el target a 18+; esa alternativa todavía no está seleccionada. Alinear contenido, ficha y material promocional con la audiencia declarada. Ver `.kiro/handoff.md` para los pendientes de monetización, privacidad y configuración externa.
 
 ---
 
@@ -317,8 +318,8 @@ El código está listo y esperando. Solo faltan los assets:
 | Vidas globales | `LivesManager.cs` | ✅ |
 | Respawn | `LevelManager.cs` | ✅ |
 | Game Over | `GameOverController.cs` | ✅ (ad real en Fase 4) |
-| Ads (Unity LevelPlay) | `AdsManager.cs` | ✅ (falta instalar SDK + keys) |
-| IAP NoAds (RevenueCat) | `RevenueCatManager.cs`, `NoAdsPurchaseButton.cs` | ✅ (falta instalar SDK + keys) |
+| Ads (Unity LevelPlay) | `AdsManager.cs` | ⚠️ SDK declarado; falta resolverlo, consentimiento, configuración iOS, escenas y pruebas |
+| IAP NoAds (RevenueCat) | `RevenueCatManager.cs`, `NoAdsPurchaseButton.cs` | ⚠️ SDK declarado; falta app/productos/entitlement, keys, UI en escena y pruebas |
 | Gemas por nivel | `LevelManager.cs` | ✅ |
 | Rating de estrellas | `LevelRatingSystem.cs` | ✅ |
 | Persistencia | `SaveManager.cs` | ✅ |

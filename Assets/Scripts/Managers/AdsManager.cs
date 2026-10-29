@@ -1,23 +1,20 @@
 using System;
 using UnityEngine;
+#if LEVELPLAY_DEPENDENCIES_INSTALLED
+using Unity.Services.LevelPlay;
+#endif
 
 /// <summary>
 /// Wrapper centralizado para el sistema de anuncios.
 /// Aísla el SDK de ads del resto del juego — si cambias de SDK
 /// solo modificas este archivo.
 ///
-/// SDK TARGET: Unity LevelPlay (Unity Gaming Services)
-/// Documentación: https://developers.is.com/ironsource-mobile/unity/levelplay-starter-kit/
-///
-/// SETUP REQUERIDO:
-/// 1. En Unity: Window → Package Manager → buscar "LevelPlay" e instalar.
-/// 2. En el Inspector del GameObject AdsManager: asignar App Keys de Android e iOS
-///    (obtenidas desde el dashboard de LevelPlay / ironSource).
-/// 3. En Dashboard: configurar Ad Units para Rewarded e Interstitial.
+/// Wrapper para la API de ad units de LevelPlay 9.x. Los anuncios permanecen cerrados
+/// hasta resolver elegibilidad/consentimiento y entitlement Remove Ads.
 ///
 /// INTEGRACIÓN RevenueCat NoAds:
 ///   Si RevenueCatManager.Instance.IsNoAdsPurchased() == true,
-///   NINGÚN ad se muestra (rewarded ni interstitial).
+///   ningún ad se muestra, incluido rewarded (según el GDD).
 ///   El método OnNoAdsStatusChanged() actualiza este estado en tiempo real.
 ///
 /// USO:
@@ -34,11 +31,17 @@ public class AdsManager : MonoBehaviour
     //  Configuración
     // ─────────────────────────────────────────────────────────────────────────
 
-    [Header("App Keys (LevelPlay Dashboard)")]
+    [Header("App Keys (LevelPlay Dashboard — configurar localmente)")]
     [Tooltip("App Key de Android — obtenida en dashboard.is.com")]
-    [SerializeField] private string androidAppKey = "YOUR_ANDROID_APP_KEY";
+    [SerializeField] private string androidAppKey = "290dc33f5";
     [Tooltip("App Key de iOS — obtenida en dashboard.is.com")]
-    [SerializeField] private string iosAppKey = "YOUR_IOS_APP_KEY";
+    [SerializeField] private string iosAppKey = "290e4f7ad";
+
+    [Header("Ad Unit IDs (LevelPlay Dashboard)")]
+    [SerializeField] private string androidRewardedAdUnitId = "d9opyhliijhr3fb4";
+    [SerializeField] private string androidInterstitialAdUnitId = "7xsq048b2uuvo8vj";
+    [SerializeField] private string iosRewardedAdUnitId = "4sm02ryaqjxmk9pd";
+    [SerializeField] private string iosInterstitialAdUnitId = "6wzvpnyl3oqj65qm";
 
     [Header("Configuración de sesión")]
     [Tooltip("Segundos desde el inicio de sesión antes de permitir el primer interstitial")]
@@ -47,7 +50,7 @@ public class AdsManager : MonoBehaviour
     [SerializeField] private float interstitialMinInterval = 60f;
 
     [Header("Debug")]
-    [SerializeField] private bool enableTestMode = true;
+    [SerializeField] private bool launchLevelPlayTestSuite = true;
     [SerializeField] private bool logAdEvents = true;
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -71,6 +74,18 @@ public class AdsManager : MonoBehaviour
 
     // Estado NoAds (sincronizado desde RevenueCatManager)
     private bool _noAdsActive = false;
+    private bool privacyEligibilityResolved;
+    private bool mayServeAds;
+    private bool initializationInProgress;
+    private bool rewardedRequestPending;
+    private bool rewardedCompleted;
+    private float timeScaleBeforeAd = 1f;
+    private Coroutine rewardCloseTimeout;
+
+#if LEVELPLAY_DEPENDENCIES_INSTALLED
+    private LevelPlayRewardedAd rewardedAd;
+    private LevelPlayInterstitialAd interstitialAd;
+#endif
 
     // Callbacks activos
     private Action onRewardedSuccess;
@@ -102,7 +117,69 @@ public class AdsManager : MonoBehaviour
             ? RevenueCatManager.Instance.IsNoAdsPurchased()
             : PlayerPrefs.GetInt("IAP_NoAds_Purchased", 0) == 1;
 
-        Initialize();
+        if (RevenueCatManager.Instance != null)
+            RevenueCatManager.Instance.EntitlementStatusResolved += OnEntitlementStatusResolved;
+        TryInitializeWhenEligible();
+    }
+
+    private void OnDestroy()
+    {
+#if LEVELPLAY_DEPENDENCIES_INSTALLED
+        LevelPlay.OnInitSuccess -= OnLevelPlayInitialized;
+        LevelPlay.OnInitFailed -= OnLevelPlayInitializationFailed;
+        if (rewardedAd != null)
+        {
+            rewardedAd.OnAdLoaded -= OnRewardedLoaded;
+            rewardedAd.OnAdLoadFailed -= OnRewardedLoadFailed;
+            rewardedAd.OnAdDisplayed -= OnRewardedDisplayed;
+            rewardedAd.OnAdDisplayFailed -= OnRewardedDisplayFailed;
+            rewardedAd.OnAdRewarded -= OnRewardedEarned;
+            rewardedAd.OnAdClosed -= OnRewardedClosed;
+        }
+        if (interstitialAd != null)
+        {
+            interstitialAd.OnAdLoaded -= OnInterstitialReady;
+            interstitialAd.OnAdLoadFailed -= OnInterstitialLoadFailed;
+            interstitialAd.OnAdDisplayed -= OnInterstitialOpened;
+            interstitialAd.OnAdDisplayFailed -= OnInterstitialFailed;
+            interstitialAd.OnAdClosed -= OnInterstitialClosed;
+        }
+#endif
+        if (RevenueCatManager.Instance != null)
+            RevenueCatManager.Instance.EntitlementStatusResolved -= OnEntitlementStatusResolved;
+        if (Instance == this)
+            Instance = null;
+    }
+
+    /// <summary>
+    /// Debe llamarlo la capa de audiencia/consentimiento después de resolver las señales
+    /// pertinentes y configurar el SDK/CMP. Sin caller, los anuncios quedan bloqueados.
+    /// </summary>
+    public void SetPrivacyEligibilityResolved(bool eligible)
+    {
+        privacyEligibilityResolved = true;
+        mayServeAds = eligible;
+        if (eligible)
+            TryInitializeWhenEligible();
+    }
+
+    private void OnEntitlementStatusResolved(bool isPurchased)
+    {
+        _noAdsActive = isPurchased;
+        if (!isPurchased)
+            TryInitializeWhenEligible();
+    }
+
+    private void TryInitializeWhenEligible()
+    {
+        RevenueCatManager manager = RevenueCatManager.Instance;
+        if (!privacyEligibilityResolved || !mayServeAds || manager == null ||
+            !manager.IsEntitlementStatusResolved)
+            return;
+
+        _noAdsActive = manager.IsNoAdsPurchased();
+        if (!_noAdsActive)
+            Initialize();
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -111,42 +188,29 @@ public class AdsManager : MonoBehaviour
 
     private void Initialize()
     {
-#if UNITY_LEVELPLAY
+        if (isInitialized || initializationInProgress || !privacyEligibilityResolved || !mayServeAds || IsNoAdsActive())
+            return;
+
+#if LEVELPLAY_DEPENDENCIES_INSTALLED
         string appKey = GetAppKey();
-        if (string.IsNullOrEmpty(appKey) || appKey.StartsWith("YOUR_"))
+        if (string.IsNullOrEmpty(appKey) || appKey.StartsWith("YOUR_") ||
+            string.IsNullOrEmpty(GetRewardedAdUnitId()) || string.IsNullOrEmpty(GetInterstitialAdUnitId()))
         {
-            Debug.LogWarning("[AdsManager] App Key no configurada. Los ads no cargarán. " +
-                             "Asignar la key en el Inspector del AdsManager.");
+            Debug.LogWarning("[AdsManager] App Key o Ad Unit ID no configurado para esta plataforma.");
             return;
         }
 
-        IronSource.Agent.validateIntegration();
+        if (launchLevelPlayTestSuite && (Application.isEditor || Debug.isDebugBuild))
+            LevelPlay.SetMetaData("is_test_suite", "enable");
 
-        if (enableTestMode)
-            IronSource.Agent.setMetaData("is_test_suite", "enable");
-
-        IronSource.Agent.init(appKey, IronSourceAdUnits.REWARDED_VIDEO, IronSourceAdUnits.INTERSTITIAL);
-
-        // Suscribir eventos de Rewarded
-        IronSourceRewardedVideoEvents.onAdOpenedEvent      += OnRewardedOpened;
-        IronSourceRewardedVideoEvents.onAdClosedEvent      += OnRewardedClosed;
-        IronSourceRewardedVideoEvents.onAdRewardedEvent    += OnRewardedEarned;
-        IronSourceRewardedVideoEvents.onAdShowFailedEvent  += OnRewardedFailed;
-
-        // Suscribir eventos de Interstitial
-        IronSourceInterstitialEvents.onAdReadyEvent        += OnInterstitialReady;
-        IronSourceInterstitialEvents.onAdOpenedEvent       += OnInterstitialOpened;
-        IronSourceInterstitialEvents.onAdClosedEvent       += OnInterstitialClosed;
-        IronSourceInterstitialEvents.onAdShowFailedEvent   += OnInterstitialFailed;
-
-        isInitialized = true;
-        LogAd("SDK inicializado correctamente.");
-
-        // Precargar interstitial
-        LoadInterstitial();
+        LevelPlay.OnInitSuccess -= OnLevelPlayInitialized;
+        LevelPlay.OnInitFailed -= OnLevelPlayInitializationFailed;
+        LevelPlay.OnInitSuccess += OnLevelPlayInitialized;
+        LevelPlay.OnInitFailed += OnLevelPlayInitializationFailed;
+        initializationInProgress = true;
+        LevelPlay.Init(appKey);
 #else
-        LogAd("LevelPlay SDK no instalado. Modo simulación activo.");
-        isInitialized = true; // En modo simulación, siempre "listo"
+        LogAd("LevelPlay SDK no instalado; no se simularán anuncios ni recompensas.");
 #endif
     }
 
@@ -157,7 +221,25 @@ public class AdsManager : MonoBehaviour
 #elif UNITY_IOS
         return iosAppKey;
 #else
-        return androidAppKey; // Editor/PC: usar Android key para pruebas
+        return androidAppKey; // Editor: configuración Android solo para el test suite
+#endif
+    }
+
+    private string GetRewardedAdUnitId()
+    {
+#if UNITY_IOS
+        return iosRewardedAdUnitId;
+#else
+        return androidRewardedAdUnitId;
+#endif
+    }
+
+    private string GetInterstitialAdUnitId()
+    {
+#if UNITY_IOS
+        return iosInterstitialAdUnitId;
+#else
+        return androidInterstitialAdUnitId;
 #endif
     }
 
@@ -172,33 +254,49 @@ public class AdsManager : MonoBehaviour
     /// </summary>
     public void ShowRewarded(AdContext context, Action onSuccess, Action onFail = null)
     {
-        // Si el jugador tiene NoAds, dar la recompensa directamente sin ad.
-        if (IsNoAdsActive())
+        if (!privacyEligibilityResolved || !mayServeAds || !isInitialized)
         {
-            LogAd($"NoAds activo — recompensa otorgada directamente. Contexto: {context}");
-            onSuccess?.Invoke();
+            LogAd("Rewarded bloqueado: privacidad/audiencia o entitlement aún no habilitados.");
+            onFail?.Invoke();
             return;
         }
+
+        // Remove Ads elimina todos los anuncios; no convierte el botón rewarded en vidas gratis.
+        if (IsNoAdsActive())
+        {
+            LogAd($"Rewarded bloqueado — Remove Ads activo. Contexto: {context}");
+            onFail?.Invoke();
+            return;
+        }
+
+#if LEVELPLAY_DEPENDENCIES_INSTALLED
+        if (rewardedRequestPending)
+        {
+            LogAd("Rewarded ya solicitado; ignorando toque duplicado.");
+            return;
+        }
+#endif
 
         currentContext = context;
         onRewardedSuccess = onSuccess;
         onRewardedFail = onFail;
 
-#if UNITY_LEVELPLAY
-        if (IronSource.Agent.isRewardedVideoAvailable())
+#if LEVELPLAY_DEPENDENCIES_INSTALLED
+        if (rewardedAd != null && rewardedAd.IsAdReady())
         {
-            IronSource.Agent.showRewardedVideo();
-            LogAd($"Rewarded mostrado. Contexto: {context}");
+            rewardedRequestPending = true;
+            rewardedCompleted = false;
+            rewardedAd.ShowAd();
+            LogAd($"Rewarded solicitado. Contexto: {context}");
         }
         else
         {
-            LogAd($"Rewarded no disponible. Contexto: {context}. Ejecutando fallback.");
-            onFail?.Invoke();
+            LogAd($"Rewarded no disponible. Contexto: {context}.");
+            FailRewarded(onFail);
         }
 #else
-        // Modo simulación — simula un ad exitoso directamente
-        LogAd($"[SIMULACIÓN] Rewarded ad exitoso. Contexto: {context}");
-        SimulateRewardedAd(context, onSuccess, onFail);
+        LogAd("Rewarded no disponible: LevelPlay SDK no instalado.");
+        FailRewarded(onFail);
 #endif
     }
 
@@ -207,10 +305,12 @@ public class AdsManager : MonoBehaviour
     /// </summary>
     public bool IsRewardedReady()
     {
-#if UNITY_LEVELPLAY
-        return isInitialized && IronSource.Agent.isRewardedVideoAvailable();
+        if (!privacyEligibilityResolved || !mayServeAds || !isInitialized) return false;
+        if (IsNoAdsActive()) return false;
+#if LEVELPLAY_DEPENDENCIES_INSTALLED
+        return isInitialized && rewardedAd != null && rewardedAd.IsAdReady();
 #else
-        return true; // Modo simulación: siempre disponible
+        return false;
 #endif
     }
 
@@ -226,6 +326,12 @@ public class AdsManager : MonoBehaviour
     /// </summary>
     public void ShowInterstitial(AdContext context)
     {
+        if (!privacyEligibilityResolved || !mayServeAds || !isInitialized)
+        {
+            LogAd("Interstitial bloqueado: privacidad/audiencia o entitlement aún no habilitados.");
+            return;
+        }
+
         // Bloquear si tiene NoAds
         if (IsNoAdsActive())
         {
@@ -247,11 +353,10 @@ public class AdsManager : MonoBehaviour
             return;
         }
 
-#if UNITY_LEVELPLAY
-        if (IronSource.Agent.isInterstitialReady())
+#if LEVELPLAY_DEPENDENCIES_INSTALLED
+        if (interstitialAd != null && interstitialAd.IsAdReady())
         {
-            IronSource.Agent.showInterstitial();
-            lastInterstitialTime = now;
+            interstitialAd.ShowAd();
             LogAd($"Interstitial mostrado. Contexto: {context}");
         }
         else
@@ -260,8 +365,7 @@ public class AdsManager : MonoBehaviour
             LoadInterstitial();
         }
 #else
-        LogAd($"[SIMULACIÓN] Interstitial. Contexto: {context}");
-        lastInterstitialTime = now;
+        LogAd("Interstitial no disponible: LevelPlay SDK no instalado.");
 #endif
     }
 
@@ -271,8 +375,8 @@ public class AdsManager : MonoBehaviour
 
     private void LoadInterstitial()
     {
-#if UNITY_LEVELPLAY
-        IronSource.Agent.loadInterstitial();
+#if LEVELPLAY_DEPENDENCIES_INSTALLED
+        interstitialAd?.LoadAd();
 #endif
     }
 
@@ -280,69 +384,123 @@ public class AdsManager : MonoBehaviour
     //  Eventos del SDK — Rewarded
     // ─────────────────────────────────────────────────────────────────────────
 
-#if UNITY_LEVELPLAY
-    private void OnRewardedOpened(IronSourceAdInfo info)
+#if LEVELPLAY_DEPENDENCIES_INSTALLED
+    private void OnLevelPlayInitialized(LevelPlayConfiguration configuration)
     {
-        LogAd("Rewarded abierto.");
-        Time.timeScale = 0f; // Pausar el juego mientras corre el ad
+        initializationInProgress = false;
+        isInitialized = true;
+        LevelPlay.OnInitSuccess -= OnLevelPlayInitialized;
+        LevelPlay.OnInitFailed -= OnLevelPlayInitializationFailed;
+
+        rewardedAd = new LevelPlayRewardedAd(GetRewardedAdUnitId());
+        rewardedAd.OnAdLoaded += OnRewardedLoaded;
+        rewardedAd.OnAdLoadFailed += OnRewardedLoadFailed;
+        rewardedAd.OnAdDisplayed += OnRewardedDisplayed;
+        rewardedAd.OnAdDisplayFailed += OnRewardedDisplayFailed;
+        rewardedAd.OnAdRewarded += OnRewardedEarned;
+        rewardedAd.OnAdClosed += OnRewardedClosed;
+        rewardedAd.LoadAd();
+
+        interstitialAd = new LevelPlayInterstitialAd(GetInterstitialAdUnitId());
+        interstitialAd.OnAdLoaded += OnInterstitialReady;
+        interstitialAd.OnAdLoadFailed += OnInterstitialLoadFailed;
+        interstitialAd.OnAdDisplayed += OnInterstitialOpened;
+        interstitialAd.OnAdDisplayFailed += OnInterstitialFailed;
+        interstitialAd.OnAdClosed += OnInterstitialClosed;
+        LoadInterstitial();
+
+        LogAd("LevelPlay inicializado; formatos cargándose.");
+        if (launchLevelPlayTestSuite && (Application.isEditor || Debug.isDebugBuild))
+            LevelPlay.LaunchTestSuite();
     }
 
-    private void OnRewardedEarned(IronSourcePlacement placement, IronSourceAdInfo info)
+    private void OnLevelPlayInitializationFailed(LevelPlayInitError error)
     {
-        LogAd($"Rewarded completado. Recompensa: {placement.getRewardName()} x{placement.getRewardAmount()}");
-        Time.timeScale = 1f;
-        onRewardedSuccess?.Invoke();
-        onRewardedSuccess = null;
-        onRewardedFail = null;
+        initializationInProgress = false;
+        LevelPlay.OnInitSuccess -= OnLevelPlayInitialized;
+        LevelPlay.OnInitFailed -= OnLevelPlayInitializationFailed;
+        LogAd($"Falló inicialización de LevelPlay: {error.ErrorMessage}");
     }
 
-    private void OnRewardedClosed(IronSourceAdInfo info)
+    private void OnRewardedLoaded(LevelPlayAdInfo info) => LogAd("Rewarded cargado.");
+    private void OnRewardedLoadFailed(LevelPlayAdError error) => LogAd($"No cargó rewarded: {error}");
+
+    private void OnRewardedDisplayed(LevelPlayAdInfo info)
     {
-        LogAd("Rewarded cerrado (sin completar).");
-        Time.timeScale = 1f;
-        // Si no se llamó OnRewardedEarned, el jugador cerró antes
-        if (onRewardedFail != null)
+        timeScaleBeforeAd = Time.timeScale;
+        Time.timeScale = 0f;
+        LogAd("Rewarded mostrado.");
+    }
+
+    private void OnRewardedEarned(LevelPlayAdInfo info, LevelPlayReward reward)
+    {
+        if (!rewardedRequestPending || rewardedCompleted) return;
+        rewardedCompleted = true;
+        if (rewardCloseTimeout != null)
         {
-            onRewardedFail?.Invoke();
-            onRewardedSuccess = null;
-            onRewardedFail = null;
+            StopCoroutine(rewardCloseTimeout);
+            rewardCloseTimeout = null;
         }
+
+        LogAd($"Rewarded completado. Recompensa SDK: {reward.Name} x{reward.Amount}");
+        onRewardedSuccess?.Invoke();
+        ClearRewardedCallbacks();
     }
 
-    private void OnRewardedFailed(IronSourceError error, IronSourceAdInfo info)
+    private void OnRewardedClosed(LevelPlayAdInfo info)
     {
-        LogAd($"Rewarded falló: {error.getDescription()}");
-        Time.timeScale = 1f;
-        onRewardedFail?.Invoke();
-        onRewardedSuccess = null;
-        onRewardedFail = null;
+        Time.timeScale = timeScaleBeforeAd;
+        if (rewardedRequestPending && !rewardedCompleted)
+        {
+            // LevelPlay documents reward and close as asynchronous; defer failure so
+            // a reward callback arriving just after close can still grant exactly once.
+            rewardCloseTimeout = StartCoroutine(FailRewardedAfterCloseGracePeriod());
+        }
+        else
+        {
+            ClearRewardedCallbacks();
+        }
+
+        rewardedAd?.LoadAd();
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    //  Eventos del SDK — Interstitial
-    // ─────────────────────────────────────────────────────────────────────────
-
-    private void OnInterstitialReady(IronSourceAdInfo info)
-        => LogAd("Interstitial listo.");
-
-    private void OnInterstitialOpened(IronSourceAdInfo info)
-        => Time.timeScale = 0f;
-
-    private void OnInterstitialClosed(IronSourceAdInfo info)
+    private void OnRewardedDisplayFailed(LevelPlayAdInfo info, LevelPlayAdError error)
     {
-        Time.timeScale = 1f;
-        LoadInterstitial(); // Precargar el siguiente
+        Time.timeScale = timeScaleBeforeAd;
+        LogAd($"No se pudo mostrar rewarded: {error}");
+        FailRewarded(onRewardedFail);
+        rewardedAd?.LoadAd();
     }
 
-    private void OnInterstitialFailed(IronSourceError error, IronSourceAdInfo info)
+    private System.Collections.IEnumerator FailRewardedAfterCloseGracePeriod()
     {
-        LogAd($"Interstitial falló: {error.getDescription()}");
-        Time.timeScale = 1f;
+        yield return new WaitForSecondsRealtime(5f);
+        rewardCloseTimeout = null;
+        if (rewardedRequestPending && !rewardedCompleted)
+            FailRewarded(onRewardedFail);
     }
 
-    private void OnApplicationPause(bool isPaused)
+    private void OnInterstitialReady(LevelPlayAdInfo info) => LogAd("Interstitial listo.");
+    private void OnInterstitialLoadFailed(LevelPlayAdError error) => LogAd($"No cargó interstitial: {error}");
+
+    private void OnInterstitialOpened(LevelPlayAdInfo info)
     {
-        IronSource.Agent.onApplicationPause(isPaused);
+        timeScaleBeforeAd = Time.timeScale;
+        Time.timeScale = 0f;
+        lastInterstitialTime = Time.realtimeSinceStartup;
+    }
+
+    private void OnInterstitialClosed(LevelPlayAdInfo info)
+    {
+        Time.timeScale = timeScaleBeforeAd;
+        LoadInterstitial();
+    }
+
+    private void OnInterstitialFailed(LevelPlayAdInfo info, LevelPlayAdError error)
+    {
+        Time.timeScale = timeScaleBeforeAd;
+        LogAd($"Interstitial falló: {error}");
+        LoadInterstitial();
     }
 #endif
 
@@ -364,23 +522,27 @@ public class AdsManager : MonoBehaviour
     {
         _noAdsActive = isPurchased;
         LogAd($"Estado NoAds actualizado: {(isPurchased ? "ACTIVO — ads desactivados" : "INACTIVO — ads activos")}");
+        if (!isPurchased && privacyEligibilityResolved && mayServeAds)
+            TryInitializeWhenEligible();
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    //  Simulación (sin SDK instalado)
-    // ─────────────────────────────────────────────────────────────────────────
-
-    private void SimulateRewardedAd(AdContext context, Action onSuccess, Action onFail)
+    private void FailRewarded(Action onFail)
     {
-        // En simulación siempre tiene éxito — para pruebas reales del flujo
-        // sin depender del SDK instalado.
-        StartCoroutine(SimulateAdDelay(onSuccess));
+        ClearRewardedCallbacks();
+        onFail?.Invoke();
     }
 
-    private System.Collections.IEnumerator SimulateAdDelay(Action onSuccess)
+    private void ClearRewardedCallbacks()
     {
-        yield return new UnityEngine.WaitForSecondsRealtime(0.5f);
-        onSuccess?.Invoke();
+        if (rewardCloseTimeout != null)
+        {
+            StopCoroutine(rewardCloseTimeout);
+            rewardCloseTimeout = null;
+        }
+        onRewardedSuccess = null;
+        onRewardedFail = null;
+        rewardedRequestPending = false;
+        rewardedCompleted = false;
     }
 
     // ─────────────────────────────────────────────────────────────────────────

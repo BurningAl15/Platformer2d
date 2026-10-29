@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Utilities;
 
 /// <summary>
 /// Detecta la conexión y desconexión de gamepads físicos (GameSir X5s,
@@ -61,7 +62,24 @@ public class GamepadDetector : MonoBehaviour
     /// </summary>
     public bool HasPhysicalGamepad()
     {
-        return Gamepad.current != null;
+        foreach (InputDevice device in InputSystem.devices)
+        {
+            if ((device is Gamepad || device is Joystick) && device.enabled &&
+                !IsOnScreenDevice(device))
+                return true;
+        }
+        return false;
+    }
+
+    private static bool IsOnScreenDevice(InputDevice device)
+    {
+        InternedString onScreenUsage = new InternedString("OnScreen");
+        foreach (InternedString usage in device.usages)
+        {
+            if (usage == onScreenUsage)
+                return true;
+        }
+        return false;
     }
 
     // ───────────────────────────────────────────────
@@ -70,7 +88,7 @@ public class GamepadDetector : MonoBehaviour
 
     private void OnDeviceChanged(InputDevice device, InputDeviceChange change)
     {
-        if (device is not Gamepad) return;
+        if (!(device is Gamepad) && !(device is Joystick)) return;
 
         switch (change)
         {
@@ -79,7 +97,10 @@ public class GamepadDetector : MonoBehaviour
             case InputDeviceChange.Enabled:
                 if (debugLog)
                     Debug.Log($"[GamepadDetector] Gamepad conectado: {device.displayName}");
-                ApplyGamepadState();
+                // On-screen controls register a virtual Gamepad before marking it
+                // with the OnScreen usage. Wait briefly before checking the device list.
+                CancelInvoke(nameof(ApplyGamepadState));
+                Invoke(nameof(ApplyGamepadState), 0.05f);
                 break;
 
             case InputDeviceChange.Removed:
@@ -87,7 +108,8 @@ public class GamepadDetector : MonoBehaviour
             case InputDeviceChange.Disabled:
                 if (debugLog)
                     Debug.Log($"[GamepadDetector] Gamepad desconectado: {device.displayName}");
-                ApplyGamepadState();
+                CancelInvoke(nameof(ApplyGamepadState));
+                Invoke(nameof(ApplyGamepadState), 0.05f);
                 break;
         }
     }

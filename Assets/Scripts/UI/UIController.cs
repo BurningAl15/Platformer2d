@@ -33,6 +33,14 @@ public class HeartUI
     {
         heartImage.sprite = currentHealth % 2 == 1 ? heartFull : heartHalf;
     }
+
+    public void SetHealth(int health, int slotIndex)
+    {
+        if (heartImage == null) return;
+
+        int healthForHeart = health - (slotIndex * 2);
+        heartImage.sprite = healthForHeart >= 2 ? heartFull : healthForHeart == 1 ? heartHalf : heartEmpty;
+    }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -57,6 +65,10 @@ public class UIController : MonoBehaviour
     [SerializeField] private Sprite heartEmpty;
     [SerializeField] private Sprite heartHalf;
     [SerializeField] private Sprite heartFull;
+
+    [Header("Corazón extra — Dado Secreto")]
+    [Tooltip("Slot visual del corazón extra. Se muestra cuando la salud máxima supera los slots base.")]
+    [SerializeField] private Image bonusHeartIcon;
 
     // ─────────────────────────────
     //  Gemas
@@ -107,6 +119,12 @@ public class UIController : MonoBehaviour
         foreach (var heart in hearts)
             heart.Init(heartEmpty, heartHalf, heartFull);
 
+        if (bonusHeartIcon != null)
+        {
+            bonusHeartIcon.sprite = heartEmpty;
+            bonusHeartIcon.gameObject.SetActive(false);
+        }
+
         if (endLevel_animator != null) endLevel_animator.gameObject.SetActive(false);
         if (amazingJob_animator != null) amazingJob_animator.gameObject.SetActive(false);
     }
@@ -120,6 +138,7 @@ public class UIController : MonoBehaviour
 
         // Mostrar vidas iniciales
         RefreshLivesUI();
+        RefreshHealthDisplay();
 
         // Mostrar gemas globales si hay texto asignado
         RefreshGlobalGemsUI();
@@ -158,8 +177,37 @@ public class UIController : MonoBehaviour
 
     public void ResetHearts()
     {
-        foreach (var heart in hearts)
-            heart.Init(heartEmpty, heartHalf, heartFull);
+        RefreshHealthDisplay();
+    }
+
+    /// <summary>Actualiza los slots base y el slot extra opcional según PlayerHealth.</summary>
+    public void RefreshHealthDisplay()
+    {
+        int health = PlayerHealth._instance != null ? PlayerHealth._instance.CurrentHealth : hearts.Count * 2;
+        int maxHealth = PlayerHealth._instance != null ? PlayerHealth._instance.MaxHealth : hearts.Count * 2;
+
+        for (int i = 0; i < hearts.Count; i++)
+        {
+            var heart = hearts[i];
+            if (heart?.heartImage == null) continue;
+
+            bool slotAvailable = i * 2 < maxHealth;
+            heart.heartImage.gameObject.SetActive(slotAvailable);
+            if (slotAvailable)
+                heart.SetHealth(health, i);
+        }
+
+        if (bonusHeartIcon != null)
+        {
+            int baseCapacity = hearts.Count * 2;
+            bool hasBonusHeart = maxHealth > baseCapacity;
+            bonusHeartIcon.gameObject.SetActive(hasBonusHeart);
+            if (hasBonusHeart)
+            {
+                int bonusHealth = Mathf.Clamp(health - baseCapacity, 0, 2);
+                bonusHeartIcon.sprite = bonusHealth >= 2 ? heartFull : bonusHealth == 1 ? heartHalf : heartEmpty;
+            }
+        }
     }
 
     // ─────────────────────────────────────────────────────────────────────────

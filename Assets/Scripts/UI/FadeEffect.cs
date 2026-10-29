@@ -11,7 +11,6 @@ public class FadeEffect : MonoBehaviour
     [SerializeField] private AnimationCurve animationCurve;
     private Coroutine currentCoroutine = null;
 
-    [SerializeField]
     enum Fade_Effect
     {
         FadeIn,

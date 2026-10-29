@@ -77,9 +77,18 @@ public class DiceRollController : MonoBehaviour
     }
 
     private System.Action<int> onGameOverComplete;
+    private System.Action onLevelCompleteContinue;
 
     public void Show(DiceType startingType = DiceType.Normal)
     {
+        onLevelCompleteContinue = null;
+        ShowInternal(startingType, null);
+    }
+
+    /// <summary>Muestra el dado al completar nivel y ejecuta el siguiente flujo al cerrarlo.</summary>
+    public void ShowFromLevelComplete(DiceType startingType, System.Action onContinue)
+    {
+        onLevelCompleteContinue = onContinue;
         ShowInternal(startingType, null);
     }
 
@@ -89,6 +98,7 @@ public class DiceRollController : MonoBehaviour
     /// </summary>
     public void ShowFromGameOver(DiceType startingType, System.Action<int> onComplete)
     {
+        onLevelCompleteContinue = null;
         ShowInternal(startingType, onComplete);
     }
 
@@ -178,7 +188,13 @@ public class DiceRollController : MonoBehaviour
     public void OnClosePressed()
     {
         Hide();
-        if (onGameOverComplete != null)
+        if (onLevelCompleteContinue != null)
+        {
+            var callback = onLevelCompleteContinue;
+            onLevelCompleteContinue = null;
+            callback.Invoke();
+        }
+        else if (onGameOverComplete != null)
         {
             var cb = onGameOverComplete;
             onGameOverComplete = null;

@@ -8,7 +8,7 @@ using TMPro;
 /// SETUP EN UNITY EDITOR:
 /// - Adjuntar este script a un GameObject con un Button.
 /// - Asignar los campos en el Inspector.
-/// - El botón se oculta automáticamente si NoAds ya está comprado.
+/// - Oculta la compra si Remove Ads ya está activo; mantiene Restaurar disponible.
 ///
 /// USO:
 ///   El botón llama a RevenueCatManager.Instance.PurchaseNoAds().
@@ -16,6 +16,14 @@ using TMPro;
 /// </summary>
 public class NoAdsPurchaseButton : MonoBehaviour
 {
+    [Header("Panel de Tienda (Opcional)")]
+    [Tooltip("CanvasGroup del panel completo de tienda para abrir/cerrar")]
+    [SerializeField] private CanvasGroup storePanelGroup;
+    [Tooltip("Botón que abre la tienda desde el menú principal o pausa")]
+    [SerializeField] private Button openStoreButton;
+    [Tooltip("Botón que cierra el panel de tienda")]
+    [SerializeField] private Button closeStoreButton;
+
     [Header("Referencias UI")]
     [SerializeField] private Button purchaseButton;
     [SerializeField] private Button restoreButton;
@@ -26,14 +34,20 @@ public class NoAdsPurchaseButton : MonoBehaviour
     [Tooltip("Panel o icono que se muestra cuando NoAds ya está activo")]
     [SerializeField] private GameObject noAdsActiveIndicator;
 
-    [Header("Precio (mostrado en el botón hasta que el SDK provea el real)")]
-    [SerializeField] private string fallbackPriceText = "$1.99";
+    [Tooltip("Mensaje visible de resultado para compra o restauración")]
+    [SerializeField] private TextMeshProUGUI statusText;
 
     [Header("Feedback")]
     [SerializeField] private GameObject loadingOverlay;
 
     private void Start()
     {
+        if (openStoreButton != null)
+            openStoreButton.onClick.AddListener(OpenPanel);
+
+        if (closeStoreButton != null)
+            closeStoreButton.onClick.AddListener(ClosePanel);
+
         if (purchaseButton != null)
             purchaseButton.onClick.AddListener(OnPurchasePressed);
 
@@ -41,6 +55,71 @@ public class NoAdsPurchaseButton : MonoBehaviour
             restoreButton.onClick.AddListener(OnRestorePressed);
 
         RefreshUI();
+        RefreshPriceWhenReady();
+    }
+
+    public void OpenPanel()
+    {
+        if (storePanelGroup != null)
+        {
+            storePanelGroup.alpha = 1f;
+            storePanelGroup.interactable = true;
+            storePanelGroup.blocksRaycasts = true;
+        }
+        SetStatus(string.Empty);
+        RefreshUI();
+        RefreshPriceWhenReady();
+    }
+
+    public void ClosePanel()
+    {
+        if (storePanelGroup != null)
+        {
+            storePanelGroup.alpha = 0f;
+            storePanelGroup.interactable = false;
+            storePanelGroup.blocksRaycasts = false;
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (RevenueCatManager.Instance != null)
+            RevenueCatManager.Instance.PurchasesInitialized -= LoadLocalizedPrice;
+    }
+
+    private void RefreshPriceWhenReady()
+    {
+        RevenueCatManager manager = RevenueCatManager.Instance;
+        if (manager == null || !manager.IsInitialized)
+        {
+            if (manager != null)
+                manager.PurchasesInitialized += LoadLocalizedPrice;
+            return;
+        }
+
+        LoadLocalizedPrice();
+    }
+
+    private void LoadLocalizedPrice()
+    {
+        RevenueCatManager manager = RevenueCatManager.Instance;
+        if (manager == null || purchaseButtonLabel == null)
+            return;
+
+        manager.PurchasesInitialized -= LoadLocalizedPrice;
+        manager.GetNoAdsPrice(
+            price =>
+            {
+                if (purchaseButtonLabel != null)
+                    purchaseButtonLabel.text = $"Sin Anuncios — {price}";
+            },
+            error =>
+            {
+                if (purchaseButtonLabel != null)
+                    purchaseButtonLabel.text = "Sin Anuncios";
+                SetStatus("Precio no disponible. Inténtalo de nuevo más tarde.");
+                Debug.LogWarning($"[NoAdsPurchaseButton] No se pudo cargar el precio: {error}");
+            });
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -56,14 +135,15 @@ public class NoAdsPurchaseButton : MonoBehaviour
         if (purchaseButton != null)
             purchaseButton.gameObject.SetActive(!hasPurchased);
 
+        // La restauración debe seguir accesible para quien ya compró en otro dispositivo.
         if (restoreButton != null)
-            restoreButton.gameObject.SetActive(!hasPurchased);
+            restoreButton.gameObject.SetActive(true);
 
         if (noAdsActiveIndicator != null)
             noAdsActiveIndicator.SetActive(hasPurchased);
 
         if (purchaseButtonLabel != null && !hasPurchased)
-            purchaseButtonLabel.text = $"Sin Anuncios — {fallbackPriceText}";
+            purchaseButtonLabel.text = "Sin Anuncios";
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -72,9 +152,10 @@ public class NoAdsPurchaseButton : MonoBehaviour
 
     private void OnPurchasePressed()
     {
+        SetStatus(string.Empty);
         if (RevenueCatManager.Instance == null)
         {
-            Debug.LogWarning("[NoAdsPurchaseButton] RevenueCatManager no encontrado.");
+            SetStatus("Compras no disponibles ahora.");
             return;
         }
 
@@ -85,6 +166,7 @@ public class NoAdsPurchaseButton : MonoBehaviour
             {
                 SetLoading(false);
                 RefreshUI();
+                SetStatus("Compra completada. Anuncios desactivados.");
                 Debug.Log("[NoAdsPurchaseButton] Compra exitosa. Anuncios desactivados.");
             },
             onError: errorMsg =>
@@ -92,7 +174,7 @@ public class NoAdsPurchaseButton : MonoBehaviour
                 SetLoading(false);
                 if (errorMsg != "cancelled")
                 {
-                    // No mostrar error si el usuario canceló voluntariamente
+                    SetStatus("No se pudo completar la compra. Inténtalo de nuevo.");
                     Debug.LogWarning($"[NoAdsPurchaseButton] Error en compra: {errorMsg}");
                 }
             }
@@ -101,9 +183,10 @@ public class NoAdsPurchaseButton : MonoBehaviour
 
     private void OnRestorePressed()
     {
+        SetStatus(string.Empty);
         if (RevenueCatManager.Instance == null)
         {
-            Debug.LogWarning("[NoAdsPurchaseButton] RevenueCatManager no encontrado.");
+            SetStatus("Restauración no disponible ahora.");
             return;
         }
 
@@ -114,11 +197,13 @@ public class NoAdsPurchaseButton : MonoBehaviour
             {
                 SetLoading(false);
                 RefreshUI();
+                SetStatus("Compra de Remove Ads restaurada.");
                 Debug.Log("[NoAdsPurchaseButton] Restauración completada.");
             },
             onError: errorMsg =>
             {
                 SetLoading(false);
+                SetStatus("No se encontró una compra para restaurar.");
                 Debug.LogWarning($"[NoAdsPurchaseButton] Error al restaurar: {errorMsg}");
             }
         );
@@ -138,5 +223,11 @@ public class NoAdsPurchaseButton : MonoBehaviour
 
         if (restoreButton != null)
             restoreButton.interactable = !loading;
+    }
+
+    private void SetStatus(string message)
+    {
+        if (statusText != null)
+            statusText.text = message;
     }
 }

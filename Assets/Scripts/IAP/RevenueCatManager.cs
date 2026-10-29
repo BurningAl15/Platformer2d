@@ -1,51 +1,54 @@
 using System;
-using System.Collections;
 using UnityEngine;
 
 /// <summary>
 /// Manager centralizado para compras in-app via RevenueCat.
 /// Gestiona el producto NoAds (entitlement) con cache local en PlayerPrefs.
 ///
-/// SDK TARGET: RevenueCat Unity SDK
-/// Documentación: https://www.revenuecat.com/docs/unity
-///
-/// SETUP REQUERIDO:
-/// 1. Descargar el .unitypackage desde: https://github.com/RevenueCat/purchases-unity/releases
-/// 2. Importar en el proyecto (Assets → Import Package → Custom Package).
-/// 3. En el Inspector de este componente, asignar:
-///    - androidApiKey: "goog_XXXXXXXXXX" (desde RevenueCat Dashboard)
-///    - iosApiKey:     "appl_XXXXXXXXXX" (desde RevenueCat Dashboard)
-///    - noAdsProductId: "com.fatcatgamestudio.foxstale.noads" (SKU del producto)
-///    - noAdsEntitlementId: "NoAds" (entitlement configurado en RevenueCat)
-/// 4. En el Dashboard de RevenueCat:
-///    - Crear entitlement "NoAds"
-///    - Crear offering con el producto one-time purchase
-///    - Configurar los SKUs en Google Play Console y App Store Connect
+/// Prototipo de wrapper de compra. El SDK, los identificadores de tienda y el entitlement
+/// deben verificarse antes de producción; ver la auditoría vigente en .kiro/handoff.md.
 ///
 /// FLUJO:
 ///   RevenueCatManager.Instance.IsNoAdsPurchased()  → bool (sincrónico, usa cache)
 ///   RevenueCatManager.Instance.PurchaseNoAds(onSuccess, onError)
 ///   RevenueCatManager.Instance.RestorePurchases(onSuccess, onError)
 /// </summary>
+[RequireComponent(typeof(Purchases))]
 public class RevenueCatManager : MonoBehaviour
 {
+    [Serializable]
+    private sealed class LocalApiKeys
+    {
+        public string androidApiKey;
+        public string iosApiKey;
+    }
+
     public static RevenueCatManager Instance { get; private set; }
+    public bool IsInitialized => _isInitialized;
+    public bool IsEntitlementStatusResolved { get; private set; }
+
+    public event Action<bool> EntitlementStatusResolved;
+    public event Action PurchasesInitialized;
 
     // ─────────────────────────────────────────────────────────────────────────
     //  Configuración (asignar en Inspector)
     // ─────────────────────────────────────────────────────────────────────────
 
-    [Header("RevenueCat API Keys")]
+    [Header("RevenueCat API Keys — configurar localmente")]
     [Tooltip("API Key de Android — obtenida en app.revenuecat.com")]
     [SerializeField] private string androidApiKey = "goog_XXXXXXXXXX";
     [Tooltip("API Key de iOS — obtenida en app.revenuecat.com")]
     [SerializeField] private string iosApiKey = "appl_XXXXXXXXXX";
+    [Tooltip("Test Store API key para pruebas aisladas cuando se active la opción siguiente")]
+    [SerializeField] private string testStoreApiKey = "test_XXXXXXXXXX";
+    [Tooltip("Solo para pruebas aisladas de RevenueCat Test Store; los builds Development usan la tienda real por defecto")]
+    [SerializeField] private bool useTestStoreInDevelopmentBuild = false;
 
     [Header("Producto NoAds")]
     [Tooltip("Product ID en Google Play / App Store. Ej: com.fatcatgamestudio.foxstale.noads")]
     [SerializeField] private string noAdsProductId = "com.fatcatgamestudio.foxstale.noads";
-    [Tooltip("ID del entitlement en RevenueCat Dashboard. Ej: NoAds")]
-    [SerializeField] private string noAdsEntitlementId = "NoAds";
+    [Tooltip("Entitlement Remove Ads configurado en RevenueCat")]
+    [SerializeField] private string noAdsEntitlementId = "remove_ads";
 
     [Header("Debug")]
     [SerializeField] private bool logEvents = true;
@@ -62,6 +65,8 @@ public class RevenueCatManager : MonoBehaviour
 
     private bool _isInitialized = false;
     private bool _isPurchasing  = false;
+    private Purchases purchases;
+    private LocalApiKeys localApiKeys;
 
     // ─────────────────────────────────────────────────────────────────────────
     //  Ciclo de vida
@@ -80,6 +85,7 @@ public class RevenueCatManager : MonoBehaviour
 
     private void Start()
     {
+        purchases = GetComponent<Purchases>();
         Initialize();
     }
 
@@ -89,7 +95,12 @@ public class RevenueCatManager : MonoBehaviour
 
     private void Initialize()
     {
-#if UNITY_PURCHASING && UNITY_REVENUECAT
+        if (Application.isEditor)
+        {
+            LogRC("RevenueCat no se ejecuta en Unity Editor. Ejecutar un build en dispositivo para probar compras.");
+            return;
+        }
+
         string apiKey = GetApiKey();
         if (string.IsNullOrEmpty(apiKey) || apiKey.Contains("XXXXXXXXXX"))
         {
@@ -98,33 +109,64 @@ public class RevenueCatManager : MonoBehaviour
             return;
         }
 
-        Purchases.PurchasesConfiguration config = Purchases.PurchasesConfiguration
-            .Builder(apiKey)
+        Purchases.PurchasesConfiguration config = Purchases.PurchasesConfiguration.Builder
+            .Init(apiKey)
             .Build();
 
-        Purchases.Configure(config);
-        Purchases.GetSharedInstance().GetCustomerInfo(
-            customerInfo => OnCustomerInfoReceived(customerInfo),
-            error        => LogRC($"Error al obtener customer info al iniciar: {error.message}")
+        purchases.useRuntimeSetup = true;
+        purchases.Configure(config);
+        purchases.GetCustomerInfo(
+            (customerInfo, error) =>
+            {
+                if (error != null || customerInfo == null)
+                {
+                    LogRC($"Error al obtener customer info al iniciar: {error}");
+                    return; // Entitlement unresolved: ads remain blocked.
+                }
+                OnCustomerInfoReceived(customerInfo);
+            }
         );
 
         _isInitialized = true;
+        PurchasesInitialized?.Invoke();
         LogRC("SDK inicializado correctamente.");
-#else
-        // Sin SDK instalado: usar cache de PlayerPrefs como fuente de verdad.
-        _isInitialized = true;
-        LogRC("RevenueCat SDK no instalado. Usando cache local (PlayerPrefs).");
-#endif
     }
 
     private string GetApiKey()
     {
+        if (localApiKeys == null)
+        {
+            TextAsset localConfig = Resources.Load<TextAsset>("RevenueCatPublicKeys.local");
+            if (localConfig != null)
+            {
+                try
+                {
+                    localApiKeys = JsonUtility.FromJson<LocalApiKeys>(localConfig.text);
+                }
+                catch (Exception exception)
+                {
+                    LogRC($"No se pudo leer Assets/Resources/RevenueCatPublicKeys.local.json: {exception.GetType().Name}");
+                    localApiKeys = new LocalApiKeys();
+                }
+            }
+            else
+                localApiKeys = new LocalApiKeys();
+        }
+
+#if DEVELOPMENT_BUILD
+        if (useTestStoreInDevelopmentBuild)
+            return testStoreApiKey;
+#endif
 #if UNITY_ANDROID
-        return androidApiKey;
+        return !string.IsNullOrEmpty(localApiKeys.androidApiKey)
+            ? localApiKeys.androidApiKey
+            : androidApiKey;
 #elif UNITY_IOS
-        return iosApiKey;
+        return !string.IsNullOrEmpty(localApiKeys.iosApiKey)
+            ? localApiKeys.iosApiKey
+            : iosApiKey;
 #else
-        return androidApiKey; // Editor: Android key para pruebas
+        return androidApiKey;
 #endif
     }
 
@@ -139,6 +181,36 @@ public class RevenueCatManager : MonoBehaviour
     public bool IsNoAdsPurchased()
         => PlayerPrefs.GetInt(KEY_NO_ADS, 0) == 1;
 
+    /// <summary>Returns the store-localized price for the exact configured Remove Ads product.</summary>
+    public void GetNoAdsPrice(Action<string> onPrice, Action<string> onError = null)
+    {
+        if (!_isInitialized)
+        {
+            onError?.Invoke("Compras no inicializadas.");
+            return;
+        }
+
+        purchases.GetOfferings((offerings, error) =>
+        {
+            if (error != null)
+            {
+                onError?.Invoke(error.Message);
+                return;
+            }
+
+            Purchases.Package package = offerings?.Current?.AvailablePackages.Find(
+                candidate => candidate.StoreProduct != null &&
+                             candidate.StoreProduct.Identifier == noAdsProductId);
+            if (package?.StoreProduct == null || string.IsNullOrEmpty(package.StoreProduct.PriceString))
+            {
+                onError?.Invoke("El producto Remove Ads aún no está configurado en RevenueCat.");
+                return;
+            }
+
+            onPrice?.Invoke(package.StoreProduct.PriceString);
+        });
+    }
+
     // ─────────────────────────────────────────────────────────────────────────
     //  API PÚBLICA — Compra
     // ─────────────────────────────────────────────────────────────────────────
@@ -150,6 +222,12 @@ public class RevenueCatManager : MonoBehaviour
     /// </summary>
     public void PurchaseNoAds(Action onSuccess, Action<string> onError = null)
     {
+        if (!_isInitialized)
+        {
+            onError?.Invoke("Compras no inicializadas. Revisa la configuración de RevenueCat.");
+            return;
+        }
+
         if (_isPurchasing)
         {
             LogRC("Compra ya en progreso, ignorando llamada duplicada.");
@@ -164,12 +242,19 @@ public class RevenueCatManager : MonoBehaviour
             return;
         }
 
-#if UNITY_PURCHASING && UNITY_REVENUECAT
         _isPurchasing = true;
         LogRC($"Iniciando compra de: {noAdsProductId}");
 
-        Purchases.GetSharedInstance().GetOfferings(offerings =>
+        purchases.GetOfferings((offerings, offeringsError) =>
         {
+            if (offeringsError != null)
+            {
+                _isPurchasing = false;
+                LogRC($"Error al cargar offerings: {offeringsError.Message}");
+                onError?.Invoke(offeringsError.Message);
+                return;
+            }
+
             if (offerings?.Current == null)
             {
                 _isPurchasing = false;
@@ -179,12 +264,9 @@ public class RevenueCatManager : MonoBehaviour
                 return;
             }
 
-            Purchases.Package package = offerings.Current.GetPackage(noAdsProductId);
-            if (package == null)
-            {
-                // Intentar con el offering actual por defecto
-                package = offerings.Current.Lifetime;
-            }
+            Purchases.Package package = offerings.Current.AvailablePackages.Find(
+                candidate => candidate.StoreProduct != null &&
+                             candidate.StoreProduct.Identifier == noAdsProductId);
 
             if (package == null)
             {
@@ -195,12 +277,22 @@ public class RevenueCatManager : MonoBehaviour
                 return;
             }
 
-            Purchases.GetSharedInstance().PurchasePackage(
-                package,
-                (transaction, customerInfo) =>
+            purchases.PurchasePackage(package, result =>
                 {
                     _isPurchasing = false;
-                    OnCustomerInfoReceived(customerInfo);
+                    if (result == null || result.UserCancelled)
+                    {
+                        onError?.Invoke("cancelled");
+                        return;
+                    }
+                    if (result.Error != null)
+                    {
+                        LogRC($"Error en compra: {result.Error.Message}");
+                        onError?.Invoke(result.Error.Message);
+                        return;
+                    }
+
+                    OnCustomerInfoReceived(result.CustomerInfo);
 
                     if (IsNoAdsPurchased())
                     {
@@ -213,35 +305,9 @@ public class RevenueCatManager : MonoBehaviour
                         LogRC(msg);
                         onError?.Invoke(msg);
                     }
-                },
-                (error, userCancelled) =>
-                {
-                    _isPurchasing = false;
-                    if (userCancelled)
-                    {
-                        LogRC("Compra cancelada por el usuario.");
-                        onError?.Invoke("cancelled");
-                    }
-                    else
-                    {
-                        LogRC($"Error en compra: {error.message}");
-                        onError?.Invoke(error.message);
-                    }
                 }
             );
-        },
-        error =>
-        {
-            _isPurchasing = false;
-            LogRC($"Error al cargar offerings: {error.message}");
-            onError?.Invoke(error.message);
         });
-#else
-        // Simulación: activa NoAds localmente para pruebas de flujo.
-        LogRC("[SIMULACIÓN] Compra NoAds exitosa (SDK no instalado).");
-        SetNoAdsPurchasedLocally(true);
-        onSuccess?.Invoke();
-#endif
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -256,33 +322,49 @@ public class RevenueCatManager : MonoBehaviour
     public void RestorePurchases(Action onSuccess, Action<string> onError = null)
     {
         LogRC("Iniciando restauración de compras...");
+        if (!_isInitialized)
+        {
+            onError?.Invoke("Compras no inicializadas. Revisa la configuración de RevenueCat.");
+            return;
+        }
 
-#if UNITY_PURCHASING && UNITY_REVENUECAT
-        Purchases.GetSharedInstance().RestorePurchases(
-            customerInfo =>
+        purchases.RestorePurchases(
+            (customerInfo, error) =>
             {
+                if (error != null)
+                {
+                    LogRC($"Error al restaurar compras: {error.Message}");
+                    onError?.Invoke(error.Message);
+                    return;
+                }
+                if (customerInfo == null)
+                {
+                    const string message = "La tienda no devolvió información de compras.";
+                    LogRC(message);
+                    onError?.Invoke(message);
+                    return;
+                }
+
                 OnCustomerInfoReceived(customerInfo);
-                LogRC($"Restauración completada. NoAds: {IsNoAdsPurchased()}");
-                onSuccess?.Invoke();
-            },
-            error =>
-            {
-                LogRC($"Error al restaurar compras: {error.message}");
-                onError?.Invoke(error.message);
+                if (IsNoAdsPurchased())
+                {
+                    LogRC("Restauración completada. Remove Ads activo.");
+                    onSuccess?.Invoke();
+                }
+                else
+                {
+                    const string message = "No se encontró una compra de Remove Ads para restaurar.";
+                    LogRC(message);
+                    onError?.Invoke(message);
+                }
             }
         );
-#else
-        // Simulación: restaurar desde cache.
-        LogRC("[SIMULACIÓN] Restauración completada (SDK no instalado). Cache sin cambios.");
-        onSuccess?.Invoke();
-#endif
     }
 
     // ─────────────────────────────────────────────────────────────────────────
     //  Helpers internos
     // ─────────────────────────────────────────────────────────────────────────
 
-#if UNITY_PURCHASING && UNITY_REVENUECAT
     private void OnCustomerInfoReceived(Purchases.CustomerInfo customerInfo)
     {
         if (customerInfo == null) return;
@@ -293,7 +375,6 @@ public class RevenueCatManager : MonoBehaviour
         SetNoAdsPurchasedLocally(hasEntitlement);
         LogRC($"CustomerInfo procesado. Entitlement '{noAdsEntitlementId}' activo: {hasEntitlement}");
     }
-#endif
 
     /// <summary>
     /// Persiste el estado de NoAds en PlayerPrefs (cache offline).
@@ -302,10 +383,17 @@ public class RevenueCatManager : MonoBehaviour
     {
         PlayerPrefs.SetInt(KEY_NO_ADS, purchased ? 1 : 0);
         PlayerPrefs.Save();
+        ResolveEntitlementStatus(purchased);
 
         // Notificar al AdsManager para que actualice su comportamiento en tiempo real.
         if (AdsManager.Instance != null)
             AdsManager.Instance.OnNoAdsStatusChanged(purchased);
+    }
+
+    private void ResolveEntitlementStatus(bool isPurchased)
+    {
+        IsEntitlementStatusResolved = true;
+        EntitlementStatusResolved?.Invoke(isPurchased);
     }
 
     private void LogRC(string message)

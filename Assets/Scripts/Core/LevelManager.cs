@@ -22,6 +22,10 @@ public class LevelManager : MonoBehaviour
     [Tooltip("Total de gemas del nivel. Si es 0, se detecta automáticamente al iniciar buscando Pickups de tipo Gema.")]
     [SerializeField] private int totalGemsInLevel = 0;
 
+    [Header("Resumen de mundo (opcional)")]
+    [SerializeField] private WorldData currentWorldData;
+    [SerializeField] private WorldCompleteController worldCompleteController;
+
     private int gemsCollected = 0;
     public float timeInLevel { get; private set; }
 
@@ -157,14 +161,39 @@ public class LevelManager : MonoBehaviour
         {
             FadeEffect._instance.Fade_In();
             yield return new WaitUntil(() => FadeEffect._instance.endFade);
-            DiceRollController.Instance.Show(DiceType.Normal);
+            if (IsCurrentWorldComplete())
+            {
+                DiceRollController.Instance.ShowFromLevelComplete(
+                    DiceType.Normal,
+                    () => worldCompleteController.Show(currentWorldData));
+            }
+            else
+            {
+                DiceRollController.Instance.Show(DiceType.Normal);
+            }
             // El flujo continúa cuando DiceRollController llame SceneUtils.ToSelectionScene()
             // via su botón "Continuar". El LevelManager cede el control aquí.
             currentCoroutine = null;
             yield break;
         }
 
+        if (IsCurrentWorldComplete())
+        {
+            FadeEffect._instance.Fade_In();
+            yield return new WaitUntil(() => FadeEffect._instance.endFade);
+            worldCompleteController.Show(currentWorldData);
+            currentCoroutine = null;
+            yield break;
+        }
+
         SceneUtils.ToSelectionScene();
+    }
+
+    private bool IsCurrentWorldComplete()
+    {
+        return currentWorldData != null && worldCompleteController != null &&
+               WorldProgressManager.Instance != null &&
+               WorldProgressManager.Instance.IsWorldComplete(currentWorldData);
     }
 
     private LevelRating SaveProgress()

@@ -55,7 +55,7 @@ Assets/
 │   │                   PlayerAnimator, PlayerEffects, PlatformRider
 │   ├── Systems/        LivesManager, LevelRatingSystem, ComboManager
 │   ├── UI/             UIController, FadeEffect, PauseMenu, UI_SelectController,
-│   │                   GameOverController
+│   │                   GameOverController, WorldCompleteController
 │   └── Utils/          InputManager, SceneUtils, StringUtils, TurnOff_OnTime
 ├── Editor/             CountGemsInLevel, BuildAutomation (pendiente)
 └── PlayerInputSystem.inputactions   — bindings de teclado, gamepad y on-screen
@@ -118,7 +118,7 @@ Toda la documentación del proyecto vive en la carpeta `.kiro/`:
 | 1 | Controles (mobile on-screen + gamepad físico) | ✅ Código listo |
 | 2 | Refactorización (SaveManager, limpieza God Classes) | ✅ Código listo |
 | 3 | Economía (vidas, estrellas, trébol, dado de vidas, corazón extra) | ✅ Código completo |
-| 4 | Monetización (Ads Unity LevelPlay + IAP NoAds RevenueCat) | ✅ Código listo — pendiente instalar SDKs |
+| 4 | Monetización (LevelPlay + compra Remove Ads en RevenueCat) | ⚠️ Paquetes y wrappers actuales declarados; pendientes resolución/compilación, configuración RevenueCat, consentimiento, UI/escenas y pruebas en dispositivos. Ver `.kiro/handoff.md` |
 | 5 | Builds automáticos (Android AAB + iOS Xcode) | ✅ Código listo |
 | 6 | Múltiples mundos (WorldData, WorldProgressManager) | ✅ Arquitectura base lista |
 
@@ -168,7 +168,7 @@ Ver `.kiro/handoff.md` para la lista completa. Los más críticos:
 
 3. **En `AudioMixerManager`:** Reasignar `pickup_health_clip` (renombrado desde `pickup_helth_clip`).
 
-4. **IAP NoAds:** Agregar botón `NoAdsPurchaseButton.cs` en la pantalla de Settings/PauseMenu. Ver sección de pendientes de Fase 4 en el handoff.
+4. **Compra Remove Ads:** Cablear `NoAdsPurchaseButton.cs` a la UI prefab-authored y configurar en RevenueCat el producto, entitlement `remove_ads`, offering y Test Store para desarrollo. El precio se lee localizado de la tienda; no se inventa un fallback. Ver `.kiro/handoff.md`.
 
 5. **Assets pendientes de Antigravity:** Sprites de estrella, trébol, fragmento de dado y tipos de dado. Ver tabla arriba.
 

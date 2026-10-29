@@ -1,0 +1,109 @@
+require "shellwords"
+
+APP_ID = "com.fatcatgamestudio.foxstale"
+
+def ensure_levelplay_ios_pods(root)
+  podfile_path = File.join(root, "Podfile")
+  UI.user_error!("Unity iOS Podfile is missing") unless File.file?(podfile_path)
+
+  podfile = File.read(podfile_path)
+  unless podfile.include?("pod 'IronSourceSDK'")
+    target_marker = "target 'UnityFramework' do"
+    UI.user_error!("UnityFramework target missing from Podfile") unless podfile.include?(target_marker)
+    podfile.sub!(target_marker, "#{target_marker}\n  pod 'IronSourceSDK', '9.5.0.0'")
+  end
+
+  unless podfile.include?("FOXSTALE_IOS_PODS_MIN_15")
+    podfile << <<~'RUBY'
+
+      # FOXSTALE_IOS_PODS_MIN_15: Xcode 27 no longer builds pods targeting below iOS 15.
+      post_install do |installer|
+        installer.pods_project.targets.each do |target|
+          target.build_configurations.each do |config|
+            deployment_target = config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'].to_f
+            config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.0' if deployment_target < 15.0
+          end
+        end
+      end
+    RUBY
+  end
+
+  File.write(podfile_path, podfile)
+  # Fastlane's bundled GEM_PATH can hide CocoaPods' minitest dependency.
+  # Invoke the standalone CocoaPods environment used by the build machine.
+  sh("env", "-u", "GEM_PATH", "-u", "GEM_HOME", "pod", "install", "--project-directory=#{root}")
+end
+
+platform :android do
+  desc "Upload an existing signed AAB to Google Play Internal Testing only"
+  lane :internal do
+    aab = File.expand_path(ENV.fetch("ANDROID_AAB_PATH"))
+    credentials = File.expand_path(ENV.fetch("PLAY_STORE_JSON_KEY_PATH"))
+    UI.user_error!("Android AAB is missing or empty") unless File.file?(aab) && File.size?(aab)
+    UI.user_error!("Google Play credentials file is missing") unless File.file?(credentials)
+
+    upload_to_play_store(
+      package_name: APP_ID,
+      json_key: credentials,
+      aab: aab,
+      track: "internal",
+      release_status: "completed",
+      skip_upload_metadata: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true
+    )
+  end
+end
+
+platform :ios do
+  desc "Build Unity Xcode export and upload to TestFlight only"
+  lane :upload_testflight do
+    root = File.expand_path(ENV.fetch("UNITY_IOS_PROJECT"))
+    project = File.join(root, "Unity-iPhone.xcodeproj")
+    workspace = File.join(root, "Unity-iPhone.xcworkspace")
+    UI.user_error!("Unity Xcode project is missing") unless File.directory?(project)
+    ensure_levelplay_ios_pods(root)
+
+    key_path = File.expand_path(ENV.fetch("ASC_KEY_FILEPATH"))
+    UI.user_error!("App Store Connect key file is missing") unless File.file?(key_path)
+    key_id = ENV.fetch("ASC_KEY_ID")
+    issuer_id = ENV.fetch("ASC_ISSUER_ID")
+    team_id = ENV.fetch("IOS_DEVELOPMENT_TEAM")
+    api_key = app_store_connect_api_key(
+      key_id: key_id,
+      issuer_id: issuer_id,
+      key_filepath: key_path
+    )
+
+    target = File.directory?(workspace) ? { workspace: workspace } : { project: project }
+    signing = [
+      "-allowProvisioningUpdates",
+      "DEVELOPMENT_TEAM=#{team_id}",
+      "CODE_SIGN_STYLE=Automatic",
+      "-authenticationKeyPath", key_path,
+      "-authenticationKeyID", key_id,
+      "-authenticationKeyIssuerID", issuer_id
+    ]
+
+    ipa = build_app(
+      **target,
+      scheme: "Unity-iPhone",
+      clean: true,
+      export_method: "app-store",
+      export_team_id: team_id,
+      export_options: File.expand_path("ExportOptions-FoxsTale.plist", __dir__),
+      output_directory: File.expand_path("../Builds/CI/iOS/ipa", __dir__),
+      output_name: "FoxsTale.ipa",
+      xcargs: Shellwords.join(signing),
+      export_xcargs: "-allowProvisioningUpdates"
+    )
+
+    upload_to_testflight(
+      api_key: api_key,
+      app_identifier: APP_ID,
+      ipa: ipa,
+      skip_submission: true,
+      skip_waiting_for_build_processing: true
+    )
+  end
+end

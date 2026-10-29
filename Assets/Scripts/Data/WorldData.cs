@@ -47,6 +47,9 @@ public class WorldData : ScriptableObject
     public int totalDiceFragments = 3;
 
     [Header("Presentación")]
+    [Tooltip("Escena de selección asociada a este mundo.")]
+    public string selectionSceneName = "LevelSelection";
+
     [Tooltip("Sprite o thumbnail del mundo para la pantalla de selección de mundos (futuro).")]
     public Sprite worldThumbnail;
 
