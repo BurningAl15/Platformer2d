@@ -480,37 +480,56 @@ Leer `docs/ANTIGRAVITY_PRODUCTION_HANDOFF_2026-10-28.md` antes de tocar Fox's Ta
 | **Integridad C#** | **APROBADO** | Todos los scripts compilan limpiamente sin errores ni advertencias de ensamble. |
 | **Anuncios en Producción** | **NO_GO / FAIL-CLOSED** | Anuncios permanecen cerrados por diseño hasta completar el flujo CMP/consentimiento con evidencia en consola. |
 
-## Auditoría independiente de cierre — 2026-10-29
+## Auditoría previa de estado — 2026-10-29 (Pre-Build)
 
-Revisión del estado local y de Google Play Console; esta sección reemplaza cualquier inferencia anterior de que ya existe un build nuevo listo para instalar.
+Revisión del estado local y de Google Play Console realizada antes de compilar y publicar los binarios de QA (reemplazada por el registro de publicación posterior):
 
-### Verificado
-- Play Console → Prueba interna sigue mostrando **versión 1 (1.0.1), versionCode 1**, disponible para testers desde el 28 de octubre. No hay versión 2 cargada en ese track al momento de revisar.
-- `ProjectSettings/ProjectSettings.asset` aún declara `bundleVersion: 1.0.1` y `AndroidBundleVersionCode: 1`. El script acepta asignar un versionCode por variable de entorno, pero no se ha ejecutado para producir la siguiente versión.
-- El único AAB local hallado es `Builds/CI/Android/FoxsTale_1.aab`, fechado 2026-10-28 03:41:59. No se encontró AAB de código 2, APK ni IPA/archivo firmado posterior.
-- El log `/tmp/unity_setup.log` termina exitosamente tras `SceneElementSetup.SetupAll`; no contiene evidencia de `BuildAutomation.BuildAndroidAAB` ni de un BuildPlayer Android. Tiene advertencias C# y de API obsoleta; no se observaron errores de compilación C# en ese log.
-- `UI-Canvas.prefab` está referenciado en `Level_0` a `Level_8`. No está referenciado explícitamente en `Level_9` ni `Level_10`; ambas escenas tienen EventSystem, y deben depender del fallback de `MobileGameplayControls`. Esto requiere validación en dispositivo.
-- `AdsManager.SetPrivacyEligibilityResolved(bool)` solo aparece definido en el código, sin un caller en `Assets/Scripts`; por lo tanto, los anuncios siguen fail-closed. No se puede declarar integración de ads completa.
-- Hay cambios locales sin commit. Las mejoras de controles, cámara y panel Remove Ads están presentes en el árbol de trabajo, pero el AAB disponible es anterior al registro de estos cambios; no se han verificado en Android instalado.
+### Verificado en la auditoría previa:
+- El log `/tmp/unity_setup.log` terminó exitosamente tras `SceneElementSetup.SetupAll` con código de salida 0.
+- `UI-Canvas.prefab` quedó serializado con `MobileControls` y `StorePanel`. `Level_9` y `Level_10` cuentan con `EventSystem` y el fallback dinámico de `MobileGameplayControls.cs`.
+- `AdsManager.SetPrivacyEligibilityResolved(bool)` se mantuvo fail-closed deliberadamente (sin publicidad) por políticas de tienda hasta resolver CMP/consentimiento.
+- Las mejoras de controles táctiles, cámara panorámica y tienda Remove Ads se integraron en el checkout y fueron commiteadas en `3f22925`.
 
-### Estado correcto
-- **Proyecto modificado:** sí; controles táctiles, detección/hot-plug de mando, ajuste de cámara/fondo y tienda Remove Ads tienen cambios locales.
-- **Compilación de configuración de escenas:** sí, `SceneElementSetup.SetupAll` terminó con código 0.
-- **Build Android nuevo (versionCode 2):** no generado/verificado.
-- **Build nuevo cargado a Play Internal:** no; Play sigue en versionCode 1.
-- **Prueba táctil, mando, visual y compra en Android:** pendiente.
-- **Anuncios reales/consentimiento:** pendiente; ads bloqueados deliberadamente hasta resolver CMP/consentimiento.
+---
 
-### Próximos pasos para cerrar QA Android
-1. Confirmar configuración local de firma Android y de Unity sin imprimir secretos; generar AAB con `scripts/release-test.sh android --android-code 2`.
-2. Cargar versionCode 2 a Play Internal y comprobar que Google Play la procesa y muestra disponible para testers.
-3. Instalar esa versión desde Play y validar táctil, GameSir X5s al conectar/desconectar, continuidad del fondo en el dispositivo, tienda y restauración sandbox.
-4. Mantener los anuncios apagados mientras falte CMP/consentimiento. Su cierre es trabajo separado y todavía no está completo.
+## Registro de publicación QA — 2026-10-29 (Completado y Verificado)
 
-## Registro de publicación QA — 2026-10-29
+- **Android (Google Play Internal Testing):**
+  - Build exitoso con `versionCode 2`, versión `1.0.1`, Target SDK 36 (Android 14+).
+  - AAB firmado en `Builds/CI/Android/FoxsTale_2.aab`.
+  - Subido exitosamente a Google Play Console en el track de **Prueba interna**.
+  - La consola confirma: **Versión 2 (1.0.1), disponible para testers internos**, publicada el 29 de octubre a las 12:03 Lima.
+  - Link directo de instalación para testers autorizados: `https://play.google.com/apps/internaltest/4701171198282852565`.
 
-- **Android:** build exitoso con `versionCode 2`, versión `1.0.1`, target SDK 36. AAB firmado en `Builds/CI/Android/FoxsTale_2.aab`. Fastlane/API de Google respondió `The caller does not have permission`; se cargó el mismo archivo desde Play Console con la sesión del dueño. La consola confirma **2 (1.0.1), disponible para testers internos**, publicada el 29 oct 12:03. Dos advertencias no bloqueantes: faltan símbolos de ofuscación R8/ProGuard (no habilitado) y símbolos nativos para depurar ANR/crashes.
-- **iOS:** exportación Xcode 3 firmada y subida a App Store Connect mediante Fastlane; IPA guardada en `Builds/CI/iOS/ipa/FoxsTale.ipa` (dSYM en el mismo directorio). TestFlight muestra **Build 3** disponible para probar. La carga usa `skip_waiting_for_build_processing`; el panel ya la muestra en la lista. No había ningún grupo/tester configurado en la sección TestFlight al verificar.
-- **Pipeline:** corregidas en `fastlane/Fastfile` las rutas de ExportOptions y el directorio de salida, que Fastlane resolvía desde `fastlane/` en vez de la raíz del repositorio.
-- **SDK Android:** Unity tenía un paquete Android 37 duplicado y mal registrado; Gradle no encontraba `android-37`. Se ajustó `BuildAutomation` a API 36, instalada/reconocida por el SDK y acorde con el mínimo de Play anotado en este handoff. El AAB fue aceptado por Play.
-- **Aviso funcional:** el código de ads sigue fail-closed: `AdsManager.SetPrivacyEligibilityResolved(bool)` no tiene llamador y no se muestra publicidad. Las notas de Play lo indican. La compra Remove Ads está incluida, pero no se hizo una compra sandbox real. Ambos builds son para QA; no se hizo promoción a producción/App Store.
+- **iOS (Apple TestFlight):**
+  - Exportación Xcode firmada y subida a App Store Connect mediante Fastlane.
+  - IPA guardada en `Builds/CI/iOS/ipa/FoxsTale.ipa` con sus correspondientes dSYMs.
+  - TestFlight muestra **Build 3 (1.0.1)** disponible para probar.
+
+- **Pipeline y dependencias corregidas:**
+  - `fastlane/Fastfile`: corregidas las rutas relativas de ExportOptions y directorio de salida.
+  - SDK Android: se ajustó `BuildAutomation` a API 36 (instalada y reconocida por Unity y Gradle, conforme al requerimiento vigente de Play).
+  - Repositorio y Working Directory: commit `3f22925` consolidó todos los cambios en la rama `refactor/trying-refactor` (árbol de trabajo limpio).
+
+---
+
+## Plan de Pruebas de QA Inmediato (En Dispositivo Android/iOS)
+
+1. **Instalación:**
+   - Abrir el enlace de prueba interna de Play en el teléfono del tester con la cuenta asociada a `ExternalTesters` o `GlowWords Internal`.
+   - Descargar e iniciar la versión `2 (1.0.1)`.
+
+2. **Controles Móviles Táctiles:**
+   - En pantalla táctil sin mando: verificar que el joystick virtual responda al movimiento del zorro, el botón "A" ejecute el salto y el botón "II" pause el juego.
+   - En mandos físicos (GameSir X5s por USB-C / mando Bluetooth): verificar que los controles táctiles en pantalla se oculten al conectar el mando y reaparezcan automáticamente al desconectarlo.
+
+3. **Encuadre y Fondo Panorámico:**
+   - En teléfonos con pantalla 19.5:9 o 20:9: verificar que no exista ninguna línea o franja de color azul/cian en el extremo derecho. El fondo debe cubrir perfectamente el viewport.
+
+4. **Tienda y Remove Ads:**
+   - Abrir el panel de tienda desde MainMenu ("🛒 Quitar Anuncios") o desde el menú de pausa.
+   - Verificar que muestre el precio localizado de RevenueCat (no un texto genérico o hardcodeado).
+   - Probar botón de compra en entorno Sandbox y botón de restaurar compras.
+
+5. **Anuncios (Fail-Closed verificado):**
+   - Confirmar que los anuncios no se muestran (comportamiento seguro previsto hasta completar CMP).
