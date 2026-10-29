@@ -35,7 +35,7 @@ public static class SceneElementSetup
     [MenuItem("CustomEditorTools/Setup Missing Scene Elements & Placeholders")]
     public static void SetupAll()
     {
-        Debug.Log("[SceneElementSetup] 🚀 Iniciando configuración de escenas y placeholders...");
+        Debug.Log("[SceneElementSetup] Iniciando configuracion de escenas y placeholders...");
 
         try
         {
@@ -57,7 +57,7 @@ public static class SceneElementSetup
             // 5. Agregar Trebol a cada nivel de gameplay
             SetupGameplayLevels(trebolPrefab);
 
-            Debug.Log("[SceneElementSetup] ✅ ¡Todas las escenas y placeholders configurados con éxito!");
+            Debug.Log("[SceneElementSetup] Todas las escenas y placeholders configurados con exito!");
         }
         catch (System.Exception ex)
         {
@@ -287,7 +287,7 @@ public static class SceneElementSetup
             rect.anchoredPosition = Vector2.zero;
 
             var tmp = trebolTxtObj.AddComponent<TextMeshProUGUI>();
-            tmp.text = "🍀 x0";
+            tmp.text = "x0";
             tmp.fontSize = 28;
             tmp.alignment = TextAlignmentOptions.Right;
 
@@ -307,12 +307,25 @@ public static class SceneElementSetup
             rect.anchoredPosition = Vector2.zero;
 
             var tmp = livesTxtObj.AddComponent<TextMeshProUGUI>();
-            tmp.text = "❤️ x3";
+            tmp.text = "x3";
             tmp.fontSize = 28;
             tmp.alignment = TextAlignmentOptions.Left;
 
             SerializedProperty livesTextProp = soUI.FindProperty("livesText");
             if (livesTextProp != null) livesTextProp.objectReferenceValue = tmp;
+        }
+
+        // Gems HUD Text (conectar Gems_Txt y resetear de 999 a 0)
+        Transform gemsTxtTransform = root.transform.Find("GemsContainer/Gems_Txt") ?? root.transform.Find("Gems_Txt");
+        if (gemsTxtTransform != null)
+        {
+            var tmpGems = gemsTxtTransform.GetComponent<TextMeshProUGUI>();
+            if (tmpGems != null)
+            {
+                tmpGems.text = "0";
+                SerializedProperty gemsLevelProp = soUI.FindProperty("gemsLevelText");
+                if (gemsLevelProp != null) gemsLevelProp.objectReferenceValue = tmpGems;
+            }
         }
 
         soUI.ApplyModifiedProperties();
@@ -376,7 +389,7 @@ public static class SceneElementSetup
         soGOC.FindProperty("panelRect").objectReferenceValue = rect;
 
         // Título
-        GameObject titleObj = CreateTMPText(panelObj, "Title", "¡GAME OVER!", 44, new Vector2(0f, 180f));
+        GameObject titleObj = CreateTMPText(panelObj, "Title", "GAME OVER!", 44, new Vector2(0f, 180f));
 
         // Botón Ad
         Button btnAd = CreateUIButton(panelObj, "WatchAdButton", "Ver Video (+2 Vidas)", new Vector2(0f, 80f), new Color(0.2f, 0.6f, 0.9f));
@@ -384,11 +397,11 @@ public static class SceneElementSetup
         soGOC.FindProperty("firstSelectedButton").objectReferenceValue = btnAd.gameObject;
 
         // Botón Trébol
-        Button btnTrebol = CreateUIButton(panelObj, "UseTrebolButton", "🍀 Gastar Trébol (Tirar Dado)", new Vector2(0f, 10f), new Color(0.2f, 0.8f, 0.3f));
+        Button btnTrebol = CreateUIButton(panelObj, "UseTrebolButton", "Gastar Trebol (Tirar Dado)", new Vector2(0f, 10f), new Color(0.2f, 0.8f, 0.3f));
         soGOC.FindProperty("useTrebolButton").objectReferenceValue = btnTrebol;
 
         // Botón Gemas
-        Button btnGems = CreateUIButton(panelObj, "SpendGemsButton", "💎 Usar Gemas (+1 Vida)", new Vector2(0f, -60f), new Color(0.8f, 0.4f, 0.8f));
+        Button btnGems = CreateUIButton(panelObj, "SpendGemsButton", "Usar Gemas (+1 Vida)", new Vector2(0f, -60f), new Color(0.8f, 0.4f, 0.8f));
         soGOC.FindProperty("spendGemsButton").objectReferenceValue = btnGems;
 
         // Botón Volver al Mapa
@@ -396,13 +409,13 @@ public static class SceneElementSetup
         soGOC.FindProperty("returnToMapButton").objectReferenceValue = btnMap;
 
         // Textos informativos
-        GameObject txtGems = CreateTMPText(panelObj, "GemsCostText", "10 💎", 22, new Vector2(160f, -60f));
+        GameObject txtGems = CreateTMPText(panelObj, "GemsCostText", "10 Gemas", 22, new Vector2(160f, -60f));
         soGOC.FindProperty("gemCostText").objectReferenceValue = txtGems.GetComponent<TextMeshProUGUI>();
 
-        GameObject txtCurrentGems = CreateTMPText(panelObj, "CurrentGemsText", "Tienes: 0 💎", 22, new Vector2(0f, -200f));
+        GameObject txtCurrentGems = CreateTMPText(panelObj, "CurrentGemsText", "Tienes: 0 Gemas", 22, new Vector2(0f, -200f));
         soGOC.FindProperty("currentGemsText").objectReferenceValue = txtCurrentGems.GetComponent<TextMeshProUGUI>();
 
-        GameObject txtTrebol = CreateTMPText(panelObj, "TrebolAvailableText", "Tréboles: 0 🍀", 22, new Vector2(0f, -230f));
+        GameObject txtTrebol = CreateTMPText(panelObj, "TrebolAvailableText", "Treboles: 0", 22, new Vector2(0f, -230f));
         soGOC.FindProperty("trebolAvailableText").objectReferenceValue = txtTrebol.GetComponent<TextMeshProUGUI>();
 
         soGOC.ApplyModifiedProperties();
@@ -434,7 +447,7 @@ public static class SceneElementSetup
         soDRC.FindProperty("panelRect").objectReferenceValue = rect;
 
         // Título y Estado
-        CreateTMPText(panelObj, "DiceTitle", "🎲 DADO DE VIDAS 🎲", 40, new Vector2(0f, 180f));
+        CreateTMPText(panelObj, "DiceTitle", "DADO DE VIDAS", 40, new Vector2(0f, 180f));
         GameObject statusText = CreateTMPText(panelObj, "DiceStatus", "Dado Normal (1 - 3 Vidas)", 26, new Vector2(0f, 120f));
         soDRC.FindProperty("diceStatusText").objectReferenceValue = statusText.GetComponent<TextMeshProUGUI>();
 
@@ -443,21 +456,21 @@ public static class SceneElementSetup
         soDRC.FindProperty("diceNumberText").objectReferenceValue = numberText.GetComponent<TextMeshProUGUI>();
 
         // Botones
-        Button btnRoll = CreateUIButton(panelObj, "RollButton", "¡Lanzar Dado!", new Vector2(-120f, -90f), new Color(0.2f, 0.8f, 0.3f));
+        Button btnRoll = CreateUIButton(panelObj, "RollButton", "Lanzar Dado", new Vector2(-120f, -90f), new Color(0.2f, 0.8f, 0.3f));
         soDRC.FindProperty("rollButton").objectReferenceValue = btnRoll;
 
         Button btnStop = CreateUIButton(panelObj, "StopButton", "Parar", new Vector2(120f, -90f), new Color(0.9f, 0.3f, 0.2f));
         btnStop.interactable = false;
         soDRC.FindProperty("stopButton").objectReferenceValue = btnStop;
 
-        Button btnUpgrade = CreateUIButton(panelObj, "UpgradeButton", "🍀 Mejorar con Trébol", new Vector2(0f, -160f), new Color(0.85f, 0.7f, 0.1f));
+        Button btnUpgrade = CreateUIButton(panelObj, "UpgradeButton", "Mejorar con Trebol", new Vector2(0f, -160f), new Color(0.85f, 0.7f, 0.1f));
         soDRC.FindProperty("upgradeWithTrebolButton").objectReferenceValue = btnUpgrade;
 
         Button btnClose = CreateUIButton(panelObj, "CloseButton", "Continuar", new Vector2(0f, -220f), new Color(0.5f, 0.5f, 0.5f));
         btnClose.interactable = false;
         soDRC.FindProperty("closeButton").objectReferenceValue = btnClose;
 
-        GameObject trebolText = CreateTMPText(panelObj, "TrebolAvailableText", "🍀 Tréboles: 0", 22, new Vector2(0f, -260f));
+        GameObject trebolText = CreateTMPText(panelObj, "TrebolAvailableText", "Treboles: 0", 22, new Vector2(0f, -260f));
         soDRC.FindProperty("trebolAvailableText").objectReferenceValue = trebolText.GetComponent<TextMeshProUGUI>();
 
         soDRC.ApplyModifiedProperties();
@@ -585,7 +598,7 @@ public static class SceneElementSetup
         CreateTMPText(panelObj, "StoreTitle", "TIENDA / QUITAR ANUNCIOS", 38, new Vector2(0f, 180f));
 
         // Descripción
-        CreateTMPText(panelObj, "StoreDesc", "¡Juega sin interrupciones!\nElimina todos los anuncios permanentemente.", 22, new Vector2(0f, 100f));
+        CreateTMPText(panelObj, "StoreDesc", "Juega sin interrupciones!\nElimina todos los anuncios permanentemente.", 22, new Vector2(0f, 100f));
 
         // Botón Compra
         Button btnPurchase = CreateUIButton(panelObj, "PurchaseButton", "Sin Anuncios", new Vector2(0f, 10f), new Color(0.2f, 0.75f, 0.35f));
@@ -598,7 +611,7 @@ public static class SceneElementSetup
         soNoAds.FindProperty("restoreButton").objectReferenceValue = btnRestore;
 
         // Indicador activo (cuando ya está comprado)
-        GameObject indicatorObj = CreateTMPText(panelObj, "ActiveIndicator", "✓ Sin Anuncios Activo", 24, new Vector2(0f, 10f));
+        GameObject indicatorObj = CreateTMPText(panelObj, "ActiveIndicator", "Sin Anuncios Activo", 24, new Vector2(0f, 10f));
         indicatorObj.GetComponent<TextMeshProUGUI>().color = new Color(0.3f, 1f, 0.4f);
         indicatorObj.SetActive(false);
         soNoAds.FindProperty("noAdsActiveIndicator").objectReferenceValue = indicatorObj;
@@ -614,7 +627,7 @@ public static class SceneElementSetup
         // Botón para abrir la tienda (si se solicita, ej. en MainMenu)
         if (createOpenButton)
         {
-            Button btnOpen = CreateUIButton(canvasRoot, "OpenStoreButton", "🛒 Quitar Anuncios", new Vector2(0f, -180f), new Color(0.9f, 0.6f, 0.1f));
+            Button btnOpen = CreateUIButton(canvasRoot, "OpenStoreButton", "Quitar Anuncios", new Vector2(0f, -180f), new Color(0.9f, 0.6f, 0.1f));
             soNoAds.FindProperty("openStoreButton").objectReferenceValue = btnOpen;
         }
 

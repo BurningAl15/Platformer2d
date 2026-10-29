@@ -99,8 +99,9 @@ public class LevelManager : MonoBehaviour
     {
         if (currentCoroutine != null) return;
 
-        // Consumir una vida y verificar si el jugador puede continuar
-        bool canContinue = LivesManager.Instance == null || LivesManager.Instance.ConsumeLifeAndCheck();
+        // En el tutorial (Level_0), el respawn es infinito: no se consumen vidas ni hay Game Over.
+        bool isTutorial = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "Level_0";
+        bool canContinue = isTutorial || LivesManager.Instance == null || LivesManager.Instance.ConsumeLifeAndCheck();
 
         if (canContinue)
         {

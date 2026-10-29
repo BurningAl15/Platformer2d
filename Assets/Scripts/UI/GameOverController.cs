@@ -326,13 +326,13 @@ public class GameOverController : MonoBehaviour
         bool canGems = LivesManager.Instance?.CanAffordLife() ?? false;
 
         if (gemCostText != null)
-            gemCostText.text = $"{cost} 💎";
+            gemCostText.text = $"{cost} Gemas";
 
         if (currentGemsText != null)
-            currentGemsText.text = $"Tienes: {gems} 💎";
+            currentGemsText.text = $"Tienes: {gems} Gemas";
 
         if (trebolAvailableText != null)
-            trebolAvailableText.text = $"Tréboles: {trebols} 🍀";
+            trebolAvailableText.text = $"Treboles: {trebols}";
 
         // Deshabilitar botón de gemas si no alcanza
         if (spendGemsButton != null)
@@ -352,7 +352,7 @@ public class GameOverController : MonoBehaviour
 
     private void ShowAdUnavailableFeedback()
     {
-        const string message = "Anuncio no disponible. Inténtalo de nuevo más tarde.";
+        const string message = "Anuncio no disponible. Intentalo de nuevo mas tarde.";
         if (adFeedbackText != null)
             adFeedbackText.text = message;
         else

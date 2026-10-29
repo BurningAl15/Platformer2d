@@ -66,7 +66,7 @@ public class UIController : MonoBehaviour
     [SerializeField] private Sprite heartHalf;
     [SerializeField] private Sprite heartFull;
 
-    [Header("Corazón extra — Dado Secreto")]
+    [Header("Corazon extra - Dado Secreto")]
     [Tooltip("Slot visual del corazón extra. Se muestra cuando la salud máxima supera los slots base.")]
     [SerializeField] private Image bonusHeartIcon;
 

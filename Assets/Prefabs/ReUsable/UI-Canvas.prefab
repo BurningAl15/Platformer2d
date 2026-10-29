@@ -6183,7 +6183,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 999
+  m_text: 0
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: c5f8a594b6b6fe54e95024e6ab976f9c, type: 2}
   m_sharedMaterial: {fileID: 2389116638468360122, guid: c5f8a594b6b6fe54e95024e6ab976f9c, type: 2}
@@ -6469,7 +6469,7 @@ MonoBehaviour:
   heartHalf: {fileID: 2139837793675082937, guid: d9a616f95048ea84e8fc6f7920f846b8, type: 3}
   heartFull: {fileID: 8109154662235370213, guid: d9a616f95048ea84e8fc6f7920f846b8, type: 3}
   bonusHeartIcon: {fileID: 0}
-  gemsLevelText: {fileID: 0}
+  gemsLevelText: {fileID: 8365330789894772374}
   gemsGlobalText: {fileID: 0}
   trebolCountText: {fileID: 975572561435348856}
   livesText: {fileID: 8348819999050142469}

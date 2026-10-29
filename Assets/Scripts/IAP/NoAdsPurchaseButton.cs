@@ -60,8 +60,10 @@ public class NoAdsPurchaseButton : MonoBehaviour
 
     public void OpenPanel()
     {
+        transform.SetAsLastSibling();
         if (storePanelGroup != null)
         {
+            storePanelGroup.transform.SetAsLastSibling();
             storePanelGroup.alpha = 1f;
             storePanelGroup.interactable = true;
             storePanelGroup.blocksRaycasts = true;
@@ -111,13 +113,13 @@ public class NoAdsPurchaseButton : MonoBehaviour
             price =>
             {
                 if (purchaseButtonLabel != null)
-                    purchaseButtonLabel.text = $"Sin Anuncios — {price}";
+                    purchaseButtonLabel.text = $"Sin Anuncios - {price}";
             },
             error =>
             {
                 if (purchaseButtonLabel != null)
                     purchaseButtonLabel.text = "Sin Anuncios";
-                SetStatus("Precio no disponible. Inténtalo de nuevo más tarde.");
+                SetStatus("Precio no disponible. Intentalo de nuevo mas tarde.");
                 Debug.LogWarning($"[NoAdsPurchaseButton] No se pudo cargar el precio: {error}");
             });
     }
@@ -174,7 +176,7 @@ public class NoAdsPurchaseButton : MonoBehaviour
                 SetLoading(false);
                 if (errorMsg != "cancelled")
                 {
-                    SetStatus("No se pudo completar la compra. Inténtalo de nuevo.");
+                    SetStatus("No se pudo completar la compra. Intentalo de nuevo.");
                     Debug.LogWarning($"[NoAdsPurchaseButton] Error en compra: {errorMsg}");
                 }
             }
@@ -186,7 +188,7 @@ public class NoAdsPurchaseButton : MonoBehaviour
         SetStatus(string.Empty);
         if (RevenueCatManager.Instance == null)
         {
-            SetStatus("Restauración no disponible ahora.");
+            SetStatus("Restauracion no disponible ahora.");
             return;
         }
 
@@ -198,12 +200,12 @@ public class NoAdsPurchaseButton : MonoBehaviour
                 SetLoading(false);
                 RefreshUI();
                 SetStatus("Compra de Remove Ads restaurada.");
-                Debug.Log("[NoAdsPurchaseButton] Restauración completada.");
+                Debug.Log("[NoAdsPurchaseButton] Restauracion completada.");
             },
             onError: errorMsg =>
             {
                 SetLoading(false);
-                SetStatus("No se encontró una compra para restaurar.");
+                SetStatus("No se encontro una compra para restaurar.");
                 Debug.LogWarning($"[NoAdsPurchaseButton] Error al restaurar: {errorMsg}");
             }
         );

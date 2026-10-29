@@ -74,11 +74,14 @@ public class SceneTransitionManager : MonoBehaviour
     {
         isTransitioning = true;
 
-        // Intentar usar FadeEffect si existe en la escena actual
+        // Si la pantalla ya está en negro por un fade previo (ej. al terminar nivel), no repetir el fade
         if (FadeEffect._instance != null)
         {
-            FadeEffect._instance.Fade_Out();
-            yield return new WaitUntil(() => FadeEffect._instance.endFade);
+            if (!FadeEffect._instance.IsScreenBlack())
+            {
+                FadeEffect._instance.Fade_Out();
+                yield return new WaitUntil(() => FadeEffect._instance.endFade);
+            }
         }
         else
         {

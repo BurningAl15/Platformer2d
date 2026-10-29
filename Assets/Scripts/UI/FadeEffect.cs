@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -21,6 +21,8 @@ public class FadeEffect : MonoBehaviour
     [SerializeField] private Fade_Effect _fadeEffect;
 
     public bool endFade = false;
+
+    public bool IsScreenBlack() => fadeScreen != null && fadeScreen.color.a >= 0.95f;
     
     private void Awake()
     {

@@ -247,15 +247,15 @@ public class DiceRollController : MonoBehaviour
         {
             PlayerHealth._instance.AddBonusHeart();
             if (diceStatusText != null)
-                diceStatusText.text = $"¡Ganaste +{finalResult} vidas y +1 ❤️ extra!";
+                diceStatusText.text = $"Ganaste +{finalResult} vidas y +1 corazon extra";
         }
 
         // Notificar cambio de vidas a LivesManager para que dispare OnLivesChanged
         if (LivesManager.Instance != null)
             LivesManager.Instance.NotifyLivesChanged();
 
-        if (diceStatusText != null)
-            diceStatusText.text = $"¡Ganaste +{finalResult} vidas!";
+        if (diceStatusText != null && currentDiceType != DiceType.Secret)
+            diceStatusText.text = $"Ganaste +{finalResult} vidas";
 
         if (stopButton != null) stopButton.interactable = false;
         if (closeButton != null) closeButton.interactable = true;
@@ -284,7 +284,7 @@ public class DiceRollController : MonoBehaviour
         int trebols = SaveManager.Instance != null ? SaveManager.Instance.LoadTotalTrebols() : 0;
 
         if (trebolAvailableText != null)
-            trebolAvailableText.text = $"🍀 Tréboles: {trebols}";
+            trebolAvailableText.text = $"Treboles: {trebols}";
 
         if (upgradeWithTrebolButton != null)
             upgradeWithTrebolButton.interactable = trebols > 0 && currentDiceType == DiceType.Normal;

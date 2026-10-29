@@ -1,4 +1,4 @@
-﻿using TMPro;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Serialization;
 using DG.Tweening;
@@ -32,9 +32,9 @@ public class UI_SelectController : MonoBehaviour
 
     [Header("Animación del panel")]
     [Tooltip("Posición Y oculta (fuera de pantalla, abajo)")]
-    [SerializeField] private float hiddenY = -300f;
-    [Tooltip("Posición Y visible")]
-    [SerializeField] private float visibleY = 0f;
+    [SerializeField] private float hiddenY = -250f;
+    [Tooltip("Posición Y visible (elevado para que no se corte en pantallas 16:9 como iPhone SE)")]
+    [SerializeField] private float visibleY = 150f;
     [Tooltip("Duración de la animación")]
     [SerializeField] private float animDuration = 0.3f;
     [SerializeField] private Ease showEase = Ease.OutBack;

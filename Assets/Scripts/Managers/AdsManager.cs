@@ -119,7 +119,8 @@ public class AdsManager : MonoBehaviour
 
         if (RevenueCatManager.Instance != null)
             RevenueCatManager.Instance.EntitlementStatusResolved += OnEntitlementStatusResolved;
-        TryInitializeWhenEligible();
+
+        SetPrivacyEligibilityResolved(true);
     }
 
     private void OnDestroy()
@@ -172,12 +173,19 @@ public class AdsManager : MonoBehaviour
 
     private void TryInitializeWhenEligible()
     {
-        RevenueCatManager manager = RevenueCatManager.Instance;
-        if (!privacyEligibilityResolved || !mayServeAds || manager == null ||
-            !manager.IsEntitlementStatusResolved)
+        if (!privacyEligibilityResolved || !mayServeAds)
             return;
 
-        _noAdsActive = manager.IsNoAdsPurchased();
+        RevenueCatManager manager = RevenueCatManager.Instance;
+        if (manager != null && manager.IsEntitlementStatusResolved)
+        {
+            _noAdsActive = manager.IsNoAdsPurchased();
+        }
+        else
+        {
+            _noAdsActive = PlayerPrefs.GetInt("IAP_NoAds_Purchased", 0) == 1;
+        }
+
         if (!_noAdsActive)
             Initialize();
     }
