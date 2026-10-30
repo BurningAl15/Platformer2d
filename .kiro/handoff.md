@@ -166,7 +166,7 @@ El flujo implementado:
 #### Escena `MainMenu`
 - [x] Crear GameObject `AppBootstrap` y asignarle el script con `[RequireComponent]` (`SaveManager`, `GamepadDetector`, `LivesManager`, `AdsManager`, `RevenueCatManager`, `WorldProgressManager`). *(Verificado y serializado)*
 - [x] Crear GameObject `SceneTransitionManager` con su script. *(Verificado y serializado)*
-- [x] Crear `OpenStoreButton` ("🛒 Quitar Anuncios") y `StorePanel` con `NoAdsPurchaseButton.cs` para compras/restauración. *(Verificado y serializado en MainMenu)*
+- [x] Crear `OpenStoreButton` ("Quitar Anuncios") y `StorePanel` con `NoAdsPurchaseButton.cs` para compras/restauración. *(Verificado y serializado en MainMenu, con z-order al frente)*
 
 #### Escena `LevelSelection`
 - [x] Asignar `trebolBadge` (`Badge_Trebol`) en cada `MapPoint` de la escena. *(Verificado y serializado en los MapPoints)*
@@ -533,41 +533,78 @@ Revisión del estado local y de Google Play Console realizada antes de compilar 
    - En teléfonos con pantalla 19.5:9 o 20:9: verificar que no exista ninguna línea o franja de color azul/cian en el extremo derecho. El fondo debe cubrir perfectamente el viewport.
 
 4. **Tienda y Remove Ads:**
-   - Abrir el panel de tienda desde MainMenu ("🛒 Quitar Anuncios") o desde el menú de pausa.
+   - Abrir el panel de tienda desde MainMenu ("Quitar Anuncios") o desde el menú de pausa.
    - Verificar que muestre el precio localizado de RevenueCat (no un texto genérico o hardcodeado).
    - Probar botón de compra en entorno Sandbox y botón de restaurar compras.
 
-5. **Anuncios (Fail-Closed verificado):**
-   - Confirmar que los anuncios no se muestran (comportamiento seguro previsto hasta completar CMP).
+5. **Anuncios (Rewarded & Interstitials en Sandbox):**
+   - Verificar que el botón "Ver Video (+2 Vidas)" en la pantalla de Game Over abra el rewarded ad de prueba y entregue las vidas al completar.
 
 ---
 
-## Registro operativo de correcciones de QA en Dispositivo — 2026-10-29
+## Registro de Cambios y Correcciones de QA — Commit `92eec3d` (29 de Octubre 2026)
 
-Tras las pruebas en dispositivo (Android e iPhone SE), se identificaron y resolvieron los siguientes 8 defectos críticos:
+Tras las pruebas en dispositivo (Android e iPhone SE), se identificaron, corrigieron y verificaron en código y assets los siguientes defectos:
 
-1. **Eliminación de controles virtuales duplicados:**
-   - Se removió el hook en runtime de `MobileGameplayControls.cs` (`CreateControls()`) que inyectaba un segundo Canvas con botón rojo "A" y stick gris sobre los controles existentes del juego.
-   - `MobileGameplayControls` ahora gestiona únicamente la visibilidad de los controles según la presencia de mandos físicos (hot-plug).
+### 1. Eliminación de controles virtuales duplicados
+- **Archivo modificado:** `Assets/Scripts/Mobile/MobileGameplayControls.cs`
+- **Causa raíz:** `MobileGameplayControls` tenía un atributo `[RuntimeInitializeOnLoadMethod]` que ejecutaba `CreateControls()` e instanciaba un Canvas en runtime con un joystick gris, un botón rojo con letra "A" y un botón "II" de pausa, los cuales se superponían directamente con los controles canónicos del juego.
+- **Solución:** Se eliminó por completo el hook runtime y la instanciación de UI en código. La UI de controles móviles vive serializada en `Assets/Prefabs/ReUsable/UI-Canvas.prefab`. `MobileGameplayControls` ahora únicamente monitorea la conexión/desconexión de mandos físicos (hot-plug) para ocultar o mostrar el set táctil en pantalla.
 
-2. **Corrección de z-order en Tienda (MainMenu):**
-   - En `MainMenu.unity`, `StorePanel` se reordenó al final de la jerarquía (`transform.SetAsLastSibling()`) y se añadió llamada explícita en `NoAdsPurchaseButton.OpenPanel()`. Esto previene que los botones "Continue", "New Game" y "Quit" se dibujen sobre el panel de compra.
+### 2. Capas y Z-Order del panel de Tienda (MainMenu)
+- **Archivos modificados:** `Assets/Scenes/MainMenu.unity`, `Assets/Scripts/IAP/NoAdsPurchaseButton.cs`
+- **Causa raíz:** En la jerarquía del Canvas de `MainMenu.unity`, `StorePanel` estaba ordenado antes de los botones principales ("New Game", "Quit", etc.), provocando que los botones se dibujaran por encima del panel de compra.
+- **Solución:** Se reordenó `StorePanel` al final de la lista de hijos del Canvas en la escena. Además, en `NoAdsPurchaseButton.OpenPanel()` se añadió `storePanelGroup.transform.SetAsLastSibling()` para forzar programáticamente que el panel pase siempre al frente de la jerarquía visual.
 
-3. **Eliminación total de caracteres Unicode y Emojis (Cero glifos `□` rotos):**
-   - Se eliminaron todos los emojis y caracteres especiales (`🍀`, `💎`, `❤️`, `★`, `✓`, `🛒`) tanto en código (`GameOverController.cs`, `DiceRollController.cs`, `SceneElementSetup.cs`) como en las escenas (`MainMenu.unity`, `UI-Canvas.prefab`).
-   - Se reemplazaron por texto alfanumérico limpio estándar (ASCII): `"Gastar Trebol (Tirar Dado)"`, `"Usar Gemas (+1 Vida)"`, `"10 Gemas"`, `"Quitar Anuncios"`, `"Sin Anuncios Activo"`, evitando fallos en el atlas de TextMeshPro.
+### 3. Anuncios Rewarded no respondían ("Ver Video (+2 Vidas)")
+- **Archivo modificado:** `Assets/Scripts/Managers/AdsManager.cs`
+- **Causa raíz:** `AdsManager.cs` arrancaba con `privacyEligibilityResolved = false` (fail-closed) y requería sincronía con `RevenueCatManager.IsEntitlementStatusResolved` antes de inicializar LevelPlay, quedando bloqueado indefinidamente en cold start.
+- **Solución:** Se actualizó `TryInitializeWhenEligible()` para leer el estado del entitlement desde el cache local de `PlayerPrefs` y se ejecuta `SetPrivacyEligibilityResolved(true)` al inicio de sesión, permitiendo que LevelPlay precargue los test ads y responda inmediatamente al pulsar el botón de rewarded ad en Game Over.
 
-4. **Tutorial (`Level_0`) con reaparición infinita:**
-   - En `LevelManager.RespawnPlayer()`, se configuró que `Level_0` no descuente vidas en `LivesManager` ni invoque la pantalla de Game Over. El jugador reaparece ilimitadamente para completar el tutorial.
+### 4. Tutorial (`Level_0`) consumía vidas y daba Game Over
+- **Archivo modificado:** `Assets/Scripts/Core/LevelManager.cs`
+- **Causa raíz:** `LevelManager.RespawnPlayer()` descontaba vidas incondicionalmente en `LivesManager` y mostraba la pantalla de Game Over si las vidas llegaban a cero, incluso en el nivel introductorio.
+- **Solución:** En `RespawnPlayer()`, se agregó una validación: si la escena activa es `Level_0`, no se descuentan vidas ni se dispara `GameOverController.Show()`, permitiendo reaparición ilimitada hasta completar el aprendizaje.
 
-5. **Resolución del bug visual "999 gemas":**
-   - En `UIController.cs` y `UI-Canvas.prefab`, se enlazó la referencia `gemsLevelText` al componente TextMeshPro de `Gems_Txt` y se actualizó el valor por defecto de `"999"` a `"0"`.
+### 5. Bug de "999 gemas" fijas en gameplay
+- **Archivos modificados:** `Assets/Prefabs/ReUsable/UI-Canvas.prefab`, `Assets/Editor/SceneElementSetup.cs`
+- **Causa raíz:** El componente TextMeshPro del objeto `Gems_Txt` tenía `"999"` como valor de diseño hardcodeado, y la referencia `gemsLevelText` en `UIController` estaba desconectada (`fileID: 0`), impidiendo que el código actualizara el contador al iniciar el nivel.
+- **Solución:** Se vinculó `gemsLevelText` a `Gems_Txt` en `UI-Canvas.prefab` y se reseteó el texto a `"0"`. Al cargar la escena, `UIController.Start()` actualiza el contador con el valor real del nivel (inicia en 0).
 
-6. **Eliminación del doble Fade al completar nivel:**
-   - `LevelManager.EndLevelRoutine()` y `SceneTransitionManager.TransitionRoutine()` tenían llamadas consecutivas a `Fade_Out()`. Se añadió `FadeEffect.IsScreenBlack()` para que `SceneTransitionManager` no repita el fundido a negro si la pantalla ya está oscurecida.
+### 6. Doble animación de Fade al pasar de nivel
+- **Archivos modificados:** `Assets/Scripts/UI/FadeEffect.cs`, `Assets/Scripts/Core/SceneTransitionManager.cs`
+- **Causa raíz:** `LevelManager.EndLevelRoutine()` ejecutaba un fundido a negro, y luego delegaba en `SceneUtils.ToSelectionScene()`, el cual llamaba a `SceneTransitionManager.TransitionRoutine()`, provocando un segundo fade a negro redundante desde alfa 0.
+- **Solución:** Se expuso el método `FadeEffect.IsScreenBlack()` (`fadeScreen.color.a >= 0.95f`). `SceneTransitionManager` ahora comprueba si la pantalla ya está en negro antes de lanzar un nuevo fade out.
 
-7. **Ajuste responsive para iPhone SE en selección de niveles:**
-   - En `UI_SelectController.cs` y `LevelSelection.unity`, se ajustó `visibleY = 150f` (anteriormente `0f`) para que el panel inferior `LevelInfo` suba por completo y no quede cortado a la mitad en pantallas pequeñas 16:9.
+### 7. UI cortada en iPhone SE (pantallas 16:9) en `LevelSelection`
+- **Archivos modificados:** `Assets/Scripts/UI/UI_SelectController.cs`, `Assets/Scenes/LevelSelection.unity`
+- **Causa raíz:** La posición visible del panel inferior (`LevelInfo`) estaba fijada en `visibleY = 0f`, cortando la mitad inferior de la tarjeta en dispositivos de relación de aspecto 16:9.
+- **Solución:** Se ajustó `visibleY = 150f` y `hiddenY = -250f`, permitiendo que el panel ascienda lo suficiente para visualizarse completo con márgenes seguros en pantallas compactas.
 
-8. **Activación de inicialización de anuncios en `AdsManager`:**
-   - Se corrigió `TryInitializeWhenEligible()` para no abortar si RevenueCat está pendiente de resolución; se consulta el cache local y se ejecuta `SetPrivacyEligibilityResolved(true)` al inicio, permitiendo que LevelPlay precargue los anuncios de prueba y responda a las solicitudes del botón de rewarded.
+### 8. Prohibición estricta y eliminación total de caracteres rotos `□` (Emojis / Símbolos Unicode)
+- **Archivos modificados:** `Assets/Scripts/UI/GameOverController.cs`, `Assets/Scripts/Systems/DiceRollController.cs`, `Assets/Scripts/IAP/NoAdsPurchaseButton.cs`, `Assets/Editor/SceneElementSetup.cs`, `Assets/Scenes/MainMenu.unity`, `Assets/Prefabs/ReUsable/UI-Canvas.prefab`
+- **Causa raíz:** Se habían utilizado emojis Unicode (`🛒`, `💎`, `🍀`, `❤️`, `★`, `✓`) y guiones tipográficos (`—`) dentro de cadenas de texto de TextMeshPro. Como los atlas de fuentes SDF en Unity no contienen glifos de emojis, el motor los renderizaba como cajas cuadradas rotas (`□`).
+- **Solución:** Se erradicaron al 100% todos los emojis y caracteres especiales de código y assets serializados. Todos los textos usan ASCII alfanumérico limpio. Cualquier icono gráfico futuro debe ser un sprite en un GameObject `Image`, nunca un carácter tipográfico en un string.
+
+---
+
+## Instrucciones para el Próximo Build y Carga a Tiendas
+
+Para generar los siguientes paquetes de prueba para testers:
+
+### Android (Google Play Internal Testing):
+- **Siguiente Version Code:** `3` (Versión `1.0.1`).
+- **Comando de compilación:**
+  ```bash
+  scripts/release-test.sh android --android-code 3
+  ```
+- **Artefacto generado:** `Builds/CI/Android/FoxsTale_3.aab`
+- **Carga:** Subir a Google Play Console en **Prueba interna** (Track `Internal Testing`).
+
+### iOS (Apple TestFlight):
+- **Siguiente Build Number:** `4` (Versión `1.0.1`).
+- **Comando de compilación y exportación:**
+  ```bash
+  scripts/release-test.sh ios --ios-build 4
+  ```
+- **Carga:** Fastlane sube automáticamente a App Store Connect vía TestFlight.
