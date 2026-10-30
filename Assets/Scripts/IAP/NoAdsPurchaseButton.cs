@@ -113,13 +113,13 @@ public class NoAdsPurchaseButton : MonoBehaviour
             price =>
             {
                 if (purchaseButtonLabel != null)
-                    purchaseButtonLabel.text = $"Sin Anuncios - {price}";
+                    purchaseButtonLabel.text = $"Remove Ads - {price}";
             },
             error =>
             {
                 if (purchaseButtonLabel != null)
-                    purchaseButtonLabel.text = "Sin Anuncios";
-                SetStatus("Precio no disponible. Intentalo de nuevo mas tarde.");
+                    purchaseButtonLabel.text = "Remove Ads";
+                SetStatus("Price unavailable. Please try again later.");
                 Debug.LogWarning($"[NoAdsPurchaseButton] No se pudo cargar el precio: {error}");
             });
     }
@@ -145,7 +145,7 @@ public class NoAdsPurchaseButton : MonoBehaviour
             noAdsActiveIndicator.SetActive(hasPurchased);
 
         if (purchaseButtonLabel != null && !hasPurchased)
-            purchaseButtonLabel.text = "Sin Anuncios";
+            purchaseButtonLabel.text = "Remove Ads";
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -157,7 +157,7 @@ public class NoAdsPurchaseButton : MonoBehaviour
         SetStatus(string.Empty);
         if (RevenueCatManager.Instance == null)
         {
-            SetStatus("Compras no disponibles ahora.");
+            SetStatus("Purchases unavailable right now.");
             return;
         }
 
@@ -168,16 +168,16 @@ public class NoAdsPurchaseButton : MonoBehaviour
             {
                 SetLoading(false);
                 RefreshUI();
-                SetStatus("Compra completada. Anuncios desactivados.");
-                Debug.Log("[NoAdsPurchaseButton] Compra exitosa. Anuncios desactivados.");
+                SetStatus("Purchase complete. Ads removed.");
+                Debug.Log("[NoAdsPurchaseButton] Purchase successful. Ads removed.");
             },
             onError: errorMsg =>
             {
                 SetLoading(false);
                 if (errorMsg != "cancelled")
                 {
-                    SetStatus("No se pudo completar la compra. Intentalo de nuevo.");
-                    Debug.LogWarning($"[NoAdsPurchaseButton] Error en compra: {errorMsg}");
+                    SetStatus("Purchase could not be completed. Please try again.");
+                    Debug.LogWarning($"[NoAdsPurchaseButton] Purchase error: {errorMsg}");
                 }
             }
         );
@@ -188,7 +188,7 @@ public class NoAdsPurchaseButton : MonoBehaviour
         SetStatus(string.Empty);
         if (RevenueCatManager.Instance == null)
         {
-            SetStatus("Restauracion no disponible ahora.");
+            SetStatus("Restore unavailable right now.");
             return;
         }
 
@@ -199,14 +199,14 @@ public class NoAdsPurchaseButton : MonoBehaviour
             {
                 SetLoading(false);
                 RefreshUI();
-                SetStatus("Compra de Remove Ads restaurada.");
-                Debug.Log("[NoAdsPurchaseButton] Restauracion completada.");
+                SetStatus("Remove Ads purchase restored.");
+                Debug.Log("[NoAdsPurchaseButton] Purchases restored.");
             },
             onError: errorMsg =>
             {
                 SetLoading(false);
-                SetStatus("No se encontro una compra para restaurar.");
-                Debug.LogWarning($"[NoAdsPurchaseButton] Error al restaurar: {errorMsg}");
+                SetStatus("No purchase found to restore.");
+                Debug.LogWarning($"[NoAdsPurchaseButton] Restore error: {errorMsg}");
             }
         );
     }

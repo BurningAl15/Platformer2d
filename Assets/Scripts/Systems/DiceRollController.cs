@@ -34,6 +34,12 @@ public class DiceRollController : MonoBehaviour
     [SerializeField] private Button upgradeWithTrebolButton;
     [SerializeField] private Button closeButton;
 
+    [Header("Visual del Dado (Caras)")]
+    [Tooltip("Componente Image opcional para mostrar la cara gráfica del dado")]
+    [SerializeField] private Image diceFaceImage;
+    [Tooltip("Sprites para las 6 caras del dado (índice 0 = cara 1, ..., índice 5 = cara 6)")]
+    [SerializeField] private Sprite[] diceFaceSprites;
+
     [Header("Configuración de Animación")]
     [SerializeField] private float rollDuration = 2.0f;
     [SerializeField] private float cycleInterval = 0.08f;
@@ -110,6 +116,9 @@ public class DiceRollController : MonoBehaviour
 
         RefreshUI();
 
+        if (PlatformDetector.Instance != null)
+            PlatformDetector.Instance.ForceSetMobileUIActive(false, false);
+
         if (panelGroup != null)
         {
             panelGroup.alpha = 1f;
@@ -129,6 +138,9 @@ public class DiceRollController : MonoBehaviour
 
     public void Hide()
     {
+        if (PlatformDetector.Instance != null)
+            PlatformDetector.Instance.ForceSetMobileUIActive(PlatformDetector.IsMobile(), false);
+
         if (panelRect != null)
         {
             panelRect.DOKill();
@@ -206,6 +218,26 @@ public class DiceRollController : MonoBehaviour
         }
     }
 
+    private void UpdateDiceVisual(int value)
+    {
+        bool hasSprite = diceFaceSprites != null && value >= 1 && value <= diceFaceSprites.Length && diceFaceSprites[value - 1] != null && diceFaceImage != null;
+        if (hasSprite)
+        {
+            diceFaceImage.gameObject.SetActive(true);
+            diceFaceImage.sprite = diceFaceSprites[value - 1];
+            if (diceNumberText != null) diceNumberText.gameObject.SetActive(false);
+        }
+        else
+        {
+            if (diceFaceImage != null) diceFaceImage.gameObject.SetActive(false);
+            if (diceNumberText != null)
+            {
+                diceNumberText.gameObject.SetActive(true);
+                diceNumberText.text = value.ToString();
+            }
+        }
+    }
+
     private IEnumerator RollSequence()
     {
         isRolling = true;
@@ -219,8 +251,7 @@ public class DiceRollController : MonoBehaviour
         while (isRolling && timer < rollDuration)
         {
             lastValue = GetRandomValueForType(currentDiceType);
-            if (diceNumberText != null)
-                diceNumberText.text = lastValue.ToString();
+            UpdateDiceVisual(lastValue);
 
             yield return new WaitForSecondsRealtime(cycleInterval);
             timer += cycleInterval;
@@ -230,11 +261,14 @@ public class DiceRollController : MonoBehaviour
         int finalResult = GetRandomValueForType(currentDiceType);
         lastRollResult = finalResult;
 
-        if (diceNumberText != null)
-        {
-            diceNumberText.text = finalResult.ToString();
-            diceNumberText.transform.DOPunchScale(Vector3.one * 0.3f, 0.3f).SetUpdate(true);
-        }
+        UpdateDiceVisual(finalResult);
+
+        Transform visualTransform = (diceFaceImage != null && diceFaceImage.gameObject.activeSelf)
+            ? diceFaceImage.transform
+            : (diceNumberText != null ? diceNumberText.transform : null);
+
+        if (visualTransform != null)
+            visualTransform.DOPunchScale(Vector3.one * 0.3f, 0.3f).SetUpdate(true);
 
         // Otorgar vidas ganadas
         if (SaveManager.Instance != null)
@@ -247,7 +281,7 @@ public class DiceRollController : MonoBehaviour
         {
             PlayerHealth._instance.AddBonusHeart();
             if (diceStatusText != null)
-                diceStatusText.text = $"Ganaste +{finalResult} vidas y +1 corazon extra";
+                diceStatusText.text = $"You won +{finalResult} lives and +1 bonus heart!";
         }
 
         // Notificar cambio de vidas a LivesManager para que dispare OnLivesChanged
@@ -255,7 +289,7 @@ public class DiceRollController : MonoBehaviour
             LivesManager.Instance.NotifyLivesChanged();
 
         if (diceStatusText != null && currentDiceType != DiceType.Secret)
-            diceStatusText.text = $"Ganaste +{finalResult} vidas";
+            diceStatusText.text = $"You won +{finalResult} lives!";
 
         if (stopButton != null) stopButton.interactable = false;
         if (closeButton != null) closeButton.interactable = true;
@@ -284,7 +318,7 @@ public class DiceRollController : MonoBehaviour
         int trebols = SaveManager.Instance != null ? SaveManager.Instance.LoadTotalTrebols() : 0;
 
         if (trebolAvailableText != null)
-            trebolAvailableText.text = $"Treboles: {trebols}";
+            trebolAvailableText.text = $"Clovers: {trebols}";
 
         if (upgradeWithTrebolButton != null)
             upgradeWithTrebolButton.interactable = trebols > 0 && currentDiceType == DiceType.Normal;
@@ -294,16 +328,16 @@ public class DiceRollController : MonoBehaviour
             switch (currentDiceType)
             {
                 case DiceType.Upgraded_3_5:
-                    diceStatusText.text = "Dado Mejorado (3 - 5 Vidas)";
+                    diceStatusText.text = "Upgraded Dice (3 - 5 Lives)";
                     break;
                 case DiceType.Upgraded_2_6:
-                    diceStatusText.text = "Dado Mejorado (2 - 6 Vidas)";
+                    diceStatusText.text = "Upgraded Dice (2 - 6 Lives)";
                     break;
                 case DiceType.Secret:
-                    diceStatusText.text = "Dado Secreto (4 - 6 Vidas)";
+                    diceStatusText.text = "Secret Dice (4 - 6 Lives)";
                     break;
                 default:
-                    diceStatusText.text = "Dado Normal (1 - 3 Vidas)";
+                    diceStatusText.text = "Normal Dice (1 - 3 Lives)";
                     break;
             }
         }

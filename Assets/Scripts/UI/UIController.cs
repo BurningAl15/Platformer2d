@@ -136,6 +136,12 @@ public class UIController : MonoBehaviour
         if (endLevel_animator != null) endLevel_animator.gameObject.SetActive(false);
         if (amazingJob_animator != null) amazingJob_animator.gameObject.SetActive(false);
 
+        if (gemsLevelText != null)
+        {
+            gemsLevelText.textWrappingMode = TextWrappingModes.NoWrap;
+            gemsLevelText.overflowMode = TextOverflowModes.Overflow;
+        }
+
         // Mostrar vidas iniciales
         RefreshLivesUI();
         RefreshHealthDisplay();
@@ -219,6 +225,8 @@ public class UIController : MonoBehaviour
     {
         if (gemsLevelText != null)
         {
+            gemsLevelText.textWrappingMode = TextWrappingModes.NoWrap;
+            gemsLevelText.overflowMode = TextOverflowModes.Overflow;
             gemsLevelText.text = totalGems > 0
                 ? $"{currentGems} / {totalGems}"
                 : currentGems.ToString();

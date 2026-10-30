@@ -34,7 +34,7 @@ public class UI_SelectController : MonoBehaviour
     [Tooltip("Posición Y oculta (fuera de pantalla, abajo)")]
     [SerializeField] private float hiddenY = -250f;
     [Tooltip("Posición Y visible (elevado para que no se corte en pantallas 16:9 como iPhone SE)")]
-    [SerializeField] private float visibleY = 150f;
+    [SerializeField] private float visibleY = 180f;
     [Tooltip("Duración de la animación")]
     [SerializeField] private float animDuration = 0.3f;
     [SerializeField] private Ease showEase = Ease.OutBack;

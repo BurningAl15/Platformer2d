@@ -14305,7 +14305,7 @@ MonoBehaviour:
   bestTimeText: {fileID: 2054893661}
   timeTargetText: {fileID: 1881196918}
   hiddenY: -250
-  visibleY: 150
+  visibleY: 180
   animDuration: 0.3
   showEase: 27
   hideEase: 26

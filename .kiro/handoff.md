@@ -3,7 +3,7 @@
 > Este archivo es la fuente de verdad del proyecto.
 > Se actualiza al terminar cada fase. Si hay duda sobre qué falta, leer esto primero.
 >
-> **Última actualización:** 29/10/2026 — Corrección integral de UI, inputs, flujo de vidas y eliminación absoluta de iconos/emojis en textos de TextMeshPro.
+> **Última actualización:** 30/10/2026 — Corrección integral de UI, inputs, flujo de vidas y estado de builds de prueba v3/v4.
 
 > [!CAUTION]
 > **REGLA ESTRICTA DE DISEÑO E IMPLEMENTACIÓN (NO NEGOCIABLE):**
@@ -588,23 +588,67 @@ Tras las pruebas en dispositivo (Android e iPhone SE), se identificaron, corrigi
 
 ---
 
-## Instrucciones para el Próximo Build y Carga a Tiendas
+## Estado de builds y siguiente acción
 
-Para generar los siguientes paquetes de prueba para testers:
+- **Android:** code 3 compilado y subido a Google Play Prueba interna el 30 oct 2026 a las 1:42 (Lima). Play Console muestra `1.0.1`, code 3, «Disponible para testers internos» y «Lanzamiento completo». Siguiente code libre: 4.
+- **iOS:** build 4 ya se subió a App Store Connect y espera procesamiento para TestFlight. El siguiente build number será 5; no regenerar el 4.
 
-### Android (Google Play Internal Testing):
-- **Siguiente Version Code:** `3` (Versión `1.0.1`).
-- **Comando de compilación:**
-  ```bash
-  scripts/release-test.sh android --android-code 3
-  ```
-- **Artefacto generado:** `Builds/CI/Android/FoxsTale_3.aab`
-- **Carga:** Subir a Google Play Console en **Prueba interna** (Track `Internal Testing`).
+---
 
-### iOS (Apple TestFlight):
-- **Siguiente Build Number:** `4` (Versión `1.0.1`).
-- **Comando de compilación y exportación:**
-  ```bash
-  scripts/release-test.sh ios --ios-build 4
-  ```
-- **Carga:** Fastlane sube automáticamente a App Store Connect vía TestFlight.
+## Registro de builds de prueba — 2026-10-30
+
+### Android — code 3
+- Unity 6000.6.0f1 compiló el AAB firmado `Builds/CI/Android/FoxsTale_3.aab` para `com.fatcatgamestudio.foxstale`; `jarsigner -verify` confirmó `jar verified`.
+- SHA-256: `9249bd9d3fb10bbbf6b48011eb520e35c9fb82598bd4c303cb3ae9e6e94c957e`.
+- El intento inicial de Fastlane respondió HTTP 403: `The caller does not have permission`. Tras corregir permisos de la cuenta de servicio, se reutilizó el mismo AAB y `fastlane android internal` terminó con «Successfully finished the upload to Google Play». Play Console confirmó code 3 en Prueba interna como «Disponible para testers internos» y «Lanzamiento completo» a las 1:42 (Lima). No reutilizar el code 3 para futuros builds.
+- Log: `Builds/CI/logs/android_3.log`.
+
+### iOS — build 4
+- Xcode archivó y firmó la app; Fastlane subió `Builds/CI/iOS/ipa/FoxsTale.ipa` a App Store Connect. El proyecto exportado está en `Builds/CI/iOS/XcodeProject_4/` y los símbolos en `Builds/CI/iOS/ipa/FoxsTale.app.dSYM.zip`.
+- El IPA declara bundle `com.fatcatgamestudio.foxstale`, versión `1.0.1` y build `4`.
+- App Store Connect confirmó la recepción del binario. La lane usó `skip_waiting_for_build_processing`; por tanto, el procesamiento y la disponibilidad en TestFlight todavía no se verificaron. Siguiente build number: `5`.
+
+### Alcance de validación
+- Android code 3 quedó disponible en Play Internal; no se promovió ningún binario a producción ni a App Review.
+- No se probaron estos artefactos en dispositivos durante este pase.
+- Fastlane Play dejó de estar bloqueado para Fox's Tale tras el permiso limitado. El AAB code 3 ya está publicado en Prueba interna; no requiere carga manual.
+
+### Diagnóstico confirmado del HTTP 403 — 30 oct 2026
+- El JSON configurado para Fox's Tale y el JSON predeterminado de Lazy Lovers son **el mismo archivo por SHA-256** y corresponden a `fatcat-store-release@shipkit-500520.iam.gserviceaccount.com`; no es una clave equivocada ni un problema del AAB.
+- En Play Console > Gestionar cuenta > Usuarios y permisos, esa cuenta de servicio figura activa, con acceso individual a **16 aplicaciones**, entre ellas Lazy Lovers, Mix2Word y MemoryPulse. **Fox's Tale (`com.fatcatgamestudio.foxstale`) no aparece en la lista**. En el selector «Añadir aplicación», Fox's Tale es la única app elegible. La pestaña de permisos de cuenta no concede acceso global ni permiso global para lanzar en canales de pruebas.
+- Causa del `403 The caller does not have permission`: falta acceso a Fox's Tale para la cuenta de servicio en Play Console. La presencia de Fox's Tale en el dashboard del propietario no concede acceso a la cuenta de servicio.
+- Corrección aplicada tras autorización expresa del propietario: se añadió **solo** Fox's Tale a esa cuenta con «Ver información de la aplicación (solo lectura)» y «Lanzar aplicaciones en canales de pruebas». Play marcó automáticamente «Ver información sobre la calidad de la aplicación (solo lectura)» como dependencia, por lo que la fila muestra **3 permisos efectivos**. No se concedió administrador, producción, finanzas ni permisos globales. El cambio quedó guardado y se comprobó al volver a abrir la cuenta.
+- Se reutilizó `Builds/CI/Android/FoxsTale_3.aab` mediante `fastlane android internal`, sin regenerar ni rotar keystore. La lane terminó correctamente y Play Console confirmó code 3 activo y disponible para testers internos. Enlace: https://play.google.com/console/u/0/developers/7720975764288323280/app/4976400942511877165/releases/overview
+
+---
+
+## Registro de Correcciones Críticas de UI, Inputs y Localización — 30 de Octubre 2026
+
+1. **Eliminación definitiva del botón amarillo "Quitar Anuncios" y StorePanel de MainMenu:**
+   - Se eliminaron `OpenStoreButton` y `StorePanel` de `Assets/Scenes/MainMenu.unity`.
+   - Se modificó `Assets/Editor/SceneElementSetup.cs` para destruir cualquier `OpenStoreButton` o `StorePanel` existente en `MainMenu.unity` y no volver a crearlos.
+
+2. **Eliminación de controles virtuales táctiles duplicados:**
+   - Se eliminó el GameObject `MobileControls` de `Assets/Prefabs/ReUsable/UI-Canvas.prefab`.
+   - Se removió `CreateMobileControls` de `Assets/Editor/SceneElementSetup.cs`.
+   - El único sistema canónico de controles virtuales en pantalla es el de `InputManager` (`GameplayUI` y `GameSelectorUI`), gestionado por `PlatformDetector` y `GamepadDetector`.
+
+3. **Corrección de Wrapping / Overflow en texto de gemas del HUD:**
+   - En `Assets/Prefabs/ReUsable/UI-Canvas.prefab`: `Gems_Txt` se configuró con `m_TextWrappingMode = 0` (NoWrap), `m_enableAutoSizing = 1` (min: 36, max: 90), `sizeDelta.x = 280`.
+   - En `Assets/Scripts/UI/UIController.cs`: se fuerza programáticamente `textWrappingMode = TextWrappingModes.NoWrap` y `overflowMode = TextOverflowModes.Overflow` en `Start()` y `UpdateGems_UI()`.
+
+4. **Trébol / Collectable en la escena (`TrebolPickup.cs`):**
+   - Se corrigió `Assets/Scripts/Environment/Interactables/TrebolPickup.cs`: si el trébol ya fue recolectado en partidas anteriores según `SaveManager.Instance.HasTrebol(levelNumber)`, se desactiva completamente (`gameObject.SetActive(false); return;`) en lugar de mostrar una sombra translúcida en la escena. La obtención del trébol se refleja en la UI (HUD y mapa de niveles).
+
+5. **Localización 100% en Inglés y Cero Caracteres Rotos:**
+   - Se tradujeron todas las cadenas al inglés en `GameOverController.cs`, `DiceRollController.cs`, `NoAdsPurchaseButton.cs`, `SceneElementSetup.cs` y los paneles de `UI-Canvas.prefab`:
+     - `"GAME OVER"`, `"Watch Video (+2 Lives)"`, `"Spend Clover (Roll Dice)"`, `"Use Gems (+1 Life)"`, `"Return to Map"`, `"Gems: {gems}"`, `"Clovers: {trebols}"`.
+     - `"DICE OF LIVES"`, `"Roll Dice"`, `"Stop"`, `"Upgrade with Clover"`, `"Continue"`, `"You won +{finalResult} lives!"`, `"You won +{finalResult} lives and +1 bonus heart!"`.
+     - `"STORE / REMOVE ADS"`, `"Remove Ads"`, `"Restore Purchases"`, `"Close"`.
+
+6. **Soporte de Caras Gráficas de Dado en `DiceRollController.cs`:**
+   - Se agregaron campos serializados `diceFaceImage` y `diceFaceSprites` (array de sprites para caras 1 a 6) con fallback automático al texto numérico si aún no hay sprites asignados.
+
+7. **Responsividad en pantalla de selección de niveles (`LevelSelection.unity`):**
+   - Se ajustó `visibleY = 180f` en `UI_SelectController.cs` y en la escena serializada `LevelSelection.unity` para evitar que el panel inferior se corte en pantallas 16:9 como iPhone SE.
+

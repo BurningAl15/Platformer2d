@@ -172,13 +172,24 @@ public static class SceneElementSetup
             Debug.Log("[SceneElementSetup] SceneTransitionManager creado en MainMenu.");
         }
 
-        // StorePanel & StoreButton en MainMenu Canvas
+        // En MainMenu NO debe existir OpenStoreButton ni StorePanel
         Canvas canvas = Object.FindObjectOfType<Canvas>();
-        if (canvas != null && canvas.transform.Find("StorePanel") == null)
+        if (canvas != null)
         {
-            CreateStorePanel(canvas.gameObject, true);
-            modified = true;
-            Debug.Log("[SceneElementSetup] StorePanel y Botón Quitar Anuncios creados en MainMenu.");
+            Transform storeBtn = canvas.transform.Find("OpenStoreButton");
+            if (storeBtn != null)
+            {
+                Object.DestroyImmediate(storeBtn.gameObject);
+                modified = true;
+                Debug.Log("[SceneElementSetup] OpenStoreButton eliminado de MainMenu.");
+            }
+            Transform storePnl = canvas.transform.Find("StorePanel");
+            if (storePnl != null)
+            {
+                Object.DestroyImmediate(storePnl.gameObject);
+                modified = true;
+                Debug.Log("[SceneElementSetup] StorePanel eliminado de MainMenu.");
+            }
         }
 
         if (modified)
@@ -241,6 +252,16 @@ public static class SceneElementSetup
                 so.ApplyModifiedProperties();
                 modified = true;
             }
+        }
+
+        UI_SelectController uiSelect = Object.FindObjectOfType<UI_SelectController>();
+        if (uiSelect != null)
+        {
+            SerializedObject soSelect = new SerializedObject(uiSelect);
+            soSelect.FindProperty("visibleY").floatValue = 180f;
+            soSelect.FindProperty("hiddenY").floatValue = -250f;
+            soSelect.ApplyModifiedProperties();
+            modified = true;
         }
 
         if (modified)
@@ -323,6 +344,13 @@ public static class SceneElementSetup
             if (tmpGems != null)
             {
                 tmpGems.text = "0";
+                tmpGems.textWrappingMode = TextWrappingModes.NoWrap;
+                tmpGems.overflowMode = TextOverflowModes.Overflow;
+                tmpGems.enableAutoSizing = true;
+                tmpGems.fontSizeMin = 36;
+                tmpGems.fontSizeMax = 90;
+                RectTransform rt = gemsTxtTransform.GetComponent<RectTransform>();
+                if (rt != null) rt.sizeDelta = new Vector2(280f, rt.sizeDelta.y);
                 SerializedProperty gemsLevelProp = soUI.FindProperty("gemsLevelText");
                 if (gemsLevelProp != null) gemsLevelProp.objectReferenceValue = tmpGems;
             }
@@ -344,11 +372,13 @@ public static class SceneElementSetup
             CreateDiceRollPanel(root);
         }
 
-        // 4. MobileControls (Controles táctiles móviles serializados)
+        // 4. MobileControls: NO DEBEN EXISTIR EN UI-Canvas.prefab.
+        // InputManager ya tiene sus propios controles y botones canónicos.
         Transform existingMobileControls = root.transform.Find("MobileControls");
-        if (existingMobileControls == null)
+        if (existingMobileControls != null)
         {
-            CreateMobileControls(root);
+            Object.DestroyImmediate(existingMobileControls.gameObject);
+            Debug.Log("[SceneElementSetup] MobileControls duplicado eliminado de UI-Canvas.prefab.");
         }
 
         // 5. StorePanel (Panel de Quitar Anuncios)
@@ -360,7 +390,7 @@ public static class SceneElementSetup
 
         PrefabUtility.SaveAsPrefabAsset(root, prefabPath);
         PrefabUtility.UnloadPrefabContents(root);
-        Debug.Log("[SceneElementSetup] UI-Canvas.prefab configurado con HUD, GameOverPanel, DiceRollPanel, MobileControls y StorePanel.");
+        Debug.Log("[SceneElementSetup] UI-Canvas.prefab configurado con HUD, GameOverPanel, DiceRollPanel y StorePanel.");
     }
 
     private static void CreateGameOverPanel(GameObject canvasRoot)
@@ -389,33 +419,33 @@ public static class SceneElementSetup
         soGOC.FindProperty("panelRect").objectReferenceValue = rect;
 
         // Título
-        GameObject titleObj = CreateTMPText(panelObj, "Title", "GAME OVER!", 44, new Vector2(0f, 180f));
+        GameObject titleObj = CreateTMPText(panelObj, "Title", "GAME OVER", 44, new Vector2(0f, 180f));
 
         // Botón Ad
-        Button btnAd = CreateUIButton(panelObj, "WatchAdButton", "Ver Video (+2 Vidas)", new Vector2(0f, 80f), new Color(0.2f, 0.6f, 0.9f));
+        Button btnAd = CreateUIButton(panelObj, "WatchAdButton", "Watch Video (+2 Lives)", new Vector2(0f, 80f), new Color(0.2f, 0.6f, 0.9f));
         soGOC.FindProperty("watchAdButton").objectReferenceValue = btnAd;
         soGOC.FindProperty("firstSelectedButton").objectReferenceValue = btnAd.gameObject;
 
         // Botón Trébol
-        Button btnTrebol = CreateUIButton(panelObj, "UseTrebolButton", "Gastar Trebol (Tirar Dado)", new Vector2(0f, 10f), new Color(0.2f, 0.8f, 0.3f));
+        Button btnTrebol = CreateUIButton(panelObj, "UseTrebolButton", "Spend Clover (Roll Dice)", new Vector2(0f, 10f), new Color(0.2f, 0.8f, 0.3f));
         soGOC.FindProperty("useTrebolButton").objectReferenceValue = btnTrebol;
 
         // Botón Gemas
-        Button btnGems = CreateUIButton(panelObj, "SpendGemsButton", "Usar Gemas (+1 Vida)", new Vector2(0f, -60f), new Color(0.8f, 0.4f, 0.8f));
+        Button btnGems = CreateUIButton(panelObj, "SpendGemsButton", "Use Gems (+1 Life)", new Vector2(0f, -60f), new Color(0.8f, 0.4f, 0.8f));
         soGOC.FindProperty("spendGemsButton").objectReferenceValue = btnGems;
 
         // Botón Volver al Mapa
-        Button btnMap = CreateUIButton(panelObj, "ReturnToMapButton", "Volver al Mapa", new Vector2(0f, -130f), new Color(0.6f, 0.6f, 0.6f));
+        Button btnMap = CreateUIButton(panelObj, "ReturnToMapButton", "Return to Map", new Vector2(0f, -130f), new Color(0.6f, 0.6f, 0.6f));
         soGOC.FindProperty("returnToMapButton").objectReferenceValue = btnMap;
 
         // Textos informativos
-        GameObject txtGems = CreateTMPText(panelObj, "GemsCostText", "10 Gemas", 22, new Vector2(160f, -60f));
+        GameObject txtGems = CreateTMPText(panelObj, "GemsCostText", "10 Gems", 22, new Vector2(160f, -60f));
         soGOC.FindProperty("gemCostText").objectReferenceValue = txtGems.GetComponent<TextMeshProUGUI>();
 
-        GameObject txtCurrentGems = CreateTMPText(panelObj, "CurrentGemsText", "Tienes: 0 Gemas", 22, new Vector2(0f, -200f));
+        GameObject txtCurrentGems = CreateTMPText(panelObj, "CurrentGemsText", "Gems: 0", 22, new Vector2(0f, -200f));
         soGOC.FindProperty("currentGemsText").objectReferenceValue = txtCurrentGems.GetComponent<TextMeshProUGUI>();
 
-        GameObject txtTrebol = CreateTMPText(panelObj, "TrebolAvailableText", "Treboles: 0", 22, new Vector2(0f, -230f));
+        GameObject txtTrebol = CreateTMPText(panelObj, "TrebolAvailableText", "Clovers: 0", 22, new Vector2(0f, -230f));
         soGOC.FindProperty("trebolAvailableText").objectReferenceValue = txtTrebol.GetComponent<TextMeshProUGUI>();
 
         soGOC.ApplyModifiedProperties();
@@ -447,8 +477,8 @@ public static class SceneElementSetup
         soDRC.FindProperty("panelRect").objectReferenceValue = rect;
 
         // Título y Estado
-        CreateTMPText(panelObj, "DiceTitle", "DADO DE VIDAS", 40, new Vector2(0f, 180f));
-        GameObject statusText = CreateTMPText(panelObj, "DiceStatus", "Dado Normal (1 - 3 Vidas)", 26, new Vector2(0f, 120f));
+        CreateTMPText(panelObj, "DiceTitle", "DICE OF LIVES", 40, new Vector2(0f, 180f));
+        GameObject statusText = CreateTMPText(panelObj, "DiceStatus", "Normal Dice (1 - 3 Lives)", 26, new Vector2(0f, 120f));
         soDRC.FindProperty("diceStatusText").objectReferenceValue = statusText.GetComponent<TextMeshProUGUI>();
 
         // Número del dado (grande)
@@ -456,21 +486,21 @@ public static class SceneElementSetup
         soDRC.FindProperty("diceNumberText").objectReferenceValue = numberText.GetComponent<TextMeshProUGUI>();
 
         // Botones
-        Button btnRoll = CreateUIButton(panelObj, "RollButton", "Lanzar Dado", new Vector2(-120f, -90f), new Color(0.2f, 0.8f, 0.3f));
+        Button btnRoll = CreateUIButton(panelObj, "RollButton", "Roll Dice", new Vector2(-120f, -90f), new Color(0.2f, 0.8f, 0.3f));
         soDRC.FindProperty("rollButton").objectReferenceValue = btnRoll;
 
-        Button btnStop = CreateUIButton(panelObj, "StopButton", "Parar", new Vector2(120f, -90f), new Color(0.9f, 0.3f, 0.2f));
+        Button btnStop = CreateUIButton(panelObj, "StopButton", "Stop", new Vector2(120f, -90f), new Color(0.9f, 0.3f, 0.2f));
         btnStop.interactable = false;
         soDRC.FindProperty("stopButton").objectReferenceValue = btnStop;
 
-        Button btnUpgrade = CreateUIButton(panelObj, "UpgradeButton", "Mejorar con Trebol", new Vector2(0f, -160f), new Color(0.85f, 0.7f, 0.1f));
+        Button btnUpgrade = CreateUIButton(panelObj, "UpgradeButton", "Upgrade with Clover", new Vector2(0f, -160f), new Color(0.85f, 0.7f, 0.1f));
         soDRC.FindProperty("upgradeWithTrebolButton").objectReferenceValue = btnUpgrade;
 
-        Button btnClose = CreateUIButton(panelObj, "CloseButton", "Continuar", new Vector2(0f, -220f), new Color(0.5f, 0.5f, 0.5f));
+        Button btnClose = CreateUIButton(panelObj, "CloseButton", "Continue", new Vector2(0f, -220f), new Color(0.5f, 0.5f, 0.5f));
         btnClose.interactable = false;
         soDRC.FindProperty("closeButton").objectReferenceValue = btnClose;
 
-        GameObject trebolText = CreateTMPText(panelObj, "TrebolAvailableText", "Treboles: 0", 22, new Vector2(0f, -260f));
+        GameObject trebolText = CreateTMPText(panelObj, "TrebolAvailableText", "Clovers: 0", 22, new Vector2(0f, -260f));
         soDRC.FindProperty("trebolAvailableText").objectReferenceValue = trebolText.GetComponent<TextMeshProUGUI>();
 
         soDRC.ApplyModifiedProperties();
@@ -571,7 +601,7 @@ public static class SceneElementSetup
         soMGC.ApplyModifiedProperties();
     }
 
-    private static void CreateStorePanel(GameObject canvasRoot, bool createOpenButton)
+    private static void CreateStorePanel(GameObject canvasRoot, bool createOpenButton = false)
     {
         GameObject panelObj = new GameObject("StorePanel");
         panelObj.transform.SetParent(canvasRoot.transform, false);
@@ -595,23 +625,23 @@ public static class SceneElementSetup
         soNoAds.FindProperty("storePanelGroup").objectReferenceValue = cg;
 
         // Título
-        CreateTMPText(panelObj, "StoreTitle", "TIENDA / QUITAR ANUNCIOS", 38, new Vector2(0f, 180f));
+        CreateTMPText(panelObj, "StoreTitle", "STORE / REMOVE ADS", 38, new Vector2(0f, 180f));
 
         // Descripción
-        CreateTMPText(panelObj, "StoreDesc", "Juega sin interrupciones!\nElimina todos los anuncios permanentemente.", 22, new Vector2(0f, 100f));
+        CreateTMPText(panelObj, "StoreDesc", "Play without interruptions!\nPurchasing permanently removes all ads.", 22, new Vector2(0f, 100f));
 
         // Botón Compra
-        Button btnPurchase = CreateUIButton(panelObj, "PurchaseButton", "Sin Anuncios", new Vector2(0f, 10f), new Color(0.2f, 0.75f, 0.35f));
+        Button btnPurchase = CreateUIButton(panelObj, "PurchaseButton", "Remove Ads", new Vector2(0f, 10f), new Color(0.2f, 0.75f, 0.35f));
         soNoAds.FindProperty("purchaseButton").objectReferenceValue = btnPurchase;
         TextMeshProUGUI purchaseLabel = btnPurchase.GetComponentInChildren<TextMeshProUGUI>();
         soNoAds.FindProperty("purchaseButtonLabel").objectReferenceValue = purchaseLabel;
 
         // Botón Restaurar
-        Button btnRestore = CreateUIButton(panelObj, "RestoreButton", "Restaurar Compras", new Vector2(0f, -60f), new Color(0.3f, 0.5f, 0.8f));
+        Button btnRestore = CreateUIButton(panelObj, "RestoreButton", "Restore Purchases", new Vector2(0f, -60f), new Color(0.3f, 0.5f, 0.8f));
         soNoAds.FindProperty("restoreButton").objectReferenceValue = btnRestore;
 
         // Indicador activo (cuando ya está comprado)
-        GameObject indicatorObj = CreateTMPText(panelObj, "ActiveIndicator", "Sin Anuncios Activo", 24, new Vector2(0f, 10f));
+        GameObject indicatorObj = CreateTMPText(panelObj, "ActiveIndicator", "Remove Ads Active", 24, new Vector2(0f, 10f));
         indicatorObj.GetComponent<TextMeshProUGUI>().color = new Color(0.3f, 1f, 0.4f);
         indicatorObj.SetActive(false);
         soNoAds.FindProperty("noAdsActiveIndicator").objectReferenceValue = indicatorObj;
@@ -621,15 +651,8 @@ public static class SceneElementSetup
         soNoAds.FindProperty("statusText").objectReferenceValue = statusObj.GetComponent<TextMeshProUGUI>();
 
         // Botón Cerrar
-        Button btnClose = CreateUIButton(panelObj, "CloseButton", "Cerrar", new Vector2(0f, -180f), new Color(0.5f, 0.5f, 0.5f));
+        Button btnClose = CreateUIButton(panelObj, "CloseButton", "Close", new Vector2(0f, -180f), new Color(0.5f, 0.5f, 0.5f));
         soNoAds.FindProperty("closeStoreButton").objectReferenceValue = btnClose;
-
-        // Botón para abrir la tienda (si se solicita, ej. en MainMenu)
-        if (createOpenButton)
-        {
-            Button btnOpen = CreateUIButton(canvasRoot, "OpenStoreButton", "Quitar Anuncios", new Vector2(0f, -180f), new Color(0.9f, 0.6f, 0.1f));
-            soNoAds.FindProperty("openStoreButton").objectReferenceValue = btnOpen;
-        }
 
         soNoAds.ApplyModifiedProperties();
     }

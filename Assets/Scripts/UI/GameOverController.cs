@@ -90,9 +90,11 @@ public class GameOverController : MonoBehaviour
 
     public void Show()
     {
-        // Pausar el juego
+        // Pausar el juego y ocultar controles virtuales de gameplay para no solapar el menú
         Time.timeScale = 0f;
         InputManager.Instance?.EnableUIOnlyInput();
+        if (PlatformDetector.Instance != null)
+            PlatformDetector.Instance.ForceSetMobileUIActive(false, false);
 
         // Actualizar textos de economía
         RefreshEconomyUI();
@@ -310,6 +312,8 @@ public class GameOverController : MonoBehaviour
         Hide();
         Time.timeScale = 1f;
         InputManager.Instance?.EnablePlayerInput();
+        if (PlatformDetector.Instance != null)
+            PlatformDetector.Instance.ForceSetMobileUIActive(PlatformDetector.IsMobile(), false);
 
         // Respawnear al jugador con las vidas actualizadas
         if (LevelManager._instance != null)
@@ -326,13 +330,13 @@ public class GameOverController : MonoBehaviour
         bool canGems = LivesManager.Instance?.CanAffordLife() ?? false;
 
         if (gemCostText != null)
-            gemCostText.text = $"{cost} Gemas";
+            gemCostText.text = $"{cost} Gems";
 
         if (currentGemsText != null)
-            currentGemsText.text = $"Tienes: {gems} Gemas";
+            currentGemsText.text = $"Gems: {gems}";
 
         if (trebolAvailableText != null)
-            trebolAvailableText.text = $"Treboles: {trebols}";
+            trebolAvailableText.text = $"Clovers: {trebols}";
 
         // Deshabilitar botón de gemas si no alcanza
         if (spendGemsButton != null)
@@ -352,7 +356,7 @@ public class GameOverController : MonoBehaviour
 
     private void ShowAdUnavailableFeedback()
     {
-        const string message = "Anuncio no disponible. Intentalo de nuevo mas tarde.";
+        const string message = "Ad unavailable. Please try again later.";
         if (adFeedbackText != null)
             adFeedbackText.text = message;
         else

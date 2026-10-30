@@ -31,17 +31,12 @@ public class TrebolPickup : MonoBehaviour
         if (levelNumber <= 0)
             levelNumber = SceneUtils.Get_CurrentLevelName();
 
-        // Si ya fue recolectado en partidas anteriores, ocultar o marcar visualmente
+        // Si ya fue recolectado en partidas anteriores, ocultar por completo de la escena.
+        // El estado recolectado se refleja en la UI (HUD y mapa de niveles), no en la escena.
         if (SaveManager.Instance != null && SaveManager.Instance.HasTrebol(levelNumber))
         {
-            // Aparece translúcido o se desactiva
-            if (spriteRenderer != null)
-            {
-                Color c = spriteRenderer.color;
-                c.a = 0.35f;
-                spriteRenderer.color = c;
-            }
-            if (col != null) col.enabled = false;
+            gameObject.SetActive(false);
+            return;
         }
     }
 
