@@ -258,7 +258,7 @@ public class RevenueCatManager : MonoBehaviour
             if (offerings?.Current == null)
             {
                 _isPurchasing = false;
-                string msg = "No se pudieron cargar los offerings de RevenueCat.";
+                string msg = "Could not load store offerings from RevenueCat.";
                 LogRC(msg);
                 onError?.Invoke(msg);
                 return;
@@ -271,7 +271,7 @@ public class RevenueCatManager : MonoBehaviour
             if (package == null)
             {
                 _isPurchasing = false;
-                string msg = $"Producto '{noAdsProductId}' no encontrado en el offering actual.";
+                string msg = $"Product '{noAdsProductId}' not found in current offering.";
                 LogRC(msg);
                 onError?.Invoke(msg);
                 return;
@@ -301,7 +301,7 @@ public class RevenueCatManager : MonoBehaviour
                     }
                     else
                     {
-                        string msg = "Compra procesada pero el entitlement NoAds no se activó.";
+                        string msg = "Purchase processed, but Remove Ads entitlement was not activated.";
                         LogRC(msg);
                         onError?.Invoke(msg);
                     }
@@ -353,7 +353,7 @@ public class RevenueCatManager : MonoBehaviour
                 }
                 else
                 {
-                    const string message = "No se encontró una compra de Remove Ads para restaurar.";
+                    const string message = "No previous Remove Ads purchase was found to restore.";
                     LogRC(message);
                     onError?.Invoke(message);
                 }
