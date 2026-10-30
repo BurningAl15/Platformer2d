@@ -136,11 +136,11 @@ public class UIController : MonoBehaviour
         if (endLevel_animator != null) endLevel_animator.gameObject.SetActive(false);
         if (amazingJob_animator != null) amazingJob_animator.gameObject.SetActive(false);
 
-        if (gemsLevelText != null)
-        {
-            gemsLevelText.textWrappingMode = TextWrappingModes.NoWrap;
-            gemsLevelText.overflowMode = TextOverflowModes.Overflow;
-        }
+        // Configurar auto-sizing y no-wrap en todos los textos del HUD
+        ConfigureAutoResize(gemsLevelText, 24f, 90f);
+        ConfigureAutoResize(gemsGlobalText, 16f, 48f);
+        ConfigureAutoResize(trebolCountText, 16f, 36f);
+        ConfigureAutoResize(livesText, 16f, 36f);
 
         // Mostrar vidas iniciales
         RefreshLivesUI();
@@ -225,12 +225,25 @@ public class UIController : MonoBehaviour
     {
         if (gemsLevelText != null)
         {
+            gemsLevelText.enableAutoSizing = true;
+            gemsLevelText.fontSizeMin = 24f;
+            gemsLevelText.fontSizeMax = 90f;
             gemsLevelText.textWrappingMode = TextWrappingModes.NoWrap;
-            gemsLevelText.overflowMode = TextOverflowModes.Overflow;
+            gemsLevelText.overflowMode = TextOverflowModes.Ellipsis;
             gemsLevelText.text = totalGems > 0
                 ? $"{currentGems} / {totalGems}"
                 : currentGems.ToString();
         }
+    }
+
+    private static void ConfigureAutoResize(TextMeshProUGUI tmp, float minSize, float maxSize)
+    {
+        if (tmp == null) return;
+        tmp.enableAutoSizing = true;
+        tmp.fontSizeMin = minSize;
+        tmp.fontSizeMax = maxSize;
+        tmp.textWrappingMode = TextWrappingModes.NoWrap;
+        tmp.overflowMode = TextOverflowModes.Ellipsis;
     }
 
     /// <summary>Refresca el texto de gemas globales del wallet.</summary>

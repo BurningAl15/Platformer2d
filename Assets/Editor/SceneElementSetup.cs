@@ -56,7 +56,10 @@ public static class SceneElementSetup
             // 5. Agregar Trebol a cada nivel de gameplay
             SetupGameplayLevels(trebolPrefab);
 
-            Debug.Log("[SceneElementSetup] Todas las escenas y paneles configurados con exito en estilo pixel art!");
+            // 6. Revisión exhaustiva de auto-sizing en todos los textos de prefabs y escenas
+            ConfigureAllProjectTextsForAutoSizing();
+
+            Debug.Log("[SceneElementSetup] Todas las escenas y paneles configurados con exito en estilo pixel art y auto-sizing!");
         }
         catch (System.Exception ex)
         {
@@ -196,15 +199,20 @@ public static class SceneElementSetup
         var tmp = textObj.AddComponent<TextMeshProUGUI>();
         tmp.font = GetPixelFont();
         tmp.text = label;
-        tmp.fontSize = size.y > 65 ? 26 : 22;
+        float baseSize = size.y > 65 ? 26f : 22f;
+        tmp.fontSize = baseSize;
+        tmp.enableAutoSizing = true;
+        tmp.fontSizeMin = 14f;
+        tmp.fontSizeMax = baseSize;
         tmp.alignment = TextAlignmentOptions.Center;
         tmp.color = Color.white;
         tmp.textWrappingMode = TextWrappingModes.NoWrap;
+        tmp.overflowMode = TextOverflowModes.Ellipsis;
 
         return btn;
     }
 
-    private static GameObject CreatePixelText(GameObject parent, string name, string text, float fontSize, Vector2 anchoredPos, Vector2 size, Color? color = null)
+    private static GameObject CreatePixelText(GameObject parent, string name, string text, float fontSize, Vector2 anchoredPos, Vector2 size, Color? color = null, bool allowWrapping = false)
     {
         GameObject go = new GameObject(name);
         go.transform.SetParent(parent.transform, false);
@@ -220,9 +228,13 @@ public static class SceneElementSetup
         tmp.font = GetPixelFont();
         tmp.text = text;
         tmp.fontSize = fontSize;
+        tmp.enableAutoSizing = true;
+        tmp.fontSizeMin = Mathf.Min(14f, fontSize * 0.5f);
+        tmp.fontSizeMax = fontSize;
         tmp.alignment = TextAlignmentOptions.Center;
         tmp.color = color ?? Color.white;
-        tmp.textWrappingMode = TextWrappingModes.NoWrap;
+        tmp.textWrappingMode = allowWrapping ? TextWrappingModes.Normal : TextWrappingModes.NoWrap;
+        tmp.overflowMode = TextOverflowModes.Ellipsis;
 
         return go;
     }
@@ -843,7 +855,7 @@ public static class SceneElementSetup
         CreatePixelText(container, "StoreTitle", "STORE / REMOVE ADS", 36f, new Vector2(0f, 195f), new Vector2(600f, 45f));
 
         // Descripción
-        CreatePixelText(container, "StoreDesc", "Play without interruptions!\nPurchasing permanently removes all ads.", 20f, new Vector2(0f, 125f), new Vector2(640f, 60f));
+        CreatePixelText(container, "StoreDesc", "Play without interruptions!\nPurchasing permanently removes all ads.", 20f, new Vector2(0f, 125f), new Vector2(640f, 60f), null, allowWrapping: true);
 
         // Botón Compra
         Button btnPurchase = CreatePixelButton(container, "PurchaseButton", "Remove Ads", new Vector2(0f, 35f), new Vector2(440f, 72f));
@@ -917,5 +929,117 @@ public static class SceneElementSetup
                 EditorSceneManager.SaveScene(scene);
             }
         }
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    //  6. Revisión exhaustiva de auto-sizing en todos los textos del proyecto
+    // ─────────────────────────────────────────────────────────────────────────
+
+    [MenuItem("CustomEditorTools/Configure All Texts For Auto Sizing & Resize")]
+    public static void ConfigureAllProjectTextsForAutoSizing()
+    {
+        Debug.Log("[SceneElementSetup] Iniciando configuracion de auto-sizing (shrink/resize) en todos los textos...");
+
+        string[] prefabsToScan = new string[]
+        {
+            "Assets/Prefabs/ReUsable/UI-Canvas.prefab",
+            "Assets/Prefabs/ReUsable/LevelPrefab.prefab",
+            "Assets/Prefabs/UI/Start-Button.prefab",
+            "Assets/Prefabs/UI/PauseMenu.prefab"
+        };
+
+        foreach (string prefabPath in prefabsToScan)
+        {
+            if (!File.Exists(prefabPath)) continue;
+            GameObject root = PrefabUtility.LoadPrefabContents(prefabPath);
+            if (root == null) continue;
+
+            bool modified = ApplyAutoSizingToHierarchy(root);
+            if (modified)
+            {
+                PrefabUtility.SaveAsPrefabAsset(root, prefabPath);
+                Debug.Log($"[SceneElementSetup] Auto-sizing y resize aplicados a prefab: {prefabPath}");
+            }
+            PrefabUtility.UnloadPrefabContents(root);
+        }
+
+        List<string> scenesToScan = new List<string>()
+        {
+            "Assets/Scenes/MainMenu.unity",
+            "Assets/Scenes/LevelSelection.unity",
+            "Assets/Scenes/LevelSelection-Complete.unity"
+        };
+
+        for (int i = 0; i <= 10; i++)
+        {
+            string lvl = $"Assets/Scenes/Levels/Level_{i}.unity";
+            if (File.Exists(lvl))
+                scenesToScan.Add(lvl);
+        }
+
+        foreach (string scenePath in scenesToScan)
+        {
+            if (!File.Exists(scenePath)) continue;
+            Scene scene = EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Single);
+            bool modified = false;
+
+            GameObject[] roots = scene.GetRootGameObjects();
+            foreach (GameObject root in roots)
+            {
+                if (ApplyAutoSizingToHierarchy(root))
+                    modified = true;
+            }
+
+            if (modified)
+            {
+                EditorSceneManager.MarkSceneDirty(scene);
+                EditorSceneManager.SaveScene(scene);
+                Debug.Log($"[SceneElementSetup] Auto-sizing y resize aplicados a escena: {scenePath}");
+            }
+        }
+    }
+
+    private static bool ApplyAutoSizingToHierarchy(GameObject root)
+    {
+        bool modified = false;
+        TextMeshProUGUI[] texts = root.GetComponentsInChildren<TextMeshProUGUI>(true);
+        foreach (var tmp in texts)
+        {
+            string textContent = tmp.text ?? string.Empty;
+            string objName = tmp.gameObject.name;
+
+            bool isMultiline = textContent.Contains("\n") || objName.Contains("Desc") || objName.Contains("Billboard");
+            float currentMax = Mathf.Max(tmp.fontSize, tmp.fontSizeMax, 18f);
+            float minSize = currentMax > 60f ? 24f : 14f;
+
+            if (!tmp.enableAutoSizing || tmp.fontSizeMin != minSize || tmp.fontSizeMax != currentMax)
+            {
+                tmp.enableAutoSizing = true;
+                tmp.fontSizeMin = minSize;
+                tmp.fontSizeMax = currentMax;
+                modified = true;
+            }
+
+            TextWrappingModes targetWrap = isMultiline ? TextWrappingModes.Normal : TextWrappingModes.NoWrap;
+            if (tmp.textWrappingMode != targetWrap)
+            {
+                tmp.textWrappingMode = targetWrap;
+                modified = true;
+            }
+
+            if (tmp.overflowMode != TextOverflowModes.Ellipsis)
+            {
+                tmp.overflowMode = TextOverflowModes.Ellipsis;
+                modified = true;
+            }
+
+            // Si es un contador de gemas que quedó en 999 en diseño, resetear a 0
+            if ((objName == "Gems_Txt" || objName.Contains("Gems")) && textContent == "999")
+            {
+                tmp.text = "0";
+                modified = true;
+            }
+        }
+        return modified;
     }
 }

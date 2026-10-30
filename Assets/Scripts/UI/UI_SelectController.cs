@@ -60,7 +60,24 @@ public class UI_SelectController : MonoBehaviour
             panelRect.anchoredPosition = new Vector2(pos.x, hiddenY);
         }
 
+        // Configurar auto-sizing y no-wrap para que nunca hagan overflow
+        ConfigureAutoResize(levelNameText, 20f, 60f);
+        ConfigureAutoResize(gemsFoundText, 14f, 40f);
+        ConfigureAutoResize(gemsTargetText, 14f, 40f);
+        ConfigureAutoResize(bestTimeText, 14f, 40f);
+        ConfigureAutoResize(timeTargetText, 14f, 40f);
+
         levelInfoContainer.SetActive(false);
+    }
+
+    private static void ConfigureAutoResize(TextMeshProUGUI tmp, float minSize, float maxSize)
+    {
+        if (tmp == null) return;
+        tmp.enableAutoSizing = true;
+        tmp.fontSizeMin = minSize;
+        tmp.fontSizeMax = maxSize;
+        tmp.textWrappingMode = TextWrappingModes.NoWrap;
+        tmp.overflowMode = TextOverflowModes.Ellipsis;
     }
 
     public void RenderLevelData(MapPoint levelInfo)

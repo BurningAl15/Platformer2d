@@ -60,7 +60,13 @@ public class WorldCompleteController : MonoBehaviour
     private static void SetText(TextMeshProUGUI target, string value)
     {
         if (target != null)
+        {
+            target.enableAutoSizing = true;
+            target.fontSizeMin = 14f;
+            target.textWrappingMode = TextWrappingModes.NoWrap;
+            target.overflowMode = TextOverflowModes.Ellipsis;
             target.text = value;
+        }
     }
 
     private static string FormatTime(float seconds)

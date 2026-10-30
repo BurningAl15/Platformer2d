@@ -54,8 +54,36 @@ public class NoAdsPurchaseButton : MonoBehaviour
         if (restoreButton != null)
             restoreButton.onClick.AddListener(OnRestorePressed);
 
+        ConfigureAllTextsAutoResize();
         RefreshUI();
         RefreshPriceWhenReady();
+    }
+
+    private void ConfigureAllTextsAutoResize()
+    {
+        ConfigureAutoResize(purchaseButtonLabel, 14f, 28f);
+        ConfigureAutoResize(statusText, 12f, 22f);
+        ConfigureButtonAutoResize(purchaseButton, 14f, 28f);
+        ConfigureButtonAutoResize(restoreButton, 14f, 28f);
+        ConfigureButtonAutoResize(closeStoreButton, 14f, 28f);
+        ConfigureButtonAutoResize(openStoreButton, 14f, 28f);
+    }
+
+    private static void ConfigureAutoResize(TextMeshProUGUI tmp, float minSize, float maxSize)
+    {
+        if (tmp == null) return;
+        tmp.enableAutoSizing = true;
+        tmp.fontSizeMin = minSize;
+        tmp.fontSizeMax = maxSize;
+        tmp.textWrappingMode = TextWrappingModes.NoWrap;
+        tmp.overflowMode = TextOverflowModes.Ellipsis;
+    }
+
+    private static void ConfigureButtonAutoResize(Button btn, float minSize, float maxSize)
+    {
+        if (btn == null) return;
+        var tmp = btn.GetComponentInChildren<TextMeshProUGUI>();
+        ConfigureAutoResize(tmp, minSize, maxSize);
     }
 
     public void OpenPanel()

@@ -55,7 +55,38 @@ public class GameOverController : MonoBehaviour
     {
         if (_instance != null && _instance != this) { Destroy(gameObject); return; }
         _instance = this;
+        ConfigureAllTextsAutoResize();
         HideInstant();
+    }
+
+    private void ConfigureAllTextsAutoResize()
+    {
+        ConfigureAutoResize(gemCostText, 14f, 24f);
+        ConfigureAutoResize(currentGemsText, 14f, 26f);
+        ConfigureAutoResize(trebolAvailableText, 14f, 26f);
+        ConfigureAutoResize(adFeedbackText, 12f, 22f);
+        ConfigureButtonAutoResize(watchAdButton, 14f, 28f);
+        ConfigureButtonAutoResize(spendGemsButton, 14f, 28f);
+        ConfigureButtonAutoResize(useTrebolButton, 14f, 28f);
+        ConfigureButtonAutoResize(useSecretDiceButton, 14f, 28f);
+        ConfigureButtonAutoResize(returnToMapButton, 14f, 28f);
+    }
+
+    private static void ConfigureAutoResize(TextMeshProUGUI tmp, float minSize, float maxSize)
+    {
+        if (tmp == null) return;
+        tmp.enableAutoSizing = true;
+        tmp.fontSizeMin = minSize;
+        tmp.fontSizeMax = maxSize;
+        tmp.textWrappingMode = TextWrappingModes.NoWrap;
+        tmp.overflowMode = TextOverflowModes.Ellipsis;
+    }
+
+    private static void ConfigureButtonAutoResize(Button btn, float minSize, float maxSize)
+    {
+        if (btn == null) return;
+        var tmp = btn.GetComponentInChildren<TextMeshProUGUI>();
+        ConfigureAutoResize(tmp, minSize, maxSize);
     }
 
     private void Start()

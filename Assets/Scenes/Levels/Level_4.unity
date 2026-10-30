@@ -1475,6 +1475,198 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1654703424546847951}
     m_Modifications:
+    - target: {fileID: 134228920079441608, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_fontSizeMin
+      value: 24
+      objectReference: {fileID: 0}
+    - target: {fileID: 134228920079441608, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_overflowMode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 134228920079441608, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_enableAutoSizing
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 398744652485990182, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_fontSizeMin
+      value: 24
+      objectReference: {fileID: 0}
+    - target: {fileID: 398744652485990182, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_overflowMode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 398744652485990182, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_enableAutoSizing
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 975572561435348856, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_fontSizeMin
+      value: 24
+      objectReference: {fileID: 0}
+    - target: {fileID: 975572561435348856, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_overflowMode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 975572561435348856, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_TextWrappingMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 975572561435348856, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_enableAutoSizing
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1084593155306079665, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_fontSizeMin
+      value: 24
+      objectReference: {fileID: 0}
+    - target: {fileID: 1084593155306079665, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_overflowMode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1084593155306079665, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_enableAutoSizing
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2016055195208142355, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_fontSizeMin
+      value: 24
+      objectReference: {fileID: 0}
+    - target: {fileID: 2016055195208142355, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_overflowMode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2016055195208142355, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_enableAutoSizing
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2034612387621185905, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_fontSizeMin
+      value: 24
+      objectReference: {fileID: 0}
+    - target: {fileID: 2034612387621185905, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_overflowMode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2034612387621185905, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_enableAutoSizing
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048534426444667147, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_fontSizeMin
+      value: 24
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048534426444667147, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_overflowMode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048534426444667147, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_enableAutoSizing
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3112558472793232435, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_fontSizeMin
+      value: 24
+      objectReference: {fileID: 0}
+    - target: {fileID: 3112558472793232435, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_overflowMode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3112558472793232435, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_enableAutoSizing
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3327672115629020262, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_fontSizeMin
+      value: 24
+      objectReference: {fileID: 0}
+    - target: {fileID: 3327672115629020262, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_overflowMode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3327672115629020262, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_enableAutoSizing
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3372832316065231351, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_fontSizeMin
+      value: 24
+      objectReference: {fileID: 0}
+    - target: {fileID: 3372832316065231351, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_overflowMode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3372832316065231351, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_enableAutoSizing
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3855209540710374360, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_fontSizeMin
+      value: 24
+      objectReference: {fileID: 0}
+    - target: {fileID: 3855209540710374360, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_overflowMode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3855209540710374360, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_enableAutoSizing
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4911257867002253921, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_fontSizeMin
+      value: 24
+      objectReference: {fileID: 0}
+    - target: {fileID: 4911257867002253921, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_overflowMode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4911257867002253921, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_enableAutoSizing
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5236080700748235245, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_fontSizeMin
+      value: 24
+      objectReference: {fileID: 0}
+    - target: {fileID: 5236080700748235245, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_overflowMode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5236080700748235245, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_enableAutoSizing
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5299812527261380007, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_fontSizeMin
+      value: 24
+      objectReference: {fileID: 0}
+    - target: {fileID: 5299812527261380007, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_overflowMode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5299812527261380007, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_enableAutoSizing
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5647457846979810459, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_fontSizeMax
+      value: 75
+      objectReference: {fileID: 0}
+    - target: {fileID: 5647457846979810459, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_fontSizeMin
+      value: 24
+      objectReference: {fileID: 0}
+    - target: {fileID: 5647457846979810459, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_overflowMode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5647457846979810459, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_TextWrappingMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5647457846979810459, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_enableAutoSizing
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5647457846979810459, guid: 52073add4951c934daba861871d7e9ed, type: 3}
       propertyPath: m_textInfo.lineCount
       value: 0
@@ -1496,6 +1688,26 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5647457847608308738, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_fontSizeMax
+      value: 75
+      objectReference: {fileID: 0}
+    - target: {fileID: 5647457847608308738, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_fontSizeMin
+      value: 24
+      objectReference: {fileID: 0}
+    - target: {fileID: 5647457847608308738, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_overflowMode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5647457847608308738, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_TextWrappingMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5647457847608308738, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_enableAutoSizing
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5647457847608308738, guid: 52073add4951c934daba861871d7e9ed, type: 3}
       propertyPath: m_textInfo.lineCount
       value: 0
       objectReference: {fileID: 0}
@@ -1510,6 +1722,22 @@ PrefabInstance:
     - target: {fileID: 5647457847608308738, guid: 52073add4951c934daba861871d7e9ed, type: 3}
       propertyPath: m_textInfo.characterCount
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5647457848694358801, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_fontSizeMax
+      value: 75
+      objectReference: {fileID: 0}
+    - target: {fileID: 5647457848694358801, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_fontSizeMin
+      value: 24
+      objectReference: {fileID: 0}
+    - target: {fileID: 5647457848694358801, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_overflowMode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5647457848694358801, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_enableAutoSizing
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5647457848694358801, guid: 52073add4951c934daba861871d7e9ed, type: 3}
       propertyPath: m_textInfo.lineCount
@@ -1530,6 +1758,130 @@ PrefabInstance:
     - target: {fileID: 5647457848694358801, guid: 52073add4951c934daba861871d7e9ed, type: 3}
       propertyPath: m_textInfo.characterCount
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5940788047375514548, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_fontSizeMin
+      value: 24
+      objectReference: {fileID: 0}
+    - target: {fileID: 5940788047375514548, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_overflowMode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5940788047375514548, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_enableAutoSizing
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6660697447037981520, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_fontSizeMin
+      value: 24
+      objectReference: {fileID: 0}
+    - target: {fileID: 6660697447037981520, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_overflowMode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6660697447037981520, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_TextWrappingMode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6660697447037981520, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_enableAutoSizing
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7389601659139541994, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_fontSizeMin
+      value: 24
+      objectReference: {fileID: 0}
+    - target: {fileID: 7389601659139541994, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_overflowMode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7389601659139541994, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_enableAutoSizing
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7470967644440681477, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_fontSizeMin
+      value: 24
+      objectReference: {fileID: 0}
+    - target: {fileID: 7470967644440681477, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_overflowMode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7470967644440681477, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_enableAutoSizing
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7595812447732655982, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_fontSizeMin
+      value: 24
+      objectReference: {fileID: 0}
+    - target: {fileID: 7595812447732655982, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_overflowMode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7595812447732655982, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_enableAutoSizing
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7610112441488935115, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_fontSizeMin
+      value: 24
+      objectReference: {fileID: 0}
+    - target: {fileID: 7610112441488935115, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_overflowMode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7610112441488935115, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_enableAutoSizing
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7715580584486045135, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_fontSizeMin
+      value: 24
+      objectReference: {fileID: 0}
+    - target: {fileID: 7715580584486045135, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_overflowMode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7715580584486045135, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_enableAutoSizing
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7905167260024110387, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_fontSizeMin
+      value: 24
+      objectReference: {fileID: 0}
+    - target: {fileID: 7905167260024110387, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_overflowMode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7905167260024110387, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_enableAutoSizing
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8348819999050142469, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_fontSizeMin
+      value: 24
+      objectReference: {fileID: 0}
+    - target: {fileID: 8348819999050142469, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_overflowMode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8348819999050142469, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_TextWrappingMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8348819999050142469, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_enableAutoSizing
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8365330789894772374, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_fontSizeMin
+      value: 24
+      objectReference: {fileID: 0}
+    - target: {fileID: 8365330789894772374, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_overflowMode
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8365330789894772374, guid: 52073add4951c934daba861871d7e9ed, type: 3}
       propertyPath: m_textInfo.lineCount
@@ -1640,6 +1992,22 @@ PrefabInstance:
       value: UI-Canvas
       objectReference: {fileID: 0}
     - target: {fileID: 8365330790446073061, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_fontSizeMax
+      value: 200
+      objectReference: {fileID: 0}
+    - target: {fileID: 8365330790446073061, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_fontSizeMin
+      value: 24
+      objectReference: {fileID: 0}
+    - target: {fileID: 8365330790446073061, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_overflowMode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8365330790446073061, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_enableAutoSizing
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8365330790446073061, guid: 52073add4951c934daba861871d7e9ed, type: 3}
       propertyPath: m_textInfo.lineCount
       value: 0
       objectReference: {fileID: 0}
@@ -1658,6 +2026,18 @@ PrefabInstance:
     - target: {fileID: 8365330790446073061, guid: 52073add4951c934daba861871d7e9ed, type: 3}
       propertyPath: m_textInfo.characterCount
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8796177790344463498, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_fontSizeMin
+      value: 24
+      objectReference: {fileID: 0}
+    - target: {fileID: 8796177790344463498, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_overflowMode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8796177790344463498, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_enableAutoSizing
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

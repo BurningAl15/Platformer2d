@@ -72,6 +72,36 @@ public class DiceRollController : MonoBehaviour
         {
             panelRect.anchoredPosition = new Vector2(panelRect.anchoredPosition.x, hiddenY);
         }
+
+        ConfigureAllTextsAutoResize();
+    }
+
+    private void ConfigureAllTextsAutoResize()
+    {
+        ConfigureAutoResize(diceNumberText, 24f, 80f);
+        ConfigureAutoResize(diceStatusText, 14f, 26f);
+        ConfigureAutoResize(trebolAvailableText, 14f, 24f);
+        ConfigureButtonAutoResize(rollButton, 14f, 28f);
+        ConfigureButtonAutoResize(stopButton, 14f, 28f);
+        ConfigureButtonAutoResize(upgradeWithTrebolButton, 14f, 28f);
+        ConfigureButtonAutoResize(closeButton, 14f, 28f);
+    }
+
+    private static void ConfigureAutoResize(TextMeshProUGUI tmp, float minSize, float maxSize)
+    {
+        if (tmp == null) return;
+        tmp.enableAutoSizing = true;
+        tmp.fontSizeMin = minSize;
+        tmp.fontSizeMax = maxSize;
+        tmp.textWrappingMode = TextWrappingModes.NoWrap;
+        tmp.overflowMode = TextOverflowModes.Ellipsis;
+    }
+
+    private static void ConfigureButtonAutoResize(Button btn, float minSize, float maxSize)
+    {
+        if (btn == null) return;
+        var tmp = btn.GetComponentInChildren<TextMeshProUGUI>();
+        ConfigureAutoResize(tmp, minSize, maxSize);
     }
 
     private void Start()

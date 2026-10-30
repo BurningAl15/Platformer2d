@@ -39,6 +39,10 @@ Tras la revisión de QA y las directivas del proyecto, se corrigió la disparida
 6. **Contador de Gemas:**
    - Configurado con `TextWrappingModes.NoWrap`, auto-sizing habilitado y ancho de contenedor ampliado (300px) para evitar saltos de línea con valores de 3 o más dígitos.
 
+7. **Auto-Sizing y Resize Universal (Eliminación de Overflow y Multi-Línea):**
+   - Se revisaron e implementaron configuraciones de auto-sizing dinámico (`enableAutoSizing = true`, `fontSizeMin = 14-24`, `fontSizeMax`, `overflowMode = Ellipsis`, `textWrappingMode = NoWrap`) en TODOS los textos y botones de las escenas (`MainMenu.unity`, `LevelSelection.unity`, `Level_0` a `Level_10`) y prefabs (`Start-Button.prefab`, `PauseMenu.prefab`, `LevelPrefab.prefab`, `UI-Canvas.prefab`).
+   - Los scripts de runtime (`UIController.cs`, `UI_SelectController.cs`, `GameOverController.cs`, `DiceRollController.cs`, `NoAdsPurchaseButton.cs`, `WorldCompleteController.cs`) refuerzan el auto-sizing, garantizando que cuando una cadena crece o la resolución varía, el texto se redimensiona automáticamente (shrink) en vez de partirse en dos renglones o salirse del marco.
+
 ---
 
 ## Plan de cierre rápido para Antigravity — 2026-10-29
