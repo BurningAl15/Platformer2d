@@ -378,18 +378,22 @@ public static class SceneElementSetup
                 buttonMenu.gameObject.name = "ButtonMenu";
             }
 
-            // 2. Recrear StorePanel al frente del Canvas
-            Transform existingStorePanel = canvas.transform.Find("StorePanel");
-            if (existingStorePanel != null)
+            // 2. Recrear StorePanel al frente del Canvas principal (y eliminar de cualquier otro canvas como BG-Canvas)
+            foreach (var c in Object.FindObjectsOfType<Canvas>(true))
             {
-                Object.DestroyImmediate(existingStorePanel.gameObject);
-                modified = true;
+                Transform sp = c.transform.Find("StorePanel");
+                if (sp != null)
+                {
+                    Object.DestroyImmediate(sp.gameObject);
+                    modified = true;
+                }
             }
             CreateStorePanel(canvas.gameObject, false);
             Transform storePanelObj = canvas.transform.Find("StorePanel");
             if (storePanelObj != null)
             {
                 storePanelObj.SetAsLastSibling();
+                storePanelObj.gameObject.SetActive(false);
                 modified = true;
             }
 
@@ -757,6 +761,7 @@ public static class SceneElementSetup
         soGOC.FindProperty("adFeedbackText").objectReferenceValue = txtFeedback.GetComponent<TextMeshProUGUI>();
 
         soGOC.ApplyModifiedProperties();
+        panelObj.SetActive(false);
     }
 
     private static void CreateDiceRollPanel(GameObject canvasRoot)
@@ -841,6 +846,7 @@ public static class SceneElementSetup
         soDRC.FindProperty("trebolAvailableText").objectReferenceValue = trebolText.GetComponent<TextMeshProUGUI>();
 
         soDRC.ApplyModifiedProperties();
+        panelObj.SetActive(false);
     }
 
     private static void CreateStorePanel(GameObject canvasRoot, bool createOpenButton = false)
@@ -881,6 +887,7 @@ public static class SceneElementSetup
         soNoAds.FindProperty("closeStoreButton").objectReferenceValue = btnClose;
 
         soNoAds.ApplyModifiedProperties();
+        panelObj.SetActive(false);
     }
 
     // ─────────────────────────────────────────────────────────────────────────

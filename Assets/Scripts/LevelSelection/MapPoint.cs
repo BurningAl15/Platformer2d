@@ -58,8 +58,9 @@ public class MapPoint : MonoBehaviour
 
     public void CheckTrebol()
     {
+        // El estado del trébol se muestra en la UI (panel LevelInfo), no en la escena del mapa.
         if (trebolBadge)
-            trebolBadge.SetActive(hasTrebol);
+            trebolBadge.SetActive(false);
     }
 
     // ───────────────────────────────────────────────

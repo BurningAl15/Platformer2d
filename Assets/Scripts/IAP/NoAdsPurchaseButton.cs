@@ -57,6 +57,12 @@ public class NoAdsPurchaseButton : MonoBehaviour
         ConfigureAllTextsAutoResize();
         RefreshUI();
         RefreshPriceWhenReady();
+
+        // Si el panel de tienda empieza con alpha 0, mantenerlo inactivo para que nunca se dibuje en el fondo
+        if (storePanelGroup != null && storePanelGroup.alpha <= 0.01f)
+        {
+            storePanelGroup.gameObject.SetActive(false);
+        }
     }
 
     private void ConfigureAllTextsAutoResize()
@@ -91,6 +97,7 @@ public class NoAdsPurchaseButton : MonoBehaviour
         transform.SetAsLastSibling();
         if (storePanelGroup != null)
         {
+            storePanelGroup.gameObject.SetActive(true);
             storePanelGroup.transform.SetAsLastSibling();
             storePanelGroup.alpha = 1f;
             storePanelGroup.interactable = true;
@@ -108,6 +115,7 @@ public class NoAdsPurchaseButton : MonoBehaviour
             storePanelGroup.alpha = 0f;
             storePanelGroup.interactable = false;
             storePanelGroup.blocksRaycasts = false;
+            storePanelGroup.gameObject.SetActive(false);
         }
     }
 

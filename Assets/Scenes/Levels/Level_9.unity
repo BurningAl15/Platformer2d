@@ -16513,6 +16513,10 @@ PrefabInstance:
       value: 65535
       objectReference: {fileID: 0}
     - target: {fileID: 3596359121230391587, guid: d27be4ec49071e14ebb6ca335f3d3c9d, type: 3}
+      propertyPath: m_TextWrappingMode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3596359121230391587, guid: d27be4ec49071e14ebb6ca335f3d3c9d, type: 3}
       propertyPath: m_enableAutoSizing
       value: 1
       objectReference: {fileID: 0}

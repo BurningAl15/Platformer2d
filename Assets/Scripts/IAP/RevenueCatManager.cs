@@ -186,7 +186,7 @@ public class RevenueCatManager : MonoBehaviour
     {
         if (!_isInitialized)
         {
-            onError?.Invoke("Compras no inicializadas.");
+            onError?.Invoke("Purchases not initialized.");
             return;
         }
 
@@ -203,7 +203,7 @@ public class RevenueCatManager : MonoBehaviour
                              candidate.StoreProduct.Identifier == noAdsProductId);
             if (package?.StoreProduct == null || string.IsNullOrEmpty(package.StoreProduct.PriceString))
             {
-                onError?.Invoke("El producto Remove Ads aún no está configurado en RevenueCat.");
+                onError?.Invoke("Remove Ads product is not configured yet.");
                 return;
             }
 
@@ -224,7 +224,7 @@ public class RevenueCatManager : MonoBehaviour
     {
         if (!_isInitialized)
         {
-            onError?.Invoke("Compras no inicializadas. Revisa la configuración de RevenueCat.");
+            onError?.Invoke("Purchases not initialized. Check store connection.");
             return;
         }
 
@@ -324,7 +324,7 @@ public class RevenueCatManager : MonoBehaviour
         LogRC("Iniciando restauración de compras...");
         if (!_isInitialized)
         {
-            onError?.Invoke("Compras no inicializadas. Revisa la configuración de RevenueCat.");
+            onError?.Invoke("Purchases not initialized. Check store connection.");
             return;
         }
 
@@ -339,7 +339,7 @@ public class RevenueCatManager : MonoBehaviour
                 }
                 if (customerInfo == null)
                 {
-                    const string message = "La tienda no devolvió información de compras.";
+                    const string message = "Store did not return purchase info.";
                     LogRC(message);
                     onError?.Invoke(message);
                     return;

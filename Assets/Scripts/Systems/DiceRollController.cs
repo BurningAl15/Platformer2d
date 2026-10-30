@@ -67,6 +67,7 @@ public class DiceRollController : MonoBehaviour
             panelGroup.alpha = 0f;
             panelGroup.interactable = false;
             panelGroup.blocksRaycasts = false;
+            panelGroup.gameObject.SetActive(false);
         }
         if (panelRect != null)
         {
@@ -151,6 +152,7 @@ public class DiceRollController : MonoBehaviour
 
         if (panelGroup != null)
         {
+            panelGroup.gameObject.SetActive(true);
             panelGroup.alpha = 1f;
             panelGroup.interactable = true;
             panelGroup.blocksRaycasts = true;
@@ -182,6 +184,7 @@ public class DiceRollController : MonoBehaviour
                              panelGroup.alpha = 0f;
                              panelGroup.interactable = false;
                              panelGroup.blocksRaycasts = false;
+                             panelGroup.gameObject.SetActive(false);
                          }
                      });
         }
@@ -190,6 +193,7 @@ public class DiceRollController : MonoBehaviour
             panelGroup.alpha = 0f;
             panelGroup.interactable = false;
             panelGroup.blocksRaycasts = false;
+            panelGroup.gameObject.SetActive(false);
         }
     }
 

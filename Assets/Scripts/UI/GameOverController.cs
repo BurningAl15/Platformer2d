@@ -135,6 +135,7 @@ public class GameOverController : MonoBehaviour
             watchAdButton.gameObject.SetActive(AdsManager.Instance == null || !AdsManager.Instance.IsNoAdsActive());
 
         // Mostrar panel con animación
+        panelGroup.gameObject.SetActive(true);
         panelGroup.interactable  = true;
         panelGroup.blocksRaycasts = true;
         panelGroup.alpha = 1f;
@@ -177,6 +178,7 @@ public class GameOverController : MonoBehaviour
         panelGroup.alpha = 0f;
         if (panelRect != null)
             panelRect.anchoredPosition = new Vector2(panelRect.anchoredPosition.x, hiddenY);
+        panelGroup.gameObject.SetActive(false);
     }
 
     // ─────────────────────────────────────────────────────────────────────────

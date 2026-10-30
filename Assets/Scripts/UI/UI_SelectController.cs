@@ -30,6 +30,11 @@ public class UI_SelectController : MonoBehaviour
     [FormerlySerializedAs("timeTarget")]
     [SerializeField] private TextMeshProUGUI timeTargetText;
 
+    [Header("Clover / Trebol")]
+    [Tooltip("Indicador visual en el panel UI de si el trébol del nivel fue recolectado")]
+    [SerializeField] private GameObject cloverIndicator;
+    [SerializeField] private TextMeshProUGUI cloverText;
+
     [Header("Animación del panel")]
     [Tooltip("Posición Y oculta (fuera de pantalla, abajo)")]
     [SerializeField] private float hiddenY = -250f;
@@ -58,6 +63,12 @@ public class UI_SelectController : MonoBehaviour
         {
             Vector2 pos = panelRect.anchoredPosition;
             panelRect.anchoredPosition = new Vector2(pos.x, hiddenY);
+
+            // Si el pivot es inferior (Y=0), elevar visibleY para garantizar que no se corte en ninguna resolucion
+            if (panelRect.pivot.y == 0f && visibleY < 50f)
+            {
+                visibleY = 50f;
+            }
         }
 
         // Configurar auto-sizing y no-wrap para que nunca hagan overflow
@@ -66,6 +77,7 @@ public class UI_SelectController : MonoBehaviour
         ConfigureAutoResize(gemsTargetText, 14f, 40f);
         ConfigureAutoResize(bestTimeText, 14f, 40f);
         ConfigureAutoResize(timeTargetText, 14f, 40f);
+        ConfigureAutoResize(cloverText, 14f, 40f);
 
         levelInfoContainer.SetActive(false);
     }
@@ -90,6 +102,11 @@ public class UI_SelectController : MonoBehaviour
         bestTimeText.text = levelInfo.bestTime >= 99999f
             ? "Best: ----"
             : "Best: " + levelInfo.bestTime.ToString("F1") + "s";
+
+        if (cloverIndicator != null)
+            cloverIndicator.SetActive(levelInfo.hasTrebol);
+        if (cloverText != null)
+            cloverText.text = levelInfo.hasTrebol ? "CLOVER: FOUND" : "CLOVER: --";
     }
 
     /// <summary>

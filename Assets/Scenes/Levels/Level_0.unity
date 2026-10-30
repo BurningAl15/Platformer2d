@@ -1858,6 +1858,10 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5647457848694358801, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+      propertyPath: m_TextWrappingMode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5647457848694358801, guid: 52073add4951c934daba861871d7e9ed, type: 3}
       propertyPath: m_enableAutoSizing
       value: 1
       objectReference: {fileID: 0}

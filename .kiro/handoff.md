@@ -3,13 +3,39 @@
 > Este archivo es la fuente de verdad del proyecto.
 > Se actualiza al terminar cada fase. Si hay duda sobre qué falta, leer esto primero.
 >
-> **Última actualización:** 30/10/2026 — Rediseño integral Pixel-Art Nativo de UI, dados gráficos, responsive layout iPhone SE y eliminación de controles duplicados.
+> **Última actualización:** 30/10/2026 — Resolución definitiva de las 3 capturas de QA: limpieza de StorePanel duplicado en BG-Canvas, panel de selección responsive sin cortes, eliminación de sombra de trébol en el mapa, HUD limpio sin 999 ni emojis rotos.
 
 > [!CAUTION]
 > **REGLA ESTRICTA DE DISEÑO E IMPLEMENTACIÓN (NO NEGOCIABLE):**
 > **CERO ICONOS / EMOJIS EN TEXTOS DE UNITY / TEXTMESHPRO.**
 > Unity no es una web ni un navegador. Los atlas de fuentes (SDF / TTF) en Unity NO contienen glifos de emojis unicode (`🛒`, `💎`, `🍀`, `❤️`, `★`, `✓`, etc.). Meter emojis o símbolos unicode en `m_text` o en strings de C# provoca que TextMeshPro dibuje caracteres rotos / cajas cuadradas (`□`) en pantalla.
 > **Si se requiere un icono visual (gema, trébol, corazón, carrito):** DEBE implementarse SIEMPRE como un GameObject con componente `Image` o `SpriteRenderer` usando el asset Sprite correspondiente. NUNCA poner emojis o caracteres especiales dentro del string del texto. Los textos deben ser 100% texto alfanumérico limpio en inglés.
+
+---
+
+## 🔍 Resolución Exhaustiva de Capturas de QA (30-Oct-2026)
+
+Tras inspeccionar minuciosamente las 3 capturas enviadas por el usuario, se diagnosticaron las causas raíz y se aplicaron las soluciones definitivas tanto en código como en escenas y prefabs de Unity:
+
+### 1. Captura 1 — Gameplay / HUD (`LevelPrefab.prefab` y `UI-Canvas.prefab`)
+- **Problema 1 (Contador "999" Gemas):** En `LevelPrefab.prefab`, el componente `Gems_Txt` tenía el valor estático `999` hardcodeado en diseño, causando que el nivel iniciara mostrando 999 gemas antes de cualquier recolección.
+  - *Solución:* Se restableció `m_text: 0` en `LevelPrefab.prefab` y se reforzó en `UIController.cs` la inicialización en `Awake()` y `Start()` a `0`, con auto-sizing habilitado y `NoWrap`.
+- **Problema 2 (Controles Virtuales Duplicados):** Se observaban dos botones de pausa en la esquina superior izquierda y un recuadro rojo tras el botón de salto `A`.
+  - *Solución:* Se eliminaron todos los controles táctiles duplicados que residían en `UI-Canvas.prefab`. Los controles móviles provienen exclusivamente de `InputManager`, gestionados limpiamente por `PlatformDetector`.
+- **Problema 3 (Caracteres Rotos por Emojis):** `UI-Canvas.prefab` tenía serializados strings con emojis unicode (`\U0001F340 x0` y `\u2764\uFE0F x3`), lo que causaba glifos faltantes en la fuente pixel-art.
+  - *Solución:* Reemplazados por cadenas alfanuméricas limpias (`"x0"` y `"x3"`).
+
+### 2. Captura 2 — Mapa de Niveles (`LevelSelection.unity` & `UI_SelectController.cs`)
+- **Problema 1 (Sombra/Trébol flotante en la escena):** Al recolectar el trébol y volver al mapa, aparecía un sprite verde (`Badge_Trebol`) directamente sobre el nodo en el mapa del mundo, quedando como una sombra extraña detrás de la cabeza de Fox.
+  - *Solución:* En `MapPoint.cs`, `CheckTrebol()` desactiva `trebolBadge` en el espacio de la escena del mundo (`trebolBadge.SetActive(false)`). La información de si el trébol fue conseguido se trasladó al panel de UI (`LevelInfo` en `UI_SelectController.cs`), donde corresponde mostrar el estado del coleccionable.
+- **Problema 2 (Panel `LevelInfo` cortado abajo en 16:9 / iPhone SE):** En pantallas 16:9, la parte inferior del contenedor `LevelInfo` quedaba parcialmente fuera de la pantalla.
+  - *Solución:* En `UI_SelectController.cs`, se ajustó la posición visible para que el panel se eleve al menos `50f` con pivot inferior `(0.5, 0)`, asegurando visibilidad total de los objetivos de gemas, tiempo récord y estado del trébol en cualquier relación de aspecto.
+
+### 3. Captura 3 — Menú Principal (`MainMenu.unity` & `NoAdsPurchaseButton.cs`)
+- **Problema 1 (Panel de Tienda visible detrás de los botones del menú):** En `MainMenu.unity`, existía un `StorePanel` secundario activo por error bajo `BG-Canvas`, renderizándose sobre el fondo detrás de "Continue", "New Game" y "Quit".
+  - *Solución:* Se eliminó por completo el `StorePanel` huérfano de `BG-Canvas`. El único `StorePanel` legítimo reside en el `Canvas` principal, tiene `m_IsActive: 0` por defecto y CanvasGroup con alpha 0. Solo se muestra cuando el jugador presiona `Store-Button`.
+- **Problema 2 (Botón de tienda no integrado y textos en español):** El botón de compra previo era un botón plano en español ("Quitar Anuncios") fuera de estilo.
+  - *Solución:* Sustituido por `Store-Button` con el sprite pixel-art oficial (`UI_Buttons_1_Normal`), tipografía `Pixelnauts SDF 1`, texto en inglés "Remove Ads", e integrado armónicamente en `ButtonMenu`. Todos los textos del panel y controladores (`RevenueCatManager`, `NoAdsPurchaseButton`, etc.) están 100% en inglés.
 
 ---
 
