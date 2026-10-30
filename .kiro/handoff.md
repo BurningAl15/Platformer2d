@@ -652,33 +652,36 @@ Tras las pruebas en dispositivo (Android e iPhone SE), se identificaron, corrigi
 
 ---
 
-## Registro de Correcciones Críticas de UI, Inputs y Localización — 30 de Octubre 2026
+## Registro de Correcciones Críticas y Rediseño Pixel-Art — 30 de Octubre 2026 (Commit `179e0af`)
 
-1. **Eliminación definitiva del botón amarillo "Quitar Anuncios" y StorePanel de MainMenu:**
-   - Se eliminaron `OpenStoreButton` y `StorePanel` de `Assets/Scenes/MainMenu.unity`.
-   - Se modificó `Assets/Editor/SceneElementSetup.cs` para destruir cualquier `OpenStoreButton` o `StorePanel` existente en `MainMenu.unity` y no volver a crearlos.
+1. **Integración Pixel-Art Nativa de Store y Remove Ads en `MainMenu.unity`:**
+   - Se eliminó el botón amarillo plano y antiestético previo que rompía el arte del juego.
+   - En su lugar, se creó `Store-Button` ("Remove Ads") directamente dentro del contenedor `ButtonMenu`, con el mismo estilo visual 9-slice (`UI_Buttons_1_Normal.png`), SpriteSwap y tamaño armónico (400x85) que `Start-Button` y `Quit-Button`.
+   - `StorePanel` se serializó al frente del Canvas (`SetAsLastSibling()`) con marco pixel-art 9-slice (`UI_Panel.png`), backdrop oscuro semitransparente que bloquea raycasts y textos limpios en inglés ("Remove Ads", "Restore Purchases", "Close").
 
 2. **Eliminación de controles virtuales táctiles duplicados:**
-   - Se eliminó el GameObject `MobileControls` de `Assets/Prefabs/ReUsable/UI-Canvas.prefab`.
+   - Se eliminó definitivamente el GameObject `MobileControls` de `Assets/Prefabs/ReUsable/UI-Canvas.prefab`.
    - Se removió `CreateMobileControls` de `Assets/Editor/SceneElementSetup.cs`.
-   - El único sistema canónico de controles virtuales en pantalla es el de `InputManager` (`GameplayUI` y `GameSelectorUI`), gestionado por `PlatformDetector` y `GamepadDetector`.
+   - El único sistema canónico de controles táctiles en pantalla es el de `InputManager` (`GameplayUI` y `GameSelectorUI`), gestionado por `PlatformDetector` y `GamepadDetector` sin duplicaciones ni solapamientos.
 
 3. **Corrección de Wrapping / Overflow en texto de gemas del HUD:**
-   - En `Assets/Prefabs/ReUsable/UI-Canvas.prefab`: `Gems_Txt` se configuró con `m_TextWrappingMode = 0` (NoWrap), `m_enableAutoSizing = 1` (min: 36, max: 90), `sizeDelta.x = 280`.
+   - En `Assets/Prefabs/ReUsable/UI-Canvas.prefab`: `Gems_Txt` se configuró con `m_TextWrappingMode = 0` (NoWrap), `m_enableAutoSizing = 1` (min: 36, max: 90), ancho ampliado a `300px` y valor inicial reseteado a `"0"`.
    - En `Assets/Scripts/UI/UIController.cs`: se fuerza programáticamente `textWrappingMode = TextWrappingModes.NoWrap` y `overflowMode = TextOverflowModes.Overflow` en `Start()` y `UpdateGems_UI()`.
 
 4. **Trébol / Collectable en la escena (`TrebolPickup.cs`):**
-   - Se corrigió `Assets/Scripts/Environment/Interactables/TrebolPickup.cs`: si el trébol ya fue recolectado en partidas anteriores según `SaveManager.Instance.HasTrebol(levelNumber)`, se desactiva completamente (`gameObject.SetActive(false); return;`) en lugar de mostrar una sombra translúcida en la escena. La obtención del trébol se refleja en la UI (HUD y mapa de niveles).
+   - En `Assets/Scripts/Environment/Interactables/TrebolPickup.cs`: si el trébol ya fue recolectado en partidas anteriores según `SaveManager.Instance.HasTrebol(levelNumber)`, se desactiva completamente (`gameObject.SetActive(false); return;`) en lugar de mostrar una sombra translúcida en la escena. La obtención del trébol se refleja exclusivamente en la UI (HUD y mapa de niveles).
 
 5. **Localización 100% en Inglés y Cero Caracteres Rotos:**
    - Se tradujeron todas las cadenas al inglés en `GameOverController.cs`, `DiceRollController.cs`, `NoAdsPurchaseButton.cs`, `SceneElementSetup.cs` y los paneles de `UI-Canvas.prefab`:
      - `"GAME OVER"`, `"Watch Video (+2 Lives)"`, `"Spend Clover (Roll Dice)"`, `"Use Gems (+1 Life)"`, `"Return to Map"`, `"Gems: {gems}"`, `"Clovers: {trebols}"`.
-     - `"DICE OF LIVES"`, `"Roll Dice"`, `"Stop"`, `"Upgrade with Clover"`, `"Continue"`, `"You won +{finalResult} lives!"`, `"You won +{finalResult} lives and +1 bonus heart!"`.
+     - `"DICE OF LIVES"`, `"Normal Dice (1 - 3 Lives)"`, `"Roll Dice"`, `"Stop"`, `"Upgrade with Clover"`, `"Continue"`, `"You won +{finalResult} lives!"`, `"You won +{finalResult} lives and +1 bonus heart!"`.
      - `"STORE / REMOVE ADS"`, `"Remove Ads"`, `"Restore Purchases"`, `"Close"`.
+   - Cero emojis o caracteres unicode incompatibles; fuentes vinculadas a `Pixelnauts SDF 1.asset`.
 
-6. **Soporte de Caras Gráficas de Dado en `DiceRollController.cs`:**
-   - Se agregaron campos serializados `diceFaceImage` y `diceFaceSprites` (array de sprites para caras 1 a 6) con fallback automático al texto numérico si aún no hay sprites asignados.
+6. **Integración de Caras Gráficas de Dado en `DiceRollPanel`:**
+   - Se crearon 6 sprites pixel-art (`dice_face_1.png` a `dice_face_6.png`) en `Assets/2D Platformer Assets/Graphics/UI/Dice/` con sus respectivos `.meta`.
+   - `DiceRollController.cs` actualiza la imagen gráfica central (`diceFaceImage`) ciclando entre las 6 caras durante la animación del tiro del dado.
 
 7. **Responsividad en pantalla de selección de niveles (`LevelSelection.unity`):**
-   - Se ajustó `visibleY = 180f` en `UI_SelectController.cs` y en la escena serializada `LevelSelection.unity` para evitar que el panel inferior se corte en pantallas 16:9 como iPhone SE.
+   - En `UI_SelectController.cs` y en la escena serializada `LevelSelection.unity`, `levelInfoContainer` fue configurado con pivot inferior `(0.5, 0)` y anclaje inferior con `visibleY = 30f` y `hiddenY = -350f`, garantizando visibilidad completa del panel en pantallas 16:9 como iPhone SE sin sufrir cortes en el tercio inferior.
 
