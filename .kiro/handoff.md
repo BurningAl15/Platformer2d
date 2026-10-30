@@ -3,13 +3,43 @@
 > Este archivo es la fuente de verdad del proyecto.
 > Se actualiza al terminar cada fase. Si hay duda sobre qué falta, leer esto primero.
 >
-> **Última actualización:** 30/10/2026 — Corrección integral de UI, inputs, flujo de vidas y estado de builds de prueba v3/v4.
+> **Última actualización:** 30/10/2026 — Rediseño integral Pixel-Art Nativo de UI, dados gráficos, responsive layout iPhone SE y eliminación de controles duplicados.
 
 > [!CAUTION]
 > **REGLA ESTRICTA DE DISEÑO E IMPLEMENTACIÓN (NO NEGOCIABLE):**
 > **CERO ICONOS / EMOJIS EN TEXTOS DE UNITY / TEXTMESHPRO.**
 > Unity no es una web ni un navegador. Los atlas de fuentes (SDF / TTF) en Unity NO contienen glifos de emojis unicode (`🛒`, `💎`, `🍀`, `❤️`, `★`, `✓`, etc.). Meter emojis o símbolos unicode en `m_text` o en strings de C# provoca que TextMeshPro dibuje caracteres rotos / cajas cuadradas (`□`) en pantalla.
-> **Si se requiere un icono visual (gema, trébol, corazón, carrito):** DEBE implementarse SIEMPRE como un GameObject con componente `Image` o `SpriteRenderer` usando el asset Sprite correspondiente. NUNCA poner emojis o caracteres especiales dentro del string del texto. Los textos deben ser 100% texto alfanumérico limpio.
+> **Si se requiere un icono visual (gema, trébol, corazón, carrito):** DEBE implementarse SIEMPRE como un GameObject con componente `Image` o `SpriteRenderer` usando el asset Sprite correspondiente. NUNCA poner emojis o caracteres especiales dentro del string del texto. Los textos deben ser 100% texto alfanumérico limpio en inglés.
+
+---
+
+## 🎨 Registro de Rediseño Visual Pixel-Art Nativo (30-Oct-2026)
+
+Tras la revisión de QA y las directivas del proyecto, se corrigió la disparidad visual entre los nuevos sistemas y el arte de Fox's Tale:
+
+1. **Botones e Interfaces Pixel Art:**
+   - Cero cajas planas / genéricas: todos los botones utilizan los sprites 9-slice oficiales (`UI_Buttons_1_Normal.png`, `UI_Buttons_2_Highlighted.png`, `UI_Buttons_3_Pressed.png`, `UI_Buttons_3_Warning.png`) con transición `SpriteSwap`.
+   - Diálogos y paneles enmarcados con `UI_Panel.png` (9-slice) sobre fondo semitransparente oscuro (`rgba(5, 10, 20, 0.82)`).
+   - Tipografía universal del juego: `Pixelnauts SDF 1.asset` en todos los títulos, textos informativos y etiquetas de botones.
+
+2. **Dado Gráfico de Vidas (`DiceRollPanel`):**
+   - Se crearon e integraron 6 texturas pixel-art de caras de dado (`dice_face_1.png` a `dice_face_6.png`) en `Assets/2D Platformer Assets/Graphics/UI/Dice/`.
+   - `DiceRollController.cs` actualiza la imagen gráfica (`diceFaceImage`) ciclando entre las 6 caras durante el tiro, en lugar de mostrar texto plano con signo de interrogación.
+
+3. **Tienda y Quitar Anuncios (`StorePanel` & `MainMenu.unity`):**
+   - En `MainMenu.unity`, `Store-Button` ("Remove Ads") forma parte armónica de `ButtonMenu` con el mismo estilo, tamaño (400x85) y tipografía que `Start-Button` y `Quit-Button`.
+   - `StorePanel` se posiciona al frente del Canvas (`SetAsLastSibling()`), bloqueando inputs debajo y mostrando opciones en inglés: "Remove Ads", "Restore Purchases" y "Close".
+
+4. **Controles Móviles en Gameplay:**
+   - Eliminados definitivamente los controles táctiles duplicados en `UI-Canvas.prefab`. `InputManager` y `PlatformDetector` gestionan los controles oficiales del juego sin solapamientos.
+
+5. **Responsividad en iPhone SE (16:9):**
+   - En `LevelSelection.unity`, `levelInfoContainer` fue ajustado con pivot inferior `(0.5, 0)` y coordenadas `visibleY = 30f`, `hiddenY = -350f`, garantizando visibilidad completa del panel de nivel sin cortes inferiores.
+
+6. **Contador de Gemas:**
+   - Configurado con `TextWrappingModes.NoWrap`, auto-sizing habilitado y ancho de contenedor ampliado (300px) para evitar saltos de línea con valores de 3 o más dígitos.
+
+---
 
 ## Plan de cierre rápido para Antigravity — 2026-10-29
 

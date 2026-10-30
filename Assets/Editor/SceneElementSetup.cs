@@ -4,13 +4,12 @@ using TMPro;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
-using UnityEngine.InputSystem.OnScreen;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 /// <summary>
 /// Script de Editor para configurar automáticamente todos los elementos faltantes,
-/// prefabs y placeholders en las escenas de Fox's Tale.
+/// prefabs y paneles de UI en Fox's Tale con el estilo pixel art nativo del juego.
 /// 
 /// SE EJECUTA DESDE: Menú -> CustomEditorTools -> Setup Missing Scene Elements & Placeholders
 /// o automáticamente al compilar el script una vez.
@@ -18,7 +17,7 @@ using UnityEngine.UI;
 [InitializeOnLoad]
 public static class SceneElementSetup
 {
-    private const string SETUP_FLAG_KEY = "FoxsTale_SceneSetup_Completed_v1";
+    private const string SETUP_FLAG_KEY = "FoxsTale_PixelUISetup_Completed_v2";
 
     static SceneElementSetup()
     {
@@ -35,7 +34,7 @@ public static class SceneElementSetup
     [MenuItem("CustomEditorTools/Setup Missing Scene Elements & Placeholders")]
     public static void SetupAll()
     {
-        Debug.Log("[SceneElementSetup] Iniciando configuracion de escenas y placeholders...");
+        Debug.Log("[SceneElementSetup] Iniciando configuracion de escenas y paneles pixel-art...");
 
         try
         {
@@ -45,19 +44,19 @@ public static class SceneElementSetup
             GameObject trebolPrefab = CreateTrebolPrefab();
             GameObject diceFragPrefab = CreateDiceFragmentPrefab();
 
-            // 2. Configurar MainMenu
+            // 2. Configurar MainMenu (con Store-Button pixel art y StorePanel al frente)
             SetupMainMenuScene();
 
-            // 3. Configurar LevelSelection
+            // 3. Configurar LevelSelection (badges y responsive bottom panel)
             SetupLevelSelectionScene();
 
-            // 4. Configurar UI-Canvas Prefab
+            // 4. Configurar UI-Canvas Prefab (GameOverPanel, DiceRollPanel, StorePanel con estilo pixel art)
             SetupUICanvasPrefab();
 
             // 5. Agregar Trebol a cada nivel de gameplay
             SetupGameplayLevels(trebolPrefab);
 
-            Debug.Log("[SceneElementSetup] Todas las escenas y placeholders configurados con exito!");
+            Debug.Log("[SceneElementSetup] Todas las escenas y paneles configurados con exito en estilo pixel art!");
         }
         catch (System.Exception ex)
         {
@@ -72,6 +71,163 @@ public static class SceneElementSetup
     }
 
     // ─────────────────────────────────────────────────────────────────────────
+    //  Recursos Visuales Pixel Art del Proyecto
+    // ─────────────────────────────────────────────────────────────────────────
+
+    private static TMP_FontAsset GetPixelFont()
+    {
+        TMP_FontAsset font = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>("Assets/2D Platformer Assets/Font/Pixelnauts SDF 1.asset");
+        if (font == null)
+        {
+            string[] guids = AssetDatabase.FindAssets("t:TMP_FontAsset Pixelnauts");
+            if (guids.Length > 0)
+                font = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(AssetDatabase.GUIDToAssetPath(guids[0]));
+        }
+        return font;
+    }
+
+    private static Sprite GetPanelSprite()
+    {
+        Sprite s = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/2D Platformer Assets/Graphics/UI/UI_Panel.png");
+        if (s == null)
+            s = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/2D Platformer Assets/Graphics/UI/Pause.png");
+        return s;
+    }
+
+    private static (Sprite normal, Sprite highlighted, Sprite pressed, Sprite warning) GetButtonSprites()
+    {
+        Sprite normal = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/2D Platformer Assets/Graphics/UI/UI_Buttons_1_Normal.png");
+        Sprite highlighted = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/2D Platformer Assets/Graphics/UI/UI_Buttons_2_Highlighted.png");
+        Sprite pressed = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/2D Platformer Assets/Graphics/UI/UI_Buttons_3_Pressed.png");
+        Sprite warning = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/2D Platformer Assets/Graphics/UI/UI_Buttons_3_Warning.png");
+        return (normal, highlighted, pressed, warning);
+    }
+
+    private static Sprite[] GetDiceFaceSprites()
+    {
+        Sprite[] sprites = new Sprite[6];
+        for (int i = 1; i <= 6; i++)
+        {
+            sprites[i - 1] = AssetDatabase.LoadAssetAtPath<Sprite>($"Assets/2D Platformer Assets/Graphics/UI/Dice/dice_face_{i}.png");
+        }
+        return sprites;
+    }
+
+    private static (GameObject root, GameObject container, CanvasGroup cg, RectTransform containerRect) CreatePixelPanelRoot(
+        GameObject canvasRoot, string name, Vector2 containerSize)
+    {
+        GameObject panelObj = new GameObject(name);
+        panelObj.transform.SetParent(canvasRoot.transform, false);
+
+        var rootRect = panelObj.AddComponent<RectTransform>();
+        rootRect.anchorMin = Vector2.zero;
+        rootRect.anchorMax = Vector2.one;
+        rootRect.offsetMin = Vector2.zero;
+        rootRect.offsetMax = Vector2.zero;
+
+        var cg = panelObj.AddComponent<CanvasGroup>();
+        cg.alpha = 0f;
+        cg.interactable = false;
+        cg.blocksRaycasts = false;
+
+        // Backdrop oscuro semitransparente que cubre y bloquea toda la pantalla
+        var backdrop = panelObj.AddComponent<Image>();
+        backdrop.color = new Color(0.02f, 0.04f, 0.08f, 0.82f);
+
+        // Contenedor centrado con marco pixel art 9-slice
+        GameObject container = new GameObject("Container");
+        container.transform.SetParent(panelObj.transform, false);
+
+        var cRect = container.AddComponent<RectTransform>();
+        cRect.anchorMin = new Vector2(0.5f, 0.5f);
+        cRect.anchorMax = new Vector2(0.5f, 0.5f);
+        cRect.pivot = new Vector2(0.5f, 0.5f);
+        cRect.sizeDelta = containerSize;
+        cRect.anchoredPosition = Vector2.zero;
+
+        var cImg = container.AddComponent<Image>();
+        cImg.sprite = GetPanelSprite();
+        cImg.type = Image.Type.Sliced;
+        cImg.color = new Color(1f, 1f, 1f, 0.98f);
+
+        return (panelObj, container, cg, cRect);
+    }
+
+    private static Button CreatePixelButton(GameObject parent, string name, string label, Vector2 anchoredPos, Vector2 size, bool isWarning = false)
+    {
+        GameObject go = new GameObject(name);
+        go.transform.SetParent(parent.transform, false);
+
+        var rect = go.AddComponent<RectTransform>();
+        rect.anchorMin = new Vector2(0.5f, 0.5f);
+        rect.anchorMax = new Vector2(0.5f, 0.5f);
+        rect.pivot = new Vector2(0.5f, 0.5f);
+        rect.sizeDelta = size;
+        rect.anchoredPosition = anchoredPos;
+
+        var (normal, highlighted, pressed, warning) = GetButtonSprites();
+
+        var img = go.AddComponent<Image>();
+        img.sprite = isWarning ? (warning ?? normal) : normal;
+        img.type = Image.Type.Sliced;
+        img.color = Color.white;
+
+        var btn = go.AddComponent<Button>();
+        btn.targetGraphic = img;
+        btn.transition = Selectable.Transition.SpriteSwap;
+
+        SpriteState state = new SpriteState
+        {
+            highlightedSprite = isWarning ? warning : highlighted,
+            pressedSprite = pressed,
+            selectedSprite = isWarning ? warning : highlighted
+        };
+        btn.spriteState = state;
+
+        GameObject textObj = new GameObject("Text (TMP)");
+        textObj.transform.SetParent(go.transform, false);
+
+        var textRect = textObj.AddComponent<RectTransform>();
+        textRect.anchorMin = Vector2.zero;
+        textRect.anchorMax = Vector2.one;
+        textRect.offsetMin = Vector2.zero;
+        textRect.offsetMax = Vector2.zero;
+
+        var tmp = textObj.AddComponent<TextMeshProUGUI>();
+        tmp.font = GetPixelFont();
+        tmp.text = label;
+        tmp.fontSize = size.y > 65 ? 26 : 22;
+        tmp.alignment = TextAlignmentOptions.Center;
+        tmp.color = Color.white;
+        tmp.textWrappingMode = TextWrappingModes.NoWrap;
+
+        return btn;
+    }
+
+    private static GameObject CreatePixelText(GameObject parent, string name, string text, float fontSize, Vector2 anchoredPos, Vector2 size, Color? color = null)
+    {
+        GameObject go = new GameObject(name);
+        go.transform.SetParent(parent.transform, false);
+
+        var rect = go.AddComponent<RectTransform>();
+        rect.anchorMin = new Vector2(0.5f, 0.5f);
+        rect.anchorMax = new Vector2(0.5f, 0.5f);
+        rect.pivot = new Vector2(0.5f, 0.5f);
+        rect.sizeDelta = size;
+        rect.anchoredPosition = anchoredPos;
+
+        var tmp = go.AddComponent<TextMeshProUGUI>();
+        tmp.font = GetPixelFont();
+        tmp.text = text;
+        tmp.fontSize = fontSize;
+        tmp.alignment = TextAlignmentOptions.Center;
+        tmp.color = color ?? Color.white;
+        tmp.textWrappingMode = TextWrappingModes.NoWrap;
+
+        return go;
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
     //  1. Prefabs de coleccionables
     // ─────────────────────────────────────────────────────────────────────────
 
@@ -83,10 +239,9 @@ public static class SceneElementSetup
 
         GameObject go = new GameObject("TrebolPickup");
         var sr = go.AddComponent<SpriteRenderer>();
-        sr.color = new Color(0.2f, 0.85f, 0.3f, 1f); // Verde trébol
+        sr.color = new Color(0.2f, 0.85f, 0.3f, 1f);
         sr.sortingLayerName = "Interactables";
 
-        // Usar sprite de gema como base temporal si existe
         Sprite defaultSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/2D Platformer Assets/Items/Gems/gem-1.png");
         if (defaultSprite == null)
         {
@@ -116,7 +271,7 @@ public static class SceneElementSetup
 
         GameObject go = new GameObject("DiceFragmentPickup");
         var sr = go.AddComponent<SpriteRenderer>();
-        sr.color = new Color(1f, 0.84f, 0f, 1f); // Dorado dado
+        sr.color = new Color(1f, 0.84f, 0f, 1f);
         sr.sortingLayerName = "Interactables";
 
         Sprite defaultSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/2D Platformer Assets/Items/Gems/gem-1.png");
@@ -156,7 +311,7 @@ public static class SceneElementSetup
         if (Object.FindObjectOfType<AppBootstrap>() == null)
         {
             GameObject bootObj = new GameObject("AppBootstrap");
-            bootObj.AddComponent<AppBootstrap>(); // [RequireComponent] agrega SaveManager, GamepadDetector, LivesManager
+            bootObj.AddComponent<AppBootstrap>();
             Undo.RegisterCreatedObjectUndo(bootObj, "Create AppBootstrap");
             modified = true;
             Debug.Log("[SceneElementSetup] AppBootstrap creado en MainMenu.");
@@ -172,23 +327,148 @@ public static class SceneElementSetup
             Debug.Log("[SceneElementSetup] SceneTransitionManager creado en MainMenu.");
         }
 
-        // En MainMenu NO debe existir OpenStoreButton ni StorePanel
-        Canvas canvas = Object.FindObjectOfType<Canvas>();
+        MainMenuManager mmm = Object.FindObjectOfType<MainMenuManager>();
+        Canvas canvas = mmm != null ? mmm.GetComponent<Canvas>() : null;
+        if (canvas == null)
+        {
+            foreach (var c in Object.FindObjectsOfType<Canvas>())
+            {
+                if (c.transform.Find("Text-Img") != null || c.GetComponent<MainMenuManager>() != null)
+                {
+                    canvas = c;
+                    break;
+                }
+            }
+        }
+        if (canvas == null)
+            canvas = Object.FindObjectOfType<Canvas>();
+
         if (canvas != null)
         {
-            Transform storeBtn = canvas.transform.Find("OpenStoreButton");
-            if (storeBtn != null)
+            // 1. Localizar el contenedor de botones de menu (ButtonMenu)
+            Transform buttonMenu = canvas.transform.Find("ButtonMenu");
+            if (buttonMenu == null)
             {
-                Object.DestroyImmediate(storeBtn.gameObject);
-                modified = true;
-                Debug.Log("[SceneElementSetup] OpenStoreButton eliminado de MainMenu.");
+                foreach (Transform child in canvas.transform)
+                {
+                    if (child.name == "StorePanel") continue;
+                    Button[] btns = child.GetComponentsInChildren<Button>(true);
+                    if (btns.Length > 0)
+                    {
+                        buttonMenu = child;
+                        break;
+                    }
+                }
             }
-            Transform storePnl = canvas.transform.Find("StorePanel");
-            if (storePnl != null)
+
+            if (buttonMenu != null)
             {
-                Object.DestroyImmediate(storePnl.gameObject);
+                buttonMenu.gameObject.name = "ButtonMenu";
+            }
+
+            // 2. Recrear StorePanel al frente del Canvas
+            Transform existingStorePanel = canvas.transform.Find("StorePanel");
+            if (existingStorePanel != null)
+            {
+                Object.DestroyImmediate(existingStorePanel.gameObject);
                 modified = true;
-                Debug.Log("[SceneElementSetup] StorePanel eliminado de MainMenu.");
+            }
+            CreateStorePanel(canvas.gameObject, false);
+            Transform storePanelObj = canvas.transform.Find("StorePanel");
+            if (storePanelObj != null)
+            {
+                storePanelObj.SetAsLastSibling();
+                modified = true;
+            }
+
+            // 3. Crear o actualizar Store-Button en el menu con el estilo visual pixel-art idéntico
+            if (buttonMenu != null)
+            {
+                RectTransform bmRect = buttonMenu.GetComponent<RectTransform>();
+                if (bmRect != null)
+                {
+                    bmRect.sizeDelta = new Vector2(400f, 480f);
+                }
+
+                Transform continueBtn = buttonMenu.Find("Continue-Button");
+                Transform startBtn = buttonMenu.Find("Start-Button");
+                Transform quitBtn = buttonMenu.Find("Quit-Button");
+                Transform storeBtn = buttonMenu.Find("Store-Button");
+
+                if (storeBtn != null)
+                {
+                    Object.DestroyImmediate(storeBtn.gameObject);
+                }
+
+                Button newStoreBtn = CreatePixelButton(buttonMenu.gameObject, "Store-Button", "Remove Ads", Vector2.zero, new Vector2(400f, 85f));
+                storeBtn = newStoreBtn.transform;
+                modified = true;
+
+                // Ordenar jerarquia de botones
+                if (continueBtn != null) continueBtn.SetSiblingIndex(0);
+                if (startBtn != null) startBtn.SetSiblingIndex(1);
+                storeBtn.SetSiblingIndex(2);
+                if (quitBtn != null) quitBtn.SetSiblingIndex(3);
+
+                // Posicionar armonicamente de arriba a abajo
+                if (continueBtn != null)
+                {
+                    RectTransform crt = continueBtn.GetComponent<RectTransform>();
+                    crt.anchorMin = new Vector2(0.5f, 0.5f);
+                    crt.anchorMax = new Vector2(0.5f, 0.5f);
+                    crt.pivot = new Vector2(0.5f, 0.5f);
+                    crt.anchoredPosition = new Vector2(0f, 150f);
+                    crt.sizeDelta = new Vector2(400f, 85f);
+                }
+                if (startBtn != null)
+                {
+                    RectTransform srt = startBtn.GetComponent<RectTransform>();
+                    srt.anchorMin = new Vector2(0.5f, 0.5f);
+                    srt.anchorMax = new Vector2(0.5f, 0.5f);
+                    srt.pivot = new Vector2(0.5f, 0.5f);
+                    srt.anchoredPosition = new Vector2(0f, 50f);
+                    srt.sizeDelta = new Vector2(400f, 85f);
+                }
+                if (storeBtn != null)
+                {
+                    RectTransform strt = storeBtn.GetComponent<RectTransform>();
+                    strt.anchorMin = new Vector2(0.5f, 0.5f);
+                    strt.anchorMax = new Vector2(0.5f, 0.5f);
+                    strt.pivot = new Vector2(0.5f, 0.5f);
+                    strt.anchoredPosition = new Vector2(0f, -50f);
+                    strt.sizeDelta = new Vector2(400f, 85f);
+                }
+                if (quitBtn != null)
+                {
+                    RectTransform qrt = quitBtn.GetComponent<RectTransform>();
+                    qrt.anchorMin = new Vector2(0.5f, 0.5f);
+                    qrt.anchorMax = new Vector2(0.5f, 0.5f);
+                    qrt.pivot = new Vector2(0.5f, 0.5f);
+                    qrt.anchoredPosition = new Vector2(0f, -150f);
+                    qrt.sizeDelta = new Vector2(400f, 85f);
+                }
+
+                // Enlazar Store-Button con StorePanel tanto via SerializedProperty como persistent listener
+                if (storePanelObj != null)
+                {
+                    NoAdsPurchaseButton noAdsScript = storePanelObj.GetComponent<NoAdsPurchaseButton>();
+                    if (noAdsScript != null)
+                    {
+                        SerializedObject soNoAds = new SerializedObject(noAdsScript);
+                        SerializedProperty openProp = soNoAds.FindProperty("openStoreButton");
+                        if (openProp != null)
+                        {
+                            openProp.objectReferenceValue = newStoreBtn;
+                            soNoAds.ApplyModifiedProperties();
+                        }
+                        UnityEditor.Events.UnityEventTools.AddPersistentListener(newStoreBtn.onClick, noAdsScript.OpenPanel);
+                    }
+                }
+                Debug.Log("[SceneElementSetup] Store-Button creado y posicionado armónicamente en ButtonMenu.");
+            }
+            else
+            {
+                Debug.LogWarning("[SceneElementSetup] No se encontro el contenedor ButtonMenu en Canvas.");
             }
         }
 
@@ -196,6 +476,7 @@ public static class SceneElementSetup
         {
             EditorSceneManager.MarkSceneDirty(scene);
             EditorSceneManager.SaveScene(scene);
+            Debug.Log("[SceneElementSetup] MainMenu configurado con Store-Button pixel art y StorePanel al frente.");
         }
     }
 
@@ -219,7 +500,6 @@ public static class SceneElementSetup
 
             if (trebolProp != null && trebolProp.objectReferenceValue == null)
             {
-                // Buscar si ya tiene un hijo Badge_Trebol
                 Transform existingBadge = point.transform.Find("Badge_Trebol");
                 GameObject badgeObj = null;
 
@@ -237,7 +517,6 @@ public static class SceneElementSetup
                     sr.color = new Color(0.2f, 0.9f, 0.3f, 1f);
                     sr.sortingLayerName = "UI";
 
-                    // Usar sprite de gem badge como base
                     Transform gemBadge = point.transform.Find("Badge_Gem (1)") ?? point.transform.Find("Badge_Gem");
                     if (gemBadge != null)
                     {
@@ -258,9 +537,25 @@ public static class SceneElementSetup
         if (uiSelect != null)
         {
             SerializedObject soSelect = new SerializedObject(uiSelect);
-            soSelect.FindProperty("visibleY").floatValue = 180f;
-            soSelect.FindProperty("hiddenY").floatValue = -250f;
+            soSelect.FindProperty("visibleY").floatValue = 30f;
+            soSelect.FindProperty("hiddenY").floatValue = -350f;
             soSelect.ApplyModifiedProperties();
+
+            // Configurar anclaje responsive infalible para iPhone SE y pantallas 16:9
+            SerializedProperty containerProp = soSelect.FindProperty("levelInfoContainer");
+            if (containerProp != null && containerProp.objectReferenceValue != null)
+            {
+                GameObject containerObj = (GameObject)containerProp.objectReferenceValue;
+                RectTransform rt = containerObj.GetComponent<RectTransform>();
+                if (rt != null)
+                {
+                    rt.pivot = new Vector2(0.5f, 0f);
+                    rt.anchorMin = new Vector2(0f, 0f);
+                    rt.anchorMax = new Vector2(1f, 0f);
+                    rt.sizeDelta = new Vector2(-200f, 270f);
+                    rt.anchoredPosition = new Vector2(0f, -350f);
+                }
+            }
             modified = true;
         }
 
@@ -268,7 +563,7 @@ public static class SceneElementSetup
         {
             EditorSceneManager.MarkSceneDirty(scene);
             EditorSceneManager.SaveScene(scene);
-            Debug.Log($"[SceneElementSetup] Trebol badges configurados en {mapPoints.Length} MapPoints de LevelSelection.");
+            Debug.Log($"[SceneElementSetup] LevelSelection configurado responsive y con trebol badges.");
         }
     }
 
@@ -292,6 +587,7 @@ public static class SceneElementSetup
         }
 
         SerializedObject soUI = new SerializedObject(uiController);
+        TMP_FontAsset pixelFont = GetPixelFont();
 
         // 1. Configurar HUD Texts (Trebol y Vidas)
         Transform hudContainer = root.transform.Find("Gems_Txt")?.parent ?? root.transform;
@@ -303,17 +599,23 @@ public static class SceneElementSetup
             GameObject trebolTxtObj = new GameObject("Trebol_Txt");
             trebolTxtObj.transform.SetParent(hudContainer, false);
             var rect = trebolTxtObj.AddComponent<RectTransform>();
-            rect.anchorMin = new Vector2(0.85f, 0.9f);
+            rect.anchorMin = new Vector2(0.82f, 0.88f);
             rect.anchorMax = new Vector2(0.98f, 0.98f);
             rect.anchoredPosition = Vector2.zero;
 
             var tmp = trebolTxtObj.AddComponent<TextMeshProUGUI>();
+            if (pixelFont != null) tmp.font = pixelFont;
             tmp.text = "x0";
             tmp.fontSize = 28;
             tmp.alignment = TextAlignmentOptions.Right;
 
             SerializedProperty trebolTextProp = soUI.FindProperty("trebolCountText");
             if (trebolTextProp != null) trebolTextProp.objectReferenceValue = tmp;
+        }
+        else
+        {
+            var tmp = trebolTxtTransform.GetComponent<TextMeshProUGUI>();
+            if (tmp != null && pixelFont != null) tmp.font = pixelFont;
         }
 
         // Vidas HUD Text
@@ -324,10 +626,11 @@ public static class SceneElementSetup
             livesTxtObj.transform.SetParent(hudContainer, false);
             var rect = livesTxtObj.AddComponent<RectTransform>();
             rect.anchorMin = new Vector2(0.02f, 0.85f);
-            rect.anchorMax = new Vector2(0.15f, 0.92f);
+            rect.anchorMax = new Vector2(0.18f, 0.95f);
             rect.anchoredPosition = Vector2.zero;
 
             var tmp = livesTxtObj.AddComponent<TextMeshProUGUI>();
+            if (pixelFont != null) tmp.font = pixelFont;
             tmp.text = "x3";
             tmp.fontSize = 28;
             tmp.alignment = TextAlignmentOptions.Left;
@@ -335,14 +638,20 @@ public static class SceneElementSetup
             SerializedProperty livesTextProp = soUI.FindProperty("livesText");
             if (livesTextProp != null) livesTextProp.objectReferenceValue = tmp;
         }
+        else
+        {
+            var tmp = livesTxtTransform.GetComponent<TextMeshProUGUI>();
+            if (tmp != null && pixelFont != null) tmp.font = pixelFont;
+        }
 
-        // Gems HUD Text (conectar Gems_Txt y resetear de 999 a 0)
+        // Gems HUD Text (resetear de 999 a 0 y configurar NoWrap con auto-sizing)
         Transform gemsTxtTransform = root.transform.Find("GemsContainer/Gems_Txt") ?? root.transform.Find("Gems_Txt");
         if (gemsTxtTransform != null)
         {
             var tmpGems = gemsTxtTransform.GetComponent<TextMeshProUGUI>();
             if (tmpGems != null)
             {
+                if (pixelFont != null) tmpGems.font = pixelFont;
                 tmpGems.text = "0";
                 tmpGems.textWrappingMode = TextWrappingModes.NoWrap;
                 tmpGems.overflowMode = TextOverflowModes.Overflow;
@@ -350,7 +659,7 @@ public static class SceneElementSetup
                 tmpGems.fontSizeMin = 36;
                 tmpGems.fontSizeMax = 90;
                 RectTransform rt = gemsTxtTransform.GetComponent<RectTransform>();
-                if (rt != null) rt.sizeDelta = new Vector2(280f, rt.sizeDelta.y);
+                if (rt != null) rt.sizeDelta = new Vector2(300f, rt.sizeDelta.y);
                 SerializedProperty gemsLevelProp = soUI.FindProperty("gemsLevelText");
                 if (gemsLevelProp != null) gemsLevelProp.objectReferenceValue = tmpGems;
             }
@@ -358,22 +667,7 @@ public static class SceneElementSetup
 
         soUI.ApplyModifiedProperties();
 
-        // 2. GameOverPanel
-        Transform existingGOPanel = root.transform.Find("GameOverPanel");
-        if (existingGOPanel == null)
-        {
-            CreateGameOverPanel(root);
-        }
-
-        // 3. DiceRollPanel
-        Transform existingDicePanel = root.transform.Find("DiceRollPanel");
-        if (existingDicePanel == null)
-        {
-            CreateDiceRollPanel(root);
-        }
-
-        // 4. MobileControls: NO DEBEN EXISTIR EN UI-Canvas.prefab.
-        // InputManager ya tiene sus propios controles y botones canónicos.
+        // 2. MobileControls: NO DEBEN EXISTIR EN UI-Canvas.prefab.
         Transform existingMobileControls = root.transform.Find("MobileControls");
         if (existingMobileControls != null)
         {
@@ -381,36 +675,38 @@ public static class SceneElementSetup
             Debug.Log("[SceneElementSetup] MobileControls duplicado eliminado de UI-Canvas.prefab.");
         }
 
-        // 5. StorePanel (Panel de Quitar Anuncios)
-        Transform existingStorePanel = root.transform.Find("StorePanel");
-        if (existingStorePanel == null)
+        // 3. Recrear GameOverPanel con estilo pixel art nativo
+        Transform existingGOPanel = root.transform.Find("GameOverPanel");
+        if (existingGOPanel != null)
         {
-            CreateStorePanel(root, false);
+            Object.DestroyImmediate(existingGOPanel.gameObject);
         }
+        CreateGameOverPanel(root);
+
+        // 4. Recrear DiceRollPanel con estilo pixel art nativo y caras del dado gráficas
+        Transform existingDicePanel = root.transform.Find("DiceRollPanel");
+        if (existingDicePanel != null)
+        {
+            Object.DestroyImmediate(existingDicePanel.gameObject);
+        }
+        CreateDiceRollPanel(root);
+
+        // 5. Recrear StorePanel con estilo pixel art nativo
+        Transform existingStorePanel = root.transform.Find("StorePanel");
+        if (existingStorePanel != null)
+        {
+            Object.DestroyImmediate(existingStorePanel.gameObject);
+        }
+        CreateStorePanel(root, false);
 
         PrefabUtility.SaveAsPrefabAsset(root, prefabPath);
         PrefabUtility.UnloadPrefabContents(root);
-        Debug.Log("[SceneElementSetup] UI-Canvas.prefab configurado con HUD, GameOverPanel, DiceRollPanel y StorePanel.");
+        Debug.Log("[SceneElementSetup] UI-Canvas.prefab configurado en estilo pixel art nativo.");
     }
 
     private static void CreateGameOverPanel(GameObject canvasRoot)
     {
-        GameObject panelObj = new GameObject("GameOverPanel");
-        panelObj.transform.SetParent(canvasRoot.transform, false);
-
-        var rect = panelObj.AddComponent<RectTransform>();
-        rect.anchorMin = Vector2.zero;
-        rect.anchorMax = Vector2.one;
-        rect.offsetMin = Vector2.zero;
-        rect.offsetMax = Vector2.zero;
-
-        var cg = panelObj.AddComponent<CanvasGroup>();
-        cg.alpha = 0f;
-        cg.interactable = false;
-        cg.blocksRaycasts = false;
-
-        var img = panelObj.AddComponent<Image>();
-        img.color = new Color(0f, 0f, 0f, 0.88f); // Fondo oscuro
+        var (panelObj, container, cg, rect) = CreatePixelPanelRoot(canvasRoot, "GameOverPanel", new Vector2(740f, 580f));
 
         var goc = panelObj.AddComponent<GameOverController>();
         SerializedObject soGOC = new SerializedObject(goc);
@@ -419,56 +715,41 @@ public static class SceneElementSetup
         soGOC.FindProperty("panelRect").objectReferenceValue = rect;
 
         // Título
-        GameObject titleObj = CreateTMPText(panelObj, "Title", "GAME OVER", 44, new Vector2(0f, 180f));
+        CreatePixelText(container, "Title", "GAME OVER", 40f, new Vector2(0f, 215f), new Vector2(600f, 50f));
 
-        // Botón Ad
-        Button btnAd = CreateUIButton(panelObj, "WatchAdButton", "Watch Video (+2 Lives)", new Vector2(0f, 80f), new Color(0.2f, 0.6f, 0.9f));
+        // Botones de acción
+        Button btnAd = CreatePixelButton(container, "WatchAdButton", "Watch Video (+2 Lives)", new Vector2(0f, 130f), new Vector2(440f, 68f));
         soGOC.FindProperty("watchAdButton").objectReferenceValue = btnAd;
         soGOC.FindProperty("firstSelectedButton").objectReferenceValue = btnAd.gameObject;
 
-        // Botón Trébol
-        Button btnTrebol = CreateUIButton(panelObj, "UseTrebolButton", "Spend Clover (Roll Dice)", new Vector2(0f, 10f), new Color(0.2f, 0.8f, 0.3f));
+        Button btnTrebol = CreatePixelButton(container, "UseTrebolButton", "Spend Clover (Roll Dice)", new Vector2(0f, 50f), new Vector2(440f, 68f));
         soGOC.FindProperty("useTrebolButton").objectReferenceValue = btnTrebol;
 
-        // Botón Gemas
-        Button btnGems = CreateUIButton(panelObj, "SpendGemsButton", "Use Gems (+1 Life)", new Vector2(0f, -60f), new Color(0.8f, 0.4f, 0.8f));
+        Button btnGems = CreatePixelButton(container, "SpendGemsButton", "Use Gems (+1 Life)", new Vector2(0f, -30f), new Vector2(440f, 68f));
         soGOC.FindProperty("spendGemsButton").objectReferenceValue = btnGems;
 
-        // Botón Volver al Mapa
-        Button btnMap = CreateUIButton(panelObj, "ReturnToMapButton", "Return to Map", new Vector2(0f, -130f), new Color(0.6f, 0.6f, 0.6f));
+        Button btnMap = CreatePixelButton(container, "ReturnToMapButton", "Return to Map", new Vector2(0f, -110f), new Vector2(440f, 68f), isWarning: true);
         soGOC.FindProperty("returnToMapButton").objectReferenceValue = btnMap;
 
-        // Textos informativos
-        GameObject txtGems = CreateTMPText(panelObj, "GemsCostText", "10 Gems", 22, new Vector2(160f, -60f));
-        soGOC.FindProperty("gemCostText").objectReferenceValue = txtGems.GetComponent<TextMeshProUGUI>();
+        // Fila de información económica
+        GameObject txtCost = CreatePixelText(container, "GemsCostText", "10 Gems", 20f, new Vector2(170f, -30f), new Vector2(140f, 35f), new Color(1f, 0.88f, 0.2f));
+        soGOC.FindProperty("gemCostText").objectReferenceValue = txtCost.GetComponent<TextMeshProUGUI>();
 
-        GameObject txtCurrentGems = CreateTMPText(panelObj, "CurrentGemsText", "Gems: 0", 22, new Vector2(0f, -200f));
+        GameObject txtCurrentGems = CreatePixelText(container, "CurrentGemsText", "Gems: 0", 22f, new Vector2(-130f, -190f), new Vector2(250f, 35f), new Color(1f, 0.9f, 0.3f));
         soGOC.FindProperty("currentGemsText").objectReferenceValue = txtCurrentGems.GetComponent<TextMeshProUGUI>();
 
-        GameObject txtTrebol = CreateTMPText(panelObj, "TrebolAvailableText", "Clovers: 0", 22, new Vector2(0f, -230f));
+        GameObject txtTrebol = CreatePixelText(container, "TrebolAvailableText", "Clovers: 0", 22f, new Vector2(130f, -190f), new Vector2(250f, 35f), new Color(0.3f, 1f, 0.4f));
         soGOC.FindProperty("trebolAvailableText").objectReferenceValue = txtTrebol.GetComponent<TextMeshProUGUI>();
+
+        GameObject txtFeedback = CreatePixelText(container, "AdFeedbackText", "", 18f, new Vector2(0f, -235f), new Vector2(600f, 30f), new Color(1f, 0.35f, 0.35f));
+        soGOC.FindProperty("adFeedbackText").objectReferenceValue = txtFeedback.GetComponent<TextMeshProUGUI>();
 
         soGOC.ApplyModifiedProperties();
     }
 
     private static void CreateDiceRollPanel(GameObject canvasRoot)
     {
-        GameObject panelObj = new GameObject("DiceRollPanel");
-        panelObj.transform.SetParent(canvasRoot.transform, false);
-
-        var rect = panelObj.AddComponent<RectTransform>();
-        rect.anchorMin = Vector2.zero;
-        rect.anchorMax = Vector2.one;
-        rect.offsetMin = Vector2.zero;
-        rect.offsetMax = Vector2.zero;
-
-        var cg = panelObj.AddComponent<CanvasGroup>();
-        cg.alpha = 0f;
-        cg.interactable = false;
-        cg.blocksRaycasts = false;
-
-        var img = panelObj.AddComponent<Image>();
-        img.color = new Color(0.05f, 0.05f, 0.15f, 0.95f);
+        var (panelObj, container, cg, rect) = CreatePixelPanelRoot(canvasRoot, "DiceRollPanel", new Vector2(740f, 600f));
 
         var drc = panelObj.AddComponent<DiceRollController>();
         SerializedObject soDRC = new SerializedObject(drc);
@@ -477,235 +758,117 @@ public static class SceneElementSetup
         soDRC.FindProperty("panelRect").objectReferenceValue = rect;
 
         // Título y Estado
-        CreateTMPText(panelObj, "DiceTitle", "DICE OF LIVES", 40, new Vector2(0f, 180f));
-        GameObject statusText = CreateTMPText(panelObj, "DiceStatus", "Normal Dice (1 - 3 Lives)", 26, new Vector2(0f, 120f));
+        CreatePixelText(container, "DiceTitle", "DICE OF LIVES", 38f, new Vector2(0f, 235f), new Vector2(600f, 45f));
+        GameObject statusText = CreatePixelText(container, "DiceStatus", "Normal Dice (1 - 3 Lives)", 22f, new Vector2(0f, 190f), new Vector2(600f, 35f));
         soDRC.FindProperty("diceStatusText").objectReferenceValue = statusText.GetComponent<TextMeshProUGUI>();
 
-        // Número del dado (grande)
-        GameObject numberText = CreateTMPText(panelObj, "DiceNumber", "?", 80, new Vector2(0f, 20f));
+        // Marco del dado central
+        GameObject diceBox = new GameObject("DiceBox");
+        diceBox.transform.SetParent(container.transform, false);
+        var dbRect = diceBox.AddComponent<RectTransform>();
+        dbRect.anchorMin = new Vector2(0.5f, 0.5f);
+        dbRect.anchorMax = new Vector2(0.5f, 0.5f);
+        dbRect.pivot = new Vector2(0.5f, 0.5f);
+        dbRect.sizeDelta = new Vector2(130f, 130f);
+        dbRect.anchoredPosition = new Vector2(0f, 85f);
+
+        var (normalBtn, _, _, _) = GetButtonSprites();
+        var dbImg = diceBox.AddComponent<Image>();
+        dbImg.sprite = normalBtn;
+        dbImg.type = Image.Type.Sliced;
+        dbImg.color = new Color(0.9f, 0.95f, 1f, 1f);
+
+        // Imagen gráfica de la cara del dado
+        GameObject diceFaceObj = new GameObject("DiceFaceImage");
+        diceFaceObj.transform.SetParent(diceBox.transform, false);
+        var dfRect = diceFaceObj.AddComponent<RectTransform>();
+        dfRect.anchorMin = new Vector2(0.5f, 0.5f);
+        dfRect.anchorMax = new Vector2(0.5f, 0.5f);
+        dfRect.pivot = new Vector2(0.5f, 0.5f);
+        dfRect.sizeDelta = new Vector2(100f, 100f);
+        dfRect.anchoredPosition = Vector2.zero;
+
+        Sprite[] diceSprites = GetDiceFaceSprites();
+        var dfImg = diceFaceObj.AddComponent<Image>();
+        if (diceSprites != null && diceSprites.Length > 0 && diceSprites[0] != null)
+            dfImg.sprite = diceSprites[0];
+        dfImg.preserveAspect = true;
+        soDRC.FindProperty("diceFaceImage").objectReferenceValue = dfImg;
+
+        SerializedProperty spritesProp = soDRC.FindProperty("diceFaceSprites");
+        if (spritesProp != null && diceSprites != null)
+        {
+            spritesProp.arraySize = diceSprites.Length;
+            for (int i = 0; i < diceSprites.Length; i++)
+            {
+                spritesProp.GetArrayElementAtIndex(i).objectReferenceValue = diceSprites[i];
+            }
+        }
+
+        // Fallback número del dado
+        GameObject numberText = CreatePixelText(diceBox, "DiceNumber", "?", 60f, Vector2.zero, new Vector2(100f, 100f));
+        numberText.SetActive(false);
         soDRC.FindProperty("diceNumberText").objectReferenceValue = numberText.GetComponent<TextMeshProUGUI>();
 
         // Botones
-        Button btnRoll = CreateUIButton(panelObj, "RollButton", "Roll Dice", new Vector2(-120f, -90f), new Color(0.2f, 0.8f, 0.3f));
+        Button btnRoll = CreatePixelButton(container, "RollButton", "Roll Dice", new Vector2(-120f, -25f), new Vector2(210f, 66f));
         soDRC.FindProperty("rollButton").objectReferenceValue = btnRoll;
 
-        Button btnStop = CreateUIButton(panelObj, "StopButton", "Stop", new Vector2(120f, -90f), new Color(0.9f, 0.3f, 0.2f));
+        Button btnStop = CreatePixelButton(container, "StopButton", "Stop", new Vector2(120f, -25f), new Vector2(210f, 66f), isWarning: true);
         btnStop.interactable = false;
         soDRC.FindProperty("stopButton").objectReferenceValue = btnStop;
 
-        Button btnUpgrade = CreateUIButton(panelObj, "UpgradeButton", "Upgrade with Clover", new Vector2(0f, -160f), new Color(0.85f, 0.7f, 0.1f));
+        Button btnUpgrade = CreatePixelButton(container, "UpgradeButton", "Upgrade with Clover", new Vector2(0f, -105f), new Vector2(440f, 66f));
         soDRC.FindProperty("upgradeWithTrebolButton").objectReferenceValue = btnUpgrade;
 
-        Button btnClose = CreateUIButton(panelObj, "CloseButton", "Continue", new Vector2(0f, -220f), new Color(0.5f, 0.5f, 0.5f));
+        Button btnClose = CreatePixelButton(container, "CloseButton", "Continue", new Vector2(0f, -185f), new Vector2(440f, 66f), isWarning: true);
         btnClose.interactable = false;
         soDRC.FindProperty("closeButton").objectReferenceValue = btnClose;
 
-        GameObject trebolText = CreateTMPText(panelObj, "TrebolAvailableText", "Clovers: 0", 22, new Vector2(0f, -260f));
+        GameObject trebolText = CreatePixelText(container, "TrebolAvailableText", "Clovers: 0", 20f, new Vector2(0f, -250f), new Vector2(500f, 35f), new Color(0.3f, 1f, 0.4f));
         soDRC.FindProperty("trebolAvailableText").objectReferenceValue = trebolText.GetComponent<TextMeshProUGUI>();
 
         soDRC.ApplyModifiedProperties();
     }
 
-    private static void CreateMobileControls(GameObject canvasRoot)
-    {
-        GameObject controlsObj = new GameObject("MobileControls");
-        controlsObj.transform.SetParent(canvasRoot.transform, false);
-
-        var rect = controlsObj.AddComponent<RectTransform>();
-        rect.anchorMin = Vector2.zero;
-        rect.anchorMax = Vector2.one;
-        rect.offsetMin = Vector2.zero;
-        rect.offsetMax = Vector2.zero;
-
-        var cg = controlsObj.AddComponent<CanvasGroup>();
-        cg.alpha = 1f;
-        cg.interactable = true;
-        cg.blocksRaycasts = true;
-
-        var mgc = controlsObj.AddComponent<MobileGameplayControls>();
-
-        // Joystick (Move Stick)
-        GameObject stickObj = new GameObject("MoveStick");
-        stickObj.transform.SetParent(controlsObj.transform, false);
-        var stickRect = stickObj.AddComponent<RectTransform>();
-        stickRect.anchorMin = Vector2.zero;
-        stickRect.anchorMax = Vector2.zero;
-        stickRect.pivot = new Vector2(0.5f, 0.5f);
-        stickRect.anchoredPosition = new Vector2(160f, 150f);
-        stickRect.sizeDelta = new Vector2(200f, 200f);
-
-        var stickImg = stickObj.AddComponent<Image>();
-        stickImg.color = new Color(0.06f, 0.13f, 0.17f, 0.48f);
-
-        var stick = stickObj.AddComponent<OnScreenStick>();
-        stick.controlPath = "<Gamepad>/leftStick";
-        stick.behaviour = OnScreenStick.Behaviour.RelativePositionWithStaticOrigin;
-        stick.movementRange = 60f;
-        stick.useIsolatedInputActions = true;
-
-        // Knob
-        GameObject knobObj = new GameObject("StickKnob");
-        knobObj.transform.SetParent(stickObj.transform, false);
-        var knobRect = knobObj.AddComponent<RectTransform>();
-        knobRect.anchorMin = new Vector2(0.5f, 0.5f);
-        knobRect.anchorMax = new Vector2(0.5f, 0.5f);
-        knobRect.pivot = new Vector2(0.5f, 0.5f);
-        knobRect.anchoredPosition = Vector2.zero;
-        knobRect.sizeDelta = new Vector2(80f, 80f);
-
-        var knobImg = knobObj.AddComponent<Image>();
-        knobImg.color = new Color(0.85f, 0.94f, 0.92f, 0.62f);
-        knobImg.raycastTarget = false;
-
-        // Jump Button
-        GameObject jumpObj = new GameObject("JumpButton");
-        jumpObj.transform.SetParent(controlsObj.transform, false);
-        var jumpRect = jumpObj.AddComponent<RectTransform>();
-        jumpRect.anchorMin = new Vector2(1f, 0f);
-        jumpRect.anchorMax = new Vector2(1f, 0f);
-        jumpRect.pivot = new Vector2(0.5f, 0.5f);
-        jumpRect.anchoredPosition = new Vector2(-160f, 150f);
-        jumpRect.sizeDelta = new Vector2(150f, 150f);
-
-        var jumpImg = jumpObj.AddComponent<Image>();
-        jumpImg.color = new Color(0.88f, 0.25f, 0.17f, 0.72f);
-
-        var jumpBtn = jumpObj.AddComponent<OnScreenButton>();
-        jumpBtn.controlPath = "<Gamepad>/buttonSouth";
-
-        CreateTMPText(jumpObj, "Label", "A", 48, Vector2.zero);
-
-        // Pause Button
-        GameObject pauseObj = new GameObject("PauseButton");
-        pauseObj.transform.SetParent(controlsObj.transform, false);
-        var pauseRect = pauseObj.AddComponent<RectTransform>();
-        pauseRect.anchorMin = new Vector2(0.5f, 1f);
-        pauseRect.anchorMax = new Vector2(0.5f, 1f);
-        pauseRect.pivot = new Vector2(0.5f, 0.5f);
-        pauseRect.anchoredPosition = new Vector2(0f, -70f);
-        pauseRect.sizeDelta = new Vector2(80f, 80f);
-
-        var pauseImg = pauseObj.AddComponent<Image>();
-        pauseImg.color = new Color(0.06f, 0.13f, 0.17f, 0.5f);
-
-        var pauseBtn = pauseObj.AddComponent<OnScreenButton>();
-        pauseBtn.controlPath = "<Gamepad>/start";
-
-        CreateTMPText(pauseObj, "Label", "II", 32, Vector2.zero);
-
-        SerializedObject soMGC = new SerializedObject(mgc);
-        soMGC.FindProperty("controlsCanvasGroup").objectReferenceValue = cg;
-        soMGC.FindProperty("onScreenStick").objectReferenceValue = stick;
-        soMGC.FindProperty("jumpButton").objectReferenceValue = jumpBtn;
-        soMGC.FindProperty("pauseButton").objectReferenceValue = pauseBtn;
-        soMGC.ApplyModifiedProperties();
-    }
-
     private static void CreateStorePanel(GameObject canvasRoot, bool createOpenButton = false)
     {
-        GameObject panelObj = new GameObject("StorePanel");
-        panelObj.transform.SetParent(canvasRoot.transform, false);
-
-        var rect = panelObj.AddComponent<RectTransform>();
-        rect.anchorMin = Vector2.zero;
-        rect.anchorMax = Vector2.one;
-        rect.offsetMin = Vector2.zero;
-        rect.offsetMax = Vector2.zero;
-
-        var cg = panelObj.AddComponent<CanvasGroup>();
-        cg.alpha = 0f;
-        cg.interactable = false;
-        cg.blocksRaycasts = false;
-
-        var img = panelObj.AddComponent<Image>();
-        img.color = new Color(0.04f, 0.04f, 0.08f, 0.95f);
+        var (panelObj, container, cg, rect) = CreatePixelPanelRoot(canvasRoot, "StorePanel", new Vector2(740f, 540f));
 
         var noAds = panelObj.AddComponent<NoAdsPurchaseButton>();
         SerializedObject soNoAds = new SerializedObject(noAds);
         soNoAds.FindProperty("storePanelGroup").objectReferenceValue = cg;
 
         // Título
-        CreateTMPText(panelObj, "StoreTitle", "STORE / REMOVE ADS", 38, new Vector2(0f, 180f));
+        CreatePixelText(container, "StoreTitle", "STORE / REMOVE ADS", 36f, new Vector2(0f, 195f), new Vector2(600f, 45f));
 
         // Descripción
-        CreateTMPText(panelObj, "StoreDesc", "Play without interruptions!\nPurchasing permanently removes all ads.", 22, new Vector2(0f, 100f));
+        CreatePixelText(container, "StoreDesc", "Play without interruptions!\nPurchasing permanently removes all ads.", 20f, new Vector2(0f, 125f), new Vector2(640f, 60f));
 
         // Botón Compra
-        Button btnPurchase = CreateUIButton(panelObj, "PurchaseButton", "Remove Ads", new Vector2(0f, 10f), new Color(0.2f, 0.75f, 0.35f));
+        Button btnPurchase = CreatePixelButton(container, "PurchaseButton", "Remove Ads", new Vector2(0f, 35f), new Vector2(440f, 72f));
         soNoAds.FindProperty("purchaseButton").objectReferenceValue = btnPurchase;
         TextMeshProUGUI purchaseLabel = btnPurchase.GetComponentInChildren<TextMeshProUGUI>();
         soNoAds.FindProperty("purchaseButtonLabel").objectReferenceValue = purchaseLabel;
 
         // Botón Restaurar
-        Button btnRestore = CreateUIButton(panelObj, "RestoreButton", "Restore Purchases", new Vector2(0f, -60f), new Color(0.3f, 0.5f, 0.8f));
+        Button btnRestore = CreatePixelButton(container, "RestoreButton", "Restore Purchases", new Vector2(0f, -50f), new Vector2(440f, 72f));
         soNoAds.FindProperty("restoreButton").objectReferenceValue = btnRestore;
 
         // Indicador activo (cuando ya está comprado)
-        GameObject indicatorObj = CreateTMPText(panelObj, "ActiveIndicator", "Remove Ads Active", 24, new Vector2(0f, 10f));
-        indicatorObj.GetComponent<TextMeshProUGUI>().color = new Color(0.3f, 1f, 0.4f);
+        GameObject indicatorObj = CreatePixelText(container, "ActiveIndicator", "Remove Ads Active", 24f, new Vector2(0f, 35f), new Vector2(440f, 50f), new Color(0.3f, 1f, 0.4f));
         indicatorObj.SetActive(false);
         soNoAds.FindProperty("noAdsActiveIndicator").objectReferenceValue = indicatorObj;
 
         // Status text
-        GameObject statusObj = CreateTMPText(panelObj, "StatusText", "", 18, new Vector2(0f, -120f));
+        GameObject statusObj = CreatePixelText(container, "StatusText", "", 18f, new Vector2(0f, -125f), new Vector2(640f, 35f), new Color(1f, 0.9f, 0.3f));
         soNoAds.FindProperty("statusText").objectReferenceValue = statusObj.GetComponent<TextMeshProUGUI>();
 
         // Botón Cerrar
-        Button btnClose = CreateUIButton(panelObj, "CloseButton", "Close", new Vector2(0f, -180f), new Color(0.5f, 0.5f, 0.5f));
+        Button btnClose = CreatePixelButton(container, "CloseButton", "Close", new Vector2(0f, -190f), new Vector2(440f, 68f), isWarning: true);
         soNoAds.FindProperty("closeStoreButton").objectReferenceValue = btnClose;
 
         soNoAds.ApplyModifiedProperties();
-    }
-
-    private static GameObject CreateTMPText(GameObject parent, string name, string text, float fontSize, Vector2 anchoredPos)
-    {
-        GameObject go = new GameObject(name);
-        go.transform.SetParent(parent.transform, false);
-
-        var rect = go.AddComponent<RectTransform>();
-        rect.sizeDelta = new Vector2(500f, 60f);
-        rect.anchoredPosition = anchoredPos;
-
-        var tmp = go.AddComponent<TextMeshProUGUI>();
-        tmp.text = text;
-        tmp.fontSize = fontSize;
-        tmp.alignment = TextAlignmentOptions.Center;
-        tmp.color = Color.white;
-
-        return go;
-    }
-
-    private static Button CreateUIButton(GameObject parent, string name, string label, Vector2 anchoredPos, Color btnColor)
-    {
-        GameObject go = new GameObject(name);
-        go.transform.SetParent(parent.transform, false);
-
-        var rect = go.AddComponent<RectTransform>();
-        rect.sizeDelta = new Vector2(260f, 50f);
-        rect.anchoredPosition = anchoredPos;
-
-        var img = go.AddComponent<Image>();
-        img.color = btnColor;
-
-        var btn = go.AddComponent<Button>();
-        btn.targetGraphic = img;
-
-        GameObject textObj = new GameObject("Text");
-        textObj.transform.SetParent(go.transform, false);
-
-        var textRect = textObj.AddComponent<RectTransform>();
-        textRect.anchorMin = Vector2.zero;
-        textRect.anchorMax = Vector2.one;
-        textRect.offsetMin = Vector2.zero;
-        textRect.offsetMax = Vector2.zero;
-
-        var tmp = textObj.AddComponent<TextMeshProUGUI>();
-        tmp.text = label;
-        tmp.fontSize = 20;
-        tmp.alignment = TextAlignmentOptions.Center;
-        tmp.color = Color.white;
-
-        return btn;
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -726,7 +889,6 @@ public static class SceneElementSetup
             {
                 GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(trebolPrefab);
                 
-                // Ubicar el trébol en una posición de exploración (cerca del Goal o a altura media)
                 Goal goal = Object.FindObjectOfType<Goal>();
                 if (goal != null)
                 {
@@ -741,14 +903,12 @@ public static class SceneElementSetup
                 Debug.Log($"[SceneElementSetup] TrebolPickup agregado a {scenePath}");
             }
 
-            // Fondo y encuadre: fijar color de cielo #47F3FF en la cámara para eliminar cualquier corte cian/azul
             Camera cam = Object.FindObjectOfType<Camera>();
             Color skyColor = new Color(0.2784f, 0.9529f, 1f, 1f);
             if (cam != null && cam.backgroundColor != skyColor)
             {
                 cam.backgroundColor = skyColor;
                 sceneDirty = true;
-                Debug.Log($"[SceneElementSetup] Cámara de {scenePath} configurada con color de cielo #47F3FF.");
             }
 
             if (sceneDirty)
