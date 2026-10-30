@@ -40,21 +40,22 @@ public static class SceneElementSetup
         {
             AssetDatabase.StartAssetEditing();
 
-            // 1. Crear prefabs de coleccionables
+            // 1. Crear prefabs de coleccionables y datos de mundo
             GameObject trebolPrefab = CreateTrebolPrefab();
             GameObject diceFragPrefab = CreateDiceFragmentPrefab();
+            WorldData world1Data = CreateOrGetWorld1Data();
 
             // 2. Configurar MainMenu (con Store-Button pixel art y StorePanel al frente)
             SetupMainMenuScene();
 
-            // 3. Configurar LevelSelection (badges y responsive bottom panel)
-            SetupLevelSelectionScene();
+            // 3. Configurar LevelSelection (badges, worldData y responsive bottom panel)
+            SetupLevelSelectionScene(world1Data);
 
-            // 4. Configurar UI-Canvas Prefab (GameOverPanel, DiceRollPanel, StorePanel con estilo pixel art)
+            // 4. Configurar UI-Canvas Prefab (GameOverPanel, DiceRollPanel, StorePanel, WorldCompletePanel con estilo pixel art)
             SetupUICanvasPrefab();
 
-            // 5. Agregar Trebol a cada nivel de gameplay
-            SetupGameplayLevels(trebolPrefab);
+            // 5. Agregar Trebol y configurar LevelManager en cada nivel de gameplay
+            SetupGameplayLevels(trebolPrefab, world1Data);
 
             // 6. Revisión exhaustiva de auto-sizing en todos los textos de prefabs y escenas
             ConfigureAllProjectTextsForAutoSizing();
@@ -301,6 +302,35 @@ public static class SceneElementSetup
         return prefab;
     }
 
+    private static WorldData CreateOrGetWorld1Data()
+    {
+        string dir = "Assets/Data";
+        if (!AssetDatabase.IsValidFolder(dir))
+            AssetDatabase.CreateFolder("Assets", "Data");
+
+        string path = $"{dir}/WorldData_World1.asset";
+        WorldData existing = AssetDatabase.LoadAssetAtPath<WorldData>(path);
+        if (existing == null)
+        {
+            existing = ScriptableObject.CreateInstance<WorldData>();
+            existing.worldName = "World 1 - The Forest";
+            existing.worldNumber = 1;
+            existing.levelSceneNames = new string[] {
+                "Level_0", "Level_1", "Level_2", "Level_3", "Level_4",
+                "Level_5", "Level_6", "Level_7", "Level_8", "Level_9", "Level_10"
+            };
+            existing.starsRequiredToUnlock = 0;
+            existing.totalGems = 1100;
+            existing.totalTrebols = 10;
+            existing.totalDiceFragments = 3;
+            existing.selectionSceneName = "LevelSelection";
+            AssetDatabase.CreateAsset(existing, path);
+            AssetDatabase.SaveAssets();
+            Debug.Log($"[SceneElementSetup] WorldData creado en: {path}");
+        }
+        return existing;
+    }
+
     // ─────────────────────────────────────────────────────────────────────────
     //  2. Escena MainMenu
     // ─────────────────────────────────────────────────────────────────────────
@@ -500,13 +530,26 @@ public static class SceneElementSetup
     //  3. Escena LevelSelection
     // ─────────────────────────────────────────────────────────────────────────
 
-    private static void SetupLevelSelectionScene()
+    private static void SetupLevelSelectionScene(WorldData world1Data)
     {
         string scenePath = "Assets/Scenes/LevelSelection.unity";
         if (!File.Exists(scenePath)) return;
 
         Scene scene = EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Single);
         bool modified = false;
+
+        MapPointsHolder mph = Object.FindObjectOfType<MapPointsHolder>();
+        if (mph != null && world1Data != null)
+        {
+            SerializedObject soMPH = new SerializedObject(mph);
+            SerializedProperty worldProp = soMPH.FindProperty("worldData");
+            if (worldProp != null)
+            {
+                worldProp.objectReferenceValue = world1Data;
+                soMPH.ApplyModifiedProperties();
+                modified = true;
+            }
+        }
 
         MapPoint[] mapPoints = Object.FindObjectsOfType<MapPoint>();
         foreach (var point in mapPoints)
@@ -571,7 +614,38 @@ public static class SceneElementSetup
                     rt.sizeDelta = new Vector2(-200f, 270f);
                     rt.anchoredPosition = new Vector2(0f, -350f);
                 }
+
+                SerializedProperty cloverTextProp = soSelect.FindProperty("cloverText");
+                if (cloverTextProp != null && cloverTextProp.objectReferenceValue == null)
+                {
+                    Transform existingClover = containerObj.transform.Find("Clover_Txt");
+                    TextMeshProUGUI cloverTmp = null;
+                    if (existingClover == null)
+                    {
+                        GameObject cObj = new GameObject("Clover_Txt");
+                        cObj.transform.SetParent(containerObj.transform, false);
+                        var crt = cObj.AddComponent<RectTransform>();
+                        crt.anchorMin = new Vector2(0.7f, 0.55f);
+                        crt.anchorMax = new Vector2(0.98f, 0.9f);
+                        crt.anchoredPosition = Vector2.zero;
+                        cloverTmp = cObj.AddComponent<TextMeshProUGUI>();
+                        cloverTmp.font = GetPixelFont();
+                        cloverTmp.text = "CLOVER: --";
+                        cloverTmp.fontSize = 20f;
+                        cloverTmp.enableAutoSizing = true;
+                        cloverTmp.fontSizeMin = 12f;
+                        cloverTmp.fontSizeMax = 22f;
+                        cloverTmp.alignment = TextAlignmentOptions.Right;
+                        cloverTmp.color = new Color(0.3f, 1f, 0.4f);
+                    }
+                    else
+                    {
+                        cloverTmp = existingClover.GetComponent<TextMeshProUGUI>();
+                    }
+                    cloverTextProp.objectReferenceValue = cloverTmp;
+                }
             }
+            soSelect.ApplyModifiedProperties();
             modified = true;
         }
 
@@ -607,6 +681,46 @@ public static class SceneElementSetup
 
         // 1. Configurar HUD Texts (Trebol y Vidas)
         Transform hudContainer = root.transform.Find("Gems_Txt")?.parent ?? root.transform;
+
+        // Configurar BonusHeart en LifesContainer si existe
+        Transform lifesContainer = root.transform.Find("LifesContainer");
+        if (lifesContainer != null)
+        {
+            Transform existingBonus = lifesContainer.Find("BonusHeart");
+            Image bonusImg = null;
+            if (existingBonus == null)
+            {
+                GameObject bonusObj = new GameObject("BonusHeart");
+                bonusObj.transform.SetParent(lifesContainer, false);
+                var rt = bonusObj.AddComponent<RectTransform>();
+                rt.sizeDelta = new Vector2(48f, 44f);
+                bonusImg = bonusObj.AddComponent<Image>();
+                Sprite heartEmpty = soUI.FindProperty("heartEmpty")?.objectReferenceValue as Sprite;
+                if (heartEmpty != null) bonusImg.sprite = heartEmpty;
+                bonusObj.SetActive(false);
+            }
+            else
+            {
+                bonusImg = existingBonus.GetComponent<Image>();
+            }
+
+            SerializedProperty bonusProp = soUI.FindProperty("bonusHeartIcon");
+            if (bonusProp != null) bonusProp.objectReferenceValue = bonusImg;
+        }
+
+        // Configurar sprites de estrella
+        Sprite starFullSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/2D Platformer Assets/Graphics/UI/star.png");
+        Sprite starEmptySprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/2D Platformer Assets/Graphics/UI/star_empty.png");
+        if (starFullSprite != null)
+        {
+            SerializedProperty fullProp = soUI.FindProperty("starFull");
+            if (fullProp != null) fullProp.objectReferenceValue = starFullSprite;
+        }
+        if (starEmptySprite != null)
+        {
+            SerializedProperty emptyProp = soUI.FindProperty("starEmpty");
+            if (emptyProp != null) emptyProp.objectReferenceValue = starEmptySprite;
+        }
 
         // Trebol HUD Text
         Transform trebolTxtTransform = root.transform.Find("Trebol_Txt");
@@ -715,6 +829,14 @@ public static class SceneElementSetup
         }
         CreateStorePanel(root, false);
 
+        // 6. Recrear WorldCompletePanel con estilo pixel art nativo
+        Transform existingWorldCompletePanel = root.transform.Find("WorldCompletePanel");
+        if (existingWorldCompletePanel != null)
+        {
+            Object.DestroyImmediate(existingWorldCompletePanel.gameObject);
+        }
+        CreateWorldCompletePanel(root);
+
         PrefabUtility.SaveAsPrefabAsset(root, prefabPath);
         PrefabUtility.UnloadPrefabContents(root);
         Debug.Log("[SceneElementSetup] UI-Canvas.prefab configurado en estilo pixel art nativo.");
@@ -722,7 +844,7 @@ public static class SceneElementSetup
 
     private static void CreateGameOverPanel(GameObject canvasRoot)
     {
-        var (panelObj, container, cg, rect) = CreatePixelPanelRoot(canvasRoot, "GameOverPanel", new Vector2(740f, 580f));
+        var (panelObj, container, cg, rect) = CreatePixelPanelRoot(canvasRoot, "GameOverPanel", new Vector2(740f, 620f));
 
         var goc = panelObj.AddComponent<GameOverController>();
         SerializedObject soGOC = new SerializedObject(goc);
@@ -731,33 +853,37 @@ public static class SceneElementSetup
         soGOC.FindProperty("panelRect").objectReferenceValue = rect;
 
         // Título
-        CreatePixelText(container, "Title", "GAME OVER", 40f, new Vector2(0f, 215f), new Vector2(600f, 50f));
+        CreatePixelText(container, "Title", "GAME OVER", 40f, new Vector2(0f, 225f), new Vector2(600f, 50f));
 
         // Botones de acción
-        Button btnAd = CreatePixelButton(container, "WatchAdButton", "Watch Video (+2 Lives)", new Vector2(0f, 130f), new Vector2(440f, 68f));
+        Button btnAd = CreatePixelButton(container, "WatchAdButton", "Watch Video (+2 Lives)", new Vector2(0f, 150f), new Vector2(440f, 62f));
         soGOC.FindProperty("watchAdButton").objectReferenceValue = btnAd;
         soGOC.FindProperty("firstSelectedButton").objectReferenceValue = btnAd.gameObject;
 
-        Button btnTrebol = CreatePixelButton(container, "UseTrebolButton", "Spend Clover (Roll Dice)", new Vector2(0f, 50f), new Vector2(440f, 68f));
+        Button btnTrebol = CreatePixelButton(container, "UseTrebolButton", "Spend Clover (Roll Dice)", new Vector2(0f, 80f), new Vector2(440f, 62f));
         soGOC.FindProperty("useTrebolButton").objectReferenceValue = btnTrebol;
 
-        Button btnGems = CreatePixelButton(container, "SpendGemsButton", "Use Gems (+1 Life)", new Vector2(0f, -30f), new Vector2(440f, 68f));
+        Button btnSecret = CreatePixelButton(container, "UseSecretDiceButton", "Secret Dice (4-6 Lives)", new Vector2(0f, 10f), new Vector2(440f, 62f));
+        btnSecret.gameObject.SetActive(false);
+        soGOC.FindProperty("useSecretDiceButton").objectReferenceValue = btnSecret;
+
+        Button btnGems = CreatePixelButton(container, "SpendGemsButton", "Use Gems (+1 Life)", new Vector2(0f, -60f), new Vector2(440f, 62f));
         soGOC.FindProperty("spendGemsButton").objectReferenceValue = btnGems;
 
-        Button btnMap = CreatePixelButton(container, "ReturnToMapButton", "Return to Map", new Vector2(0f, -110f), new Vector2(440f, 68f), isWarning: true);
+        Button btnMap = CreatePixelButton(container, "ReturnToMapButton", "Return to Map", new Vector2(0f, -130f), new Vector2(440f, 62f), isWarning: true);
         soGOC.FindProperty("returnToMapButton").objectReferenceValue = btnMap;
 
         // Fila de información económica
-        GameObject txtCost = CreatePixelText(container, "GemsCostText", "10 Gems", 20f, new Vector2(170f, -30f), new Vector2(140f, 35f), new Color(1f, 0.88f, 0.2f));
+        GameObject txtCost = CreatePixelText(container, "GemsCostText", "10 Gems", 20f, new Vector2(170f, -60f), new Vector2(140f, 35f), new Color(1f, 0.88f, 0.2f));
         soGOC.FindProperty("gemCostText").objectReferenceValue = txtCost.GetComponent<TextMeshProUGUI>();
 
-        GameObject txtCurrentGems = CreatePixelText(container, "CurrentGemsText", "Gems: 0", 22f, new Vector2(-130f, -190f), new Vector2(250f, 35f), new Color(1f, 0.9f, 0.3f));
+        GameObject txtCurrentGems = CreatePixelText(container, "CurrentGemsText", "Gems: 0", 22f, new Vector2(-130f, -200f), new Vector2(250f, 35f), new Color(1f, 0.9f, 0.3f));
         soGOC.FindProperty("currentGemsText").objectReferenceValue = txtCurrentGems.GetComponent<TextMeshProUGUI>();
 
-        GameObject txtTrebol = CreatePixelText(container, "TrebolAvailableText", "Clovers: 0", 22f, new Vector2(130f, -190f), new Vector2(250f, 35f), new Color(0.3f, 1f, 0.4f));
+        GameObject txtTrebol = CreatePixelText(container, "TrebolAvailableText", "Clovers: 0", 22f, new Vector2(130f, -200f), new Vector2(250f, 35f), new Color(0.3f, 1f, 0.4f));
         soGOC.FindProperty("trebolAvailableText").objectReferenceValue = txtTrebol.GetComponent<TextMeshProUGUI>();
 
-        GameObject txtFeedback = CreatePixelText(container, "AdFeedbackText", "", 18f, new Vector2(0f, -235f), new Vector2(600f, 30f), new Color(1f, 0.35f, 0.35f));
+        GameObject txtFeedback = CreatePixelText(container, "AdFeedbackText", "", 18f, new Vector2(0f, -245f), new Vector2(600f, 30f), new Color(1f, 0.35f, 0.35f));
         soGOC.FindProperty("adFeedbackText").objectReferenceValue = txtFeedback.GetComponent<TextMeshProUGUI>();
 
         soGOC.ApplyModifiedProperties();
@@ -890,11 +1016,47 @@ public static class SceneElementSetup
         panelObj.SetActive(false);
     }
 
+    private static void CreateWorldCompletePanel(GameObject canvasRoot)
+    {
+        var (panelObj, container, cg, rect) = CreatePixelPanelRoot(canvasRoot, "WorldCompletePanel", new Vector2(740f, 560f));
+
+        var wcc = panelObj.AddComponent<WorldCompleteController>();
+        SerializedObject soWCC = new SerializedObject(wcc);
+        soWCC.FindProperty("panel").objectReferenceValue = panelObj;
+
+        // Título
+        CreatePixelText(container, "Title", "WORLD COMPLETED!", 38f, new Vector2(0f, 210f), new Vector2(600f, 45f), new Color(1f, 0.85f, 0.2f));
+
+        // Nombre del mundo
+        GameObject nameObj = CreatePixelText(container, "WorldNameText", "World 1", 26f, new Vector2(0f, 155f), new Vector2(600f, 35f));
+        soWCC.FindProperty("worldNameText").objectReferenceValue = nameObj.GetComponent<TextMeshProUGUI>();
+
+        // Estadísticas
+        GameObject starsObj = CreatePixelText(container, "StarsText", "Stars: 0 / 30", 22f, new Vector2(0f, 95f), new Vector2(500f, 35f), Color.white);
+        soWCC.FindProperty("starsText").objectReferenceValue = starsObj.GetComponent<TextMeshProUGUI>();
+
+        GameObject gemsObj = CreatePixelText(container, "GemsText", "Gems: 0 / 1100", 22f, new Vector2(0f, 45f), new Vector2(500f, 35f), new Color(1f, 0.9f, 0.3f));
+        soWCC.FindProperty("gemsText").objectReferenceValue = gemsObj.GetComponent<TextMeshProUGUI>();
+
+        GameObject trebolsObj = CreatePixelText(container, "TrebolsText", "Clovers: 0 / 10", 22f, new Vector2(0f, -5f), new Vector2(500f, 35f), new Color(0.3f, 1f, 0.4f));
+        soWCC.FindProperty("trebolsText").objectReferenceValue = trebolsObj.GetComponent<TextMeshProUGUI>();
+
+        GameObject timeObj = CreatePixelText(container, "TimeText", "Total Time: 00:00", 22f, new Vector2(0f, -55f), new Vector2(500f, 35f), Color.white);
+        soWCC.FindProperty("timeText").objectReferenceValue = timeObj.GetComponent<TextMeshProUGUI>();
+
+        // Botón Continuar
+        Button btnContinue = CreatePixelButton(container, "ContinueButton", "Continue to Map", new Vector2(0f, -145f), new Vector2(440f, 72f));
+        UnityEditor.Events.UnityEventTools.AddPersistentListener(btnContinue.onClick, wcc.ContinueToNextWorld);
+
+        soWCC.ApplyModifiedProperties();
+        panelObj.SetActive(false);
+    }
+
     // ─────────────────────────────────────────────────────────────────────────
-    //  5. Gameplay Levels (Agregar TrebolPickup a cada nivel)
+    //  5. Gameplay Levels (Agregar TrebolPickup y configurar WorldData en cada nivel)
     // ─────────────────────────────────────────────────────────────────────────
 
-    private static void SetupGameplayLevels(GameObject trebolPrefab)
+    private static void SetupGameplayLevels(GameObject trebolPrefab, WorldData world1Data)
     {
         for (int i = 0; i <= 10; i++)
         {
@@ -928,6 +1090,30 @@ public static class SceneElementSetup
             {
                 cam.backgroundColor = skyColor;
                 sceneDirty = true;
+            }
+
+            LevelManager lm = Object.FindObjectOfType<LevelManager>();
+            if (lm != null)
+            {
+                SerializedObject soLM = new SerializedObject(lm);
+                SerializedProperty worldProp = soLM.FindProperty("currentWorldData");
+                if (worldProp != null && world1Data != null)
+                {
+                    worldProp.objectReferenceValue = world1Data;
+                    sceneDirty = true;
+                }
+
+                SerializedProperty wccProp = soLM.FindProperty("worldCompleteController");
+                if (wccProp != null)
+                {
+                    WorldCompleteController wcc = Object.FindObjectOfType<WorldCompleteController>(true);
+                    if (wcc != null)
+                    {
+                        wccProp.objectReferenceValue = wcc;
+                        sceneDirty = true;
+                    }
+                }
+                soLM.ApplyModifiedProperties();
             }
 
             if (sceneDirty)

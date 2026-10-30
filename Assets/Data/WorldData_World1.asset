@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc8d2b4b527864c1cb0131f615e60c8b, type: 3}
+  m_Name: WorldData_World1
+  m_EditorClassIdentifier: Assembly-CSharp::WorldData
+  worldName: World 1 - The Forest
+  worldNumber: 1
+  levelSceneNames:
+  - Level_0
+  - Level_1
+  - Level_2
+  - Level_3
+  - Level_4
+  - Level_5
+  - Level_6
+  - Level_7
+  - Level_8
+  - Level_9
+  - Level_10
+  starsRequiredToUnlock: 0
+  totalGems: 1100
+  totalTrebols: 10
+  totalDiceFragments: 3
+  selectionSceneName: LevelSelection
+  worldThumbnail: {fileID: 0}
+  worldColor: {r: 1, g: 1, b: 1, a: 1}

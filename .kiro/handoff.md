@@ -3,13 +3,62 @@
 > Este archivo es la fuente de verdad del proyecto.
 > Se actualiza al terminar cada fase. Si hay duda sobre qué falta, leer esto primero.
 >
-> **Última actualización:** 30/10/2026 — Resolución definitiva de las 3 capturas de QA: limpieza de StorePanel duplicado en BG-Canvas, panel de selección responsive sin cortes, eliminación de sombra de trébol en el mapa, HUD limpio sin 999 ni emojis rotos.
+> **Última actualización:** 30/10/2026 — Implementación y cierre de ScriptableObject WorldData (Mundo 1), WorldCompletePanel pixel-art en UI-Canvas, slot de BonusHeart, estrellas vacías y botón de Dado Secreto en GameOverPanel. Auditoría completa de tareas y Tech Debt.
 
 > [!CAUTION]
 > **REGLA ESTRICTA DE DISEÑO E IMPLEMENTACIÓN (NO NEGOCIABLE):**
 > **CERO ICONOS / EMOJIS EN TEXTOS DE UNITY / TEXTMESHPRO.**
 > Unity no es una web ni un navegador. Los atlas de fuentes (SDF / TTF) en Unity NO contienen glifos de emojis unicode (`🛒`, `💎`, `🍀`, `❤️`, `★`, `✓`, etc.). Meter emojis o símbolos unicode en `m_text` o en strings de C# provoca que TextMeshPro dibuje caracteres rotos / cajas cuadradas (`□`) en pantalla.
 > **Si se requiere un icono visual (gema, trébol, corazón, carrito):** DEBE implementarse SIEMPRE como un GameObject con componente `Image` o `SpriteRenderer` usando el asset Sprite correspondiente. NUNCA poner emojis o caracteres especiales dentro del string del texto. Los textos deben ser 100% texto alfanumérico limpio en inglés.
+
+---
+
+## 🚀 Avance de Tareas y Estado de Deuda Técnica (30-Oct-2026)
+
+### ✅ Tareas Avanzadas y Completadas en esta Sesión:
+
+1. **Creación y Configuración del ScriptableObject `WorldData_World1.asset`:**
+   - Ubicación: `Assets/Data/WorldData_World1.asset`
+   - Configurado con los 11 niveles del Mundo 1 (`Level_0` al `Level_10`), 10 tréboles coleccionables, 3 fragmentos de dado secreto, 1100 gemas acumuladas, 30 estrellas máximas y escena de selección `"LevelSelection"`.
+
+2. **Cableado Multi-Mundo en Selección de Niveles (`LevelSelection.unity`):**
+   - El componente `MapPointsHolder` fue vinculado a `WorldData_World1.asset`, habilitando el modo multi-mundo.
+   - En el contenedor de UI `LevelInfo`, se creó y vinculó `Clover_Txt` a `UI_SelectController.cloverText`, mostrando `"CLOVER: FOUND"` o `"CLOVER: --"` directamente en la tarjeta de información del nivel en lugar de mostrar una sombra en el escenario 2D.
+
+3. **Cableado de Niveles de Gameplay (`Level_0` a `Level_10`):**
+   - En cada escena de nivel, `LevelManager.currentWorldData` quedó serializado apuntando a `WorldData_World1.asset`.
+   - `LevelManager.worldCompleteController` quedó vinculado al componente `WorldCompleteController` del Canvas.
+
+4. **Creación e Integración de `WorldCompletePanel` en `UI-Canvas.prefab`:**
+   - Construido con la estética pixel-art nativa (`UI_Panel.png` 9-slice y `Pixelnauts SDF 1`).
+   - Gobernado por `WorldCompleteController.cs`, muestra título *"WORLD COMPLETED!"*, nombre del mundo, estrellas totales, gemas acumuladas, tréboles y mejor tiempo global formateado (`00:00:00`).
+   - Botón *"Continue to Map"* conectado al evento `ContinueToNextWorld()`. Arranca inactivo (`SetActive(false)`).
+
+5. **Slot Visual de Corazón Extra (`BonusHeart` en HUD):**
+   - En `UI-Canvas.prefab` (`LifesContainer`), se añadió el 5º slot `BonusHeart` (Image) y se asignó al campo `UIController.bonusHeartIcon`.
+   - `UIController.cs` activa y actualiza automáticamente este slot con los sprites de corazón (vacío, medio o lleno) cuando `maxHealth` supera los 4 corazones base al usar el Dado Secreto.
+
+6. **Generación de Sprite de Estrella Vacía (`star_empty.png`):**
+   - Se generó el asset pixel-art `Assets/2D Platformer Assets/Graphics/UI/star_empty.png` (32×32) con su correspondiente `.meta`.
+   - Se vincularon `starFull` (`star.png`) y `starEmpty` (`star_empty.png`) en `UIController` para la calificación de fin de nivel (1, 2 o 3 estrellas).
+
+7. **Botón de Dado Secreto en `GameOverPanel`:**
+   - En `UI-Canvas.prefab`, se añadió el botón pixel-art `UseSecretDiceButton` (*"Secret Dice (4-6 Lives)"*), vinculado a `GameOverController.useSecretDiceButton`.
+   - Inicia oculto y se activa automáticamente solo si el jugador desbloqueó el Dado Secreto del mundo (`SaveManager.Instance.IsSecretDiceUnlocked(1)`).
+
+---
+
+### 📋 Estado de Deuda Técnica (Tech Debt) Identificado para Producción:
+
+A continuación se detalla de forma clara el Tech Debt restante y los prerequisitos que deben atenderse antes de la salida pública a tiendas:
+
+| Área | Ítem de Tech Debt | Impacto / Severidad | Qué se requiere para resolverlo |
+|---|---|---|---|
+| **Monetización (Ads)** | Flujo de Consentimiento CMP / GDPR | **P0 (Lanzamiento Público)** | `AdsManager.cs` corre actualmente en modo prueba/seguro. Para producción internacional se debe implementar el diálogo de consentimiento CMP/UMP y activar `AdsManager.SetPrivacyEligibilityResolved(true)` tras la respuesta real del usuario. |
+| **Tienda Apple (IAP)** | Captura real de pantalla de `StorePanel` | **P0 (App Review IAP)** | En App Store Connect, el producto No-Consumible `com.fatcatgamestudio.foxstale.noads` exige adjuntar una captura real del panel in-game en la sección *Review Information* antes de enviar la app a revisión formal. |
+| **Monetización (IAP)** | Prueba en Dispositivo Físico Sandbox | **P1 (QA de Verificación)** | Probar flujo de compra y restauración con cuentas de prueba (Google Play License Testers y Apple StoreKit Sandbox) para certificar que el recibo de RevenueCat activa el entitlement `remove_ads` y oculta anuncios en vivo. |
+| **Progreso (UGS)** | Leaderboards online por nivel | **P2 (Post-Launch / Fase 6)** | No está definido el GDD para ranking competitivo online. `LevelRatingSystem` calcula estrellas y guarda el récord localmente vía `SaveManager`; si en el futuro se desea tabla global, se integrará con Unity Gaming Services (UGS Leaderboards). |
+| **Arte / UI** | VFX de recolección de Trébol | **P2 (Polish visual)** | `TrebolPickup.cs` tiene el slot `effect` opcional. Actualmente reproduce sonido y se recolecta limpiamente; se puede añadir una partícula de chispas verdes opcional en el futuro. |
 
 ---
 
