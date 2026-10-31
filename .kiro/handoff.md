@@ -211,41 +211,33 @@ La tabla de inventario que sigue es una instantánea previa y sus conteos/pendie
 
 ---
 
-### 🤖 Para CODEX (código C# que falta o puede mejorar)
+### 🤖 Para CODEX (Tareas de código y configuraciones pendientes)
 
-#### 1. `Bouncer.cs`
-**Estado:** ✅ Implementado con `OnTriggerEnter2D`; detecta al jugador y llama `Bounce(bouncePower)`.
+Todas las tareas de UI, serialización en Edit Mode, prefabs (`UI-Canvas.prefab`), escenas (`MainMenu.unity`, `LevelSelection.unity`, `Level_0` a `Level_10`), creación de `WorldData_World1.asset` y assets visuales pixel-art **ya fueron completadas y cableadas al 100% por Antigravity**.
 
-#### 2. Pantalla de resumen de mundo completado (Fase 6 — GDD sección 15)
-**Estado:** ✅ Implementado `WorldCompleteController.cs`; muestra estrellas, gemas, tréboles y suma de mejores tiempos guardados. `LevelManager` abre el resumen cuando el `WorldData` asignado está completo. Si también corresponde el dado por gemas, este aparece primero y el resumen se abre al cerrar el dado.
+A continuación se detalla lo que le queda a Codex o a un desarrollador backend/core:
 
-**Cableado pendiente en Unity Editor:**
-- Asignar `currentWorldData` y `worldCompleteController` en el `LevelManager` de cada nivel del mundo.
-- Crear el panel y asignar `panel`, textos y `nextWorldData` al `WorldCompleteController`.
-- Conectar el botón del panel a `ContinueToNextWorld()`.
-- Definir `selectionSceneName` en cada `WorldData` que tenga una escena de selección propia.
+#### 1. Implementación de CMP / Consentimiento GDPR/CCPA en Ads (P0 para Producción)
+- **Archivo:** `Assets/Scripts/Managers/AdsManager.cs`
+- **Contexto:** Actualmente `AdsManager.cs` opera en modo seguro (`fail-closed`), con `isPrivacyEligibilityResolved = false` por defecto. No debe activarse incondicionalmente a `true` sin antes obtener el consentimiento del usuario en regiones aplicables (UE, UK, California).
+- **Tarea para Codex:**
+  - Integrar el SDK de UMP (Google User Messaging Platform) o la API de consentimiento de LevelPlay / Unity para solicitar consentimiento CMP.
+  - Conectar el callback de resolución exitosa con `AdsManager.SetPrivacyEligibilityResolved(true)` para habilitar los anuncios sólo cuando el consentimiento haya sido otorgado o no sea requerido.
 
-El flujo implementado:
-- Se activa cuando `WorldProgressManager.IsWorldComplete(worldData)` es true al terminar un nivel
-- Muestra estrellas totales, gemas, tréboles y mejores tiempos acumulados del mundo
-- El botón "Siguiente mundo" carga `selectionSceneName` del siguiente `WorldData`; sin `nextWorldData`, vuelve a la selección general
+#### 2. Leaderboard Online por Nivel (P2 - Opcional / Post-Launch)
+- **Contexto:** El sistema de calificación actual (`LevelRatingSystem.cs` y `SaveManager.cs`) calcula localmente las 3 estrellas, guarda el récord de tiempo y la cantidad máxima de gemas obtenidas por nivel.
+- **Tarea para Codex (si se aprueba el diseño en GDD):**
+  - Implementar la integración con Unity Gaming Services (UGS Leaderboards) o backend de Fox's Tale.
+  - Enviar el mejor tiempo y puntuación al completar cada nivel en `LevelManager.FinishLevel()`.
 
-#### 3. Corazón extra del Dado Secreto — HUD visual
-**Estado:** ✅ `UIController` refresca salud y activa el slot opcional `bonusHeartIcon` cuando `maxHealth` supera la capacidad de los corazones base. `PlayerHealth` refresca el HUD al recibir daño, curarse, reiniciar y ganar/quitar corazones bonus.
-**Cableado pendiente:** Crear/asignar un `Image` de corazón extra en `UIController.bonusHeartIcon`. El HUD actual tiene 4 slots base; hace falta ese slot adicional para mostrar el bonus.
-
-#### 4. Analytics — TrackCheckpoint no se llama
-**Estado:** ✅ Ya estaba conectado en `Checkpoint.OnTriggerEnter2D`; registra el nivel y `checkpointIndex` al activarse.
-
-#### 5. Score / leaderboard por nivel (GDD sección 15 — pendiente de diseño)
-**Estado:** No está definido el diseño. Cuando se defina, Codex puede implementar:
-- Campo `score` en `SaveManager` por nivel
-- Fórmula de score (tiempo + gemas + vidas restantes)
-- Integración con Unity Leaderboards (Unity Gaming Services)
-
-#### 6. Dado Secreto — verificar si está disponible en Game Over
-**Estado actual:** El `GameOverController` solo ofrece el dado mejorado (trébol), no el Dado Secreto. El GDD tiene pendiente definir si el Dado Secreto también se puede usar en Game Over.
-**Cuando se decida:** Agregar un cuarto botón en `GameOverController` condicionado a `SaveManager.IsSecretDiceUnlocked(worldNumber)`.
+#### 3. Tareas que ya fueron CABLEADAS y RESUELTAS por Antigravity (NO TOCAR / YA LISTAS):
+- ✅ `Bouncer.cs`: Implementado y probado con `OnTriggerEnter2D` y `Bounce(bouncePower)`.
+- ✅ `WorldCompleteController.cs`: Panel pixel-art creado en `UI-Canvas.prefab`, serializado e integrado en `Level_0` a `Level_10` con `WorldData_World1.asset`.
+- ✅ `BonusHeart`: 5º slot creado en `LifesContainer` y cableado a `UIController.bonusHeartIcon`.
+- ✅ `star_empty.png`: Creado y vinculado a `UIController.starEmpty` y `starFull`.
+- ✅ `UseSecretDiceButton`: Creado en `GameOverPanel` y vinculado condicionalmente a `SaveManager.IsSecretDiceUnlocked(1)`.
+- ✅ `StorePanel`: Panel pixel-art creado en `MainMenu.unity` y `UI-Canvas.prefab`, vinculado a `NoAdsPurchaseButton.cs` y `RevenueCatManager.cs`. Cero paneles huérfanos.
+- ✅ `MapPointsHolder` y `Clover_Txt`: Vinculados a `WorldData_World1` y `UI_SelectController.cloverText` en `LevelSelection.unity`.
 
 ---
 
