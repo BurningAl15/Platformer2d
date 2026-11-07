@@ -1,5 +1,9 @@
 # Fox's Tale
 
+<p align="center">
+  <img src="store-assets/play-store/icon.png" alt="Fox's Tale" width="180" />
+</p>
+
 Plataformero 2D de aventura por mundos desarrollado en Unity. El jugador explora niveles con mecánicas de salto, combate por pisoteo y coleccionables que alimentan un sistema de economía de suerte.
 
 **Estudio:** Fatcat Game Studio  
