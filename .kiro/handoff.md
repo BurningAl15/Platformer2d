@@ -1,5 +1,7 @@
 # Fox's Tale — Handoff: Fuente de Verdad
 
+> **FastTask:** tareas activas en [`../FastTask/tasks.json`](../FastTask/tasks.json); manifest y handoffs relacionados en [`../FastTask/project.json`](../FastTask/project.json). Procedimiento compartido: `../CurrentlyWorkin/docs/FASTTASK_PROJECT_WORKFLOW.md`.
+
 > Este archivo es la fuente de verdad del proyecto.
 > Se actualiza al terminar cada fase. Si hay duda sobre qué falta, leer esto primero.
 >
@@ -756,3 +758,48 @@ Tras las pruebas en dispositivo (Android e iPhone SE), se identificaron, corrigi
 7. **Responsividad en pantalla de selección de niveles (`LevelSelection.unity`):**
    - En `UI_SelectController.cs` y en la escena serializada `LevelSelection.unity`, `levelInfoContainer` fue configurado con pivot inferior `(0.5, 0)` y anclaje inferior con `visibleY = 30f` y `hiddenY = -350f`, garantizando visibilidad completa del panel en pantallas 16:9 como iPhone SE sin sufrir cortes en el tercio inferior.
 
+
+## Revisión Codex — estado del rediseño posterior a builds 3/4, 2026-10-31
+
+- FastTask `a7da262c-5c91-40c5-a1b8-5cc37a4667c6` pasa a `testing`.
+- Checkout: rama `refactor/trying-refactor`, HEAD `fcee102`; contiene `179e0af` y seguimientos `b312297`, `74d3110`, `07c0a63`, `9d314b2`. La tienda, assets pixel-art de dados, autosizing general y correcciones posteriores de overflow/localización sí están integradas en la rama actual.
+- Inspección estática confirma `StorePanel` en `UI-Canvas.prefab` y `MainMenu.unity`, los sprites `dice_face_1..6.png` y propiedades de texto autosizing/overflow. Esto no demuestra que el layout se renderice correctamente ni que la interacción/ciclo de tienda funcionen en dispositivo.
+- No se ejecutó Unity, no se generaron capturas ni se tocó signing. El build Android code 3 continúa marcado disponible en Play Internal; iOS build 4 está aceptado por ASC pero procesamiento/grupo sin verificar en el registro.
+- Próximo paso: Antigravity valida escenas/prefabs y capturas en dispositivo; después Codex usa `scripts/release-test.sh` y números siguientes verificados para un candidato interno. El 403 histórico de Play está resuelto para la cuenta de servicio y no debe volver a bloquear el flujo.
+
+### Firebase Android Gradle URI fix — 2026-11-04
+Added `Assets/Editor/BuildAutomation/FirebaseAndroidLocalRepositoryPostprocessor.cs` to normalize EDM’s generated Firebase local Maven URL for paths containing spaces. Keep the existing UPM EDM4U resolver; Firebase packages/config and Android/iOS validation remain outstanding. See FastTask task `local-8ebeec1f-cc0e-4dcb-9e94-2532ec866d16`.
+
+---
+
+## 🛠️ Integración de Navegación Móvil y Panel de Ajustes (Settings) — 07-Nov-2026
+
+- **FastTask Task:** `a7da262c-5c91-40c5-a1b8-5cc37a4667c6` (Pasa de `doing` a `testing`).
+- **Problema Diagnosticado en Dispositivo Móvil:**
+  1. En `MainMenu.unity`: Ausencia total de opciones de audio o configuración. El usuario no podía mutear o ajustar volumen desde el inicio.
+  2. En `LevelSelection.unity`: Trampa de navegación. No existía ningún botón táctil para volver al Menú Principal ni para silenciar audio; el jugador móvil quedaba atrapado en el mapa.
+  3. En `AudioMixerManager.cs`: Existían los métodos `SetBackgroundMusicVolume()` y `SetBSFXMusicVolume()`, pero no tenían interfaz gráfica de usuario conectada.
+
+- **Solución Implementada y Serializada:**
+  1. **`SettingsController.cs` (`Assets/Scripts/UI/SettingsController.cs`):**
+     - Controla `SettingsPanel` pixel-art (`UI_Panel` 9-slice y `Pixelnauts SDF 1`).
+     - Toggles de Música (`MUSIC: ON` / `MUSIC: OFF`) y Sonido (`SFX: ON` / `SFX: OFF`) con feedback cromático dinámico (verde menta para activado, rojo suave para desactivado).
+     - Conectado a `AudioMixerManager.SetBackgroundMusicVolume()`, `SetSFXVolume()` y persistencia con `SaveManager.Instance.SaveMusicEnabled()` / `SaveSFXEnabled()`.
+     - Soporta teclado, gamepad (`EventSystem.SetSelectedGameObject`) y controles táctiles.
+  2. **Menú Principal (`MainMenu.unity`):**
+     - Añadido `Settings-Button` ("Settings", 400x75) en `ButtonMenu`.
+     - `ButtonMenu` expandido y equilibrado armónicamente en 540px de altura para acomodar 5 botones limpios: Continue (160), Start (80), Remove Ads (0), Settings (-80), Quit (-160).
+     - `SettingsPanel` instanciado y serializado al frente de `Canvas` principal, iniciando inactivo (`m_IsActive: 0`).
+  3. **Selección de Niveles (`LevelSelection.unity`):**
+     - Añadido botón pixel-art **`BackToMenuButton`** (`< MENU`, 170x65) anclado en la esquina superior izquierda `(40, -40)`, conectado a `SceneUtils.GoToMainScene()`.
+     - Añadido botón pixel-art **`SettingsButton`** (`SETTINGS`, 170x65) anclado en la esquina superior derecha `(-40, -40)`, conectado a `SettingsController.OpenSettings()`.
+     - `SettingsPanel` instanciado en `UI-Canvas`, iniciando inactivo.
+  4. **Gameplay HUD / Pausa (`UI-Canvas.prefab`):**
+     - `SettingsPanel` añadido y serializado como parte del prefab `UI-Canvas`.
+  5. **Helpers y Extensiones:**
+     - En `AudioMixerManager.cs`: Añadidos getters públicos `IsMusicOn`, `IsSFXOn` y alias `SetSFXVolume()`.
+     - En `SceneUtils.cs`: Añadidos helpers de instancia `GoToMainScene()` y `GoToSelectionScene()` para eventos persistentes de Unity UI.
+     - En `SceneElementSetup.cs`: Incorporado `CreateSettingsPanel()` y `CreateCornerPixelButton()` en el pipeline automatizado.
+  6. **Validación:**
+     - Ejecución y serialización en Unity 6000.6.0f1 (exit code 0).
+     - Validación de compilación C# en batchmode (exit code 0, 0 errores).

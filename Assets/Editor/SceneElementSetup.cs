@@ -17,7 +17,7 @@ using UnityEngine.UI;
 [InitializeOnLoad]
 public static class SceneElementSetup
 {
-    private const string SETUP_FLAG_KEY = "FoxsTale_PixelUISetup_Completed_v2";
+    private const string SETUP_FLAG_KEY = "FoxsTale_PixelUISetup_Completed_v3";
 
     static SceneElementSetup()
     {
@@ -205,6 +205,61 @@ public static class SceneElementSetup
         tmp.enableAutoSizing = true;
         tmp.fontSizeMin = 14f;
         tmp.fontSizeMax = baseSize;
+        tmp.alignment = TextAlignmentOptions.Center;
+        tmp.color = Color.white;
+        tmp.textWrappingMode = TextWrappingModes.NoWrap;
+        tmp.overflowMode = TextOverflowModes.Ellipsis;
+
+        return btn;
+    }
+
+    private static Button CreateCornerPixelButton(GameObject parent, string name, string label, Vector2 anchor, Vector2 pivot, Vector2 anchoredPos, Vector2 size, bool isWarning = false)
+    {
+        GameObject go = new GameObject(name);
+        go.transform.SetParent(parent.transform, false);
+
+        var rect = go.AddComponent<RectTransform>();
+        rect.anchorMin = anchor;
+        rect.anchorMax = anchor;
+        rect.pivot = pivot;
+        rect.sizeDelta = size;
+        rect.anchoredPosition = anchoredPos;
+
+        var (normal, highlighted, pressed, warning) = GetButtonSprites();
+
+        var img = go.AddComponent<Image>();
+        img.sprite = isWarning ? (warning ?? normal) : normal;
+        img.type = Image.Type.Sliced;
+        img.color = Color.white;
+
+        var btn = go.AddComponent<Button>();
+        btn.targetGraphic = img;
+        btn.transition = Selectable.Transition.SpriteSwap;
+
+        SpriteState state = new SpriteState
+        {
+            highlightedSprite = isWarning ? warning : highlighted,
+            pressedSprite = pressed,
+            selectedSprite = isWarning ? warning : highlighted
+        };
+        btn.spriteState = state;
+
+        GameObject textObj = new GameObject("Text (TMP)");
+        textObj.transform.SetParent(go.transform, false);
+
+        var textRect = textObj.AddComponent<RectTransform>();
+        textRect.anchorMin = Vector2.zero;
+        textRect.anchorMax = Vector2.one;
+        textRect.offsetMin = Vector2.zero;
+        textRect.offsetMax = Vector2.zero;
+
+        var tmp = textObj.AddComponent<TextMeshProUGUI>();
+        tmp.font = GetPixelFont();
+        tmp.text = label;
+        tmp.fontSize = 22f;
+        tmp.enableAutoSizing = true;
+        tmp.fontSizeMin = 14f;
+        tmp.fontSizeMax = 22f;
         tmp.alignment = TextAlignmentOptions.Center;
         tmp.color = Color.white;
         tmp.textWrappingMode = TextWrappingModes.NoWrap;
@@ -408,13 +463,19 @@ public static class SceneElementSetup
                 buttonMenu.gameObject.name = "ButtonMenu";
             }
 
-            // 2. Recrear StorePanel al frente del Canvas principal (y eliminar de cualquier otro canvas como BG-Canvas)
+            // 2. Recrear StorePanel y SettingsPanel al frente del Canvas principal (y eliminar de cualquier otro canvas como BG-Canvas)
             foreach (var c in Object.FindObjectsOfType<Canvas>(true))
             {
                 Transform sp = c.transform.Find("StorePanel");
                 if (sp != null)
                 {
                     Object.DestroyImmediate(sp.gameObject);
+                    modified = true;
+                }
+                Transform setP = c.transform.Find("SettingsPanel");
+                if (setP != null)
+                {
+                    Object.DestroyImmediate(setP.gameObject);
                     modified = true;
                 }
             }
@@ -427,44 +488,53 @@ public static class SceneElementSetup
                 modified = true;
             }
 
-            // 3. Crear o actualizar Store-Button en el menu con el estilo visual pixel-art idéntico
+            // 3. Crear o actualizar Store-Button y Settings-Button en el menu con el estilo visual pixel-art idéntico
             if (buttonMenu != null)
             {
                 RectTransform bmRect = buttonMenu.GetComponent<RectTransform>();
                 if (bmRect != null)
                 {
-                    bmRect.sizeDelta = new Vector2(400f, 480f);
+                    bmRect.sizeDelta = new Vector2(400f, 540f);
                 }
 
                 Transform continueBtn = buttonMenu.Find("Continue-Button");
                 Transform startBtn = buttonMenu.Find("Start-Button");
-                Transform quitBtn = buttonMenu.Find("Quit-Button");
                 Transform storeBtn = buttonMenu.Find("Store-Button");
+                Transform settingsBtn = buttonMenu.Find("Settings-Button");
+                Transform quitBtn = buttonMenu.Find("Quit-Button");
 
                 if (storeBtn != null)
                 {
                     Object.DestroyImmediate(storeBtn.gameObject);
                 }
+                if (settingsBtn != null)
+                {
+                    Object.DestroyImmediate(settingsBtn.gameObject);
+                }
 
-                Button newStoreBtn = CreatePixelButton(buttonMenu.gameObject, "Store-Button", "Remove Ads", Vector2.zero, new Vector2(400f, 85f));
+                Button newStoreBtn = CreatePixelButton(buttonMenu.gameObject, "Store-Button", "Remove Ads", Vector2.zero, new Vector2(400f, 75f));
                 storeBtn = newStoreBtn.transform;
+
+                Button newSettingsBtn = CreatePixelButton(buttonMenu.gameObject, "Settings-Button", "Settings", Vector2.zero, new Vector2(400f, 75f));
+                settingsBtn = newSettingsBtn.transform;
                 modified = true;
 
-                // Ordenar jerarquia de botones
+                // Ordenar jerarquia de botones (Continue, Start, Store, Settings, Quit)
                 if (continueBtn != null) continueBtn.SetSiblingIndex(0);
                 if (startBtn != null) startBtn.SetSiblingIndex(1);
                 storeBtn.SetSiblingIndex(2);
-                if (quitBtn != null) quitBtn.SetSiblingIndex(3);
+                settingsBtn.SetSiblingIndex(3);
+                if (quitBtn != null) quitBtn.SetSiblingIndex(4);
 
-                // Posicionar armonicamente de arriba a abajo
+                // Posicionar armonicamente de arriba a abajo (5 botones en 540px)
                 if (continueBtn != null)
                 {
                     RectTransform crt = continueBtn.GetComponent<RectTransform>();
                     crt.anchorMin = new Vector2(0.5f, 0.5f);
                     crt.anchorMax = new Vector2(0.5f, 0.5f);
                     crt.pivot = new Vector2(0.5f, 0.5f);
-                    crt.anchoredPosition = new Vector2(0f, 150f);
-                    crt.sizeDelta = new Vector2(400f, 85f);
+                    crt.anchoredPosition = new Vector2(0f, 160f);
+                    crt.sizeDelta = new Vector2(400f, 75f);
                 }
                 if (startBtn != null)
                 {
@@ -472,8 +542,8 @@ public static class SceneElementSetup
                     srt.anchorMin = new Vector2(0.5f, 0.5f);
                     srt.anchorMax = new Vector2(0.5f, 0.5f);
                     srt.pivot = new Vector2(0.5f, 0.5f);
-                    srt.anchoredPosition = new Vector2(0f, 50f);
-                    srt.sizeDelta = new Vector2(400f, 85f);
+                    srt.anchoredPosition = new Vector2(0f, 80f);
+                    srt.sizeDelta = new Vector2(400f, 75f);
                 }
                 if (storeBtn != null)
                 {
@@ -481,8 +551,17 @@ public static class SceneElementSetup
                     strt.anchorMin = new Vector2(0.5f, 0.5f);
                     strt.anchorMax = new Vector2(0.5f, 0.5f);
                     strt.pivot = new Vector2(0.5f, 0.5f);
-                    strt.anchoredPosition = new Vector2(0f, -50f);
-                    strt.sizeDelta = new Vector2(400f, 85f);
+                    strt.anchoredPosition = new Vector2(0f, 0f);
+                    strt.sizeDelta = new Vector2(400f, 75f);
+                }
+                if (settingsBtn != null)
+                {
+                    RectTransform setrt = settingsBtn.GetComponent<RectTransform>();
+                    setrt.anchorMin = new Vector2(0.5f, 0.5f);
+                    setrt.anchorMax = new Vector2(0.5f, 0.5f);
+                    setrt.pivot = new Vector2(0.5f, 0.5f);
+                    setrt.anchoredPosition = new Vector2(0f, -80f);
+                    setrt.sizeDelta = new Vector2(400f, 75f);
                 }
                 if (quitBtn != null)
                 {
@@ -490,8 +569,8 @@ public static class SceneElementSetup
                     qrt.anchorMin = new Vector2(0.5f, 0.5f);
                     qrt.anchorMax = new Vector2(0.5f, 0.5f);
                     qrt.pivot = new Vector2(0.5f, 0.5f);
-                    qrt.anchoredPosition = new Vector2(0f, -150f);
-                    qrt.sizeDelta = new Vector2(400f, 85f);
+                    qrt.anchoredPosition = new Vector2(0f, -160f);
+                    qrt.sizeDelta = new Vector2(400f, 75f);
                 }
 
                 // Enlazar Store-Button con StorePanel tanto via SerializedProperty como persistent listener
@@ -510,7 +589,17 @@ public static class SceneElementSetup
                         UnityEditor.Events.UnityEventTools.AddPersistentListener(newStoreBtn.onClick, noAdsScript.OpenPanel);
                     }
                 }
-                Debug.Log("[SceneElementSetup] Store-Button creado y posicionado armónicamente en ButtonMenu.");
+
+                // Crear y enlazar SettingsPanel
+                CreateSettingsPanel(canvas.gameObject, newSettingsBtn);
+                Transform settingsPanelObj = canvas.transform.Find("SettingsPanel");
+                if (settingsPanelObj != null)
+                {
+                    settingsPanelObj.SetAsLastSibling();
+                    settingsPanelObj.gameObject.SetActive(false);
+                }
+
+                Debug.Log("[SceneElementSetup] Store-Button y Settings-Button creados y posicionados armónicamente en ButtonMenu.");
             }
             else
             {
@@ -649,11 +738,57 @@ public static class SceneElementSetup
             modified = true;
         }
 
+        Canvas canvas = Object.FindObjectOfType<Canvas>();
+        if (canvas != null)
+        {
+            SceneUtils su = Object.FindObjectOfType<SceneUtils>();
+            if (su == null)
+            {
+                GameObject suObj = new GameObject("SceneUtils");
+                su = suObj.AddComponent<SceneUtils>();
+                modified = true;
+            }
+
+            // 1. Boton BackToMenu en esquina superior izquierda (retroceso seguro en movil)
+            Transform existingBack = canvas.transform.Find("BackToMenuButton");
+            if (existingBack != null)
+            {
+                Object.DestroyImmediate(existingBack.gameObject);
+            }
+            Button backBtn = CreateCornerPixelButton(canvas.gameObject, "BackToMenuButton", "< MENU",
+                new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(40f, -40f), new Vector2(170f, 65f));
+            UnityEditor.Events.UnityEventTools.AddPersistentListener(backBtn.onClick, su.GoToMainScene);
+
+            // 2. Boton Settings en esquina superior derecha
+            Transform existingSettingsBtn = canvas.transform.Find("SettingsButton");
+            if (existingSettingsBtn != null)
+            {
+                Object.DestroyImmediate(existingSettingsBtn.gameObject);
+            }
+            Button settingsBtn = CreateCornerPixelButton(canvas.gameObject, "SettingsButton", "SETTINGS",
+                new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(-40f, -40f), new Vector2(170f, 65f));
+
+            // 3. Crear SettingsPanel en el Canvas
+            Transform existingSettingsPanel = canvas.transform.Find("SettingsPanel");
+            if (existingSettingsPanel != null)
+            {
+                Object.DestroyImmediate(existingSettingsPanel.gameObject);
+            }
+            CreateSettingsPanel(canvas.gameObject, settingsBtn);
+            Transform settingsPanelObj = canvas.transform.Find("SettingsPanel");
+            if (settingsPanelObj != null)
+            {
+                settingsPanelObj.SetAsLastSibling();
+                settingsPanelObj.gameObject.SetActive(false);
+            }
+            modified = true;
+        }
+
         if (modified)
         {
             EditorSceneManager.MarkSceneDirty(scene);
             EditorSceneManager.SaveScene(scene);
-            Debug.Log($"[SceneElementSetup] LevelSelection configurado responsive y con trebol badges.");
+            Debug.Log($"[SceneElementSetup] LevelSelection configurado responsive, con boton BackToMenu, Settings y badges.");
         }
     }
 
@@ -837,6 +972,14 @@ public static class SceneElementSetup
         }
         CreateWorldCompletePanel(root);
 
+        // 7. Recrear SettingsPanel con estilo pixel art nativo
+        Transform existingSettingsPanel = root.transform.Find("SettingsPanel");
+        if (existingSettingsPanel != null)
+        {
+            Object.DestroyImmediate(existingSettingsPanel.gameObject);
+        }
+        CreateSettingsPanel(root, null);
+
         PrefabUtility.SaveAsPrefabAsset(root, prefabPath);
         PrefabUtility.UnloadPrefabContents(root);
         Debug.Log("[SceneElementSetup] UI-Canvas.prefab configurado en estilo pixel art nativo.");
@@ -1014,6 +1157,48 @@ public static class SceneElementSetup
 
         soNoAds.ApplyModifiedProperties();
         panelObj.SetActive(false);
+    }
+
+    private static GameObject CreateSettingsPanel(GameObject canvasRoot, Button openSettingsButton = null)
+    {
+        var (panelObj, container, cg, rect) = CreatePixelPanelRoot(canvasRoot, "SettingsPanel", new Vector2(580f, 440f));
+
+        var sc = panelObj.AddComponent<SettingsController>();
+        SerializedObject soSC = new SerializedObject(sc);
+        soSC.FindProperty("settingsPanel").objectReferenceValue = panelObj;
+        soSC.FindProperty("settingsCanvasGroup").objectReferenceValue = cg;
+
+        // Título
+        CreatePixelText(container, "SettingsTitle", "SETTINGS", 36f, new Vector2(0f, 150f), new Vector2(500f, 45f), new Color(1f, 0.88f, 0.2f));
+
+        // Botón Music Toggle
+        Button musicBtn = CreatePixelButton(container, "MusicToggleButton", "MUSIC: ON", new Vector2(0f, 65f), new Vector2(380f, 65f));
+        TextMeshProUGUI musicTxt = musicBtn.GetComponentInChildren<TextMeshProUGUI>();
+        soSC.FindProperty("musicToggleButton").objectReferenceValue = musicBtn;
+        soSC.FindProperty("musicStatusText").objectReferenceValue = musicTxt;
+        UnityEditor.Events.UnityEventTools.AddPersistentListener(musicBtn.onClick, sc.ToggleMusic);
+
+        // Botón SFX Toggle
+        Button sfxBtn = CreatePixelButton(container, "SFXToggleButton", "SFX: ON", new Vector2(0f, -15f), new Vector2(380f, 65f));
+        TextMeshProUGUI sfxTxt = sfxBtn.GetComponentInChildren<TextMeshProUGUI>();
+        soSC.FindProperty("sfxToggleButton").objectReferenceValue = sfxBtn;
+        soSC.FindProperty("sfxStatusText").objectReferenceValue = sfxTxt;
+        UnityEditor.Events.UnityEventTools.AddPersistentListener(sfxBtn.onClick, sc.ToggleSFX);
+
+        // Botón Cerrar
+        Button closeBtn = CreatePixelButton(container, "CloseButton", "CLOSE", new Vector2(0f, -110f), new Vector2(240f, 60f), isWarning: true);
+        soSC.FindProperty("closeButton").objectReferenceValue = closeBtn;
+        UnityEditor.Events.UnityEventTools.AddPersistentListener(closeBtn.onClick, sc.CloseSettings);
+
+        if (openSettingsButton != null)
+        {
+            soSC.FindProperty("openSettingsButton").objectReferenceValue = openSettingsButton;
+            UnityEditor.Events.UnityEventTools.AddPersistentListener(openSettingsButton.onClick, sc.OpenSettings);
+        }
+
+        soSC.ApplyModifiedProperties();
+        panelObj.SetActive(false);
+        return panelObj;
     }
 
     private static void CreateWorldCompletePanel(GameObject canvasRoot)

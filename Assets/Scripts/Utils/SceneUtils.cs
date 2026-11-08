@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -38,6 +38,16 @@ public class SceneUtils : MonoBehaviour
         else
             SceneManager.LoadScene("MainMenu");
     }
+
+    /// <summary>
+    /// Helper de instancia para botones de UI (e.g. UnityEvent persistent listener).
+    /// </summary>
+    public void GoToMainScene() => ToMainScene();
+
+    /// <summary>
+    /// Helper de instancia para botones de UI (e.g. UnityEvent persistent listener).
+    /// </summary>
+    public void GoToSelectionScene() => ToSelectionScene();
 
     public static void LoadScene(string sceneName)
     {

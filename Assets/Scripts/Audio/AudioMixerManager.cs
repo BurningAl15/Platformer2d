@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Audio;
@@ -127,6 +127,9 @@ public class AudioMixerManager : MonoBehaviour
     // ─────────────────────────────
     private bool isMusicOn = true;
     private bool isSFXOn   = true;
+
+    public bool IsMusicOn => isMusicOn;
+    public bool IsSFXOn   => isSFXOn;
 
     // Pitch de combo de gemas
     private float gemPitch    = 0.5f;
@@ -353,6 +356,9 @@ public class AudioMixerManager : MonoBehaviour
         SaveManager.Instance?.SaveSFXEnabled(isSFXOn);
         RefreshAudioButtons();
     }
+
+    /// <summary>Alias sin typo para SetBSFXMusicVolume.</summary>
+    public void SetSFXVolume() => SetBSFXMusicVolume();
 
     // ─────────────────────────────────────────────────────────────────────────
     //  Helpers privados

@@ -1,0 +1,61 @@
+{
+  "schemaVersion": 1,
+  "tasks": [
+    {
+      "id": "a7da262c-5c91-40c5-a1b8-5cc37a4667c6",
+      "title": "Revisar e integrar el rediseño pixel-art posterior al build 3/4",
+      "description": "P0 QA. Rediseño pixel-art e integración de navegación móvil completados y serializados:\n1. Creado SettingsPanel pixel-art gobernado por SettingsController.cs con toggles de Música ON/OFF y SFX ON/OFF conectados a AudioMixerManager y SaveManager.\n2. Integrado botón 'Settings' en MainMenu.unity (ButtonMenu distribuido armónicamente en 540px con Start, Store, Settings y Quit).\n3. Integrado botón '< MENU' (SceneUtils.ToMainScene) y botón 'SETTINGS' en LevelSelection.unity, resolviendo el bloqueo de navegación en móviles.\n4. SettingsPanel serializado en UI-Canvas.prefab.\n5. Compilación limpia en Unity 6000.6.0f1 (exit code 0). Pasa a testing para validación en dispositivo.\nFuente: .kiro/handoff.md",
+      "status": "testing",
+      "createdAt": "2026-10-31T13:40:41+00:00",
+      "updatedAt": "2026-11-07T20:20:00-05:00"
+    },
+    {
+      "id": "d3b51c36-9b66-42c7-88b1-45823621a81e",
+      "title": "Cerrar consentimiento y elegibilidad de anuncios",
+      "description": "P0 producción. AdsManager mantiene fail-closed y no hay caller válido que resuelva privacidad; no forzar SetPrivacyEligibilityResolved(true). Implementar/revisar CMP y reglas por región/audiencia; confirmar rewarded/interstitial, no-fill, doble toque y supresión por Remove Ads en Android/iOS. Cierre: evidencia de consentimiento aceptado/denegado y pruebas de anuncios en ambos dispositivos.\nFuente: docs/ANTIGRAVITY_PRODUCTION_HANDOFF_2026-10-28.md\n\n2026-11-03 Codex: portados a Gradle/manifest Android los requisitos AndroidX JavaScriptEngine/WebKit, queries de package visibility y flags de optimización AdMob. AdsManager ya cancela el timeout de gracia al recibir recompensa y usa WaitForSecondsRealtime; no se alteraron las reglas de elegibilidad/consentimiento ni IDs. Pendiente validar manifiesto combinado, build y anuncios reales/test en dispositivo.",
+      "status": "testing",
+      "createdAt": "2026-10-31T13:40:41+00:00",
+      "updatedAt": "2026-11-03T12:30:00-05:00"
+    },
+    {
+      "id": "49b77c90-d7e5-466d-be9e-2b0b0aba03d7",
+      "title": "Completar ficha Play y metadata del IAP Apple",
+      "description": "P0 producción. Reconfirmar tareas pendientes de Play (listing, audience, ads, Data Safety/IARC y cambios sin enviar); IAP Apple 6827746088 requiere captura real y metadata. RevenueCat reportó Play Could not check y Apple Missing Metadata; comprobar credenciales/catálogo sin copiar secretos al repo. Cierre: estados actuales de consola registrados y tareas enviadas/listas según proceda.\nFuente: docs/ANTIGRAVITY_PRODUCTION_HANDOFF_2026-10-28.md",
+      "status": "todo",
+      "createdAt": "2026-10-31T13:40:41+00:00",
+      "updatedAt": "2026-10-31T13:40:41+00:00"
+    },
+    {
+      "id": "76c214fc-b5c1-4a14-a610-9b7516314de6",
+      "title": "Verificar builds recientes y preparar candidato de prueba en ambas tiendas",
+      "description": "P1 QA. Build Android code 3 está disponible en Play Internal; iOS build 4 fue recibido, pero el procesamiento/grupo no quedó confirmado en el registro. Confirmar el estado actual en consolas; integrar el checkout vigente usando scripts/release-test.sh solo si hace falta nuevo binario, con números mayores. Cierre: AAB disponible para testers, IPA instalable en grupo TestFlight y build instalado identificado; sin promover a producción.\nFuente: .kiro/handoff.md",
+      "status": "todo",
+      "createdAt": "2026-10-31T13:40:41+00:00",
+      "updatedAt": "2026-10-31T13:40:41+00:00"
+    },
+    {
+      "id": "2414d68c-da56-40eb-9745-a03027b7bbd3",
+      "title": "Ejecutar matriz de QA de tienda, juego y privacidad",
+      "description": "P1 QA. En Android/iOS probar controles táctiles y gamepad, niveles/tutorial, tienda, compra/restauración sandbox, persistencia, ads/no-fill y safe areas; revisar política/privacy manifests contra el SDK que efectivamente quede incluido. Cierre: tabla por plataforma con evidencia, defectos registrados y veredicto separado de producción.\nFuente: docs/ANTIGRAVITY_PRODUCTION_HANDOFF_2026-10-28.md",
+      "status": "todo",
+      "createdAt": "2026-10-31T13:40:41+00:00",
+      "updatedAt": "2026-10-31T13:40:41+00:00"
+    },
+    {
+      "id": "cloud-vcRigedpfXLGbPzuu46J",
+      "title": "\"Finish mobile integration\" 's-Tale's",
+      "description": "",
+      "status": "done",
+      "createdAt": "2025-12-06T23:45:29.834Z",
+      "updatedAt": "2025-12-06T23:45:29.834Z"
+    },
+    {
+      "id": "local-8ebeec1f-cc0e-4dcb-9e94-2532ec866d16",
+      "title": "Add Firebase Analytics and Crashlytics",
+      "description": "Integrate Firebase Unity SDK 14.1.0 Analytics and Crashlytics for Android/iOS app ID com.fatcatgamestudio.foxstale. Import only Analytics and Crashlytics packages, resolve shared FirebaseApp/EDM4U dependencies, add platform Firebase config and shared analytics/error reporting facade. Track package import, configuration, build and device verification separately.\n\n2026-11-03 Codex · plan de paquetes: Analytics 14.1.0 para eventos/retención y Crashlytics 14.1.0 para crashes/errores, sin otros módulos. Procedimiento Unity demostrado en Mix2Word: Assets > Import Asset Package..., elegir cada .unitypackage en ~/Downloads/firebase_unity_sdk, revisar selección e importar; esperar compilación. Fox's Tale ya usa com.unity.external-dependency-manager 2.1.1 por UPM; después de importar Firebase se debe conservar ese resolver y quitar únicamente la carpeta redundante Assets/ExternalDependencyManager importada desde Firebase. Aún no se inició la importación ni se verificaron archivos Firebase en este proyecto. Pendiente importar, registrar/configurar app Firebase, añadir fachada y validar.\n\n2026-11-04 Prioridad acordada: P2 diferido. Fox’s Tale sigue en desarrollo; retomar Firebase después de Mix2Match/Mix2Word y Lazy Lovers.\n\n2026-11-04 Codex · guard de Gradle Firebase: Fox’s Tale aún no tiene los paquetes Firebase importados; mantiene EDM4U por UPM. Se añadió el postprocessor preventivo para normalizar la ruta del Maven local Firebase en el Gradle generado, sin sustituir EDM4U. Pendiente importar Analytics/Crashlytics, conservar un solo resolver, configurar Firebase y validar Android/iOS.",
+      "status": "doing",
+      "createdAt": "2026-11-03T23:30:00-05:00",
+      "updatedAt": "2026-11-04T08:40:00-05:00"
+    }
+  ]
+}
