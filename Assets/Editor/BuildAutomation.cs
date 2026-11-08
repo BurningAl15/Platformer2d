@@ -188,6 +188,15 @@ public static class BuildAutomation
     {
         PlayerSettings.companyName = COMPANY_NAME;
         PlayerSettings.productName = PRODUCT_NAME;
+
+        Texture2D icon = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/FoxsTaleAppIcon_1024.png");
+        if (icon != null)
+        {
+            Texture2D[] icons = new Texture2D[] { icon };
+            PlayerSettings.SetIconsForTargetGroup(BuildTargetGroup.Unknown, icons);
+            PlayerSettings.SetIconsForTargetGroup(BuildTargetGroup.Android, icons);
+            PlayerSettings.SetIconsForTargetGroup(BuildTargetGroup.iOS, icons);
+        }
     }
 
     private static void ConfigureAndroidSettings(bool isAppBundle)

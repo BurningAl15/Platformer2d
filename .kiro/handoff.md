@@ -823,3 +823,20 @@ Added `Assets/Editor/BuildAutomation/FirebaseAndroidLocalRepositoryPostprocessor
   - **Track:** Apple TestFlight
   - **Estado de subida:** `Successfully uploaded package to App Store Connect` vía Fastlane pilot.
   - **Acceso:** Disponible en la app TestFlight para el grupo de testers internos de Fat Cat Game Studio una vez que Apple concluya el procesamiento del build.
+
+---
+
+## 🛠️ Corrección Crítica en Android: Build 5 (07-Nov-2026)
+
+- **Defecto Reportado:** En Android Build 4 (`FoxsTale_4.aab`), tras instalar desde Google Play, solo aparecía el botón "Desinstalar" y la app no se podía abrir ni jugar; tampoco aparecía ícono en el launcher del dispositivo.
+- **Diagnóstico:** `Assets/Plugins/Android/AndroidManifest.xml` sobreescribió la plantilla base de Unity sin declarar `UnityPlayerActivity` con el `<intent-filter>` de categoría `LAUNCHER` y acción `MAIN`. El OS Android trataba el paquete como servicio/librería sin actividad ejecutable.
+- **Corrección:**
+  1. `Assets/Plugins/Android/AndroidManifest.xml`: Declarada `com.unity3d.player.UnityPlayerActivity` exportable (`android:exported="true"`) con `MAIN` y `LAUNCHER`.
+  2. `Assets/Editor/BuildAutomation.cs`: Integrada asignación de `Assets/FoxsTaleAppIcon_1024.png` como ícono de plataforma en `PlayerSettings`.
+  3. `FastTask/builds.json` y `FastTask/tasks.json`: Build 4 registrado con QA fallido por ausencia de launcher activity; Build 5 registrado como candidato activo.
+- **Android Build 5 Generado y Subido:**
+  - **Binario:** `Builds/CI/Android/FoxsTale_5.aab`
+  - **VersionCode:** `5` (versión `1.0.1`)
+  - **Track:** Google Play Internal Testing (`internal`)
+  - **Estado de subida:** `Successfully finished the upload to Google Play` (`Result: [5]`).
+  - **Enlace de Prueba:** `https://play.google.com/apps/internaltest/4701171198282852565`
