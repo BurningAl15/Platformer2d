@@ -28,10 +28,10 @@
     {
       "id": "76c214fc-b5c1-4a14-a610-9b7516314de6",
       "title": "Verificar builds recientes y preparar candidato de prueba en ambas tiendas",
-      "description": "P1 QA. Build Android code 3 está disponible en Play Internal; iOS build 4 fue recibido, pero el procesamiento/grupo no quedó confirmado en el registro. Confirmar el estado actual en consolas; integrar el checkout vigente usando scripts/release-test.sh solo si hace falta nuevo binario, con números mayores. Cierre: AAB disponible para testers, IPA instalable en grupo TestFlight y build instalado identificado; sin promover a producción.\nFuente: .kiro/handoff.md",
-      "status": "todo",
+      "description": "P1 QA. Candidato de prueba compilado y subido a ambas tiendas:\n1. Android: FoxsTale_4.aab (versionCode 4) subido a Google Play Internal Testing con Fastlane.\n2. iOS: FoxsTale.ipa (build 5) subido a App Store Connect / TestFlight con Fastlane.\nAmbos binarios contienen el nuevo SettingsPanel, botón Settings en MainMenu y navegación Back/Settings en LevelSelection. Pasa a testing mientras Apple procesa y se verifica disponibilidad para testers.\nFuente: .kiro/handoff.md",
+      "status": "testing",
       "createdAt": "2026-10-31T13:40:41+00:00",
-      "updatedAt": "2026-10-31T13:40:41+00:00"
+      "updatedAt": "2026-11-07T22:30:00-05:00"
     },
     {
       "id": "2414d68c-da56-40eb-9745-a03027b7bbd3",

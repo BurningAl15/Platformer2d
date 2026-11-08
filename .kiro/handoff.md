@@ -803,3 +803,23 @@ Added `Assets/Editor/BuildAutomation/FirebaseAndroidLocalRepositoryPostprocessor
   6. **Validación:**
      - Ejecución y serialización en Unity 6000.6.0f1 (exit code 0).
      - Validación de compilación C# en batchmode (exit code 0, 0 errores).
+
+---
+
+## 🚀 Candidatos de Prueba Generados y Subidos (07-Nov-2026)
+
+- **FastTask Task:** `76c214fc-b5c1-4a14-a610-9b7516314de6` (Pasa de `doing` a `testing`).
+- **Android:**
+  - **Binario:** `Builds/CI/Android/FoxsTale_4.aab`
+  - **VersionCode:** `4` (versión `1.0.1`)
+  - **Track:** Google Play Internal Testing (`internal`)
+  - **Estado de subida:** `Successfully finished the upload to Google Play` vía Fastlane supply (`release_status: completed`).
+  - **Enlace de Invitación / Instalación para Testers:**
+    `https://play.google.com/apps/internaltest/4701171198282852565`
+- **iOS:**
+  - **Binario:** `Builds/CI/iOS/ipa/FoxsTale.ipa` con símbolos en `FoxsTale.app.dSYM.zip`
+  - **Build Number:** `5` (versión `1.0.1`)
+  - **App ID:** `6827745041` (`com.fatcatgamestudio.foxstale`)
+  - **Track:** Apple TestFlight
+  - **Estado de subida:** `Successfully uploaded package to App Store Connect` vía Fastlane pilot.
+  - **Acceso:** Disponible en la app TestFlight para el grupo de testers internos de Fat Cat Game Studio una vez que Apple concluya el procesamiento del build.

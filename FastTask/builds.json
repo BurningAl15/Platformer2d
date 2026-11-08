@@ -1,0 +1,65 @@
+{
+  "schemaVersion": 1,
+  "builds": [
+    {
+      "id": "e2a4b6c8-9d10-4f32-8e45-1a3b5c7d9e0f",
+      "platform": "ios",
+      "number": "5",
+      "iosBuild": "5",
+      "uploadRequested": true,
+      "status": "uploaded_processing_unverified",
+      "finishedAt": "2026-11-07",
+      "source": ".kiro/handoff.md",
+      "storeStatus": "App Store Connect confirmó recepción de build 5; Fastlane omitió espera de procesamiento. Pendiente confirmación de procesamiento de Apple y disponibilidad en grupo TestFlight.",
+      "storeUpload": "accepted",
+      "storeProcessing": "not_checked",
+      "testerAvailability": "not_checked",
+      "deviceQA": "unrecorded"
+    },
+    {
+      "id": "c1f8e21a-7b34-4a89-91c2-3e5f6d7a8b9c",
+      "platform": "android",
+      "number": "4",
+      "androidCode": "4",
+      "uploadRequested": true,
+      "status": "uploaded_internal_testing",
+      "finishedAt": "2026-11-07",
+      "source": ".kiro/handoff.md",
+      "storeStatus": "Fastlane subió FoxsTale_4.aab a Google Play Internal Testing con éxito.",
+      "storeUpload": "accepted",
+      "storeProcessing": "processed",
+      "testerAvailability": "available",
+      "deviceQA": "unrecorded"
+    },
+    {
+      "id": "488949e5-a096-4a21-99f3-1048821f8c80",
+      "platform": "android",
+      "number": "3",
+      "androidCode": "3",
+      "uploadRequested": true,
+      "status": "verified_internal_testing",
+      "finishedAt": "2026-10-30",
+      "source": ".kiro/handoff.md",
+      "storeStatus": "Play Console confirmó disponible para testers internos, lanzamiento completo. No se registró QA físico posterior al upload.",
+      "storeUpload": "accepted",
+      "storeProcessing": "processed",
+      "testerAvailability": "available",
+      "deviceQA": "unrecorded"
+    },
+    {
+      "id": "bb610d1e-313d-4a44-9c75-31855c236ddd",
+      "platform": "ios",
+      "number": "4",
+      "iosBuild": "4",
+      "uploadRequested": true,
+      "status": "uploaded_processing_unverified",
+      "finishedAt": "2026-10-30",
+      "source": ".kiro/handoff.md",
+      "storeStatus": "App Store Connect confirmó recepción; Fastlane omitió espera del procesamiento. Grupo TestFlight/disponibilidad no verificados.",
+      "storeUpload": "accepted",
+      "storeProcessing": "not_checked",
+      "testerAvailability": "not_checked",
+      "deviceQA": "unrecorded"
+    }
+  ]
+}
