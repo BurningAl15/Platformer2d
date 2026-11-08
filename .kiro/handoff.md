@@ -840,3 +840,35 @@ Added `Assets/Editor/BuildAutomation/FirebaseAndroidLocalRepositoryPostprocessor
   - **Track:** Google Play Internal Testing (`internal`)
   - **Estado de subida:** `Successfully finished the upload to Google Play` (`Result: [5]`).
   - **Enlace de Prueba:** `https://play.google.com/apps/internaltest/4701171198282852565`
+
+- **Android Build 6 y APK Directo de Diagnóstico:**
+  - **Binario AAB:** `Builds/CI/Android/FoxsTale_6.aab` (versionCode 6). Verificado con `aapt2 dump badging`: contiene `launchable-activity: name='com.unity3d.player.UnityPlayerActivity'`. Subido a Google Play Internal Testing (`Result: [6]`).
+  - **Binario APK Directo:** `Builds/FoxsTale_Test.apk` (51 MB), firmado con el keystore oficial de producción (v2/v3). Permite instalar directamente en el dispositivo móvil vía `adb install Builds/FoxsTale_Test.apk` o descargándolo al teléfono, eliminando los retrasos y el cacheo agresivo de Google Play Store app.
+  - **Nota de Icono en Play Store:** El icono que se muestra en la ficha de Google Play Store proviene de la Consola web de Google Play (Ficha principal de la tienda), no del AAB. La API de Google Play rechazó la actualización programática de imágenes (`The caller does not have permission`), por lo que la imagen de la ficha (`store-assets/play-store/icon.png`) debe actualizarse manualmente desde la consola web si se desea cambiar lo que muestra la tienda. En el dispositivo físico, el icono instalado sí toma los mipmaps del binario.
+
+## Observaciones de QA visual y flujo móvil — 2026-11-08
+
+El propietario reporta los siguientes defectos en el build móvil revisado. Se registran como pendientes; esta anotación no implica que se hayan corregido ni verificado:
+
+1. **Main Menu:** los textos de los botones añadidos se ven demasiado pequeños.
+2. **Acceso a compras:** cambiar el botón “No Ads” por un acceso general “Store/Shop”.
+3. **Settings en la primera vista:** el primer toque no abre el panel; el jugador tiene que pulsar dos veces.
+4. **Continue / controles táctiles:** el propietario no ve los controles móviles en la vista al continuar (captura `35916.jpg`). Reproducir y confirmar el flujo y la escena exactos antes de cambiar la configuración.
+5. **LevelSelection / Clover:** los elementos de la zona inferior de la tarjeta de nivel están desordenados; la etiqueta `CLOVER` queda desalineada (captura `35916.jpg`).
+6. **Estilo de popups:** el diálogo de confirmación de borrado de progreso se percibe feo y fuera del estilo pixel-art (captura `35915.jpg`). Revisar también el popup de Settings de `35917.jpg` como referencia del mismo pase visual.
+
+**Evidencia recibida:** `.codex-attachments/b3c68776-0c17-44d7-97f1-81a0fd923387/f23ffbb5-dec8-479b-afe3-81676ae5031c/35915.jpg`, `.../ceec7c3d-2bae-4847-98f9-728ffd0dd7cb/35916.jpg` y `.../37e29f52-be17-413a-b1c3-66173f38fbfd/35917.jpg`.
+
+**Estado:** pendiente investigar y corregir. No se tocaron scripts, escenas, prefabs ni builds en esta anotación. La tarea FastTask `a7da262c-5c91-40c5-a1b8-5cc37a4667c6` queda `doing` mientras se triagean estos defectos; después de implementar, deberá volver a `testing` hasta completar QA real en dispositivo.
+
+
+## Plataformas móviles — diagnóstico y primer experimento — 2026-11-08
+
+- **Relación confirmada en assets:** `MovingPlatform` está en la raíz; `OneWay-Large` es hijo, tiene tag `Platform`, `BoxCollider2D` y `Rigidbody2D` cinemático. `Player` tiene `Rigidbody2D` dinámico y collider en la raíz.
+- **Evaluación:** `TryAttach()` puede subir desde el collider hijo hasta el componente raíz con `GetComponentInParent<MovingPlatform>()`. En cambio, `OnCollisionStay2D` y `OnCollisionExit2D` comparaban el objeto que colisionó directamente con la raíz. La hipótesis quedó confirmada como fallo de identidad y de mantenimiento del estado de apoyo.
+- **Cambio aislado:** ambos callbacks resuelven ahora `MovingPlatform` desde el objeto de colisión y lo comparan con la plataforma adjunta. No se cambió el traslado del jugador por delta ni la mezcla `MovePosition`/`transform.position`. El historial ya contiene el enfoque previo con `rb.position` y luego su sustitución; no hay evidencia histórica que justifique repetir esa reversión.
+- **Pruebas Play Mode:** el smoke test temporal de callbacks confirmó apoyo en `Stay` y desprendimiento en `Exit`. Luego, usando los prefabs reales `Assets/Prefabs/Environment/MovingPlatform.prefab` y `Assets/Prefabs/ReUsable/Player.prefab` en una escena temporal, la plataforma recorrió 7,82 m; el jugador recorrió 7,80 m y acabó a 0,02 m de desfase, aún adjunto. El harness temporal se eliminó.
+- **Android:** se generó `Builds/CI/Android/FoxsTale_6.aab` y Fastlane confirmó la subida al track `internal`. Play Console confirmó versión 1.0.1, código 6, **Disponible para testers internos**. Aún no hay QA en dispositivo.
+- **iOS:** Unity 6000.6.0f1 exportó `Builds/CI/iOS/XcodeProject_6` localmente (salida 0); no es IPA y no se subió a TestFlight.
+- **Pendiente:** comprobar el recorrido en una escena completa y validar el caso original en Android/iPhone. El smoke test aísla la jerarquía real de prefabs, pero no cubre una escena de nivel ni dispositivos.
+- **Seguimiento:** tarea FastTask `3c0a75c4-c8f4-4d36-a0c8-5d8a94c13d4a` está `testing`. No hubo sincronización cloud disponible.

@@ -4,10 +4,10 @@
     {
       "id": "a7da262c-5c91-40c5-a1b8-5cc37a4667c6",
       "title": "Revisar e integrar el rediseño pixel-art posterior al build 3/4",
-      "description": "P0 QA. Rediseño pixel-art e integración de navegación móvil completados y serializados:\n1. Creado SettingsPanel pixel-art gobernado por SettingsController.cs con toggles de Música ON/OFF y SFX ON/OFF conectados a AudioMixerManager y SaveManager.\n2. Integrado botón 'Settings' en MainMenu.unity (ButtonMenu distribuido armónicamente en 540px con Start, Store, Settings y Quit).\n3. Integrado botón '< MENU' (SceneUtils.ToMainScene) y botón 'SETTINGS' en LevelSelection.unity, resolviendo el bloqueo de navegación en móviles.\n4. SettingsPanel serializado en UI-Canvas.prefab.\n5. Compilación limpia en Unity 6000.6.0f1 (exit code 0). Pasa a testing para validación en dispositivo.\nFuente: .kiro/handoff.md",
-      "status": "testing",
+      "description": "P0 QA. Rediseño pixel-art e integración de navegación móvil completados y serializados:\n1. Creado SettingsPanel pixel-art gobernado por SettingsController.cs con toggles de Música ON/OFF y SFX ON/OFF conectados a AudioMixerManager y SaveManager.\n2. Integrado botón 'Settings' en MainMenu.unity (ButtonMenu distribuido armónicamente en 540px con Start, Store, Settings y Quit).\n3. Integrado botón '< MENU' (SceneUtils.ToMainScene) y botón 'SETTINGS' en LevelSelection.unity, resolviendo el bloqueo de navegación en móviles.\n4. SettingsPanel serializado en UI-Canvas.prefab.\n5. Compilación limpia en Unity 6000.6.0f1 (exit code 0). Pasa a testing para validación en dispositivo.\nFuente: .kiro/handoff.md\n\n2026-11-08 — Observaciones de QA visual y flujo móvil reportadas por el propietario (pendientes de corrección; no se modificó código):\n- Main Menu: los textos de los botones nuevos se ven demasiado pequeños.\n- Main Menu: cambiar la llamada del botón de monetización de “No Ads” a un botón general “Store/Shop”.\n- Settings: en la primera vista, abrir Settings requiere dos pulsaciones.\n- Flujo Continue: al continuar, el propietario no ve los controles móviles en la vista indicada (captura 35916.jpg); confirmar escena/flujo exacto durante reproducción.\n- LevelSelection: la zona inferior de la tarjeta de nivel está desordenada; el dato/etiqueta CLOVER aparece fuera de alineación. Captura 35916.jpg.\n- Popups: el diálogo de confirmación de borrado de progreso se ve visualmente feo/inconsistente con el pixel-art. Captura 35915.jpg.\n- Capturas compartidas: .codex-attachments/b3c68776-0c17-44d7-97f1-81a0fd923387/{f23ffbb5-dec8-479b-afe3-81676ae5031c/35915.jpg,ceec7c3d-2bae-4847-98f9-728ffd0dd7cb/35916.jpg,37e29f52-be17-413a-b1c3-66173f38fbfd/35917.jpg}. La imagen 35917.jpg muestra Settings abierto sobre la tarjeta inferior.\n- Estado: feedback registrado; aún no hay análisis de causa, cambios, build ni verificación de dispositivo para estos puntos. Mantener esta tarea abierta y validar menú inicial, primera pulsación de Settings, navegación Continue, HUD de selección, tarjeta Clover y diálogos en móvil.\n",
+      "status": "doing",
       "createdAt": "2026-10-31T13:40:41+00:00",
-      "updatedAt": "2026-11-07T20:20:00-05:00"
+      "updatedAt": "2026-11-08T00:00:00-05:00"
     },
     {
       "id": "d3b51c36-9b66-42c7-88b1-45823621a81e",
@@ -28,10 +28,10 @@
     {
       "id": "76c214fc-b5c1-4a14-a610-9b7516314de6",
       "title": "Verificar builds recientes y preparar candidato de prueba en ambas tiendas",
-      "description": "P1 QA. Candidato de prueba compilado y subido a ambas tiendas:\n1. Android: FoxsTale_5.aab (versionCode 5) subido a Google Play Internal Testing con Fastlane. Corrige el defecto crítico de build 4 (AndroidManifest carecía de actividad lanzadora LAUNCHER) e integra el nuevo icono oficial. Play Console confirmó activo en track internal.\n2. iOS: FoxsTale.ipa (build 5) subido a App Store Connect / TestFlight con Fastlane.\nAmbos binarios contienen el nuevo SettingsPanel, botón Settings en MainMenu y navegación Back/Settings en LevelSelection. Pasa a testing para verificación en dispositivo.\nFuente: .kiro/handoff.md",
+      "description": "P1 QA. Candidato de prueba compilado y subido a ambas tiendas:\n1. Android: FoxsTale_6.aab (versionCode 6) subido a Google Play Internal Testing con Fastlane. Incluye UnityPlayerActivity con MAIN y LAUNCHER comprobado con aapt2 dump badging. Generado también Builds/FoxsTale_Test.apk firmado para instalación directa sin depender de la caché de Google Play.\n2. iOS: FoxsTale.ipa (build 5 y 6) subido a App Store Connect / TestFlight con Fastlane.\nPasa a testing para verificación en dispositivo.\nFuente: .kiro/handoff.md",
       "status": "testing",
       "createdAt": "2026-10-31T13:40:41+00:00",
-      "updatedAt": "2026-11-07T23:55:00-05:00"
+      "updatedAt": "2026-11-08T01:35:00-05:00"
     },
     {
       "id": "2414d68c-da56-40eb-9745-a03027b7bbd3",
@@ -56,6 +56,14 @@
       "status": "doing",
       "createdAt": "2026-11-03T23:30:00-05:00",
       "updatedAt": "2026-11-04T08:40:00-05:00"
+    },
+    {
+      "id": "3c0a75c4-c8f4-4d36-a0c8-5d8a94c13d4a",
+      "title": "Investigar y corregir el seguimiento del jugador en plataformas móviles",
+      "description": "P1 Gameplay. Reproducir y validar el traslado del jugador sobre plataformas móviles. Hipótesis inicial: PlatformRider compara el GameObject del collider hijo con la raíz MovingPlatform en OnCollisionStay2D/Exit2D. Primer cambio aislado: resolver el componente MovingPlatform desde el GameObject que colisionó. No cambiar todavía el algoritmo de movimiento (Rigidbody2D.MovePosition frente a transform.position), porque la historia ya contiene ambos enfoques y no conserva resultados de prueba. Cierre: compilación, prueba de Play Mode con prefab jerárquico real y prueba de subir/bajar/salir de plataforma; registrar evidencia y no marcar done sin prueba de dispositivo si el fallo es específico de móvil.\n\n2026-11-08 Codex: OnCollisionStay2D/Exit2D now resolve MovingPlatform from the colliding GameObject parent, matching the serialized child-collider hierarchy. Unity 6000.6.0f1 generated the local iOS Xcode export Builds/CI/iOS/XcodeProject_6 (exit 0; no upload). Temporary Play Mode physics simulation with a root MovingPlatform, child tagged collider/kinematic Rigidbody2D and dynamic player passed support refresh and detach-on-exit assertions. Still needs testing with a moving path in a real level and on device; not done.\n\n2026-11-08 Codex: smoke test temporal Play Mode con prefabs reales; plataforma recorrió 7.82m, jugador 7.80m, desfase final 0.02m y seguía adjunto. Android FoxsTale_6.aab (code 6) subido con Fastlane; Play Console confirmó disponible para testers internos. iOS XcodeProject_6 exportado localmente, sin IPA/subida. Pendiente QA en una escena de nivel y en dispositivo.",
+      "status": "testing",
+      "createdAt": "2026-11-08T00:32:57-05:00",
+      "updatedAt": "2026-11-08T00:49:10-05:00"
     }
   ]
 }

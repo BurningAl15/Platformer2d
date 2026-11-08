@@ -2,6 +2,59 @@
   "schemaVersion": 1,
   "builds": [
     {
+      "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+      "platform": "android",
+      "number": "6",
+      "androidCode": "6",
+      "uploadRequested": true,
+      "status": "uploaded_internal_testing",
+      "finishedAt": "2026-11-08",
+      "source": ".kiro/handoff.md",
+      "storeStatus": "FoxsTale_6.aab compilado y subido a Google Play Internal Testing con Fastlane. Play Console confirmó versión 6 activa en track internal. Generado además Builds/FoxsTale_Test.apk firmado con keystore oficial para instalación directa.",
+      "storeUpload": "accepted",
+      "storeProcessing": "processed",
+      "testerAvailability": "available",
+      "deviceQA": "unrecorded"
+    },
+    {
+      "id": "fa5281c9-ced5-4018-b708-14c52fa5ac75",
+      "platform": "android",
+      "number": "6",
+      "androidCode": "6",
+      "uploadRequested": true,
+      "status": "available_to_testers",
+      "finishedAt": "2026-11-08T00:49:10-05:00",
+      "source": ".kiro/handoff.md",
+      "storeStatus": "AAB FoxsTale_6.aab compilado; Fastlane confirmó subida al track Google Play Internal Testing. Play Console mostró versión 1.0.1, código de versión 6, Disponible para testers internos el 8-nov-2026. QA físico aún no realizado.",
+      "pipelineResult": "succeeded",
+      "storeUpload": "accepted",
+      "storeProcessing": "processed",
+      "testerAvailability": "available",
+      "deviceQA": "not_run",
+      "evidence": {
+        "android": "Builds/CI/Android/FoxsTale_6.aab"
+      }
+    },
+    {
+      "id": "d6235b8b-bf4d-4f62-8cc8-c6c5b3c22aaa",
+      "platform": "ios",
+      "number": "6",
+      "iosBuild": "6",
+      "uploadRequested": false,
+      "status": "exported_local",
+      "finishedAt": "2026-11-08",
+      "source": ".kiro/handoff.md",
+      "storeStatus": "Unity 6000.6.0f1 exportó el proyecto Xcode local Builds/CI/iOS/XcodeProject_6. No se generó IPA ni se solicitó subida a App Store Connect/TestFlight. Falta probar el movimiento en nivel y dispositivo.",
+      "pipelineResult": "succeeded",
+      "storeUpload": "not_requested",
+      "storeProcessing": "not_checked",
+      "testerAvailability": "not_checked",
+      "deviceQA": "not_run",
+      "evidence": {
+        "ios": "Builds/CI/iOS/XcodeProject_6"
+      }
+    },
+    {
       "id": "b5e9f1a2-3c4d-5e6f-7a8b-9c0d1e2f3a4b",
       "platform": "android",
       "number": "5",
