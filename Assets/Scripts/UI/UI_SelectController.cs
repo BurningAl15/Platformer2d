@@ -79,7 +79,29 @@ public class UI_SelectController : MonoBehaviour
         ConfigureAutoResize(timeTargetText, 14f, 40f);
         ConfigureAutoResize(cloverText, 14f, 40f);
 
+        // Permitir iniciar el nivel al tocar directamente la tarjeta en pantallas táctiles
+        if (levelInfoContainer != null)
+        {
+            var btn = levelInfoContainer.GetComponent<UnityEngine.UI.Button>();
+            if (btn == null)
+            {
+                btn = levelInfoContainer.AddComponent<UnityEngine.UI.Button>();
+                btn.transition = UnityEngine.UI.Selectable.Transition.None;
+            }
+            btn.onClick.RemoveListener(OnLevelCardClicked);
+            btn.onClick.AddListener(OnLevelCardClicked);
+        }
+
         levelInfoContainer.SetActive(false);
+    }
+
+    private void OnLevelCardClicked()
+    {
+        LSPlayerController player = Object.FindFirstObjectByType<LSPlayerController>();
+        if (player != null)
+        {
+            player.HandleLevelSelect();
+        }
     }
 
     private static void ConfigureAutoResize(TextMeshProUGUI tmp, float minSize, float maxSize)

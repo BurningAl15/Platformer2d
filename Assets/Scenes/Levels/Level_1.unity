@@ -4368,6 +4368,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 8365330789968393666, guid: 52073add4951c934daba861871d7e9ed, type: 3}
   m_PrefabInstance: {fileID: 1899839728}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1899839730 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3512243975146972810, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+  m_PrefabInstance: {fileID: 1899839728}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b85737cf41f1424c8de59480ec9a7f94, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WorldCompleteController
 --- !u!1 &1938735365
 GameObject:
   m_ObjectHideFlags: 0
@@ -5108,6 +5119,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Level-Managers
       objectReference: {fileID: 0}
+    - target: {fileID: 4495562546623989289, guid: 26d3b2b78604bc14fa34511c0e50a38c, type: 3}
+      propertyPath: worldCompleteController
+      value: 
+      objectReference: {fileID: 1899839730}
     - target: {fileID: 4495562547009721720, guid: 26d3b2b78604bc14fa34511c0e50a38c, type: 3}
       propertyPath: _checkpoints.Array.size
       value: 2

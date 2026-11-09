@@ -2,6 +2,168 @@
   "schemaVersion": 1,
   "builds": [
     {
+      "id": "e0a1b2c3-d4e5-6789-0123-abcdef101010",
+      "platform": "android",
+      "number": "10",
+      "androidCode": "10",
+      "uploadRequested": true,
+      "status": "uploaded_internal_testing",
+      "finishedAt": "2026-11-08T21:35:21-05:00",
+      "source": ".kiro/handoff.md",
+      "storeStatus": "FoxsTale_10.aab compilado y subido con éxito al track Internal Testing de Google Play con Fastlane supply. Corrige definitivamente el ícono de la aplicación en Android (FoxsTaleIcons.androidlib y ProjectSettings en todos los mipmaps mdpi..xxxhdpi y anydpi-v26), navegación táctil por click/tap con búsqueda en anchura (BFS) en selector de niveles, controles móviles virtuales siempre activos en gameplay (joystick, salto y pausa), rediseño completo de Settings con haptics, selector de idioma EN/ES, resumen de progreso y confirmación de reset, eliminación del error de doble pulsación al abrir paneles, y botón SHOP independiente en Main Menu.",
+      "pipelineResult": "succeeded",
+      "storeUpload": "accepted",
+      "storeProcessing": "processed",
+      "testerAvailability": "available",
+      "deviceQA": "unrecorded",
+      "evidence": {
+        "android": "Builds/CI/Android/FoxsTale_10.aab",
+        "sha256": "797762e9feb7f103a722fb2ff650343da2434dade852eef0ee1c5ac8c46d25d2"
+      }
+    },
+    {
+      "id": "f1b2c3d4-e5f6-7890-1234-bcdef1010101",
+      "platform": "ios",
+      "number": "10",
+      "iosBuild": "10",
+      "uploadRequested": true,
+      "status": "uploaded_processing_unverified",
+      "finishedAt": "2026-11-08T21:45:40-05:00",
+      "source": ".kiro/handoff.md",
+      "storeStatus": "FoxsTale.ipa (build 10) compilado con Xcode y subido con éxito a App Store Connect / TestFlight con Fastlane pilot. Incluye navegación táctil por tap/click con BFS en selector de niveles, controles de gameplay táctiles en pantalla, nuevo panel de Settings (haptics, idioma, progreso, confirmación de reset), menú principal con botón SHOP y proporciones ajustadas.",
+      "pipelineResult": "succeeded",
+      "storeUpload": "accepted",
+      "storeProcessing": "not_checked",
+      "testerAvailability": "not_checked",
+      "deviceQA": "unrecorded",
+      "evidence": {
+        "ios": "Builds/CI/iOS/ipa/FoxsTale.ipa",
+        "xcodeProject": "Builds/CI/iOS/XcodeProject_10",
+        "sha256": "fa5db7f00bd1a489ddf57ddc607ccfa7966c366785ffa93266b874102ea50c91"
+      }
+    },
+    {
+      "id": "b9a1c2d3-e4f5-6789-0123-abcdef456789",
+      "platform": "android",
+      "number": "9",
+      "androidCode": "9",
+      "uploadRequested": true,
+      "status": "uploaded_internal_testing",
+      "finishedAt": "2026-11-08T19:21:00-05:00",
+      "source": ".kiro/handoff.md",
+      "storeStatus": "FoxsTale_9.aab compilado y subido con éxito al track Internal Testing de Google Play con Fastlane supply. Integra ícono de app oficial en todas las resoluciones Android, botón independiente SHOP en Main Menu, armonización de tamaños de fuente, nuevo panel de Settings (haptics, idioma, progreso, reset), botones balanceados en LevelSelection, controles táctiles y botón de pausa activos en gameplay, y solución al error de doble toque al abrir Settings o Tienda.",
+      "pipelineResult": "succeeded",
+      "storeUpload": "accepted",
+      "storeProcessing": "processed",
+      "testerAvailability": "available",
+      "deviceQA": "unrecorded",
+      "evidence": {
+        "android": "Builds/CI/Android/FoxsTale_9.aab",
+        "sha256": "2eec12a5e5aea5266e784eee3b3c2d472b11d6c459718f483b14946493f004db"
+      }
+    },
+    {
+      "id": "c8b7a6d5-e4f3-2109-8765-fedcba987654",
+      "platform": "ios",
+      "number": "9",
+      "iosBuild": "9",
+      "uploadRequested": true,
+      "status": "uploaded_processing_unverified",
+      "finishedAt": "2026-11-08T19:30:41-05:00",
+      "source": ".kiro/handoff.md",
+      "storeStatus": "FoxsTale.ipa (build 9) compilado con Xcode y subido con éxito a App Store Connect / TestFlight con Fastlane pilot. Incluye rediseño de menú principal con botón SHOP, textos proporcionales, controles táctiles y pausa en gameplay, botones equilibrados en selección de niveles, Settings expandido y corrección del bug de doble pulsación.",
+      "pipelineResult": "succeeded",
+      "storeUpload": "accepted",
+      "storeProcessing": "not_checked",
+      "testerAvailability": "not_checked",
+      "deviceQA": "unrecorded",
+      "evidence": {
+        "ios": "Builds/CI/iOS/ipa/FoxsTale.ipa",
+        "xcodeProject": "Builds/CI/iOS/XcodeProject_9",
+        "sha256": "d1c8349d6458d9aea41c224d9473fca2872a9ac4e64be1d19ad8c6fafee6b6a5"
+      }
+    },
+    {
+      "id": "7a8b9c0d-1e2f-3a4b-5c6d-7e8f9a0b1c2d",
+      "platform": "android",
+      "number": "8",
+      "androidCode": "8",
+      "uploadRequested": false,
+      "status": "built_local",
+      "finishedAt": "2026-11-08T17:25:15-05:00",
+      "source": ".kiro/handoff.md",
+      "storeStatus": "FoxsTale_8.aab compilado localmente con BuildAutomation.BuildAndroidAAB (exit code 0). Integra todas las correcciones móviles y de plataformas.",
+      "pipelineResult": "succeeded",
+      "storeUpload": "not_requested",
+      "storeProcessing": "not_checked",
+      "testerAvailability": "not_checked",
+      "deviceQA": "unrecorded",
+      "evidence": {
+        "android": "Builds/CI/Android/FoxsTale_8.aab",
+        "sha256": "9ac1f73bd765f31a21c3a03e0312269c6e29188203181a1b87af83d54c613fb6"
+      }
+    },
+    {
+      "id": "1f2e3d4c-5b6a-7890-abcd-ef1234567890",
+      "platform": "ios",
+      "number": "8",
+      "iosBuild": "8",
+      "uploadRequested": false,
+      "status": "exported_local",
+      "finishedAt": "2026-11-08T17:26:44-05:00",
+      "source": ".kiro/handoff.md",
+      "storeStatus": "Unity 6000.6.0f1 exportó el proyecto Xcode local Builds/CI/iOS/XcodeProject_8 con BuildAutomation.BuildiOS (exit code 0).",
+      "pipelineResult": "succeeded",
+      "storeUpload": "not_requested",
+      "storeProcessing": "not_checked",
+      "testerAvailability": "not_checked",
+      "deviceQA": "not_run",
+      "evidence": {
+        "ios": "Builds/CI/iOS/XcodeProject_8"
+      }
+    },
+    {
+      "id": "e9f8a7b6-c5d4-3e2f-1a0b-9c8d7e6f5a4b",
+      "platform": "android",
+      "number": "7",
+      "androidCode": "7",
+      "uploadRequested": true,
+      "status": "uploaded_internal_testing",
+      "finishedAt": "2026-11-08T15:00:00-05:00",
+      "source": ".kiro/handoff.md",
+      "storeStatus": "FoxsTale_7.aab compilado y subido con éxito al track Internal Testing de Google Play con Fastlane supply. Corrige controles móviles invisibles (escala y orden de canvas restaurados), añade navegación táctil por gestos y toques directos en selector de niveles, e integra corrección de apoyo en plataformas móviles.",
+      "pipelineResult": "succeeded",
+      "storeUpload": "accepted",
+      "storeProcessing": "processed",
+      "testerAvailability": "available",
+      "deviceQA": "unrecorded",
+      "evidence": {
+        "android": "Builds/CI/Android/FoxsTale_7.aab",
+        "sha256": "d27b7c7f463f1b17785976063731d8db855849e420aa292da76a93023746b476"
+      }
+    },
+    {
+      "id": "3d2e1f0a-b9c8-47d6-e5f4-a1b2c3d4e5f6",
+      "platform": "ios",
+      "number": "7",
+      "iosBuild": "7",
+      "uploadRequested": true,
+      "status": "uploaded_processing_unverified",
+      "finishedAt": "2026-11-08T15:46:18-05:00",
+      "source": ".kiro/handoff.md",
+      "storeStatus": "FoxsTale.ipa (build 7) compilado y subido con éxito a App Store Connect / TestFlight con Fastlane (upload_to_testflight). Incluye controles táctiles funcionales, navegación por gestos y corrección de plataformas móviles. Pendiente confirmación de procesamiento en Apple y disponibilidad en TestFlight.",
+      "pipelineResult": "succeeded",
+      "storeUpload": "accepted",
+      "storeProcessing": "not_checked",
+      "testerAvailability": "not_checked",
+      "deviceQA": "unrecorded",
+      "evidence": {
+        "ios": "Builds/CI/iOS/ipa/FoxsTale.ipa",
+        "xcodeProject": "Builds/CI/iOS/XcodeProject_7",
+        "sha256": "9930dfd0559a030fb6c823898d2172832f2ada68ce5967d60b98b1420302f9a7"
+      }
+    },
+    {
       "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
       "platform": "android",
       "number": "6",

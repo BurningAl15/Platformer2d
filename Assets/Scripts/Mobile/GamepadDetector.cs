@@ -62,17 +62,46 @@ public class GamepadDetector : MonoBehaviour
     /// </summary>
     public bool HasPhysicalGamepad()
     {
+#if UNITY_ANDROID || UNITY_IOS
+        // En plataformas móviles, no ocultar automáticamente los controles táctiles
+        // para garantizar que siempre estén disponibles en pantalla.
+        return false;
+#else
         foreach (InputDevice device in InputSystem.devices)
         {
             if ((device is Gamepad || device is Joystick) && device.enabled &&
                 !IsOnScreenDevice(device))
+            {
+                string name = device.name.ToLowerInvariant();
+                string display = device.displayName.ToLowerInvariant();
+
+                // Filtrar dispositivos virtuales, emuladores táctiles, sensores o touch
+                if (name.Contains("virtual") || name.Contains("onscreen") || name.Contains("touch") ||
+                    display.Contains("virtual") || display.Contains("onscreen") || display.Contains("touch") ||
+                    display.Contains("sensor") || display.Contains("accelerometer") || display.Contains("gyro"))
+                {
+                    continue;
+                }
+
                 return true;
+            }
         }
         return false;
+#endif
     }
 
     private static bool IsOnScreenDevice(InputDevice device)
     {
+        if (device == null) return false;
+
+        string name = device.name.ToLowerInvariant();
+        string display = device.displayName.ToLowerInvariant();
+        if (name.Contains("onscreen") || display.Contains("onscreen") ||
+            name.Contains("virtual") || display.Contains("virtual"))
+        {
+            return true;
+        }
+
         InternedString onScreenUsage = new InternedString("OnScreen");
         foreach (InternedString usage in device.usages)
         {

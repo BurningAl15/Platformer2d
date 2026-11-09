@@ -6,11 +6,16 @@
     <intent><action android:name="com.google.android.gms.ads.service.START" /></intent>
     <intent><action android:name="com.google.android.gms.ads.service.CACHE" /></intent>
   </queries>
-  <application>
+  <application
+      android:label="@string/app_name"
+      android:icon="@mipmap/app_icon"
+      android:roundIcon="@mipmap/app_icon_round">
     <meta-data android:name="com.google.android.gms.ads.flag.OPTIMIZE_INITIALIZATION" android:value="false" />
     <meta-data android:name="com.google.android.gms.ads.flag.OPTIMIZE_AD_LOADING" android:value="false" />
     <activity android:name="com.unity3d.player.UnityPlayerActivity"
               android:theme="@style/UnityThemeSelector"
+              android:icon="@mipmap/app_icon"
+              android:roundIcon="@mipmap/app_icon_round"
               android:screenOrientation="sensorLandscape"
               android:launchMode="singleTask"
               android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|screenSize|smallestScreenSize|fontScale|layoutDirection|density"

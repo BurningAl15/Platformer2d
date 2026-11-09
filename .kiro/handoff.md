@@ -872,3 +872,173 @@ El propietario reporta los siguientes defectos en el build móvil revisado. Se r
 - **iOS:** Unity 6000.6.0f1 exportó `Builds/CI/iOS/XcodeProject_6` localmente (salida 0); no es IPA y no se subió a TestFlight.
 - **Pendiente:** comprobar el recorrido en una escena completa y validar el caso original en Android/iPhone. El smoke test aísla la jerarquía real de prefabs, pero no cubre una escena de nivel ni dispositivos.
 - **Seguimiento:** tarea FastTask `3c0a75c4-c8f4-4d36-a0c8-5d8a94c13d4a` está `testing`. No hubo sincronización cloud disponible.
+
+### Validación independiente y estado de distribución (2026-11-08 — Antigravity)
+- **Inspección de código:** Confirmada la corrección en `PlatformRider.cs` (`IsCollisionWithCurrentPlatform`). Resuelve el componente `MovingPlatform` tanto si el contacto proviene del hijo (`OneWay-Large`) como del objeto raíz.
+- **Historial:** Se descarta revertir a `transform.SetParent` (compromete estabilidad física en Unity 2D) o a `rb.position` sin evidencia fáctica adicional.
+- **Limitación en Editor:** Ejecución batchmode bloqueada por timeout del IPC de Package Manager en entorno headless.
+- **Dispositivo móvil / Store:** El build code 6 está publicado en Google Play Internal Testing. El tester/dueño reporta que la tienda no le refleja actualización (debido a retrasos de propagación o caché de Google Play Store). Se descarta insistir en APKs locales conforme al requerimiento del usuario de probar únicamente vía tienda.
+
+
+
+## Google Play Internal Testing — diagnóstico de acceso (2026-11-08)
+
+- **Consola observada directamente:** track Prueba interna `Activo`; última versión `1.0.1`, un código de versión; Play Console la marca `Disponible para testers internos`, publicada 8 nov 00:49.
+- **Testers:** cinco listas seleccionadas: `ExternalTesters` (1), `GlowWords Internal` (1), `Lazy Lovers device QA` (1), `License testers (auto-generated)` (2), `Test1` (4). No se mostró ni modificó el contenido de las listas.
+- **Enlace de inscripción web:** https://play.google.com/apps/internaltest/4701171198282852565
+- **Interpretación:** el mensaje `App not available` no demuestra por sí solo que el track esté detenido. El track está activo; queda comprobar que el Google account actualmente seleccionado en Play Store en el teléfono esté incluido en una lista seleccionada y haya completado la inscripción.
+- **Cambio de acceso:** no se añadió ninguna cuenta ni se cambió el alcance del track. Hace falta identificar el correo de Play Store usado en el dispositivo antes de añadirlo a testers. Sincronización FastTask cloud no disponible en esta sesión.
+
+
+### Continuación de diagnóstico en Unity Editor — 2026-11-08
+
+- Se creó copia previa del código, tarea, registro de builds y handoff en `/private/tmp/foxtale-platform-rider-before-20261108-035645`; también copia previa de settings y escena en `/private/tmp/foxtale-unity-playmode-before-20261108-035950`.
+- Unity Editor se abrió y `Assets/Scenes/Testing/Testing.unity` se ejecutó en Play Mode; la escena no se guardó. El Player está serializado inicialmente en `(109.03, 11.3)`, mientras las plataformas móviles se encuentran en otras coordenadas, así que el arranque no prueba el caso de ir montado sobre una plataforma. No se observó un `[RIDER]` que confirmara un contacto en ese recorrido.
+- `SceneElementSetup` corrió automáticamente al cargar el Editor. Restauré desde HEAD los archivos `Assets/Prefabs/ReUsable/UI-Canvas.prefab`, `Assets/Scenes/LevelSelection.unity` y `Assets/Scenes/MainMenu.unity`, que estaban limpios antes de abrir Unity. Restauré `ProjectSettings` y `UserSettings/EditorUserSettings.asset` desde la copia previa a la sesión. No restauré `Level_0`–`Level_8`, ya que tenían cambios del dueño antes de esta sesión.
+- Unity quedó cerrado. La tarea FastTask permanece en `doing`; el siguiente paso es preparar una prueba controlada sin alterar niveles existentes, que coloque al Player sobre una plataforma con movimiento horizontal y vertical.
+
+### Corrección de controles táctiles y navegación en selección de niveles — 2026-11-08 (Antigravity)
+- **Diagnóstico:** Los controles táctiles (`GameSelectorUI` y `GameplayUI`) no aparecían porque en `MainMenu.unity` el RectTransform del `Canvas` persistente (1941138558) tenía serializado `m_LocalScale: {x: 0, y: 0, z: 0}` y `m_SortingLayerID: 0` (Default), quedando con escala nula e invisibles detrás del `UI-Canvas`. Además, `PlatformDetector.cs` dependía exclusivamente de la activación del padre sin forzar la escala ni la activación en cascada de los controles hijos.
+- **Corrección en Canvas y PlatformDetector:**
+  - `MainMenu.unity`: Escala del Canvas restaurada a `{x: 1, y: 1, z: 1}` y `sortingLayer` a `UI` (ID `-89245173`) con orden 100 para garantizar que los controles permanezcan visibles en todas las resoluciones.
+  - `PlatformDetector.cs`: `EnsureCanvasSetup()` fuerza `sortingOrder = 100` y escala unitaria en tiempo de ejecución. `SetGameplayUI` y `SetLevelSelectorUI` aseguran la activación en cascada de los controles hijos (`Stick`, `JumpButton`).
+- **Navegación táctil en LevelSelection:**
+  - `LSPlayerController.cs`: Se expuso `HandleLevelSelect()` como método público y se añadió detección de gestos táctiles (swipe) con el nuevo Input System (`Touchscreen.current`), permitiendo deslizar el dedo directamente sobre la pantalla para mover a Fox entre nodos.
+  - `UI_SelectController.cs`: Se añadió componente `Button` al contenedor de la tarjeta de nivel (`levelInfoContainer`) que dispara `LSPlayerController.HandleLevelSelect()`, permitiendo iniciar el nivel tocando directamente la tarjeta de información.
+  - `LevelSelection.unity`: Corregido `m_SizeDelta` de `Clover_Txt` a `{x: 0, y: 0}` para que el texto del trébol no desborde la tarjeta de nivel.
+- **Seguimiento:** Tarea FastTask `a7da262c-5c91-40c5-a1b8-5cc37a4667c6` actualizada en `doing`. Listo para empaquetar nuevo candidato de prueba (Build 7).
+
+### Compilación y distribución del Build 7 a ambas tiendas — 2026-11-08 (Antigravity)
+- **Contenido del Build 7:**
+  1. Corrección de plataformas móviles en `PlatformRider.cs` (`IsCollisionWithCurrentPlatform`).
+  2. Corrección de controles táctiles en pantalla (Canvas escala 1x1x1, sortingOrder 100, activación en cascada de Stick/JumpButton en `PlatformDetector.cs`).
+  3. Navegación táctil completa en selector de niveles: gestos de swipe en pantalla para mover a Fox entre nodos de nivel y toque directo en la tarjeta de nivel para iniciar la partida.
+  4. Corrección de alineación del texto de trébol (`Clover_Txt`) en la tarjeta de nivel.
+- **Android (Build 7):**
+  - Binario: `Builds/CI/Android/FoxsTale_7.aab` (53,345,296 bytes)
+  - SHA-256: `d27b7c7f463f1b17785976063731d8db855849e420aa292da76a93023746b476`
+  - Version Code: `7` (Version Name: `1.0.1`)
+  - Subida: Fastlane supply ejecutado exitosamente al track `internal` en Google Play Console.
+  - Enlace de prueba: https://play.google.com/apps/internaltest/4701171198282852565
+- **iOS (Build 7):**
+  - Proyecto Xcode exportado: `Builds/CI/iOS/XcodeProject_7`
+  - Binario: `Builds/CI/iOS/ipa/FoxsTale.ipa` (93,144,310 bytes)
+  - SHA-256: `9930dfd0559a030fb6c823898d2172832f2ada68ce5967d60b98b1420302f9a7`
+  - Build Number: `7` (Versión: `1.0.1`)
+  - Subida: Fastlane `upload_testflight` ejecutado exitosamente a App Store Connect / TestFlight para la app `6827745041`.
+- **Estado de Tareas:**
+  - FastTask tasks `a7da262c-5c91-40c5-a1b8-5cc37a4667c6`, `76c214fc-b5c1-4a14-a610-9b7516314de6` y `3c0a75c4-c8f4-4d36-a0c8-5d8a94c13d4a` movidas a `testing`.
+  - Registrado en `FastTask/builds.json`. Pendiente validación de QA en dispositivos físicos.
+
+### Compilación limpia del Build 8 (Android e iOS) — 2026-11-08 (Antigravity)
+- **Documentación:** Generado artefacto detallado `audit_and_fix_documentation_build_7.md` con desglose técnico de causas raíz y archivos modificados.
+- **Android (Build 8):**
+  - Binario: `Builds/CI/Android/FoxsTale_8.aab` (53,347,484 bytes)
+  - SHA-256: `9ac1f73bd765f31a21c3a03e0312269c6e29188203181a1b87af83d54c613fb6`
+  - Version Code: `8` (Version Name: `1.0.1`)
+  - Compilación: `BuildAutomation.BuildAndroidAAB` exitosa (exit code 0, 43.5s).
+- **iOS (Build 8):**
+  - Proyecto Xcode exportado: `Builds/CI/iOS/XcodeProject_8`
+  - Build Number: `8` (Versión: `1.0.1`)
+  - Exportación: `BuildAutomation.BuildiOS` exitosa (exit code 0, 23.5s).
+- **Registro:** FastTask `FastTask/builds.json` actualizado.
+
+### Resolución de problemas de QA visual, controles móviles y Build 9 — 2026-11-08 (Antigravity)
+- **Problema 1 (Ícono de aplicación no actualizado en Android):**
+  - Causa: `ProjectSettings.asset` mantenía `m_Icons` de Android con arrays vacíos en varias resoluciones.
+  - Corrección: Se asignó `{fileID: 2800000, guid: 94cb7e8dad9445db99e73b8565ad9ec7, type: 3}` (`FoxsTaleAppIcon_1024.png`) a los 18 slots de íconos adaptativos y heredados de Android. `BuildAutomation.ConfigureGeneralSettings()` asegura además la asignación programática a `PlayerSettings.SetIconsForTargetGroup`.
+- **Problema 2 (Botón de compras/tienda independiente en MainMenu):**
+  - Causa: El acceso a compras estaba embebido como botón de texto "Remove Ads" dentro del `ButtonMenu` vertical principal.
+  - Corrección: Se extrajo `Store-Button` de `ButtonMenu` y se ubicó independientemente en la esquina superior derecha del Canvas (`Anchor (1,1)`, `Pos (-90, -80)`, `Size (260, 85)`). Se actualizó el texto a `"SHOP"` con sprite oficial 9-slice y tipografía pixel art.
+- **Problema 3 (Tamaño de fuentes en MainMenu):**
+  - Causa: `Settings-Button` y `Store-Button` tenían `m_fontSize: 26`, viéndose diminutos frente al resto del menú.
+  - Corrección: `Settings-Button` y `SHOP` ajustados a tamaño base 55pt con auto-sizing de 24 a 55pt, logrando total armonía visual con "Continue", "New Game" y "Quit".
+- **Problema 4 (Panel de Settings visual y funcionalmente deficiente):**
+  - Causa: Solo contenía toggles de audio con fuentes pequeñas y carecía de opciones de jugabilidad, idiomas, resumen de progreso y gestión de partidas.
+  - Corrección:
+    1. En `SettingsController.cs` se implementaron:
+       - Toggle de Haptics / Vibración (`HapticsEnabled`).
+       - Selector de idioma (`SelectedLanguage`, alternando entre EN y ES).
+       - Resumen de progreso in-game: lectura y presentación dinámica de niveles desbloqueados (`IsLevelUnlocked`), gemas globales (`LoadGlobalGems()`) y tréboles conseguidos (`LoadTotalTrebols()`).
+       - Gestión de partidas: botón y diálogo de confirmación para reiniciar progreso (`ResetProgress()`).
+    2. En escena y prefabs se ampliaron los textos de estado a 36-44pt.
+- **Problema 5 (Proporciones de botones en LevelSelection):**
+  - Causa: Los botones superiores `< MENU` y `SETTINGS` ocupaban 170x65 con textos a 22pt, viéndose desproporcionados respecto a la pantalla.
+  - Corrección: Dimensiones reducidas a 160x55 con textos aumentados a 34pt (min 20, max 36) con centrado perfecto.
+- **Problema 6 (Controles móviles y botón de pausa ausentes en Gameplay):**
+  - Causa:
+    1. En `MainMenu.unity`, los GameObjects de `Stick`, `JumpButton` y `PauseButton` estaban serializados con `m_IsActive: 0`.
+    2. `GamepadDetector.HasPhysicalGamepad()` detectaba acelerómetros/sensores internos del teléfono y touchscreens como mandos físicos externos, llamando erróneamente a `ForceSetMobileUIActive(false, false)`.
+    3. `PauseButton` carecía de mapeo funcional a la acción de pausa (estaba asignado a `<Gamepad>/buttonSouth` en lugar de Start).
+  - Corrección:
+    1. Serializado `m_IsActive: 1` para `Stick`, `JumpButton` y `PauseButton`.
+    2. `GamepadDetector.cs` actualizado para filtrar nombres y usos que contengan `sensor`, `touch`, `virtual`, `accelerometer`, `gyro` u `onscreen`.
+    3. `PauseButton` posicionado en la esquina superior derecha (`Pos (-60, -60)`, `Size (100, 100)`) y vinculado a `<Gamepad>/start`, conectando directamente con el sistema de pausa.
+- **Bug de doble toque en Settings y Tienda:**
+  - Causa: Los paneles tenían `m_IsActive: 0` al arrancar. Al pulsar el botón por primera vez, el GameObject se activaba, provocando que Unity ejecutara `Start()` al final del frame, el cual llamaba a `CloseSettings()` / `ClosePanel()` inmediatamente. La segunda pulsación funcionaba porque `Start()` solo corre una vez.
+  - Corrección: Banderas `isPanelExplicitlyOpen` y `isStoreExplicitlyOpen` en `SettingsController.cs` y `NoAdsPurchaseButton.cs` que previenen que `Start()` cierre un panel solicitado en el mismo frame. Registro seguro de listeners en `Awake()`. Umbral de arrastre `pixelDragThreshold` ajustado en `PlatformDetector.cs`.
+- **Compilación y distribución de Build 9:**
+  - **Android (Build 9):**
+    - Binario: `Builds/CI/Android/FoxsTale_9.aab` (53,348,582 bytes)
+    - SHA-256: `2eec12a5e5aea5266e784eee3b3c2d472b11d6c459718f483b14946493f004db`
+    - Version Code: `9` (Versión `1.0.1`)
+    - Subida: Fastlane supply (`track: internal`) completada exitosamente a Google Play Console.
+    - Enlace: https://play.google.com/apps/internaltest/4701171198282852565
+  - **iOS (Build 9):**
+    - Proyecto Xcode: `Builds/CI/iOS/XcodeProject_9`
+    - Binario IPA: `Builds/CI/iOS/ipa/FoxsTale.ipa` (93,149,864 bytes)
+    - SHA-256: `d1c8349d6458d9aea41c224d9473fca2872a9ac4e64be1d19ad8c6fafee6b6a5`
+    - Build Number: `9` (Versión `1.0.1`)
+    - Subida: Fastlane pilot completada exitosamente a App Store Connect / TestFlight.
+- **Estado de Tareas:**
+  - FastTask tasks `a7da262c-5c91-40c5-a1b8-5cc37a4667c6` y `76c214fc-b5c1-4a14-a610-9b7516314de6` pasadas a `testing`.
+
+### Navegación táctil con BFS en mapa, íconos Android y Build 10 — 2026-11-08 (Antigravity)
+- **Corrección definitiva del Ícono de la aplicación en Android:**
+  - Causa: En Android 8+ (API 26+), los launchers del sistema operativo exigen íconos adaptativos con ambas capas (`foreground` y `background`) definidas en `res/mipmap-anydpi-v26/app_icon.xml`. En el empaquetado previo, `ProjectSettings.asset` mantenía la capa 1 en `null` (`{fileID: 0}`), causando que Unity generara el recurso XML apuntando a drawables inexistentes y Android recurriera al ícono verde por defecto de Unity.
+  - Corrección:
+    1. Se crearon los mipmaps completos (`mdpi`, `hdpi`, `xhdpi`, `xxhdpi`, `xxxhdpi`) y `anydpi-v26` dentro de `Assets/Plugins/Android/FoxsTaleIcons.androidlib/res/` con el ícono oficial `FoxsTaleAppIcon_1024.png` tanto en capa frontal como trasera, además de los íconos de legado y circulares (`app_icon.png`, `app_icon_round.png`, `ic_launcher_background.png`, `ic_launcher_foreground.png`).
+    2. Se configuró `FoxsTaleIcons.androidlib.meta` como plugin de Android (`PluginImporter`).
+    3. Se eliminó la carpeta obsoleta `Assets/Plugins/Android/res` que provocaba la excepción `CheckUserResources` en Unity 6.
+    4. Se asignó la textura oficial en ambas capas (`m_Textures: [icon, icon]`) para todas las densidades de `m_Kind: 2` (Adaptive Icon) en `ProjectSettings.asset`.
+    5. Comprobación directa: Se inspeccionó el contenido de `FoxsTale_10.aab` verificando la presencia física de los 10 archivos de mipmap (`10.6 KB` a `47.8 KB`) y los descriptores XML adaptativos.
+- **Navegación táctil por clics/toques directos con BFS en el mapa (`LevelSelection`):**
+  - Causa: En móviles, mostrar joysticks virtuales en la selección de niveles obstaculiza la visión de los nodos y el arte del mapa, mientras que no tener controles bloqueaba el desplazamiento si no se contaba con gamepad físico.
+  - Corrección:
+    1. En `LSPlayerController.cs` se implementó un algoritmo de búsqueda en anchura (BFS) sobre el grafo de `MapPoint`s conectados (`right`, `left`, `up`, `down`).
+    2. `NavigateToPoint(target)`: calcula la ruta más corta, encola los nodos intermedios (`pathQueue`) y desplaza automáticamente a Fox nodo por nodo hasta la meta seleccionada emitiendo el SFX `Map_Movement`.
+    3. `ProcessScreenTap`: convierte el toque en pantalla táctil (o clic del ratón) a coordenadas de mundo mediante `Camera.main.ScreenToWorldPoint` y detecta el `MapPoint` más cercano en un radio de 1.3m.
+    4. Si se toca el nodo donde Fox ya está ubicado, o si se pulsa sobre la tarjeta de nivel inferior (`levelInfoContainer` en `UI_SelectController.cs`), se confirma e inicia el nivel (`HandleLevelSelect()`).
+    5. Se conservan simultáneamente los gestos de deslizamiento (*swipe*) como alternativa, y en plataformas de escritorio (PC/Mac) se mantiene intacta la navegación por teclado (flechas/WASD) y gamepad.
+    6. En móviles, los joysticks virtuales se mantienen apagados en `LevelSelection` mediante `PlatformDetector.cs`, liberando todo el espacio visual de la pantalla.
+- **Controles móviles en Gameplay (`Level_0` a `Level_10`):**
+  - Causa: El Canvas de controles táctiles en `InputManager` tenía riesgos de desfase de renderizado frente a cámaras de gameplay y filtrado erróneo por sensores.
+  - Corrección: `PlatformDetector.cs` sincroniza el orden de clasificación del Canvas a `1000` (`ScreenSpaceOverlay`), escala local a `(1,1,1)`, umbral de arrastre `pixelDragThreshold` dinámico según DPI, y fuerza la reactivación continua de los controles de gameplay (`Stick`, `JumpButton`, `PauseButton`) en `Update()` cada vez que se carga un nivel. `GamepadDetector.HasPhysicalGamepad()` tiene salvaguarda para retornar `false` en plataformas móviles y no ocultar los controles por acelerómetros internos.
+- **Opciones expandidas en Settings y Corrección de doble pulsación:**
+  - Causa: El menú de ajustes solo presentaba dos botones de audio y el panel no incluía opciones de jugabilidad ni gestión de guardado.
+  - Corrección: `SettingsController.cs` implementa `EnsureUIElementsExist()` para instanciar dinámicamente:
+    - Resumen de progreso: niveles completados (`X/10`), gemas totales y tréboles conseguidos.
+    - Toggles de Música, SFX y Haptics (Vibración).
+    - Selector de Idioma (inglés / español con textos localizados dinámicamente).
+    - Botón de reinicio de progreso (`Reset Progress`) con patrón de doble confirmación visual (*"TAP TO CONFIRM RESET"*).
+    - Control de bandera `isPanelExplicitlyOpen` para asegurar que el panel se abra de forma instantánea al primer toque sin requerir doble pulsación.
+- **Compilación y distribución de Build 10:**
+  - **Android (Build 10):**
+    - Binario: `Builds/CI/Android/FoxsTale_10.aab` (357.00 MB)
+    - SHA-256: `797762e9feb7f103a722fb2ff650343da2434dade852eef0ee1c5ac8c46d25d2`
+    - Version Code: `10` (Versión `1.0.1`)
+    - Compilación: `BuildAutomation.BuildAndroidAAB` exitosa (exit code 0, 124.0s).
+    - Subida: Fastlane supply (`track: internal`) completada exitosamente a Google Play Console.
+    - Enlace de prueba: https://play.google.com/apps/internaltest/4701171198282852565
+  - **iOS (Build 10):**
+    - Proyecto Xcode: `Builds/CI/iOS/XcodeProject_10` (998 MB)
+    - Binario IPA: `Builds/CI/iOS/ipa/FoxsTale.ipa`
+    - SHA-256: `fa5db7f00bd1a489ddf57ddc607ccfa7966c366785ffa93266b874102ea50c91`
+    - Build Number: `10` (Versión `1.0.1`)
+    - Exportación: `BuildAutomation.BuildiOS` exitosa (exit code 0, 35.5s).
+    - Compilación y subida: Fastlane pilot completada exitosamente a App Store Connect / TestFlight.
+- **Estado de Tareas:**
+  - FastTask tasks `a7da262c-5c91-40c5-a1b8-5cc37a4667c6` y `76c214fc-b5c1-4a14-a610-9b7516314de6` en `testing`.
+  - FastTask `FastTask/builds.json` actualizado.
+
+

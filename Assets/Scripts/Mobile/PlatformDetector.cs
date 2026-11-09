@@ -11,11 +11,17 @@ public class PlatformDetector : MonoBehaviour
     [SerializeField] private string mainMenuSceneName = "MainMenu";
     [SerializeField] private string levelSelectorSceneName = "LevelSelection";
     [SerializeField] private string levelScenePrefix = "Level_";
+
+    [Header("Debug")]
+    [SerializeField] private bool forceMobileUI = false;
     
     public static PlatformDetector Instance { get; private set; }
     
     public static bool IsMobile()
     {
+        if (Instance != null && Instance.forceMobileUI)
+            return true;
+
         #if UNITY_ANDROID || UNITY_IOS
             return true;
         #else
@@ -32,12 +38,42 @@ public class PlatformDetector : MonoBehaviour
         }
         
         Instance = this;
+
+        EnsureCanvasSetup();
         
         // Suscribirse al evento de carga de escena
         SceneManager.sceneLoaded += OnSceneLoaded;
         
         // Configurar UI para la escena actual
         ConfigureMobileUIForCurrentScene();
+    }
+
+    private void EnsureCanvasSetup()
+    {
+        Canvas canvas = GetComponent<Canvas>();
+        if (canvas != null)
+        {
+            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            canvas.sortingOrder = 1000;
+        }
+
+        RectTransform rt = GetComponent<RectTransform>();
+        if (rt != null)
+        {
+            if (rt.localScale.x == 0f || rt.localScale.y == 0f || rt.localScale.z == 0f)
+            {
+                rt.localScale = Vector3.one;
+            }
+        }
+
+        if (UnityEngine.EventSystems.EventSystem.current != null)
+        {
+            int targetThreshold = Mathf.Max(30, (int)(Screen.dpi * 0.15f));
+            if (UnityEngine.EventSystems.EventSystem.current.pixelDragThreshold < targetThreshold)
+            {
+                UnityEngine.EventSystems.EventSystem.current.pixelDragThreshold = targetThreshold;
+            }
+        }
     }
     
     private void OnDestroy()
@@ -48,14 +84,33 @@ public class PlatformDetector : MonoBehaviour
     
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        // Cada vez que carga una escena nueva, reconfigurar UI
-        ConfigureMobileUIForCurrentScene();
+        EnsureCanvasSetup();
+        // Cada vez que carga una escena nueva, reconfigurar UI usando el nombre de la escena recién cargada
+        ConfigureMobileUIForScene(scene.name);
+    }
+
+    private void Update()
+    {
+        if (IsMobile())
+        {
+            string currentSceneName = SceneManager.GetActiveScene().name;
+            if (IsGameplayLevelScene(currentSceneName))
+            {
+                if (gameplayMobileUI != null && !gameplayMobileUI.activeSelf)
+                {
+                    SetGameplayUI(true);
+                }
+            }
+        }
     }
     
-    private void ConfigureMobileUIForCurrentScene()
+    public void ConfigureMobileUIForCurrentScene()
     {
-        string currentSceneName = SceneManager.GetActiveScene().name;
-        
+        ConfigureMobileUIForScene(SceneManager.GetActiveScene().name);
+    }
+
+    public void ConfigureMobileUIForScene(string currentSceneName)
+    {
         bool isMobile = IsMobile();
         
         // Determinar qué UI activar según la escena
@@ -69,15 +124,15 @@ public class PlatformDetector : MonoBehaviour
         }
         else if (IsLevelSelectorScene(currentSceneName))
         {
-            // LevelSelector: Activar UI específico de selector (si existe y es mobile)
+            // LevelSelector: En móviles se navega por gestos y toques directos en el mapa para no restar espacio en pantalla
             SetGameplayUI(false);
-            SetLevelSelectorUI(isMobile);
+            SetLevelSelectorUI(false);
             
-            Debug.Log($"[PlatformDetector] LevelSelector detected. LevelSelector UI: {isMobile}");
+            Debug.Log($"[PlatformDetector] LevelSelector detected. Touch map navigation enabled, virtual sticks: OFF");
         }
         else if (IsGameplayLevelScene(currentSceneName))
         {
-            // Niveles de gameplay: Activar controles de gameplay
+            // Niveles de gameplay: Activar controles de gameplay en móvil (Stick, Jump, Pause)
             SetGameplayUI(isMobile);
             SetLevelSelectorUI(false);
             
@@ -116,6 +171,10 @@ public class PlatformDetector : MonoBehaviour
         if (gameplayMobileUI != null)
         {
             gameplayMobileUI.SetActive(active);
+            if (active)
+            {
+                EnsureChildrenActive(gameplayMobileUI);
+            }
         }
     }
     
@@ -124,6 +183,25 @@ public class PlatformDetector : MonoBehaviour
         if (levelSelectorMobileUI != null)
         {
             levelSelectorMobileUI.SetActive(active);
+            if (active)
+            {
+                EnsureChildrenActive(levelSelectorMobileUI);
+            }
+        }
+    }
+
+    private void EnsureChildrenActive(GameObject root)
+    {
+        if (root == null) return;
+        Transform rootT = root.transform;
+        for (int i = 0; i < rootT.childCount; i++)
+        {
+            Transform child = rootT.GetChild(i);
+            child.gameObject.SetActive(true);
+            for (int j = 0; j < child.childCount; j++)
+            {
+                child.GetChild(j).gameObject.SetActive(true);
+            }
         }
     }
     

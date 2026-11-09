@@ -40,26 +40,43 @@ public class NoAdsPurchaseButton : MonoBehaviour
     [Header("Feedback")]
     [SerializeField] private GameObject loadingOverlay;
 
-    private void Start()
+    private bool isStoreExplicitlyOpen = false;
+
+    private void Awake()
     {
         if (openStoreButton != null)
+        {
+            openStoreButton.onClick.RemoveListener(OpenPanel);
             openStoreButton.onClick.AddListener(OpenPanel);
+        }
 
         if (closeStoreButton != null)
+        {
+            closeStoreButton.onClick.RemoveListener(ClosePanel);
             closeStoreButton.onClick.AddListener(ClosePanel);
+        }
 
         if (purchaseButton != null)
+        {
+            purchaseButton.onClick.RemoveListener(OnPurchasePressed);
             purchaseButton.onClick.AddListener(OnPurchasePressed);
+        }
 
         if (restoreButton != null)
+        {
+            restoreButton.onClick.RemoveListener(OnRestorePressed);
             restoreButton.onClick.AddListener(OnRestorePressed);
+        }
+    }
 
+    private void Start()
+    {
         ConfigureAllTextsAutoResize();
         RefreshUI();
         RefreshPriceWhenReady();
 
-        // Si el panel de tienda empieza con alpha 0, mantenerlo inactivo para que nunca se dibuje en el fondo
-        if (storePanelGroup != null && storePanelGroup.alpha <= 0.01f)
+        // Si el panel de tienda empieza con alpha 0 y NO fue abierto explícitamente, mantenerlo inactivo
+        if (!isStoreExplicitlyOpen && storePanelGroup != null && storePanelGroup.alpha <= 0.01f)
         {
             storePanelGroup.gameObject.SetActive(false);
         }
@@ -94,6 +111,7 @@ public class NoAdsPurchaseButton : MonoBehaviour
 
     public void OpenPanel()
     {
+        isStoreExplicitlyOpen = true;
         transform.SetAsLastSibling();
         if (storePanelGroup != null)
         {
@@ -110,6 +128,7 @@ public class NoAdsPurchaseButton : MonoBehaviour
 
     public void ClosePanel()
     {
+        isStoreExplicitlyOpen = false;
         if (storePanelGroup != null)
         {
             storePanelGroup.alpha = 0f;

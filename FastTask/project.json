@@ -1,0 +1,61 @@
+{
+  "schemaVersion": 1,
+  "projectId": "5acbc535-15e3-4744-acae-f021f49fc108",
+  "name": "Fox's Tale",
+  "createdAt": "2026-10-31T13:40:41+00:00",
+  "handoffPath": ".kiro/handoff.md",
+  "relatedHandoffPaths": [
+    "../CurrentlyWorkin/docs/STORE_ACCESS_AND_BUILD_AUTHORITY.md",
+    "docs/ANTIGRAVITY_PRODUCTION_HANDOFF_2026-10-28.md",
+    "docs/MONETIZATION_RELEASE.md"
+  ],
+  "releaseReadiness": {
+    "schemaVersion": 1,
+    "updatedAt": "2026-11-08",
+    "platforms": {
+      "android": {
+        "store": "google_play",
+        "appId": "com.fatcatgamestudio.foxstale",
+        "access": {
+          "status": "verified",
+          "verifiedAt": "2026-10-30",
+          "evidenceBuildId": "488949e5-a096-4a21-99f3-1048821f8c80",
+          "source": ".kiro/handoff.md"
+        },
+        "signing": {
+          "status": "verified",
+          "verifiedAt": "2026-10-30",
+          "evidenceBuildId": "488949e5-a096-4a21-99f3-1048821f8c80"
+        },
+        "availability": {
+          "status": "available_to_testers",
+          "checkedAt": "2026-11-08",
+          "evidenceBuildId": "fa5281c9-ced5-4018-b708-14c52fa5ac75",
+          "nextAction": "Confirmar que la cuenta Google Play del teléfono esté en una de las listas seleccionadas y que complete la inscripción web; después validar instalación desde Play Store.",
+          "source": ".kiro/handoff.md"
+        }
+      },
+      "ios": {
+        "store": "app_store_connect",
+        "appId": "com.fatcatgamestudio.foxstale",
+        "access": {
+          "status": "verified",
+          "verifiedAt": "2026-10-30",
+          "evidenceBuildId": "bb610d1e-313d-4a44-9c75-31855c236ddd",
+          "source": ".kiro/handoff.md"
+        },
+        "signing": {
+          "status": "verified",
+          "verifiedAt": "2026-10-30",
+          "evidenceBuildId": "bb610d1e-313d-4a44-9c75-31855c236ddd"
+        },
+        "availability": {
+          "status": "upload_accepted",
+          "checkedAt": "2026-10-30",
+          "evidenceBuildId": "bb610d1e-313d-4a44-9c75-31855c236ddd",
+          "nextAction": "Confirm Apple processing and TestFlight group availability."
+        }
+      }
+    }
+  }
+}

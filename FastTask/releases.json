@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "releases": [
+    {
+      "id": "f9e86cc1-2025-4e6a-a3fb-f26675484085",
+      "version": "1.0.1",
+      "releaseDate": "2026-10-30",
+      "status": "internal_testing",
+      "description": "Fox's Tale. Android code 3 disponible en Play Internal; iOS build 4 recibido en App Store Connect, procesamiento/TestFlight pendiente de confirmar. Cambios post-build requieren nuevo QA. Fuente: .kiro/handoff.md"
+    }
+  ]
+}

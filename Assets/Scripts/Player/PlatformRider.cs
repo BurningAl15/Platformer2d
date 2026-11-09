@@ -55,7 +55,7 @@ public class PlatformRider : MonoBehaviour
         {
             TryAttach(collision);
         }
-        else if (currentPlatform != null && collision.gameObject == currentPlatform.gameObject)
+        else if (IsCollisionWithCurrentPlatform(collision))
         {
             wasGroundedLastFrame = true;
         }
@@ -63,10 +63,16 @@ public class PlatformRider : MonoBehaviour
     
     private void OnCollisionExit2D(Collision2D collision)
     {
-        if (currentPlatform != null && collision.gameObject == currentPlatform.gameObject)
+        if (IsCollisionWithCurrentPlatform(collision))
         {
             Detach();
         }
+    }
+
+    private bool IsCollisionWithCurrentPlatform(Collision2D collision)
+    {
+        return currentPlatform != null &&
+               collision.gameObject.GetComponentInParent<MovingPlatform>() == currentPlatform;
     }
     
     private void TryAttach(Collision2D collision)

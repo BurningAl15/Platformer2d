@@ -2335,6 +2335,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 8365330789968393666, guid: 52073add4951c934daba861871d7e9ed, type: 3}
   m_PrefabInstance: {fileID: 1547089567}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1547089569 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3512243975146972810, guid: 52073add4951c934daba861871d7e9ed, type: 3}
+  m_PrefabInstance: {fileID: 1547089567}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b85737cf41f1424c8de59480ec9a7f94, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WorldCompleteController
 --- !u!1001 &1610254561
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3361,7 +3372,7 @@ MonoBehaviour:
   stopGame: 0
   totalGemsInLevel: 0
   currentWorldData: {fileID: 0}
-  worldCompleteController: {fileID: 0}
+  worldCompleteController: {fileID: 1547089569}
 --- !u!4 &3943454753997984376
 Transform:
   m_ObjectHideFlags: 0

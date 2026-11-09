@@ -12,6 +12,8 @@ dependencies {
     // Native LevelPlay SDK required by com.unity.services.levelplay 9.5.1.
     // The Unity Package's bridge classes compile against this Maven artifact.
     implementation 'com.unity3d.ads-mediation:mediation-sdk:9.5.0'
+    implementation 'androidx.javascriptengine:javascriptengine:1.0.0-beta01' // Android 14+ ad JavaScript runtime compatibility
+    implementation 'androidx.webkit:webkit:1.13.0' // WebView support for ads SDKs
 **DEPS**}
 
 // Android Resolver Exclusions Start

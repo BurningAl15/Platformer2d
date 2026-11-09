@@ -12,25 +12,9 @@ using UnityEngine.UI;
 /// prefabs y paneles de UI en Fox's Tale con el estilo pixel art nativo del juego.
 /// 
 /// SE EJECUTA DESDE: Menú -> CustomEditorTools -> Setup Missing Scene Elements & Placeholders
-/// o automáticamente al compilar el script una vez.
 /// </summary>
-[InitializeOnLoad]
 public static class SceneElementSetup
 {
-    private const string SETUP_FLAG_KEY = "FoxsTale_PixelUISetup_Completed_v3";
-
-    static SceneElementSetup()
-    {
-        EditorApplication.delayCall += () =>
-        {
-            if (!SessionState.GetBool(SETUP_FLAG_KEY, false))
-            {
-                SessionState.SetBool(SETUP_FLAG_KEY, true);
-                SetupAll();
-            }
-        };
-    }
-
     [MenuItem("CustomEditorTools/Setup Missing Scene Elements & Placeholders")]
     public static void SetupAll()
     {
