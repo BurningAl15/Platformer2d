@@ -1024,10 +1024,12 @@ El propietario reporta los siguientes defectos en el build móvil revisado. Se r
     - Control de bandera `isPanelExplicitlyOpen` para asegurar que el panel se abra de forma instantánea al primer toque sin requerir doble pulsación.
 - **Compilación y distribución de Build 10:**
   - **Android (Build 10):**
-    - Binario: `Builds/CI/Android/FoxsTale_10.aab` (357.00 MB)
-    - SHA-256: `797762e9feb7f103a722fb2ff650343da2434dade852eef0ee1c5ac8c46d25d2`
+    - Binario AAB: `Builds/CI/Android/FoxsTale_10.aab` (53,949,742 bytes)
+    - SHA-256 AAB: `797762e9feb7f103a722fb2ff650343da2434dade852eef0ee1c5ac8c46d25d2`
+    - Binario APK directo: `Builds/FoxsTale_10.apk` (54,046,556 bytes)
+    - SHA-256 APK: `07e161cd838d78edd3bcd02597f85cafe4088d9760d291f6edccfa9d5e83663f`
     - Version Code: `10` (Versión `1.0.1`)
-    - Compilación: `BuildAutomation.BuildAndroidAAB` exitosa (exit code 0, 124.0s).
+    - Compilación: `BuildAutomation.BuildAndroidAAB` y `BuildAutomation.BuildAndroidAPK` exitosas (exit code 0).
     - Subida: Fastlane supply (`track: internal`) completada exitosamente a Google Play Console.
     - Enlace de prueba: https://play.google.com/apps/internaltest/4701171198282852565
   - **iOS (Build 10):**

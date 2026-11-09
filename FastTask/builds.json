@@ -18,7 +18,9 @@
       "deviceQA": "unrecorded",
       "evidence": {
         "android": "Builds/CI/Android/FoxsTale_10.aab",
-        "sha256": "797762e9feb7f103a722fb2ff650343da2434dade852eef0ee1c5ac8c46d25d2"
+        "sha256": "797762e9feb7f103a722fb2ff650343da2434dade852eef0ee1c5ac8c46d25d2",
+        "apk": "Builds/FoxsTale_10.apk",
+        "apkSha256": "07e161cd838d78edd3bcd02597f85cafe4088d9760d291f6edccfa9d5e83663f"
       }
     },
     {
