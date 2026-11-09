@@ -36,6 +36,9 @@ public class SettingsController : MonoBehaviour
     [Header("Progreso del Jugador")]
     [SerializeField] private TextMeshProUGUI progressSummaryText;
 
+    [Header("Versión")]
+    [SerializeField] private TextMeshProUGUI versionText;
+
     [Header("Gestión de Guardado")]
     [SerializeField] private Button resetProgressButton;
     [SerializeField] private TextMeshProUGUI resetProgressText;
@@ -247,6 +250,33 @@ public class SettingsController : MonoBehaviour
             RectTransform clrt = closeButton.GetComponent<RectTransform>();
             clrt.anchoredPosition = new Vector2(0f, -240f);
             clrt.sizeDelta = new Vector2(260f, 55f);
+        }
+
+        // 5. Etiqueta de versión abajo
+        if (versionText == null && musicStatusText != null)
+        {
+            Transform existing = container.Find("VersionText");
+            if (existing != null)
+            {
+                versionText = existing.GetComponent<TextMeshProUGUI>();
+            }
+            else
+            {
+                GameObject vObj = new GameObject("VersionText");
+                vObj.transform.SetParent(container, false);
+                RectTransform vrt = vObj.AddComponent<RectTransform>();
+                vrt.anchorMin = new Vector2(0.5f, 0.5f);
+                vrt.anchorMax = new Vector2(0.5f, 0.5f);
+                vrt.pivot = new Vector2(0.5f, 0.5f);
+                vrt.anchoredPosition = new Vector2(0f, -282f);
+                vrt.sizeDelta = new Vector2(300f, 24f);
+
+                versionText = vObj.AddComponent<TextMeshProUGUI>();
+                versionText.font = musicStatusText.font;
+                versionText.alignment = TextAlignmentOptions.Center;
+                versionText.fontSize = 16f;
+                versionText.color = new Color(0.7f, 0.7f, 0.7f, 0.8f);
+            }
         }
     }
 
@@ -506,6 +536,12 @@ public class SettingsController : MonoBehaviour
                 progressSummaryText.text = $"NIVELES: {unlockedCount}/10  |  GEMAS: {totalGems}  |  TREBOLES: {totalTrebols}";
             else
                 progressSummaryText.text = $"LEVELS: {unlockedCount}/10  |  GEMS: {totalGems}  |  CLOVERS: {totalTrebols}";
+        }
+
+        // Versión del juego
+        if (versionText != null)
+        {
+            versionText.text = AppVersionDisplay.GetFormattedVersion();
         }
     }
 }

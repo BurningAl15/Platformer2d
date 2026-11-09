@@ -111,6 +111,7 @@ public static class BuildAutomation
         {
             ConfigureGeneralSettings();
             ConfigureAndroidSettings(isAppBundle);
+            WriteBuildInfo(PlayerSettings.Android.bundleVersionCode.ToString());
 
             // APKs are local device-test artifacts. Use Unity's debug signing
             // instead of requiring the private release keystore; AAB releases
@@ -160,6 +161,7 @@ public static class BuildAutomation
         {
             ConfigureGeneralSettings();
             ConfigureiOSSettings();
+            WriteBuildInfo(PlayerSettings.iOS.buildNumber);
 
             string outputDir = Environment.GetEnvironmentVariable("FOXSTALE_IOS_OUTPUT_PATH");
             if (string.IsNullOrEmpty(outputDir))
@@ -265,6 +267,18 @@ public static class BuildAutomation
                 throw new InvalidOperationException("FOXSTALE_IOS_BUILD_NUMBER debe ser un entero positivo.");
             PlayerSettings.iOS.buildNumber = buildNumber;
         }
+    }
+
+    private static void WriteBuildInfo(string buildNumber)
+    {
+        string resourcesDir = Path.Combine(ProjectRoot, "Assets", "Resources");
+        if (!Directory.Exists(resourcesDir))
+            Directory.CreateDirectory(resourcesDir);
+
+        string filePath = Path.Combine(resourcesDir, "build_info.txt");
+        File.WriteAllText(filePath, buildNumber);
+        AssetDatabase.ImportAsset("Assets/Resources/build_info.txt", ImportAssetOptions.ForceUpdate);
+        Debug.Log($"[BuildAutomation] build_info.txt actualizado con build: {buildNumber}");
     }
 
     private static string[] GetScenesForBuild()

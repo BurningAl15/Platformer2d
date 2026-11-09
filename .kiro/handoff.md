@@ -1043,4 +1043,39 @@ El propietario reporta los siguientes defectos en el build móvil revisado. Se r
   - FastTask tasks `a7da262c-5c91-40c5-a1b8-5cc37a4667c6` y `76c214fc-b5c1-4a14-a610-9b7516314de6` en `testing`.
   - FastTask `FastTask/builds.json` actualizado.
 
+### On-screen Version Display y Build 11 (Solo Builds Directos a Tiendas) — 2026-11-09 (Antigravity)
+- **Requerimiento del usuario:**
+  - Mostrar visiblemente el número de versión y compilación en pantalla (on-screen version display), para identificar qué versión se está ejecutando en cualquier captura o sesión de QA.
+  - Subida directa y exclusiva a tiendas (Google Play Internal Testing y Apple TestFlight), sin generar ni entregar APKs sueltos.
+- **Implementación técnica:**
+  1. `Assets/Scripts/UI/AppVersionDisplay.cs`:
+     - Componente reutilizable y fachada estática `GetFormattedVersion()` y `GetBuildNumber()`.
+     - Lee el número de compilación desde `Assets/Resources/build_info.txt` inyectado durante el build.
+     - En dispositivos Android reales, dispone de fallback dinámico vía JNI invocando `packageInfo.getLongVersionCode()`.
+     - Formatea la cadena resultante como `v{version} (b{build})` (ej. `v1.0.1 (b11)`).
+  2. `Assets/Editor/BuildAutomation.cs`:
+     - Integra método automatizado `WriteBuildInfo(buildNumber)` que escribe `Assets/Resources/build_info.txt` e invoca `AssetDatabase.ImportAsset` antes de cada build de Android o iOS.
+  3. Menú Principal (`Assets/Scripts/Core/MainMenuManager.cs`):
+     - `EnsureVersionLabel()` inicializa una etiqueta pixel-art en la esquina inferior izquierda (`anchorMin (0,0)`, `anchoredPosition (30, 20)`) del Canvas principal, asegurando visibilidad inmediata al abrir la aplicación.
+  4. Panel de Ajustes (`Assets/Scripts/UI/SettingsController.cs`):
+     - En `EnsureUIElementsExist()`, añade dinámicamente la etiqueta de versión centrada al pie del contenedor, debajo del botón Close, y la actualiza en `RefreshUI()`.
+- **Compilación y distribución de Build 11:**
+  - **Android (Build 11):**
+    - Binario AAB: `Builds/CI/Android/FoxsTale_11.aab` (357 MB / 53.9 MB empaquetado)
+    - SHA-256 AAB: `399e9c7ceebee0c43ef1c46201bb7a17a3ab44a6f84ff1da06ed7726f7bc6b55`
+    - Version Code: `11` (Versión `1.0.1`)
+    - Compilación: `BuildAutomation.BuildAndroidAAB` exitosa (exit code 0, 131.0s).
+    - Subida: Fastlane supply (`track: internal`) completada exitosamente a Google Play Console.
+    - Enlace de prueba: https://play.google.com/apps/internaltest/4701171198282852565
+  - **iOS (Build 11):**
+    - Proyecto Xcode: `Builds/CI/iOS/XcodeProject_11` (998 MB)
+    - Binario IPA: `Builds/CI/iOS/ipa/FoxsTale.ipa`
+    - SHA-256: `64d93ec9b8ece68c9c3dd706b4f70f7cd5a7ef5a58ef336e2a82d2cefd8203ce`
+    - Build Number: `11` (Versión `1.0.1`)
+    - Exportación: `BuildAutomation.BuildiOS` exitosa (exit code 0, 30.5s).
+    - Compilación y subida: Fastlane pilot completada exitosamente a App Store Connect / TestFlight.
+- **Estado de Tareas:**
+  - FastTask tasks `a7da262c-5c91-40c5-a1b8-5cc37a4667c6` y `76c214fc-b5c1-4a14-a610-9b7516314de6` en `testing`.
+  - FastTask `FastTask/builds.json` actualizado con los registros del Build 11.
+
 

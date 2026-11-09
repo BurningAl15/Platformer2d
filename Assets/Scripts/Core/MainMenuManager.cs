@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.EventSystems;
 using DG.Tweening;
 using UnityEngine.UI;
@@ -27,6 +27,9 @@ public class MainMenuManager : MonoBehaviour
     [Tooltip("Primer botón del panel de confirmación de nueva partida")]
     [SerializeField] private GameObject panelFirstButton;
 
+    [Header("Versión")]
+    [SerializeField] private TMPro.TextMeshProUGUI versionText;
+
     private bool hasPlayedBefore = false;
 
     private void Awake()
@@ -46,6 +49,48 @@ public class MainMenuManager : MonoBehaviour
         panelBG.alpha = 0;
         panelBG.interactable = false;
         panelBG.blocksRaycasts = false;
+
+        EnsureVersionLabel();
+    }
+
+    private void EnsureVersionLabel()
+    {
+        if (versionText == null)
+        {
+            Transform existing = transform.Find("AppVersionText");
+            if (existing != null)
+            {
+                versionText = existing.GetComponent<TMPro.TextMeshProUGUI>();
+            }
+            else
+            {
+                GameObject vObj = new GameObject("AppVersionText");
+                vObj.transform.SetParent(transform, false);
+                RectTransform vrt = vObj.AddComponent<RectTransform>();
+                vrt.anchorMin = new Vector2(0f, 0f);
+                vrt.anchorMax = new Vector2(0f, 0f);
+                vrt.pivot = new Vector2(0f, 0f);
+                vrt.anchoredPosition = new Vector2(30f, 20f);
+                vrt.sizeDelta = new Vector2(350f, 35f);
+
+                versionText = vObj.AddComponent<TMPro.TextMeshProUGUI>();
+                TMPro.TextMeshProUGUI sampleText = GetComponentInChildren<TMPro.TextMeshProUGUI>();
+                if (sampleText != null)
+                {
+                    versionText.font = sampleText.font;
+                    versionText.fontSharedMaterial = sampleText.fontSharedMaterial;
+                }
+                versionText.alignment = TMPro.TextAlignmentOptions.BottomLeft;
+                versionText.fontSize = 24f;
+                versionText.color = new Color(1f, 1f, 1f, 0.65f);
+                vObj.AddComponent<AppVersionDisplay>();
+            }
+        }
+
+        if (versionText != null)
+        {
+            versionText.text = AppVersionDisplay.GetFormattedVersion();
+        }
     }
 
     // ───────────────────────────────────────────────

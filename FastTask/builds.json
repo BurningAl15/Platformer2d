@@ -2,6 +2,47 @@
   "schemaVersion": 1,
   "builds": [
     {
+      "id": "a1b2c3d4-1111-4aaa-bbbb-ccccdddd1111",
+      "platform": "android",
+      "number": "11",
+      "androidCode": "11",
+      "uploadRequested": true,
+      "status": "uploaded_internal_testing",
+      "finishedAt": "2026-11-09T18:26:35-05:00",
+      "source": ".kiro/handoff.md",
+      "storeStatus": "FoxsTale_11.aab compilado y subido con éxito al track Internal Testing de Google Play con Fastlane supply. Integra visualización de versión y compilación en pantalla (v1.0.1 b11 en esquina inferior de Main Menu y en el pie del panel de Settings con fallback Android JNI/Resources), junto con toda la navegación táctil BFS en selector de niveles, controles de gameplay móvil y rediseño de menú y Settings.",
+      "pipelineResult": "succeeded",
+      "storeUpload": "accepted",
+      "storeProcessing": "processed",
+      "testerAvailability": "available",
+      "deviceQA": "unrecorded",
+      "evidence": {
+        "android": "Builds/CI/Android/FoxsTale_11.aab",
+        "sha256": "399e9c7ceebee0c43ef1c46201bb7a17a3ab44a6f84ff1da06ed7726f7bc6b55"
+      }
+    },
+    {
+      "id": "b2c3d4e5-1111-4aaa-bbbb-ccccdddd2222",
+      "platform": "ios",
+      "number": "11",
+      "iosBuild": "11",
+      "uploadRequested": true,
+      "status": "uploaded_processing_unverified",
+      "finishedAt": "2026-11-09T18:36:40-05:00",
+      "source": ".kiro/handoff.md",
+      "storeStatus": "FoxsTale.ipa (build 11) compilado con Xcode y subido con éxito a App Store Connect / TestFlight con Fastlane pilot. Incluye visualización de versión en pantalla (v1.0.1 b11 en Main Menu y Settings), navegación táctil BFS en selector de niveles, controles móviles en gameplay y Settings expandido.",
+      "pipelineResult": "succeeded",
+      "storeUpload": "accepted",
+      "storeProcessing": "not_checked",
+      "testerAvailability": "not_checked",
+      "deviceQA": "unrecorded",
+      "evidence": {
+        "ios": "Builds/CI/iOS/ipa/FoxsTale.ipa",
+        "xcodeProject": "Builds/CI/iOS/XcodeProject_11",
+        "sha256": "64d93ec9b8ece68c9c3dd706b4f70f7cd5a7ef5a58ef336e2a82d2cefd8203ce"
+      }
+    },
+    {
       "id": "e0a1b2c3-d4e5-6789-0123-abcdef101010",
       "platform": "android",
       "number": "10",
