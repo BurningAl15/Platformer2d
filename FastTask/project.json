@@ -30,8 +30,8 @@
         "availability": {
           "status": "upload_accepted",
           "checkedAt": "2026-11-11",
-          "evidenceBuildId": "8656e111-7127-46a6-94c7-7da6f8dd60c2",
-          "nextAction": "El track interno ya fue consultado por Fastlane y contiene versionCode 18. La rama local está sincronizada con origin/refactor/trying-refactor en 1a967f2. Se cerró la ruta de carga por buildIndex que podía eludir el tutorial; respaldos previos en /private/tmp/foxtale-tutorial-index-guard-before-20261111. Compilar y subir el AAB 19, luego verificar procesamiento y disponibilidad para testers en Play. Build, procesamiento, disponibilidad y QA en dispositivo se registran por separado.",
+          "evidenceBuildId": "785fa3c0-d87b-49ab-8843-c88f01bc8a49",
+          "nextAction": "Google Play Android Publisher API ya muestra versionCode 19 en el track internal tras el upload. Falta confirmar visualmente en Play Console que la release figura disponible para testers e instalarla en el teléfono; QA de dispositivo sigue sin evidencia. No confundir presencia del código en el track con instalación/QA.",
           "source": ".kiro/handoff.md"
         }
       },
