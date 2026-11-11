@@ -2,7 +2,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using DG.Tweening;
-using UnityEngine.EventSystems;
 
 /// <summary>
 /// Pantalla de Game Over. Se activa cuando el jugador pierde todas sus vidas.
@@ -412,8 +411,6 @@ public class GameOverController : MonoBehaviour
 
     private void SelectFirstButton()
     {
-        if (firstSelectedButton == null || EventSystem.current == null) return;
-        EventSystem.current.SetSelectedGameObject(null);
-        EventSystem.current.SetSelectedGameObject(firstSelectedButton);
+        UISelectionUtility.SelectDefault(firstSelectedButton, panelGroup != null ? panelGroup.transform : transform);
     }
 }

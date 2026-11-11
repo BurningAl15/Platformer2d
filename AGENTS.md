@@ -2,6 +2,11 @@
 
 These instructions apply to Codex, Antigravity, and other coding agents working in this Unity project.
 
+## English language standard
+- Write all source code in English: identifiers, comments, XML documentation, inspector headers/tooltips, technical logs, and developer-facing documentation.
+- Keep player-facing text in the game's supported localized languages. Do not translate player-facing copy as part of this standard.
+- Preserve existing serialized field names unless a migration is intentional and includes a compatibility path such as `FormerlySerializedAs`.
+
 ## Start from FastTask
 - Before changing anything, read `FastTask/project.json` and `FastTask/tasks.json`. Identify and reuse the task ID for the requested work; read its `handoffPath` and only the related handoffs needed for that task.
 - At the start of work, move the existing task to `doing` and update `updatedAt`. When implementation is ready but awaits build/device/store verification, use `testing`. Mark `done` only when its stated completion evidence exists. Preserve IDs, completed history, and unrelated fields.

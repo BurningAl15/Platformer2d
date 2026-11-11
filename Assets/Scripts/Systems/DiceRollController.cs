@@ -50,6 +50,7 @@ public class DiceRollController : MonoBehaviour
 
     private DiceType currentDiceType = DiceType.Normal;
     private bool isRolling = false;
+    private bool hasRolledThisPresentation;
     private Coroutine rollRoutine;
     private int lastRollResult = 1;
 
@@ -142,6 +143,7 @@ public class DiceRollController : MonoBehaviour
     {
         currentDiceType   = startingType;
         isRolling         = false;
+        hasRolledThisPresentation = false;
         onGameOverComplete = onComplete;
 
         RefreshUI();
@@ -165,9 +167,13 @@ public class DiceRollController : MonoBehaviour
 
         if (rollButton != null) rollButton.interactable = true;
         if (stopButton != null) stopButton.interactable = false;
+        if (upgradeWithTrebolButton != null)
+            upgradeWithTrebolButton.interactable = SaveManager.Instance != null &&
+                SaveManager.Instance.LoadTotalTrebols() > 0 && startingType == DiceType.Normal;
+        UISelectionUtility.SelectDefault(rollButton != null ? rollButton.gameObject : null, panelGroup != null ? panelGroup.transform : transform);
     }
 
-    public void Hide()
+    public void Hide(Action onHidden = null)
     {
         if (PlatformDetector.Instance != null)
             PlatformDetector.Instance.ForceSetMobileUIActive(PlatformDetector.IsMobile(), false);
@@ -184,6 +190,7 @@ public class DiceRollController : MonoBehaviour
                              panelGroup.interactable = false;
                              panelGroup.blocksRaycasts = false;
                          }
+                         onHidden?.Invoke();
                      });
         }
         else if (panelGroup != null)
@@ -191,12 +198,18 @@ public class DiceRollController : MonoBehaviour
             panelGroup.alpha = 0f;
             panelGroup.interactable = false;
             panelGroup.blocksRaycasts = false;
+            onHidden?.Invoke();
+        }
+        else
+        {
+            onHidden?.Invoke();
         }
     }
 
     public void OnRollPressed()
     {
-        if (isRolling) return;
+        if (isRolling || hasRolledThisPresentation) return;
+        hasRolledThisPresentation = true;
         rollRoutine = StartCoroutine(RollSequence());
     }
 
@@ -208,7 +221,7 @@ public class DiceRollController : MonoBehaviour
 
     public void OnUpgradeWithTrebolPressed()
     {
-        if (isRolling) return;
+        if (isRolling || hasRolledThisPresentation) return;
         if (SaveManager.Instance == null) return;
 
         if (SaveManager.Instance.SpendTrebol())
@@ -230,23 +243,24 @@ public class DiceRollController : MonoBehaviour
 
     public void OnClosePressed()
     {
-        Hide();
+        Action continueAfterHide = null;
         if (onLevelCompleteContinue != null)
         {
             var callback = onLevelCompleteContinue;
             onLevelCompleteContinue = null;
-            callback.Invoke();
+            continueAfterHide = callback;
         }
         else if (onGameOverComplete != null)
         {
             var cb = onGameOverComplete;
             onGameOverComplete = null;
-            cb.Invoke(lastRollResult);
+            continueAfterHide = () => cb.Invoke(lastRollResult);
         }
         else
         {
-            SceneUtils.ToSelectionScene();
+            continueAfterHide = SceneUtils.ToSelectionScene;
         }
+        Hide(continueAfterHide);
     }
 
     private void UpdateDiceVisual(int value)
@@ -324,6 +338,9 @@ public class DiceRollController : MonoBehaviour
 
         if (stopButton != null) stopButton.interactable = false;
         if (closeButton != null) closeButton.interactable = true;
+        if (rollButton != null) rollButton.interactable = false;
+        if (upgradeWithTrebolButton != null) upgradeWithTrebolButton.interactable = false;
+        UISelectionUtility.SelectDefault(closeButton != null ? closeButton.gameObject : null, panelGroup != null ? panelGroup.transform : transform);
 
         OnRollComplete?.Invoke(finalResult);
     }

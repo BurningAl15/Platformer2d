@@ -63,7 +63,7 @@ public class PauseMenu : MonoBehaviour
             Time.timeScale = 0;
             TurnCanvasGroup(true);
             InputManager.Instance.EnableUIOnlyInput();
-            SelectFirstButton(firstSelectedButton);
+            UISelectionUtility.SelectDefault(firstSelectedButton, pauseScreen != null ? pauseScreen.transform : transform);
 
             pauseScreen.transform.DOKill();
             pauseScreen.transform.DOLocalMoveY(endPoint, 0.25f)
@@ -137,10 +137,4 @@ public class PauseMenu : MonoBehaviour
         pauseBG.alpha = active ? 1f : 0f;
     }
 
-    private void SelectFirstButton(GameObject button)
-    {
-        if (button == null || EventSystem.current == null) return;
-        EventSystem.current.SetSelectedGameObject(null);
-        EventSystem.current.SetSelectedGameObject(button);
-    }
 }

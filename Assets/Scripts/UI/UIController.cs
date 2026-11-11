@@ -126,9 +126,8 @@ public class UIController : MonoBehaviour
             bonusHeartIcon.gameObject.SetActive(false);
         }
 
-        if(cloverImg !=null){
-            cloverImg.color = disabledColor;
-        }
+        if (cloverImg != null)
+            cloverImg.gameObject.SetActive(false);
 
         if (endLevel_animator != null) endLevel_animator.gameObject.SetActive(false);
         if (amazingJob_animator != null) amazingJob_animator.gameObject.SetActive(false);
@@ -261,8 +260,9 @@ public class UIController : MonoBehaviour
     /// <summary>Refresca el contador de tréboles acumulados en el HUD.</summary>
     public void RefreshTrebolUI()
     {
-        if (cloverImg == null || SaveManager.Instance == null) return;
-        cloverImg.color = gotColor;
+        // Clover progress is represented on each level-map point, not in the gameplay HUD.
+        if (cloverImg != null && cloverImg.gameObject.activeSelf)
+            cloverImg.gameObject.SetActive(false);
     }
 
     // ─────────────────────────────────────────────────────────────────────────

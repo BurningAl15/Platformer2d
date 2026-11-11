@@ -182,20 +182,13 @@ public class LevelManager : MonoBehaviour
         UIController._instance.Run_EndLevelAnimation();
         yield return new WaitForSeconds(1.5f);
 
-        FadeEffect._instance.Fade_Out();
-
-        // Guardar progreso (delegado a SaveManager)
+        // Save progress before opening any reward or completion panel.
         LevelRating rating = SaveProgress();
-
-        yield return new WaitUntil(() => FadeEffect._instance.endFade);
-        yield return new WaitForSeconds(0.25f);
 
         // Si recolectó todas las gemas → mostrar pantalla del dado antes de ir al mapa
         bool allGemsCollected = totalGemsInLevel > 0 && gemsCollected >= totalGemsInLevel;
         if (allGemsCollected && DiceRollController.Instance != null)
         {
-            FadeEffect._instance.Fade_In();
-            yield return new WaitUntil(() => FadeEffect._instance.endFade);
             if (IsCurrentWorldComplete())
             {
                 DiceRollController.Instance.ShowFromLevelComplete(
@@ -214,8 +207,6 @@ public class LevelManager : MonoBehaviour
 
         if (IsCurrentWorldComplete())
         {
-            FadeEffect._instance.Fade_In();
-            yield return new WaitUntil(() => FadeEffect._instance.endFade);
             worldCompleteController.Show(currentWorldData);
             currentCoroutine = null;
             yield break;

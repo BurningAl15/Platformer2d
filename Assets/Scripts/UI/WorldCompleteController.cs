@@ -46,7 +46,10 @@ public class WorldCompleteController : MonoBehaviour
 
         isShowing = true;
         if (panel != null)
+        {
             SetPanelVisible(true);
+            UISelectionUtility.SelectDefault(null, panel.transform);
+        }
     }
 
     /// <summary>Conectar al botón principal del panel desde el Inspector.</summary>
