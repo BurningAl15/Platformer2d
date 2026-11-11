@@ -20,7 +20,6 @@ public class HeartUI
     {
         heartEmpty = empty;
         heartHalf  = half;
-        heartFull  = full;
         heartImage.sprite = heartFull;
     }
 
@@ -83,7 +82,9 @@ public class UIController : MonoBehaviour
     // ─────────────────────────────
     [Header("Tréboles")]
     [Tooltip("(Opcional) Texto o contador de tréboles acumulados en el HUD")]
-    [SerializeField] private TextMeshProUGUI trebolCountText;
+    // [SerializeField] private TextMeshProUGUI trebolCountText;
+    [SerializeField] private Image cloverImg;
+    [SerializeField] private Color disabledColor, gotColor;
 
     // ─────────────────────────────
     //  Vidas
@@ -125,6 +126,10 @@ public class UIController : MonoBehaviour
             bonusHeartIcon.gameObject.SetActive(false);
         }
 
+        if(cloverImg !=null){
+            cloverImg.color = disabledColor;
+        }
+
         if (endLevel_animator != null) endLevel_animator.gameObject.SetActive(false);
         if (amazingJob_animator != null) amazingJob_animator.gameObject.SetActive(false);
     }
@@ -139,7 +144,7 @@ public class UIController : MonoBehaviour
         // Configurar auto-sizing y no-wrap en todos los textos del HUD
         ConfigureAutoResize(gemsLevelText, 24f, 90f);
         ConfigureAutoResize(gemsGlobalText, 16f, 48f);
-        ConfigureAutoResize(trebolCountText, 16f, 36f);
+        // ConfigureAutoResize(trebolCountText, 16f, 36f);
         ConfigureAutoResize(livesText, 16f, 36f);
 
         // Mostrar vidas iniciales
@@ -256,8 +261,8 @@ public class UIController : MonoBehaviour
     /// <summary>Refresca el contador de tréboles acumulados en el HUD.</summary>
     public void RefreshTrebolUI()
     {
-        if (trebolCountText == null || SaveManager.Instance == null) return;
-        trebolCountText.text = $"x{SaveManager.Instance.LoadTotalTrebols()}";
+        if (cloverImg == null || SaveManager.Instance == null) return;
+        cloverImg.color = gotColor;
     }
 
     // ─────────────────────────────────────────────────────────────────────────
