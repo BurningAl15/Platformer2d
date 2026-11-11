@@ -54,6 +54,16 @@ public class SceneTransitionManager : MonoBehaviour
     public void LoadScene(int buildIndex)
     {
         if (isTransitioning) return;
+
+        // Integer-based callers (for example NextScene) must obey the same
+        // first-run tutorial gate as callers that load by scene name.
+        string targetScene = SceneManager.GetSceneByBuildIndex(buildIndex).name;
+        if (IsTutorialIncomplete() && IsRestrictedBeforeTutorial(targetScene))
+        {
+            LoadGameplayScene(0);
+            return;
+        }
+
         StartCoroutine(TransitionRoutine(() => SceneManager.LoadScene(buildIndex)));
     }
 

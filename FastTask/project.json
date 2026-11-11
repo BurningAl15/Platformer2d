@@ -31,7 +31,7 @@
           "status": "upload_accepted",
           "checkedAt": "2026-11-11",
           "evidenceBuildId": "8656e111-7127-46a6-94c7-7da6f8dd60c2",
-          "nextAction": "Commit 457890e está publicado en refactor/trying-refactor. Build 18 sigue siendo el último de tiendas y no incluye este commit. Revisar en Unity/Play Mode el layout móvil y la colocación de los fragmentos, además de daño/caídas e invulnerabilidad, antes de preparar el siguiente candidato. Build, procesamiento de tienda, disponibilidad del tester y QA de dispositivo se registran por separado.",
+          "nextAction": "El track interno ya fue consultado por Fastlane y contiene versionCode 18. La rama local está sincronizada con origin/refactor/trying-refactor en 1a967f2. Se cerró la ruta de carga por buildIndex que podía eludir el tutorial; respaldos previos en /private/tmp/foxtale-tutorial-index-guard-before-20261111. Compilar y subir el AAB 19, luego verificar procesamiento y disponibilidad para testers en Play. Build, procesamiento, disponibilidad y QA en dispositivo se registran por separado.",
           "source": ".kiro/handoff.md"
         }
       },

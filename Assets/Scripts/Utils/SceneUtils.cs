@@ -74,6 +74,15 @@ public class SceneUtils : MonoBehaviour
 
     public static void LoadScene(int buildIndex)
     {
+        // Keep the tutorial gate active even when this helper has to use its
+        // direct SceneManager fallback before SceneTransitionManager exists.
+        string targetScene = SceneManager.GetSceneByBuildIndex(buildIndex).name;
+        if (IsTutorialIncomplete() && IsRestrictedBeforeTutorial(targetScene))
+        {
+            LoadGameplayScene(0);
+            return;
+        }
+
         if (SceneTransitionManager.Instance != null)
             SceneTransitionManager.Instance.LoadScene(buildIndex);
         else
