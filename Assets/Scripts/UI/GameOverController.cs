@@ -364,7 +364,7 @@ public class GameOverController : MonoBehaviour
 
         // Respawnear al jugador con las vidas actualizadas
         if (LevelManager._instance != null)
-            LevelManager._instance.RespawnPlayer();
+            LevelManager._instance.RespawnPlayerAfterContinue();
     }
 
     private void RefreshEconomyUI()

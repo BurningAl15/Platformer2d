@@ -340,9 +340,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _spriteRenderer: {fileID: 0}
   currentHealth: 0
-  maxHealth: 8
+  baseMaxHealth: 6
   invicibilityCounter: 0
-  invincibilityLength: 2
+  invincibilityLength: 1
   deathEffect: {fileID: 0}
   stompBox: {fileID: 8508318024888336791}
 --- !u!114 &5095216838073669765

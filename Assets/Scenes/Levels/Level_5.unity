@@ -71781,3 +71781,65 @@ SceneRoots:
   - {fileID: 3484873469780846422}
   - {fileID: 6613214981622882200}
   - {fileID: 2090214735}
+
+--- !u!1001 &7713030000000000005
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 7711010000000000001, guid: ab37bafec83f4c778fbf969585fee3de, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 218.20
+      objectReference: {fileID: 0}
+    - target: {fileID: 7711010000000000001, guid: ab37bafec83f4c778fbf969585fee3de, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 5.10
+      objectReference: {fileID: 0}
+    - target: {fileID: 7711010000000000001, guid: ab37bafec83f4c778fbf969585fee3de, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7711010000000000001, guid: ab37bafec83f4c778fbf969585fee3de, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7711010000000000001, guid: ab37bafec83f4c778fbf969585fee3de, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7711010000000000001, guid: ab37bafec83f4c778fbf969585fee3de, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7711010000000000001, guid: ab37bafec83f4c778fbf969585fee3de, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7711010000000000001, guid: ab37bafec83f4c778fbf969585fee3de, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7711010000000000001, guid: ab37bafec83f4c778fbf969585fee3de, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7711010000000000001, guid: ab37bafec83f4c778fbf969585fee3de, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7711010000000000000, guid: ab37bafec83f4c778fbf969585fee3de, type: 3}
+      propertyPath: m_Name
+      value: HeartFragment_Level5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7711010000000000004, guid: ab37bafec83f4c778fbf969585fee3de, type: 3}
+      propertyPath: levelNumber
+      value: 5
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: ab37bafec83f4c778fbf969585fee3de, type: 3}

@@ -21,8 +21,9 @@ public class DeathZone : MonoBehaviour
     PlayerHealth player = other.GetComponentInParent<PlayerHealth>();
     if (player != null)
     {
-      if (LevelManager._instance != null)
-        LevelManager._instance.RespawnPlayer();
+      // Falls use the same health/invulnerability rules as other hazards, then
+      // return the player to the last waypoint without charging a global life.
+      player.DealFallDamage();
       return;
     }
 

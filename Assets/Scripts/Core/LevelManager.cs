@@ -114,30 +114,47 @@ public class LevelManager : MonoBehaviour
     /// </summary>
     public void RespawnPlayer()
     {
+        TryRespawn(consumeLife: true, restoreHealth: true);
+    }
+
+    /// <summary>La caída quita salud y vuelve al waypoint sin consumir una vida global.</summary>
+    public void RespawnPlayerFromFall()
+    {
+        TryRespawn(consumeLife: false, restoreHealth: false);
+    }
+
+    /// <summary>Continuar desde Game Over tras recuperar vidas restaura la salud.</summary>
+    public void RespawnPlayerAfterContinue()
+    {
+        TryRespawn(consumeLife: false, restoreHealth: true);
+    }
+
+    private void TryRespawn(bool consumeLife, bool restoreHealth)
+    {
         if (currentCoroutine != null) return;
 
-        // En el tutorial (Level_0), el respawn es infinito: no se consumen vidas ni hay Game Over.
         bool isTutorial = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "Level_0";
-        bool canContinue = isTutorial || LivesManager.Instance == null || LivesManager.Instance.ConsumeLifeAndCheck();
+        bool canContinue = !consumeLife || isTutorial || LivesManager.Instance == null ||
+                           LivesManager.Instance.ConsumeLifeAndCheck();
 
         if (canContinue)
-        {
-            currentCoroutine = StartCoroutine(RespawnRoutine());
-        }
+            currentCoroutine = StartCoroutine(RespawnRoutine(restoreHealth));
         // Si no puede continuar, LivesManager dispara OnGameOver y
         // GameOverController lo maneja. No iniciamos la coroutine.
     }
 
-    private IEnumerator RespawnRoutine()
+    private IEnumerator RespawnRoutine(bool restoreHealth)
     {
+        if (PlayerHealth._instance == null) { currentCoroutine = null; yield break; }
+
         PlayerHealth._instance.DeathEffect();
         PlayerHealth._instance.TurnOffPlayer();
         yield return new WaitUntil(() => PlayerHealth._instance.isDeathEffectEnd());
         FadeEffect._instance.Fade_Out();
         yield return new WaitUntil(() => FadeEffect._instance.endFade);
         yield return new WaitForSeconds(respawnHoldTime);
-        PlayerHealth._instance.ResetHealth();
-        UIController._instance.ResetHearts();
+        if (restoreHealth)
+            PlayerHealth._instance.ResetHealth();
         PlayerHealth._instance.ResetPlayer();
         PlayerHealth._instance.ResetDeathEffect();
         FadeEffect._instance.Fade_In();

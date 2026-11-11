@@ -3,11 +3,11 @@ using UnityEngine;
 
 /// <summary>
 /// Gestiona las vidas globales del jugador a través de sesiones.
-/// Las vidas persisten entre niveles (no se resetean al morir,
-/// solo al quedarse sin vidas o al iniciar nueva partida).
+/// Administra las vidas globales de reintento, separadas de los corazones
+/// de salud de PlayerHealth. Se consume una vida global cuando la salud llega a 0.
 ///
 /// FLUJO:
-/// 1. Al morir (currentHealth = 0), PlayerHealth llama LevelManager.RespawnPlayer().
+/// 1. Al morir (salud = 0), PlayerHealth llama LevelManager.RespawnPlayer().
 /// 2. LevelManager consulta LivesManager.ConsumeLifeAndCheck():
 ///    - Si quedan vidas → respawn normal.
 ///    - Si no quedan → disparar OnGameOver para mostrar pantalla de Game Over.

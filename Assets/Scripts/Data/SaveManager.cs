@@ -18,6 +18,8 @@ public class SaveManager : MonoBehaviour
     // Claves de PlayerPrefs para economía
     private const string KEY_GLOBAL_GEMS = "GlobalGems";
     private const string KEY_LIVES       = "PlayerLives";
+    private const string KEY_HEART_FRAGMENT_COUNT = "PermanentHeartFragmentCount";
+    private const string KEY_PERMANENT_HEART_COUNT = "PermanentHeartCount";
     private const int    DEFAULT_LIVES   = 3;
     // GDD: "sin límite máximo de vidas acumuladas"
     // Se mantiene un tope de seguridad alto (999) solo para evitar desbordamientos de PlayerPrefs.
@@ -204,6 +206,45 @@ public class SaveManager : MonoBehaviour
 
     public int GetMaxLives() => MAX_LIVES;
     public int GetDefaultLives() => DEFAULT_LIVES;
+
+    // ───────────────────────────────────────────────
+    //  Progresión: fragmentos de corazón
+    // ───────────────────────────────────────────────
+
+    /// <summary>True si el fragmento asignado a este nivel ya fue recogido.</summary>
+    public bool HasHeartFragment(int levelNumber)
+        => PlayerPrefs.GetInt($"HeartFragment_Level_{levelNumber}", 0) == 1;
+
+    /// <summary>
+    /// Registra como máximo un fragmento por nivel. Cada pareja otorga un corazón
+    /// permanente. Retorna false si ese nivel ya había entregado su fragmento.
+    /// </summary>
+    public bool TryCollectHeartFragment(int levelNumber, out bool grantedPermanentHeart)
+    {
+        grantedPermanentHeart = false;
+        if (levelNumber <= 0 || HasHeartFragment(levelNumber)) return false;
+
+        PlayerPrefs.SetInt($"HeartFragment_Level_{levelNumber}", 1);
+        int fragments = Mathf.Max(0, PlayerPrefs.GetInt(KEY_HEART_FRAGMENT_COUNT, 0)) + 1;
+        PlayerPrefs.SetInt(KEY_HEART_FRAGMENT_COUNT, fragments);
+
+        if (fragments % 2 == 0)
+        {
+            int hearts = Mathf.Max(0, PlayerPrefs.GetInt(KEY_PERMANENT_HEART_COUNT, 0)) + 1;
+            PlayerPrefs.SetInt(KEY_PERMANENT_HEART_COUNT, hearts);
+            grantedPermanentHeart = true;
+        }
+
+        PlayerPrefs.Save();
+        return true;
+    }
+
+    public int LoadPermanentHeartCount()
+        => Mathf.Max(0, PlayerPrefs.GetInt(KEY_PERMANENT_HEART_COUNT, 0));
+
+    /// <summary>Fragmentos que faltan para el siguiente corazón permanente (0 o 1).</summary>
+    public int LoadHeartFragmentsTowardNextHeart()
+        => Mathf.Max(0, PlayerPrefs.GetInt(KEY_HEART_FRAGMENT_COUNT, 0)) % 2;
 
     // ───────────────────────────────────────────────
     //  Configuración de audio
