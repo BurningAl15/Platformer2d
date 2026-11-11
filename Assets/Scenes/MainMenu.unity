@@ -369,7 +369,7 @@ MonoBehaviour:
   m_spriteAsset: {fileID: 0}
   m_tintAllSprites: 0
   m_StyleSheet: {fileID: 0}
-  m_TextStyleHashCode: 0
+  m_TextStyleHashCode: -1183493901
   m_overrideHtmlColors: 0
   m_faceColor:
     serializedVersion: 2
@@ -760,7 +760,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4199726456231294285, guid: efd0f002e955e6b4d9d63618dda0f0c1, type: 3}
       propertyPath: m_fontSize
-      value: 70
+      value: 90
       objectReference: {fileID: 0}
     - target: {fileID: 4199726456231294285, guid: efd0f002e955e6b4d9d63618dda0f0c1, type: 3}
       propertyPath: m_fontSizeMin
@@ -785,6 +785,10 @@ PrefabInstance:
     - target: {fileID: 4199726456231294285, guid: efd0f002e955e6b4d9d63618dda0f0c1, type: 3}
       propertyPath: m_enableAutoSizing
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4199726456231294285, guid: efd0f002e955e6b4d9d63618dda0f0c1, type: 3}
+      propertyPath: m_TextStyleHashCode
+      value: -1183493901
       objectReference: {fileID: 0}
     - target: {fileID: 4199726456231294285, guid: efd0f002e955e6b4d9d63618dda0f0c1, type: 3}
       propertyPath: m_VerticalAlignment
@@ -1061,10 +1065,10 @@ MonoBehaviour:
   m_Navigation:
     m_Mode: 4
     m_WrapAround: 0
-    m_SelectOnUp: {fileID: 4199726456060943509}
+    m_SelectOnUp: {fileID: 1325197999}
     m_SelectOnDown: {fileID: 468100077}
     m_SelectOnLeft: {fileID: 0}
-    m_SelectOnRight: {fileID: 0}
+    m_SelectOnRight: {fileID: 2036544221}
   m_Transition: 3
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
@@ -2149,7 +2153,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4199726456231294285, guid: efd0f002e955e6b4d9d63618dda0f0c1, type: 3}
       propertyPath: m_fontSize
-      value: 70
+      value: 90
       objectReference: {fileID: 0}
     - target: {fileID: 4199726456231294285, guid: efd0f002e955e6b4d9d63618dda0f0c1, type: 3}
       propertyPath: m_fontSizeMin
@@ -2174,6 +2178,10 @@ PrefabInstance:
     - target: {fileID: 4199726456231294285, guid: efd0f002e955e6b4d9d63618dda0f0c1, type: 3}
       propertyPath: m_enableAutoSizing
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4199726456231294285, guid: efd0f002e955e6b4d9d63618dda0f0c1, type: 3}
+      propertyPath: m_TextStyleHashCode
+      value: -1183493901
       objectReference: {fileID: 0}
     - target: {fileID: 4199726456231294285, guid: efd0f002e955e6b4d9d63618dda0f0c1, type: 3}
       propertyPath: m_VerticalAlignment
@@ -2398,6 +2406,17 @@ MonoBehaviour:
   musicStatusText: {fileID: 1850584212}
   sfxToggleButton: {fileID: 914545200}
   sfxStatusText: {fileID: 1992969537}
+  hapticsToggleButton: {fileID: 0}
+  hapticsStatusText: {fileID: 0}
+  languageToggleButton: {fileID: 0}
+  languageStatusText: {fileID: 0}
+  progressSummaryText: {fileID: 0}
+  versionText: {fileID: 0}
+  resetProgressButton: {fileID: 0}
+  resetProgressText: {fileID: 0}
+  confirmResetDialog: {fileID: 0}
+  confirmResetButton: {fileID: 0}
+  cancelResetButton: {fileID: 0}
   enabledColor: {r: 0.35, g: 0.95, b: 0.45, a: 1}
   disabledColor: {r: 0.85, g: 0.35, b: 0.35, a: 1}
 --- !u!224 &908657503
@@ -2981,7 +3000,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 70
+  m_fontSize: 43.95
   m_fontSizeBase: 70
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -3910,9 +3929,17 @@ PrefabInstance:
       value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 4199726455294008378, guid: efd0f002e955e6b4d9d63618dda0f0c1, type: 3}
+      propertyPath: m_Navigation.m_SelectOnUp
+      value: 
+      objectReference: {fileID: 1306320509}
+    - target: {fileID: 4199726455294008378, guid: efd0f002e955e6b4d9d63618dda0f0c1, type: 3}
       propertyPath: m_Navigation.m_SelectOnDown
       value: 
       objectReference: {fileID: 4199726456060943509}
+    - target: {fileID: 4199726455294008378, guid: efd0f002e955e6b4d9d63618dda0f0c1, type: 3}
+      propertyPath: m_Navigation.m_SelectOnRight
+      value: 
+      objectReference: {fileID: 2036544221}
     - target: {fileID: 4199726455294008378, guid: efd0f002e955e6b4d9d63618dda0f0c1, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
@@ -3960,6 +3987,10 @@ PrefabInstance:
     - target: {fileID: 4199726456231294285, guid: efd0f002e955e6b4d9d63618dda0f0c1, type: 3}
       propertyPath: m_enableAutoSizing
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4199726456231294285, guid: efd0f002e955e6b4d9d63618dda0f0c1, type: 3}
+      propertyPath: m_TextStyleHashCode
+      value: -1183493901
       objectReference: {fileID: 0}
     - target: {fileID: 4199726456231294285, guid: efd0f002e955e6b4d9d63618dda0f0c1, type: 3}
       propertyPath: m_VerticalAlignment
@@ -4025,6 +4056,7 @@ GameObject:
   - component: {fileID: 1325198001}
   - component: {fileID: 1325198000}
   - component: {fileID: 1325197999}
+  - component: {fileID: 1325198002}
   m_Layer: 0
   m_Name: Settings-Button
   m_TagString: Untagged
@@ -4065,13 +4097,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 4
     m_WrapAround: 0
-    m_SelectOnUp: {fileID: 0}
-    m_SelectOnDown: {fileID: 0}
+    m_SelectOnUp: {fileID: 4199726456060943509}
+    m_SelectOnDown: {fileID: 468100077}
     m_SelectOnLeft: {fileID: 0}
-    m_SelectOnRight: {fileID: 0}
-  m_Transition: 2
+    m_SelectOnRight: {fileID: 2036544221}
+  m_Transition: 3
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
@@ -4146,6 +4178,28 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1325197997}
   m_CullTransparentMesh: 1
+--- !u!95 &1325198002
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1325197997}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 256345b6967f58b4a8eb2072c2812026, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1001 &1328219203
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4999,7 +5053,7 @@ MonoBehaviour:
   m_spriteAsset: {fileID: 0}
   m_tintAllSprites: 0
   m_StyleSheet: {fileID: 0}
-  m_TextStyleHashCode: 0
+  m_TextStyleHashCode: -1183493901
   m_overrideHtmlColors: 0
   m_faceColor:
     serializedVersion: 2
@@ -5859,6 +5913,7 @@ MonoBehaviour:
   continueFirstButton: {fileID: 1622563073}
   newGameFirstButton: {fileID: 2094069601}
   panelFirstButton: {fileID: 447491953}
+  versionText: {fileID: 0}
 --- !u!1 &1723557181
 GameObject:
   m_ObjectHideFlags: 0
@@ -6642,7 +6697,7 @@ RectTransform:
   m_GameObject: {fileID: 1941138558}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 175195839}
@@ -6683,6 +6738,7 @@ MonoBehaviour:
   mainMenuSceneName: MainMenu
   levelSelectorSceneName: LevelSelection
   levelScenePrefix: Level_
+  forceMobileUI: 0
 --- !u!1 &1954494175
 GameObject:
   m_ObjectHideFlags: 0
@@ -6907,6 +6963,7 @@ GameObject:
   - component: {fileID: 2036544223}
   - component: {fileID: 2036544222}
   - component: {fileID: 2036544221}
+  - component: {fileID: 2036544224}
   m_Layer: 0
   m_Name: Store-Button
   m_TagString: Untagged
@@ -6947,13 +7004,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 4
     m_WrapAround: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
-    m_SelectOnLeft: {fileID: 0}
+    m_SelectOnLeft: {fileID: 4199726456060943509}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 2
+  m_Transition: 3
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
@@ -7028,6 +7085,28 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2036544219}
   m_CullTransparentMesh: 1
+--- !u!95 &2036544224
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2036544219}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 256345b6967f58b4a8eb2072c2812026, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &2039662826
 GameObject:
   m_ObjectHideFlags: 0
@@ -9729,7 +9808,11 @@ PrefabInstance:
     - target: {fileID: 4199726455294008378, guid: efd0f002e955e6b4d9d63618dda0f0c1, type: 3}
       propertyPath: m_Navigation.m_SelectOnDown
       value: 
-      objectReference: {fileID: 468100077}
+      objectReference: {fileID: 1325197999}
+    - target: {fileID: 4199726455294008378, guid: efd0f002e955e6b4d9d63618dda0f0c1, type: 3}
+      propertyPath: m_Navigation.m_SelectOnRight
+      value: 
+      objectReference: {fileID: 2036544221}
     - target: {fileID: 4199726455294008378, guid: efd0f002e955e6b4d9d63618dda0f0c1, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
@@ -9773,6 +9856,10 @@ PrefabInstance:
     - target: {fileID: 4199726456231294285, guid: efd0f002e955e6b4d9d63618dda0f0c1, type: 3}
       propertyPath: m_enableAutoSizing
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4199726456231294285, guid: efd0f002e955e6b4d9d63618dda0f0c1, type: 3}
+      propertyPath: m_TextStyleHashCode
+      value: -1183493901
       objectReference: {fileID: 0}
     - target: {fileID: 4199726456231294285, guid: efd0f002e955e6b4d9d63618dda0f0c1, type: 3}
       propertyPath: m_VerticalAlignment
