@@ -28,10 +28,10 @@
           "evidenceBuildId": "488949e5-a096-4a21-99f3-1048821f8c80"
         },
         "availability": {
-          "status": "upload_accepted",
+          "status": "available_internal_track_api_verified",
           "checkedAt": "2026-11-11",
           "evidenceBuildId": "785fa3c0-d87b-49ab-8843-c88f01bc8a49",
-          "nextAction": "Google Play Android Publisher API ya muestra versionCode 19 en el track internal tras el upload. Falta confirmar visualmente en Play Console que la release figura disponible para testers e instalarla en el teléfono; QA de dispositivo sigue sin evidencia. No confundir presencia del código en el track con instalación/QA.",
+          "nextAction": "La API Android Publisher confirma el release 1.0.1, versionCode 19, status completed en el track internal. Testers inscritos deberían verlo en el enlace de prueba interna. Falta que el propietario confirme instalación/actualización en su teléfono y completar QA de dispositivo.",
           "source": ".kiro/handoff.md"
         }
       },
