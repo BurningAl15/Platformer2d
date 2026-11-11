@@ -31,7 +31,7 @@
           "status": "upload_accepted",
           "checkedAt": "2026-11-11",
           "evidenceBuildId": "8656e111-7127-46a6-94c7-7da6f8dd60c2",
-          "nextAction": "Build 18 no contiene estos cambios locales posteriores. Tras validar/compilar el arreglo de Continue/tutorial, navegación Shop, Clover y hazards, generar un nuevo build interno; verificar procesamiento en la consola y luego QA de dispositivo. Google Play aún mostraba Build 17 disponible; TestFlight Build 18 sin estado de procesamiento verificado.",
+          "nextAction": "Los cambios locales de UI/hazards/tutorial y el arreglo de ciclo de vida de paneles aún no están en Build 18. Generar el siguiente build interno después de validar compilación; verificar procesamiento y disponibilidad en Play Console/TestFlight y luego QA en dispositivo. No afirmar resuelto hasta probar Settings, Shop, GameOver, dado y panel de mundo.",
           "source": ".kiro/handoff.md"
         }
       },
@@ -53,7 +53,7 @@
           "status": "upload_accepted",
           "checkedAt": "2026-11-11",
           "evidenceBuildId": "cb6ad2e6-25b4-4e4c-9829-eae9f7454f25",
-          "nextAction": "Build 18 no contiene estos cambios locales posteriores. Tras validar/compilar el arreglo de Continue/tutorial, navegación Shop, Clover y hazards, generar un nuevo build interno; verificar procesamiento en la consola y luego QA de dispositivo. Google Play aún mostraba Build 17 disponible; TestFlight Build 18 sin estado de procesamiento verificado.",
+          "nextAction": "Los cambios locales de UI/hazards/tutorial y el arreglo de ciclo de vida de paneles aún no están en Build 18. Generar el siguiente build interno después de validar compilación; verificar procesamiento y disponibilidad en Play Console/TestFlight y luego QA en dispositivo. No afirmar resuelto hasta probar Settings, Shop, GameOver, dado y panel de mundo.",
           "source": ".kiro/handoff.md"
         }
       }

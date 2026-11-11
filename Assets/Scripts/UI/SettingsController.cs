@@ -393,7 +393,14 @@ public class SettingsController : MonoBehaviour
             settingsPanel.SetActive(true);
 
         if (EventSystem.current != null)
-            EventSystem.current.SetSelectedGameObject(null);
+        {
+            GameObject selected = EventSystem.current.currentSelectedGameObject;
+            if (selected != null && settingsPanel != null &&
+                selected.transform.IsChildOf(settingsPanel.transform))
+            {
+                EventSystem.current.SetSelectedGameObject(null);
+            }
+        }
     }
 
     // ─────────────────────────────────────────────────────────────────────────

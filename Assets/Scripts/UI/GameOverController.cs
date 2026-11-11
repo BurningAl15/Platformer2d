@@ -46,6 +46,7 @@ public class GameOverController : MonoBehaviour
     [SerializeField] private float animDuration = 0.4f;
     [SerializeField] private float hiddenY = -600f;
     [SerializeField] private float visibleY = 0f;
+    private bool isSubscribedToGameOver;
 
     // ─────────────────────────────────────────────────────────────────────────
     //  Ciclo de vida
@@ -91,6 +92,9 @@ public class GameOverController : MonoBehaviour
 
     private void Start()
     {
+        // OnEnable can run before LivesManager.Awake when scene object order differs.
+        SubscribeToGameOver();
+
         if (watchAdButton != null)
             watchAdButton.onClick.AddListener(OnWatchAdPressed);
         if (useTrebolButton != null)
@@ -105,14 +109,23 @@ public class GameOverController : MonoBehaviour
 
     private void OnEnable()
     {
-        if (LivesManager.Instance != null)
-            LivesManager.Instance.OnGameOver += Show;
+        SubscribeToGameOver();
     }
 
     private void OnDisable()
     {
-        if (LivesManager.Instance != null)
+        if (isSubscribedToGameOver && LivesManager.Instance != null)
             LivesManager.Instance.OnGameOver -= Show;
+        isSubscribedToGameOver = false;
+    }
+
+    private void SubscribeToGameOver()
+    {
+        if (isSubscribedToGameOver || LivesManager.Instance == null)
+            return;
+
+        LivesManager.Instance.OnGameOver += Show;
+        isSubscribedToGameOver = true;
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -178,7 +191,7 @@ public class GameOverController : MonoBehaviour
         panelGroup.alpha = 0f;
         if (panelRect != null)
             panelRect.anchoredPosition = new Vector2(panelRect.anchoredPosition.x, hiddenY);
-        panelGroup.gameObject.SetActive(false);
+        // Keep the controller enabled so it remains subscribed to LivesManager.OnGameOver.
         PlatformDetector.Instance?.SetGameplayControlsSuppressed(false);
     }
 

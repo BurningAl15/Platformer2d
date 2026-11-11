@@ -9,6 +9,7 @@ public class WorldCompleteController : MonoBehaviour
 {
     [Header("Panel")]
     [SerializeField] private GameObject panel;
+    private CanvasGroup panelGroup;
 
     [Header("Resumen")]
     [SerializeField] private TextMeshProUGUI worldNameText;
@@ -25,7 +26,10 @@ public class WorldCompleteController : MonoBehaviour
     private void Awake()
     {
         if (panel != null)
-            panel.SetActive(false);
+        {
+            panelGroup = panel.GetComponent<CanvasGroup>();
+            SetPanelVisible(false);
+        }
     }
 
     public void Show(WorldData completedWorld)
@@ -42,7 +46,7 @@ public class WorldCompleteController : MonoBehaviour
 
         isShowing = true;
         if (panel != null)
-            panel.SetActive(true);
+            SetPanelVisible(true);
     }
 
     /// <summary>Conectar al botón principal del panel desde el Inspector.</summary>
@@ -66,6 +70,22 @@ public class WorldCompleteController : MonoBehaviour
             target.textWrappingMode = TextWrappingModes.NoWrap;
             target.overflowMode = TextOverflowModes.Ellipsis;
             target.text = value;
+        }
+    }
+
+    private void SetPanelVisible(bool visible)
+    {
+        if (panel == null) return;
+        if (!panel.activeSelf)
+            panel.SetActive(true);
+
+        if (panelGroup == null)
+            panelGroup = panel.GetComponent<CanvasGroup>();
+        if (panelGroup != null)
+        {
+            panelGroup.alpha = visible ? 1f : 0f;
+            panelGroup.interactable = visible;
+            panelGroup.blocksRaycasts = visible;
         }
     }
 

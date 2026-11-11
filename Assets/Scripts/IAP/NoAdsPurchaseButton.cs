@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Events;
 using TMPro;
 
 /// <summary>
@@ -40,33 +41,27 @@ public class NoAdsPurchaseButton : MonoBehaviour
     [Header("Feedback")]
     [SerializeField] private GameObject loadingOverlay;
 
-    private bool isStoreExplicitlyOpen = false;
-
     private void Awake()
     {
-        if (openStoreButton != null)
+        BindButtonListener(openStoreButton, OpenPanel);
+        BindButtonListener(closeStoreButton, ClosePanel);
+        BindButtonListener(purchaseButton, OnPurchasePressed);
+        BindButtonListener(restoreButton, OnRestorePressed);
+    }
+
+    private void BindButtonListener(Button button, UnityAction listener)
+    {
+        if (button == null) return;
+
+        button.onClick.RemoveListener(listener);
+        for (int i = 0; i < button.onClick.GetPersistentEventCount(); i++)
         {
-            openStoreButton.onClick.RemoveListener(OpenPanel);
-            openStoreButton.onClick.AddListener(OpenPanel);
+            if (button.onClick.GetPersistentTarget(i) == this &&
+                button.onClick.GetPersistentMethodName(i) == listener.Method.Name)
+                return;
         }
 
-        if (closeStoreButton != null)
-        {
-            closeStoreButton.onClick.RemoveListener(ClosePanel);
-            closeStoreButton.onClick.AddListener(ClosePanel);
-        }
-
-        if (purchaseButton != null)
-        {
-            purchaseButton.onClick.RemoveListener(OnPurchasePressed);
-            purchaseButton.onClick.AddListener(OnPurchasePressed);
-        }
-
-        if (restoreButton != null)
-        {
-            restoreButton.onClick.RemoveListener(OnRestorePressed);
-            restoreButton.onClick.AddListener(OnRestorePressed);
-        }
+        button.onClick.AddListener(listener);
     }
 
     private void Start()
@@ -75,11 +70,8 @@ public class NoAdsPurchaseButton : MonoBehaviour
         RefreshUI();
         RefreshPriceWhenReady();
 
-        // Si el panel de tienda empieza con alpha 0 y NO fue abierto explícitamente, mantenerlo inactivo
-        if (!isStoreExplicitlyOpen && storePanelGroup != null && storePanelGroup.alpha <= 0.01f)
-        {
-            storePanelGroup.gameObject.SetActive(false);
-        }
+        // Keep this object active: it owns the listeners that open the store.
+        // Its CanvasGroup controls visibility and input while the panel is closed.
     }
 
     private void ConfigureAllTextsAutoResize()
@@ -111,7 +103,6 @@ public class NoAdsPurchaseButton : MonoBehaviour
 
     public void OpenPanel()
     {
-        isStoreExplicitlyOpen = true;
         transform.SetAsLastSibling();
         if (storePanelGroup != null)
         {
@@ -128,13 +119,11 @@ public class NoAdsPurchaseButton : MonoBehaviour
 
     public void ClosePanel()
     {
-        isStoreExplicitlyOpen = false;
         if (storePanelGroup != null)
         {
             storePanelGroup.alpha = 0f;
             storePanelGroup.interactable = false;
             storePanelGroup.blocksRaycasts = false;
-            storePanelGroup.gameObject.SetActive(false);
         }
     }
 
