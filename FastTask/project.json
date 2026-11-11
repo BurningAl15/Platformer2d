@@ -31,7 +31,7 @@
           "status": "upload_accepted",
           "checkedAt": "2026-11-11",
           "evidenceBuildId": "8656e111-7127-46a6-94c7-7da6f8dd60c2",
-          "nextAction": "Los cambios locales de UI/hazards/tutorial y el arreglo de ciclo de vida de paneles aún no están en Build 18. Generar el siguiente build interno después de validar compilación; verificar procesamiento y disponibilidad en Play Console/TestFlight y luego QA en dispositivo. No afirmar resuelto hasta probar Settings, Shop, GameOver, dado y panel de mundo.",
+          "nextAction": "Los commits 5b7ee1c y 2604f02 están publicados en refactor/trying-refactor; Build 18 aún no incluye sus cambios. Compilar el siguiente candidato y verificar el resultado en Unity/dispositivo antes de nuevos uploads. Después comprobar procesamiento/availability en Play Console y TestFlight.",
           "source": ".kiro/handoff.md"
         }
       },
@@ -53,7 +53,7 @@
           "status": "upload_accepted",
           "checkedAt": "2026-11-11",
           "evidenceBuildId": "cb6ad2e6-25b4-4e4c-9829-eae9f7454f25",
-          "nextAction": "Los cambios locales de UI/hazards/tutorial y el arreglo de ciclo de vida de paneles aún no están en Build 18. Generar el siguiente build interno después de validar compilación; verificar procesamiento y disponibilidad en Play Console/TestFlight y luego QA en dispositivo. No afirmar resuelto hasta probar Settings, Shop, GameOver, dado y panel de mundo.",
+          "nextAction": "Los commits 5b7ee1c y 2604f02 están publicados en refactor/trying-refactor; Build 18 aún no incluye sus cambios. Compilar el siguiente candidato y verificar el resultado en Unity/dispositivo antes de nuevos uploads. Después comprobar procesamiento/availability en Play Console y TestFlight.",
           "source": ".kiro/handoff.md"
         }
       }
