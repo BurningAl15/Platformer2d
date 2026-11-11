@@ -89,13 +89,16 @@ public class PlayerHealth : MonoBehaviour
 
     public void DeathEffect()
     {
+        if (deathEffect == null) return;
         deathEffect.transform.position = this.transform.position;
         deathEffect.SetActive(true);
     }
 
     public bool isDeathEffectEnd()
     {
-        return deathEffect.GetComponent<TurnOff_OnTime>().finish;
+        if (deathEffect == null) return true;
+        TurnOff_OnTime effectTimer = deathEffect.GetComponent<TurnOff_OnTime>();
+        return effectTimer == null || effectTimer.finish;
     }
 
     public bool isDamaged()
@@ -105,7 +108,10 @@ public class PlayerHealth : MonoBehaviour
 
     public void ResetDeathEffect()
     {
-        deathEffect.GetComponent<TurnOff_OnTime>().Reset();
+        if (deathEffect == null) return;
+        TurnOff_OnTime effectTimer = deathEffect.GetComponent<TurnOff_OnTime>();
+        if (effectTimer != null)
+            effectTimer.Reset();
     }
 
     public void TurnOffPlayer()

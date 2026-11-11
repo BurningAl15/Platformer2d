@@ -81,6 +81,12 @@ public class AdsManager : MonoBehaviour
     private bool rewardedCompleted;
     private float timeScaleBeforeAd = 1f;
     private Coroutine rewardCloseTimeout;
+    private Coroutine initializationRetry;
+    private Coroutine rewardedLoadRetry;
+    private Coroutine interstitialLoadRetry;
+    private int initializationRetryAttempt;
+    private int rewardedLoadRetryAttempt;
+    private int interstitialLoadRetryAttempt;
 
 #if LEVELPLAY_DEPENDENCIES_INSTALLED
     private LevelPlayRewardedAd rewardedAd;
@@ -388,6 +394,82 @@ public class AdsManager : MonoBehaviour
 #endif
     }
 
+    private void ScheduleInitializationRetry()
+    {
+        if (initializationRetry == null && privacyEligibilityResolved && mayServeAds && !IsNoAdsActive())
+            initializationRetry = StartCoroutine(RetryInitialization());
+    }
+
+    private System.Collections.IEnumerator RetryInitialization()
+    {
+        while (!isInitialized && privacyEligibilityResolved && mayServeAds && !IsNoAdsActive())
+        {
+            float delay = GetRetryDelay(initializationRetryAttempt++);
+            LogAd($"Reintentando inicialización de LevelPlay en {delay:0}s.");
+            yield return new WaitForSecondsRealtime(delay);
+            if (!initializationInProgress && !isInitialized)
+                Initialize();
+
+            while (initializationInProgress)
+                yield return new WaitForSecondsRealtime(0.25f);
+        }
+
+        initializationRetry = null;
+    }
+
+    private void ScheduleRewardedLoadRetry()
+    {
+#if LEVELPLAY_DEPENDENCIES_INSTALLED
+        if (rewardedLoadRetry == null && isInitialized && !IsNoAdsActive())
+            rewardedLoadRetry = StartCoroutine(RetryRewardedLoad());
+#endif
+    }
+
+#if LEVELPLAY_DEPENDENCIES_INSTALLED
+    private System.Collections.IEnumerator RetryRewardedLoad()
+    {
+        while (isInitialized && rewardedAd != null && !rewardedAd.IsAdReady() && !IsNoAdsActive())
+        {
+            float delay = GetRetryDelay(rewardedLoadRetryAttempt++);
+            LogAd($"Reintentando carga de rewarded en {delay:0}s.");
+            yield return new WaitForSecondsRealtime(delay);
+            if (isInitialized && rewardedAd != null && !rewardedAd.IsAdReady() && !IsNoAdsActive())
+                rewardedAd.LoadAd();
+        }
+
+        rewardedLoadRetry = null;
+    }
+#endif
+
+    private void ScheduleInterstitialLoadRetry()
+    {
+#if LEVELPLAY_DEPENDENCIES_INSTALLED
+        if (interstitialLoadRetry == null && isInitialized && !IsNoAdsActive())
+            interstitialLoadRetry = StartCoroutine(RetryInterstitialLoad());
+#endif
+    }
+
+#if LEVELPLAY_DEPENDENCIES_INSTALLED
+    private System.Collections.IEnumerator RetryInterstitialLoad()
+    {
+        while (isInitialized && interstitialAd != null && !interstitialAd.IsAdReady() && !IsNoAdsActive())
+        {
+            float delay = GetRetryDelay(interstitialLoadRetryAttempt++);
+            LogAd($"Reintentando carga de interstitial en {delay:0}s.");
+            yield return new WaitForSecondsRealtime(delay);
+            if (isInitialized && interstitialAd != null && !interstitialAd.IsAdReady() && !IsNoAdsActive())
+                interstitialAd.LoadAd();
+        }
+
+        interstitialLoadRetry = null;
+    }
+#endif
+
+    private static float GetRetryDelay(int attempt)
+    {
+        return Mathf.Min(60f, Mathf.Pow(2f, Mathf.Clamp(attempt + 1, 1, 6)));
+    }
+
     // ─────────────────────────────────────────────────────────────────────────
     //  Eventos del SDK — Rewarded
     // ─────────────────────────────────────────────────────────────────────────
@@ -397,6 +479,8 @@ public class AdsManager : MonoBehaviour
     {
         initializationInProgress = false;
         isInitialized = true;
+        initializationRetryAttempt = 0;
+        initializationRetry = null;
         LevelPlay.OnInitSuccess -= OnLevelPlayInitialized;
         LevelPlay.OnInitFailed -= OnLevelPlayInitializationFailed;
 
@@ -428,10 +512,21 @@ public class AdsManager : MonoBehaviour
         LevelPlay.OnInitSuccess -= OnLevelPlayInitialized;
         LevelPlay.OnInitFailed -= OnLevelPlayInitializationFailed;
         LogAd($"Falló inicialización de LevelPlay: {error.ErrorMessage}");
+        ScheduleInitializationRetry();
     }
 
-    private void OnRewardedLoaded(LevelPlayAdInfo info) => LogAd("Rewarded cargado.");
-    private void OnRewardedLoadFailed(LevelPlayAdError error) => LogAd($"No cargó rewarded: {error}");
+    private void OnRewardedLoaded(LevelPlayAdInfo info)
+    {
+        rewardedLoadRetryAttempt = 0;
+        rewardedLoadRetry = null;
+        LogAd("Rewarded cargado.");
+    }
+
+    private void OnRewardedLoadFailed(LevelPlayAdError error)
+    {
+        LogAd($"No cargó rewarded: {error}");
+        ScheduleRewardedLoadRetry();
+    }
 
     private void OnRewardedDisplayed(LevelPlayAdInfo info)
     {
@@ -488,8 +583,18 @@ public class AdsManager : MonoBehaviour
             FailRewarded(onRewardedFail);
     }
 
-    private void OnInterstitialReady(LevelPlayAdInfo info) => LogAd("Interstitial listo.");
-    private void OnInterstitialLoadFailed(LevelPlayAdError error) => LogAd($"No cargó interstitial: {error}");
+    private void OnInterstitialReady(LevelPlayAdInfo info)
+    {
+        interstitialLoadRetryAttempt = 0;
+        interstitialLoadRetry = null;
+        LogAd("Interstitial listo.");
+    }
+
+    private void OnInterstitialLoadFailed(LevelPlayAdError error)
+    {
+        LogAd($"No cargó interstitial: {error}");
+        ScheduleInterstitialLoadRetry();
+    }
 
     private void OnInterstitialOpened(LevelPlayAdInfo info)
     {

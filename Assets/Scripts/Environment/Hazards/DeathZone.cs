@@ -16,8 +16,16 @@ public class DeathZone : MonoBehaviour
 
   private void OnTriggerEnter2D(Collider2D other)
   {
-    if(other.CompareTag("Player"))
-      LevelManager._instance.RespawnPlayer();
+    // Player colliders can live on children such as StompBox. Resolve the
+    // owning player instead of relying on the child collider's tag.
+    PlayerHealth player = other.GetComponentInParent<PlayerHealth>();
+    if (player != null)
+    {
+      if (LevelManager._instance != null)
+        LevelManager._instance.RespawnPlayer();
+      return;
+    }
+
     if(other.CompareTag("EnemyContainer"))
       Destroy(other.gameObject);
     if(other.CompareTag("FallingLog"))

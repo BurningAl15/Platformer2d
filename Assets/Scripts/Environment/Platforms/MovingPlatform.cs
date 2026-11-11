@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
+[DefaultExecutionOrder(-100)]
 public class MovingPlatform : MonoBehaviour
 {
     [Header("Movement Setup")]
@@ -14,36 +15,45 @@ public class MovingPlatform : MonoBehaviour
 
     private int currentPointIndex = 0;
     private float waitTimer = 0f;
-    private Vector2 lastPosition;
     private Vector2 currentVelocity;
+    private Vector2 fixedStepDelta;
 
     private void Start()
     {
         if (platformTransform == null)
             platformTransform = transform;
             
-        platformTransform.position = movingPoints[currentPointIndex].position;
-        lastPosition = platformTransform.position;
+        if (platformRb == null)
+            platformRb = platformTransform.GetComponent<Rigidbody2D>();
+
+        if (movingPoints.Count == 0 || movingPoints[0] == null || platformRb == null)
+        {
+            Debug.LogError($"[{nameof(MovingPlatform)}] {name} needs a Rigidbody2D and at least one valid moving point.", this);
+            enabled = false;
+            return;
+        }
+
+        platformRb.position = movingPoints[currentPointIndex].position;
         waitTimer = waitTime;
     }
 
     private void FixedUpdate()
     {
-        lastPosition = platformTransform.position;
+        fixedStepDelta = Vector2.zero;
 
-        if (movingPoints.Count == 0) return;
+        if (movingPoints.Count == 0 || platformRb == null) return;
 
         Vector2 targetPos = movingPoints[currentPointIndex].position;
-        Vector2 currentPos = platformTransform.position;
+        Vector2 currentPos = platformRb.position;
     
         float distance = Vector2.Distance(currentPos, targetPos);
 
         if (distance > 0.01f)
         {
             Vector2 newPos = Vector2.MoveTowards(currentPos, targetPos, moveSpeed * Time.fixedDeltaTime);
+            fixedStepDelta = newPos - currentPos;
             platformRb.MovePosition(newPos);
-        
-            currentVelocity = (newPos - lastPosition) / Time.fixedDeltaTime;
+            currentVelocity = fixedStepDelta / Time.fixedDeltaTime;
         }
         else
         {
@@ -68,6 +78,20 @@ public class MovingPlatform : MonoBehaviour
     public Vector2 GetVelocity()
     {
         return currentVelocity;
+    }
+
+    /// <summary>
+    /// Planned Rigidbody displacement for the current physics step. Passengers
+    /// consume this fixed-step delta instead of sampling an interpolated Transform.
+    /// </summary>
+    public Vector2 GetFixedStepDelta()
+    {
+        return fixedStepDelta;
+    }
+
+    public Vector2 GetPhysicsPosition()
+    {
+        return platformRb != null ? platformRb.position : (Vector2)platformTransform.position;
     }
     
     public Transform GetPlatformTransform()

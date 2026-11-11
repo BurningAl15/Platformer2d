@@ -22,6 +22,8 @@ public class SaveManager : MonoBehaviour
     // GDD: "sin límite máximo de vidas acumuladas"
     // Se mantiene un tope de seguridad alto (999) solo para evitar desbordamientos de PlayerPrefs.
     private const int    MAX_LIVES       = 999;
+    private const string KEY_TUTORIAL_STARTED = "TutorialStarted";
+    private const string KEY_TUTORIAL_COMPLETED = "TutorialCompleted";
 
     // Clave de IAP NoAds (gestionada por RevenueCatManager; solo se lee aquí)
     private const string KEY_NO_ADS = "IAP_NoAds_Purchased";
@@ -41,7 +43,43 @@ public class SaveManager : MonoBehaviour
     //  Progreso de niveles
     // ───────────────────────────────────────────────
 
-    public bool HasSaveData() => PlayerPrefs.HasKey(StringUtils.Get_Level(1));
+    public bool HasSaveData()
+    {
+        if (HasIncompleteTutorial())
+            return true;
+
+        // ResetProgress creates these keys with value 0. A key's existence does
+        // not mean the player has unlocked or completed any level.
+        for (int level = 1; level <= 10; level++)
+        {
+            if (PlayerPrefs.GetInt(StringUtils.Get_Level(level), 0) == 1)
+                return true;
+        }
+
+        return false;
+    }
+
+    public bool HasIncompleteTutorial()
+    {
+        bool started = PlayerPrefs.GetInt(KEY_TUTORIAL_STARTED, 0) == 1;
+        bool completed = PlayerPrefs.GetInt(KEY_TUTORIAL_COMPLETED, 0) == 1 ||
+                         PlayerPrefs.GetInt(StringUtils.Get_Level(1), 0) == 1;
+        return started && !completed;
+    }
+
+    public void MarkTutorialStarted()
+    {
+        PlayerPrefs.SetInt(KEY_TUTORIAL_STARTED, 1);
+        PlayerPrefs.SetInt(KEY_TUTORIAL_COMPLETED, 0);
+        PlayerPrefs.Save();
+    }
+
+    public void MarkTutorialCompleted()
+    {
+        PlayerPrefs.SetInt(KEY_TUTORIAL_STARTED, 1);
+        PlayerPrefs.SetInt(KEY_TUTORIAL_COMPLETED, 1);
+        PlayerPrefs.Save();
+    }
 
     public bool IsLevelUnlocked(int levelNumber)
     {
@@ -53,7 +91,8 @@ public class SaveManager : MonoBehaviour
     {
         int nextLevel = currentLevel + 1;
         PlayerPrefs.SetInt(StringUtils.Get_Level(nextLevel), 1);
-        PlayerPrefs.SetInt(StringUtils.playerPref_mapIndex, nextLevel - 2);
+        // The map list is zero-based and starts at Level_1 (index 0).
+        PlayerPrefs.SetInt(StringUtils.playerPref_mapIndex, Mathf.Max(0, nextLevel - 1));
         PlayerPrefs.Save();
     }
 

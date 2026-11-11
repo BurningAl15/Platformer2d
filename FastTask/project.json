@@ -11,7 +11,7 @@
   ],
   "releaseReadiness": {
     "schemaVersion": 1,
-    "updatedAt": "2026-11-08",
+    "updatedAt": "2026-11-11",
     "platforms": {
       "android": {
         "store": "google_play",
@@ -28,10 +28,10 @@
           "evidenceBuildId": "488949e5-a096-4a21-99f3-1048821f8c80"
         },
         "availability": {
-          "status": "available_to_testers",
-          "checkedAt": "2026-11-08",
-          "evidenceBuildId": "fa5281c9-ced5-4018-b708-14c52fa5ac75",
-          "nextAction": "Confirmar que la cuenta Google Play del teléfono esté en una de las listas seleccionadas y que complete la inscripción web; después validar instalación desde Play Store.",
+          "status": "upload_accepted",
+          "checkedAt": "2026-11-11",
+          "evidenceBuildId": "8656e111-7127-46a6-94c7-7da6f8dd60c2",
+          "nextAction": "Build 18 no contiene estos cambios locales posteriores. Tras validar/compilar el arreglo de Continue/tutorial, navegación Shop, Clover y hazards, generar un nuevo build interno; verificar procesamiento en la consola y luego QA de dispositivo. Google Play aún mostraba Build 17 disponible; TestFlight Build 18 sin estado de procesamiento verificado.",
           "source": ".kiro/handoff.md"
         }
       },
@@ -51,9 +51,10 @@
         },
         "availability": {
           "status": "upload_accepted",
-          "checkedAt": "2026-10-30",
-          "evidenceBuildId": "bb610d1e-313d-4a44-9c75-31855c236ddd",
-          "nextAction": "Confirm Apple processing and TestFlight group availability."
+          "checkedAt": "2026-11-11",
+          "evidenceBuildId": "cb6ad2e6-25b4-4e4c-9829-eae9f7454f25",
+          "nextAction": "Build 18 no contiene estos cambios locales posteriores. Tras validar/compilar el arreglo de Continue/tutorial, navegación Shop, Clover y hazards, generar un nuevo build interno; verificar procesamiento en la consola y luego QA de dispositivo. Google Play aún mostraba Build 17 disponible; TestFlight Build 18 sin estado de procesamiento verificado.",
+          "source": ".kiro/handoff.md"
         }
       }
     }

@@ -125,7 +125,7 @@ public class GameOverController : MonoBehaviour
         Time.timeScale = 0f;
         InputManager.Instance?.EnableUIOnlyInput();
         if (PlatformDetector.Instance != null)
-            PlatformDetector.Instance.ForceSetMobileUIActive(false, false);
+            PlatformDetector.Instance.SetGameplayControlsSuppressed(true);
 
         // Actualizar textos de economía
         RefreshEconomyUI();
@@ -179,6 +179,7 @@ public class GameOverController : MonoBehaviour
         if (panelRect != null)
             panelRect.anchoredPosition = new Vector2(panelRect.anchoredPosition.x, hiddenY);
         panelGroup.gameObject.SetActive(false);
+        PlatformDetector.Instance?.SetGameplayControlsSuppressed(false);
     }
 
     // ─────────────────────────────────────────────────────────────────────────

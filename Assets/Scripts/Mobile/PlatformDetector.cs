@@ -14,6 +14,7 @@ public class PlatformDetector : MonoBehaviour
 
     [Header("Debug")]
     [SerializeField] private bool forceMobileUI = false;
+    private bool gameplayControlsSuppressed;
     
     public static PlatformDetector Instance { get; private set; }
     
@@ -46,6 +47,14 @@ public class PlatformDetector : MonoBehaviour
         
         // Configurar UI para la escena actual
         ConfigureMobileUIForCurrentScene();
+    }
+
+    private void Start()
+    {
+        // Reapply once scene Awake/OnEnable and Input System device discovery
+        // have settled. This makes the persisted HUD state deterministic when
+        // the app resumes directly into a gameplay scene.
+        Invoke(nameof(ConfigureMobileUIForCurrentScene), 0.15f);
     }
 
     private void EnsureCanvasSetup()
@@ -84,24 +93,17 @@ public class PlatformDetector : MonoBehaviour
     
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        gameplayControlsSuppressed = false;
         EnsureCanvasSetup();
         // Cada vez que carga una escena nueva, reconfigurar UI usando el nombre de la escena recién cargada
         ConfigureMobileUIForScene(scene.name);
     }
 
-    private void Update()
+    private static bool ShouldShowTouchControls(bool isMobile)
     {
-        if (IsMobile())
-        {
-            string currentSceneName = SceneManager.GetActiveScene().name;
-            if (IsGameplayLevelScene(currentSceneName))
-            {
-                if (gameplayMobileUI != null && !gameplayMobileUI.activeSelf)
-                {
-                    SetGameplayUI(true);
-                }
-            }
-        }
+        // On mobile the virtual HUD is the default. A physical gamepad connection
+        // event is the only thing that may hide it.
+        return isMobile && (GamepadDetector.Instance == null || !GamepadDetector.Instance.HasPhysicalGamepad());
     }
     
     public void ConfigureMobileUIForCurrentScene()
@@ -133,10 +135,11 @@ public class PlatformDetector : MonoBehaviour
         else if (IsGameplayLevelScene(currentSceneName))
         {
             // Niveles de gameplay: Activar controles de gameplay en móvil (Stick, Jump, Pause)
-            SetGameplayUI(isMobile);
+            bool showTouchControls = ShouldShowTouchControls(isMobile);
+            SetGameplayUI(showTouchControls);
             SetLevelSelectorUI(false);
             
-            Debug.Log($"[PlatformDetector] Gameplay Level '{currentSceneName}' detected. Gameplay UI: {isMobile}");
+            Debug.Log($"[PlatformDetector] Gameplay Level '{currentSceneName}' detected. Touch controls: {showTouchControls}");
         }
         else
         {
@@ -168,13 +171,10 @@ public class PlatformDetector : MonoBehaviour
     
     private void SetGameplayUI(bool active)
     {
+        active = active && !gameplayControlsSuppressed;
         if (gameplayMobileUI != null)
         {
             gameplayMobileUI.SetActive(active);
-            if (active)
-            {
-                EnsureChildrenActive(gameplayMobileUI);
-            }
         }
     }
     
@@ -183,31 +183,18 @@ public class PlatformDetector : MonoBehaviour
         if (levelSelectorMobileUI != null)
         {
             levelSelectorMobileUI.SetActive(active);
-            if (active)
-            {
-                EnsureChildrenActive(levelSelectorMobileUI);
-            }
-        }
-    }
-
-    private void EnsureChildrenActive(GameObject root)
-    {
-        if (root == null) return;
-        Transform rootT = root.transform;
-        for (int i = 0; i < rootT.childCount; i++)
-        {
-            Transform child = rootT.GetChild(i);
-            child.gameObject.SetActive(true);
-            for (int j = 0; j < child.childCount; j++)
-            {
-                child.GetChild(j).gameObject.SetActive(true);
-            }
         }
     }
     
     // Método público para forzar reconfiguración (útil para debugging)
     public void ForceReconfigure()
     {
+        ConfigureMobileUIForCurrentScene();
+    }
+
+    public void SetGameplayControlsSuppressed(bool suppressed)
+    {
+        gameplayControlsSuppressed = suppressed;
         ConfigureMobileUIForCurrentScene();
     }
     
@@ -217,17 +204,17 @@ public class PlatformDetector : MonoBehaviour
     /// </summary>
     public void SetMobileUIActive(bool gameplay, bool levelSelector)
     {
-        SetGameplayUI(gameplay && IsMobile());
+        SetGameplayUI(gameplay && ShouldShowTouchControls(IsMobile()));
         SetLevelSelectorUI(levelSelector && IsMobile());
     }
 
     /// <summary>
-    /// Fuerza el estado de la UI mobile independientemente de la plataforma.
-    /// Usar cuando GamepadDetector necesita ocultar controles en mobile.
+    /// Aplica un estado solicitado sin activar gameplay táctil fuera de mobile
+    /// ni mientras haya un gamepad físico conectado.
     /// </summary>
     public void ForceSetMobileUIActive(bool gameplay, bool levelSelector)
     {
-        SetGameplayUI(gameplay);
+        SetGameplayUI(gameplay && ShouldShowTouchControls(IsMobile()));
         SetLevelSelectorUI(levelSelector);
     }
 }

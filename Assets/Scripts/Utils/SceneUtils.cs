@@ -17,6 +17,9 @@ public class SceneUtils : MonoBehaviour
 
     public static void LoadGameplayScene(int level)
     {
+        if (IsTutorialIncomplete() && level > 0)
+            level = 0;
+
         if (SceneTransitionManager.Instance != null)
             SceneTransitionManager.Instance.LoadGameplayScene(level);
         else
@@ -25,6 +28,12 @@ public class SceneUtils : MonoBehaviour
 
     public static void ToSelectionScene()
     {
+        if (IsTutorialIncomplete())
+        {
+            LoadGameplayScene(0);
+            return;
+        }
+
         if (SceneTransitionManager.Instance != null)
             SceneTransitionManager.Instance.ToSelectionScene();
         else
@@ -51,6 +60,12 @@ public class SceneUtils : MonoBehaviour
 
     public static void LoadScene(string sceneName)
     {
+        if (IsTutorialIncomplete() && IsRestrictedBeforeTutorial(sceneName))
+        {
+            LoadGameplayScene(0);
+            return;
+        }
+
         if (SceneTransitionManager.Instance != null)
             SceneTransitionManager.Instance.LoadScene(sceneName);
         else
@@ -68,6 +83,26 @@ public class SceneUtils : MonoBehaviour
     public static void NextScene()
     {
         LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+    }
+
+    private static bool IsTutorialIncomplete()
+    {
+        if (SaveManager.Instance != null)
+            return SaveManager.Instance.HasIncompleteTutorial();
+
+        bool started = PlayerPrefs.GetInt("TutorialStarted", 0) == 1;
+        bool completed = PlayerPrefs.GetInt("TutorialCompleted", 0) == 1 ||
+                         PlayerPrefs.GetInt("Level_1", 0) == 1;
+        return started && !completed;
+    }
+
+    private static bool IsRestrictedBeforeTutorial(string sceneName)
+    {
+        if (string.Equals(sceneName, "LevelSelection", StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        return sceneName.StartsWith("Level_", StringComparison.OrdinalIgnoreCase) &&
+               int.TryParse(sceneName.Substring("Level_".Length), out int level) && level > 0;
     }
 
     // ───────────────────────────────────────────────

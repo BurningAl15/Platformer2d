@@ -49,15 +49,14 @@ public class LevelManager : MonoBehaviour
     {
         timeInLevel = 0f;
 
-        if (totalGemsInLevel <= 0)
-        {
-            Pickup[] pickups = FindObjectsOfType<Pickup>();
-            for (int i = 0; i < pickups.Length; i++)
-            {
-                if (pickups[i] != null && pickups[i].IsGem())
-                    totalGemsInLevel++;
-            }
-        }
+        if (SceneUtils.Get_CurrentLevelName() == 0)
+            SaveManager.Instance?.MarkTutorialStarted();
+
+        // Derive the target from scene contents on every run instead of trusting
+        // a stale Inspector number. Include inactive pickups so hidden/late-area
+        // gems remain part of the level total, and ignore objects in other scenes.
+        totalGemsInLevel = CountGemsInThisScene();
+        Debug.Log($"[LevelManager] {gameObject.scene.name}: {totalGemsInLevel} gem pickups in scene.");
 
         UIController._instance?.UpdateGems_UI(gemsCollected, totalGemsInLevel);
 
@@ -77,11 +76,29 @@ public class LevelManager : MonoBehaviour
 
     public void UpdateGemsCollected()
     {
+        if (gemsCollected >= totalGemsInLevel)
+        {
+            Debug.LogWarning($"[LevelManager] Ignored extra gem event ({gemsCollected}/{totalGemsInLevel}) in {gameObject.scene.name}.");
+            return;
+        }
+
         gemsCollected++;
         UIController._instance?.UpdateGems_UI(gemsCollected, totalGemsInLevel);
 
         if (AnalyticsManager.Instance != null)
             AnalyticsManager.Instance.TrackGemCollected(SceneUtils.Get_CurrentLevelName(), gemsCollected);
+    }
+
+    private int CountGemsInThisScene()
+    {
+        int count = 0;
+        Pickup[] pickups = FindObjectsOfType<Pickup>(true);
+        foreach (Pickup pickup in pickups)
+        {
+            if (pickup != null && pickup.gameObject.scene == gameObject.scene && pickup.IsGem())
+                count++;
+        }
+        return count;
     }
 
     public int GetGemsCollected() => gemsCollected;
@@ -203,7 +220,11 @@ public class LevelManager : MonoBehaviour
 
         // Siempre desbloquear el siguiente nivel
         if (SaveManager.Instance != null)
+        {
             SaveManager.Instance.UnlockNextLevel(levelNumber);
+            if (levelNumber == 0)
+                SaveManager.Instance.MarkTutorialCompleted();
+        }
 
         LevelRating rating = LevelRating.OneStar;
 

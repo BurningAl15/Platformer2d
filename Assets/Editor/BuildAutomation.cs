@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using UnityEditor;
 using UnityEditor.Build.Reporting;
+using UnityEditor.iOS.Xcode;
 using UnityEngine;
 
 /// <summary>
@@ -179,6 +180,8 @@ public static class BuildAutomation
 
             BuildReport report = BuildPipeline.BuildPlayer(buildPlayerOptions);
             ProcessBuildResult(report, outputDir);
+            if (report.summary.result == BuildResult.Succeeded)
+                ConfigureExportediOSOrientations(outputDir);
         }
         finally
         {
@@ -267,6 +270,30 @@ public static class BuildAutomation
                 throw new InvalidOperationException("FOXSTALE_IOS_BUILD_NUMBER debe ser un entero positivo.");
             PlayerSettings.iOS.buildNumber = buildNumber;
         }
+    }
+
+    private static void ConfigureExportediOSOrientations(string outputDirectory)
+    {
+        string plistPath = Path.Combine(outputDirectory, "Info.plist");
+        if (!File.Exists(plistPath))
+            throw new FileNotFoundException("No se encontró Info.plist en el proyecto Xcode exportado.", plistPath);
+
+        PlistDocument plist = new PlistDocument();
+        plist.ReadFromFile(plistPath);
+        SetLandscapeOrientations(plist.root, "UISupportedInterfaceOrientations");
+        SetLandscapeOrientations(plist.root, "UISupportedInterfaceOrientations~ipad");
+        plist.WriteToFile(plistPath);
+        Debug.Log("[BuildAutomation] iOS export permite LandscapeLeft y LandscapeRight.");
+    }
+
+    private static void SetLandscapeOrientations(PlistElementDict root, string key)
+    {
+        PlistElementArray orientations = root[key] != null
+            ? root[key].AsArray()
+            : root.CreateArray(key);
+        orientations.values.Clear();
+        orientations.AddString("UIInterfaceOrientationLandscapeRight");
+        orientations.AddString("UIInterfaceOrientationLandscapeLeft");
     }
 
     private static void WriteBuildInfo(string buildNumber)

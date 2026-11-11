@@ -16,6 +16,7 @@ public class Pickup : MonoBehaviour
     [SerializeField] private GameObject effect;
 
     private Coroutine currentCoroutine = null;
+    private bool hasBeenCollected;
 
     [SerializeField] private Transform pickupTransform;
     public Transform PickupTransform => pickupTransform;
@@ -27,26 +28,29 @@ public class Pickup : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag(StringUtils.tag_Player))
-        {
-            if (_pickupType == PickupType.Gem)
-            {
-                LevelManager._instance.UpdateGemsCollected();
-                AudioMixerManager._instance.CallSFX_Gems();
-                // Nota: las gemas globales se acumulan al COMPLETAR el nivel
-                // (en LevelManager.SaveProgress), no al recolectarlas una a una.
-                // Así se incentiva terminar el nivel para obtener las gemas.
-                if (currentCoroutine == null)
-                    currentCoroutine = StartCoroutine(CollectEffect());
-            }
+        if (!other.CompareTag(StringUtils.tag_Player) || hasBeenCollected)
+            return;
 
-            if (_pickupType == PickupType.Health && PlayerHealth._instance.isDamaged())
-            {
-                PlayerHealth._instance.CureDamage();
-                AudioMixerManager._instance.CallSFX(SFXType.Player_Pickup_Health);
-                if (currentCoroutine == null)
-                    currentCoroutine = StartCoroutine(CollectEffect());
-            }
+        if (_pickupType == PickupType.Gem)
+        {
+            // A player can have multiple colliders and receive repeated trigger
+            // callbacks before the collect animation destroys this object.
+            // Claim this pickup before changing the level total.
+            hasBeenCollected = true;
+            LevelManager._instance?.UpdateGemsCollected();
+            AudioMixerManager._instance?.CallSFX_Gems();
+            // Las gemas globales se acumulan al completar el nivel.
+            currentCoroutine = StartCoroutine(CollectEffect());
+            return;
+        }
+
+        if (_pickupType == PickupType.Health && PlayerHealth._instance != null &&
+            PlayerHealth._instance.isDamaged())
+        {
+            hasBeenCollected = true;
+            PlayerHealth._instance.CureDamage();
+            AudioMixerManager._instance?.CallSFX(SFXType.Player_Pickup_Health);
+            currentCoroutine = StartCoroutine(CollectEffect());
         }
     }
 

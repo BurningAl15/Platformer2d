@@ -116,19 +116,31 @@ public class UI_SelectController : MonoBehaviour
 
     public void RenderLevelData(MapPoint levelInfo)
     {
-        levelNameText.text = levelInfo.levelName;
-        gemsFoundText.text = "FOUND: " + levelInfo.gemsCollected;
-        gemsTargetText.text = "IN LEVEL: " + levelInfo.totalGems;
-        timeTargetText.text = "TARGET: " + levelInfo.targetTime.ToString("F1") + "s";
+        if (levelInfo == null) return;
 
-        bestTimeText.text = levelInfo.bestTime >= 99999f
-            ? "Best: ----"
-            : "Best: " + levelInfo.bestTime.ToString("F1") + "s";
+        if (levelNameText != null) levelNameText.text = levelInfo.levelName;
+        if (gemsFoundText != null) gemsFoundText.text = "FOUND: " + levelInfo.gemsCollected;
+        if (gemsTargetText != null) gemsTargetText.text = "IN LEVEL: " + levelInfo.totalGems;
+        if (timeTargetText != null) timeTargetText.text = "TARGET: " + levelInfo.targetTime.ToString("F1") + "s";
+
+        if (bestTimeText != null)
+        {
+            bestTimeText.text = levelInfo.bestTime >= 99999f
+                ? "Best: ----"
+                : "Best: " + levelInfo.bestTime.ToString("F1") + "s";
+        }
 
         if (cloverIndicator != null)
-            cloverIndicator.SetActive(levelInfo.hasTrebol);
+        {
+            cloverIndicator.SetActive(true);
+            UnityEngine.UI.Image cloverImage = cloverIndicator.GetComponent<UnityEngine.UI.Image>();
+            if (cloverImage != null)
+                cloverImage.color = levelInfo.hasTrebol
+                    ? Color.white
+                    : new Color(0.48f, 0.48f, 0.48f, 0.9f);
+        }
         if (cloverText != null)
-            cloverText.text = levelInfo.hasTrebol ? "CLOVER: FOUND" : "CLOVER: --";
+            cloverText.text = levelInfo.hasTrebol ? "FOUND" : "--";
     }
 
     /// <summary>

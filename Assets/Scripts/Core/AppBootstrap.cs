@@ -42,6 +42,18 @@ public class AppBootstrap : MonoBehaviour
 
         InitializeDOTween();
         ConfigureFramerate();
+        ConfigureLandscapeOrientation();
+    }
+
+    private static void ConfigureLandscapeOrientation()
+    {
+#if UNITY_ANDROID || UNITY_IOS
+        Screen.autorotateToPortrait = false;
+        Screen.autorotateToPortraitUpsideDown = false;
+        Screen.autorotateToLandscapeLeft = true;
+        Screen.autorotateToLandscapeRight = true;
+        Screen.orientation = ScreenOrientation.AutoRotation;
+#endif
     }
 
     private void InitializeDOTween()

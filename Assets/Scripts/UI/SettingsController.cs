@@ -1,6 +1,7 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 /// <summary>
@@ -57,60 +58,56 @@ public class SettingsController : MonoBehaviour
     private void Awake()
     {
         EnsureUIElementsExist();
+        BindSettingsListeners();
+    }
 
-        if (openSettingsButton != null)
+    private void BindSettingsListeners()
+    {
+        BindButtonListener(openSettingsButton, OpenSettings);
+        BindButtonListener(closeButton, CloseSettings);
+        BindButtonListener(musicToggleButton, ToggleMusic);
+        BindButtonListener(sfxToggleButton, ToggleSFX);
+        BindButtonListener(hapticsToggleButton, ToggleHaptics);
+        BindButtonListener(languageToggleButton, ToggleLanguage);
+        BindButtonListener(resetProgressButton, OnResetProgressPressed);
+        BindButtonListener(confirmResetButton, ConfirmResetProgress);
+        BindButtonListener(cancelResetButton, CancelResetProgress);
+    }
+
+    private void BindButtonListener(Button button, UnityAction listener)
+    {
+        if (button == null) return;
+
+        button.onClick.RemoveListener(listener);
+
+        // RemoveListener does not remove Inspector-persistent callbacks. Avoid
+        // registering the same action twice when the scene already serializes it.
+        for (int i = 0; i < button.onClick.GetPersistentEventCount(); i++)
         {
-            openSettingsButton.onClick.RemoveListener(OpenSettings);
-            openSettingsButton.onClick.AddListener(OpenSettings);
+            if (button.onClick.GetPersistentTarget(i) == this &&
+                button.onClick.GetPersistentMethodName(i) == listener.Method.Name)
+                return;
         }
 
-        if (closeButton != null)
-        {
-            closeButton.onClick.RemoveListener(CloseSettings);
-            closeButton.onClick.AddListener(CloseSettings);
-        }
+        button.onClick.AddListener(listener);
+    }
 
-        if (musicToggleButton != null)
-        {
-            musicToggleButton.onClick.RemoveListener(ToggleMusic);
-            musicToggleButton.onClick.AddListener(ToggleMusic);
-        }
+    private Button CloneButtonWithoutSerializedActions(Button source, Transform parent, string objectName)
+    {
+        GameObject clone = Instantiate(source.gameObject, parent, false);
+        clone.name = objectName;
 
-        if (sfxToggleButton != null)
-        {
-            sfxToggleButton.onClick.RemoveListener(ToggleSFX);
-            sfxToggleButton.onClick.AddListener(ToggleSFX);
-        }
+        Button clonedButton = clone.GetComponent<Button>();
+        if (clonedButton == null)
+            clonedButton = clone.AddComponent<Button>();
 
-        if (hapticsToggleButton != null)
-        {
-            hapticsToggleButton.onClick.RemoveListener(ToggleHaptics);
-            hapticsToggleButton.onClick.AddListener(ToggleHaptics);
-        }
-
-        if (languageToggleButton != null)
-        {
-            languageToggleButton.onClick.RemoveListener(ToggleLanguage);
-            languageToggleButton.onClick.AddListener(ToggleLanguage);
-        }
-
-        if (resetProgressButton != null)
-        {
-            resetProgressButton.onClick.RemoveListener(OnResetProgressPressed);
-            resetProgressButton.onClick.AddListener(OnResetProgressPressed);
-        }
-
-        if (confirmResetButton != null)
-        {
-            confirmResetButton.onClick.RemoveListener(ConfirmResetProgress);
-            confirmResetButton.onClick.AddListener(ConfirmResetProgress);
-        }
-
-        if (cancelResetButton != null)
-        {
-            cancelResetButton.onClick.RemoveListener(CancelResetProgress);
-            cancelResetButton.onClick.AddListener(CancelResetProgress);
-        }
+        // Button.onClick has a public setter. Reset the cloned UnityEvent in
+        // place so copied Inspector-persistent actions cannot toggle Music or
+        // close Settings. Destroy()+AddComponent() is deferred until end of
+        // frame and can leave the cloned control with the original event (or
+        // cause the rest of panel initialization to abort).
+        clonedButton.onClick = new Button.ButtonClickedEvent();
+        return clonedButton;
     }
 
     private void Update()
@@ -128,6 +125,11 @@ public class SettingsController : MonoBehaviour
 
     private void EnsureUIElementsExist()
     {
+        if (musicToggleButton != null)
+            musicStatusText = musicToggleButton.GetComponentInChildren<TextMeshProUGUI>();
+        if (sfxToggleButton != null)
+            sfxStatusText = sfxToggleButton.GetComponentInChildren<TextMeshProUGUI>();
+
         Transform container = null;
         if (musicToggleButton != null)
             container = musicToggleButton.transform.parent;
@@ -200,48 +202,51 @@ public class SettingsController : MonoBehaviour
         if (hapticsToggleButton == null && musicToggleButton != null)
         {
             Transform existing = container.Find("HapticsToggleButton");
-            GameObject hObj = existing != null ? existing.gameObject : Instantiate(musicToggleButton.gameObject, container);
+            Button clonedButton = existing != null
+                ? existing.GetComponent<Button>()
+                : CloneButtonWithoutSerializedActions(musicToggleButton, container, "HapticsToggleButton");
+            GameObject hObj = clonedButton.gameObject;
             hObj.name = "HapticsToggleButton";
             RectTransform hrt = hObj.GetComponent<RectTransform>();
             hrt.anchoredPosition = new Vector2(0f, -30f);
             hrt.sizeDelta = new Vector2(420f, 60f);
 
-            hapticsToggleButton = hObj.GetComponent<Button>();
+            hapticsToggleButton = clonedButton;
             hapticsStatusText = hObj.GetComponentInChildren<TextMeshProUGUI>();
-            hapticsToggleButton.onClick.RemoveAllListeners();
-            hapticsToggleButton.onClick.AddListener(ToggleHaptics);
         }
 
         // 3. Language Button
         if (languageToggleButton == null && musicToggleButton != null)
         {
             Transform existing = container.Find("LanguageToggleButton");
-            GameObject lObj = existing != null ? existing.gameObject : Instantiate(musicToggleButton.gameObject, container);
+            Button clonedButton = existing != null
+                ? existing.GetComponent<Button>()
+                : CloneButtonWithoutSerializedActions(musicToggleButton, container, "LanguageToggleButton");
+            GameObject lObj = clonedButton.gameObject;
             lObj.name = "LanguageToggleButton";
             RectTransform lrt = lObj.GetComponent<RectTransform>();
             lrt.anchoredPosition = new Vector2(0f, -100f);
             lrt.sizeDelta = new Vector2(420f, 60f);
 
-            languageToggleButton = lObj.GetComponent<Button>();
+            languageToggleButton = clonedButton;
             languageStatusText = lObj.GetComponentInChildren<TextMeshProUGUI>();
-            languageToggleButton.onClick.RemoveAllListeners();
-            languageToggleButton.onClick.AddListener(ToggleLanguage);
         }
 
         // 4. Reset Progress Button
         if (resetProgressButton == null && closeButton != null)
         {
             Transform existing = container.Find("ResetProgressButton");
-            GameObject rObj = existing != null ? existing.gameObject : Instantiate(closeButton.gameObject, container);
+            Button clonedButton = existing != null
+                ? existing.GetComponent<Button>()
+                : CloneButtonWithoutSerializedActions(closeButton, container, "ResetProgressButton");
+            GameObject rObj = clonedButton.gameObject;
             rObj.name = "ResetProgressButton";
             RectTransform rrt = rObj.GetComponent<RectTransform>();
             rrt.anchoredPosition = new Vector2(0f, -170f);
             rrt.sizeDelta = new Vector2(420f, 55f);
 
-            resetProgressButton = rObj.GetComponent<Button>();
+            resetProgressButton = clonedButton;
             resetProgressText = rObj.GetComponentInChildren<TextMeshProUGUI>();
-            resetProgressButton.onClick.RemoveAllListeners();
-            resetProgressButton.onClick.AddListener(OnResetProgressPressed);
         }
 
         // Botón Close abajo
@@ -304,6 +309,12 @@ public class SettingsController : MonoBehaviour
             settingsPanel.transform.SetAsLastSibling();
         }
 
+        // The settings panel starts inactive in both scenes, so construct its
+        // optional controls on the explicit open path as well as in Awake.
+        EnsureUIElementsExist();
+        BindSettingsListeners();
+        ConfigureSettingsNavigation();
+
         if (settingsCanvasGroup != null)
         {
             settingsCanvasGroup.alpha = 1f;
@@ -321,6 +332,50 @@ public class SettingsController : MonoBehaviour
         }
     }
 
+    private void ConfigureSettingsNavigation()
+    {
+        Button[] buttons =
+        {
+            musicToggleButton,
+            sfxToggleButton,
+            hapticsToggleButton,
+            languageToggleButton,
+            resetProgressButton,
+            closeButton
+        };
+
+        for (int i = 0; i < buttons.Length; i++)
+        {
+            if (buttons[i] == null) continue;
+            Navigation navigation = new Navigation { mode = Navigation.Mode.Explicit };
+            navigation.selectOnUp = FindPreviousInteractable(buttons, i);
+            navigation.selectOnDown = FindNextInteractable(buttons, i);
+            buttons[i].navigation = navigation;
+        }
+    }
+
+    private static Selectable FindPreviousInteractable(Button[] buttons, int index)
+    {
+        for (int step = 1; step < buttons.Length; step++)
+        {
+            int candidate = (index - step + buttons.Length) % buttons.Length;
+            if (buttons[candidate] != null && buttons[candidate].interactable)
+                return buttons[candidate];
+        }
+        return buttons[index];
+    }
+
+    private static Selectable FindNextInteractable(Button[] buttons, int index)
+    {
+        for (int step = 1; step < buttons.Length; step++)
+        {
+            int candidate = (index + step) % buttons.Length;
+            if (buttons[candidate] != null && buttons[candidate].interactable)
+                return buttons[candidate];
+        }
+        return buttons[index];
+    }
+
     public void CloseSettings()
     {
         isPanelExplicitlyOpen = false;
@@ -332,8 +387,10 @@ public class SettingsController : MonoBehaviour
             settingsCanvasGroup.blocksRaycasts = false;
         }
 
-        if (settingsPanel != null)
-            settingsPanel.SetActive(false);
+        // Keep this GameObject active: it owns the controller and its Awake
+        // initialization. CanvasGroup hides the panel without disabling it.
+        if (settingsPanel != null && !settingsPanel.activeSelf)
+            settingsPanel.SetActive(true);
 
         if (EventSystem.current != null)
             EventSystem.current.SetSelectedGameObject(null);
@@ -455,7 +512,7 @@ public class SettingsController : MonoBehaviour
     public void RefreshUI()
     {
         string lang = PlayerPrefs.GetString("SelectedLanguage", "EN");
-        bool isEs = lang == "ES";
+        bool isEs = string.Equals(lang, "ES", System.StringComparison.OrdinalIgnoreCase);
 
         bool musicOn = true;
         bool sfxOn = true;
@@ -479,8 +536,21 @@ public class SettingsController : MonoBehaviour
 
         if (sfxStatusText != null)
         {
-            sfxStatusText.text = sfxOn ? (isEs ? "SFX: SI" : "SFX: ON") : (isEs ? "SFX: NO" : "SFX: OFF");
+            sfxStatusText.text = sfxOn ? (isEs ? "EFECTOS: SI" : "SFX: ON") : (isEs ? "EFECTOS: NO" : "SFX: OFF");
             sfxStatusText.color = sfxOn ? enabledColor : disabledColor;
+        }
+
+        Transform container = musicToggleButton != null ? musicToggleButton.transform.parent : null;
+        Transform title = container != null ? (container.Find("SettingsTitle") ?? container.Find("Title")) : null;
+        TextMeshProUGUI titleText = title != null ? title.GetComponent<TextMeshProUGUI>() : null;
+        if (titleText != null)
+            titleText.text = isEs ? "AJUSTES" : "SETTINGS";
+
+        if (openSettingsButton != null)
+        {
+            TextMeshProUGUI openText = openSettingsButton.GetComponentInChildren<TextMeshProUGUI>();
+            if (openText != null)
+                openText.text = isEs ? "AJUSTES" : "SETTINGS";
         }
 
         // Haptics / Vibración

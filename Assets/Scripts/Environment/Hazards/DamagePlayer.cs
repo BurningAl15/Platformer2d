@@ -7,10 +7,10 @@ public class DamagePlayer : MonoBehaviour
 {
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag(StringUtils.tag_Player))
-        {
-            // other.GetComponent<PlayerHealth>().DealDamage();
-            PlayerHealth._instance.DealDamage();       
-        }
+        // The trigger may receive a child collider (for example StompBox)
+        // whose tag is not Player. Resolve the health component up the hierarchy.
+        PlayerHealth player = other.GetComponentInParent<PlayerHealth>();
+        if (player != null)
+            player.DealDamage();
     }
 }

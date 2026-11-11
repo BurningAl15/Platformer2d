@@ -8,7 +8,7 @@ using UnityEngine.InputSystem.Utilities;
 /// de forma automática.
 ///
 /// Lógica:
-/// - Si hay al menos un Gamepad conectado → ocultar UI mobile.
+/// - Si hay al menos un Gamepad/Joystick físico conectado → ocultar UI mobile.
 /// - Si no hay ningún Gamepad → mostrar UI mobile (solo si es plataforma mobile).
 ///
 /// Se apoya en PlatformDetector para saber si mostrar o no la UI mobile.
@@ -23,6 +23,10 @@ public class GamepadDetector : MonoBehaviour
 
     [Tooltip("Si está activo, loguea eventos de conexión/desconexión de gamepads.")]
     [SerializeField] private bool debugLog = true;
+
+    // Cache for logs/state application; the public query also checks the live
+    // device list so startup order cannot leave it stale.
+    private bool physicalGamepadConnected;
 
     private void Awake()
     {
@@ -48,8 +52,9 @@ public class GamepadDetector : MonoBehaviour
 
     private void Start()
     {
-        // Aplicar estado inicial al arrancar la escena
-        ApplyGamepadState();
+        // Check devices connected before this listener was installed too. Some
+        // mobile controllers (including GameSir models) are exposed as Joystick.
+        RefreshGamepadState();
     }
 
     // ───────────────────────────────────────────────
@@ -62,32 +67,7 @@ public class GamepadDetector : MonoBehaviour
     /// </summary>
     public bool HasPhysicalGamepad()
     {
-#if UNITY_ANDROID || UNITY_IOS
-        // En plataformas móviles, no ocultar automáticamente los controles táctiles
-        // para garantizar que siempre estén disponibles en pantalla.
-        return false;
-#else
-        foreach (InputDevice device in InputSystem.devices)
-        {
-            if ((device is Gamepad || device is Joystick) && device.enabled &&
-                !IsOnScreenDevice(device))
-            {
-                string name = device.name.ToLowerInvariant();
-                string display = device.displayName.ToLowerInvariant();
-
-                // Filtrar dispositivos virtuales, emuladores táctiles, sensores o touch
-                if (name.Contains("virtual") || name.Contains("onscreen") || name.Contains("touch") ||
-                    display.Contains("virtual") || display.Contains("onscreen") || display.Contains("touch") ||
-                    display.Contains("sensor") || display.Contains("accelerometer") || display.Contains("gyro"))
-                {
-                    continue;
-                }
-
-                return true;
-            }
-        }
-        return false;
-#endif
+        return HasPhysicalGamepadFromDevices();
     }
 
     private static bool IsOnScreenDevice(InputDevice device)
@@ -102,10 +82,9 @@ public class GamepadDetector : MonoBehaviour
             return true;
         }
 
-        InternedString onScreenUsage = new InternedString("OnScreen");
         foreach (InternedString usage in device.usages)
         {
-            if (usage == onScreenUsage)
+            if (string.Equals(usage.ToString(), "OnScreen", System.StringComparison.OrdinalIgnoreCase))
                 return true;
         }
         return false;
@@ -126,10 +105,9 @@ public class GamepadDetector : MonoBehaviour
             case InputDeviceChange.Enabled:
                 if (debugLog)
                     Debug.Log($"[GamepadDetector] Gamepad conectado: {device.displayName}");
-                // On-screen controls register a virtual Gamepad before marking it
-                // with the OnScreen usage. Wait briefly before checking the device list.
-                CancelInvoke(nameof(ApplyGamepadState));
-                Invoke(nameof(ApplyGamepadState), 0.05f);
+                // Let OnScreenControl set its usage before classifying its virtual pad.
+                CancelInvoke(nameof(RefreshGamepadState));
+                Invoke(nameof(RefreshGamepadState), 0.1f);
                 break;
 
             case InputDeviceChange.Removed:
@@ -137,10 +115,61 @@ public class GamepadDetector : MonoBehaviour
             case InputDeviceChange.Disabled:
                 if (debugLog)
                     Debug.Log($"[GamepadDetector] Gamepad desconectado: {device.displayName}");
-                CancelInvoke(nameof(ApplyGamepadState));
-                Invoke(nameof(ApplyGamepadState), 0.05f);
+                CancelInvoke(nameof(RefreshGamepadState));
+                Invoke(nameof(RefreshGamepadState), 0.1f);
                 break;
         }
+    }
+
+    private void RefreshGamepadState()
+    {
+        physicalGamepadConnected = HasPhysicalGamepadFromDevices();
+        ApplyGamepadState();
+    }
+
+    private bool HasPhysicalGamepadFromDevices()
+    {
+        foreach (InputDevice device in InputSystem.devices)
+        {
+            if (IsPhysicalGamepad(device)) return true;
+        }
+        return false;
+    }
+
+    private static bool IsPhysicalGamepad(InputDevice device)
+    {
+        if (device == null || !device.added || !device.enabled || IsOnScreenDevice(device))
+            return false;
+        if (!(device is Gamepad) && !(device is Joystick))
+            return false;
+
+        string name = device.name.ToLowerInvariant();
+        string display = device.displayName.ToLowerInvariant();
+        string interfaceName = device.description.interfaceName.ToLowerInvariant();
+        string deviceClass = device.description.deviceClass.ToLowerInvariant();
+
+        // Mobile backends can expose an unnamed/generic Joystick even when no
+        // controller is attached. Require a recognizable identity for Joystick
+        // layouts (e.g. "GameSir X5s"); keep standard physical Gamepads.
+        string product = (device.description.product ?? string.Empty).ToLowerInvariant();
+        bool hasIdentifiableJoystick =
+            (!string.IsNullOrWhiteSpace(product) && !IsGenericJoystickIdentity(product)) ||
+            (!string.IsNullOrWhiteSpace(display) && !IsGenericJoystickIdentity(display));
+        bool genericJoystick = device is Joystick && !hasIdentifiableJoystick;
+        if (genericJoystick) return false;
+
+        return !name.Contains("virtual") && !name.Contains("onscreen") && !name.Contains("touch") &&
+               !display.Contains("virtual") && !display.Contains("onscreen") && !display.Contains("touch") &&
+               !interfaceName.Contains("onscreen") && !interfaceName.Contains("virtual") &&
+               !deviceClass.Contains("onscreen") && !deviceClass.Contains("virtual") &&
+               !product.Contains("virtual") && !product.Contains("onscreen") && !product.Contains("touch") &&
+               !display.Contains("sensor") && !display.Contains("accelerometer") && !display.Contains("gyro");
+    }
+
+    private static bool IsGenericJoystickIdentity(string identity)
+    {
+        return identity.Contains("joystick") || identity.Contains("generic") ||
+               identity.Contains("unknown") || identity == "controller" || identity == "gamepad";
     }
 
     /// <summary>
@@ -150,7 +179,8 @@ public class GamepadDetector : MonoBehaviour
     {
         if (PlatformDetector.Instance == null) return;
 
-        bool hasGamepad = HasPhysicalGamepad();
+        physicalGamepadConnected = HasPhysicalGamepadFromDevices();
+        bool hasGamepad = physicalGamepadConnected;
 
         if (hasGamepad)
         {

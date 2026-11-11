@@ -41,6 +41,13 @@ public class SceneTransitionManager : MonoBehaviour
     public void LoadScene(string sceneName)
     {
         if (isTransitioning) return;
+
+        if (IsTutorialIncomplete() && IsRestrictedBeforeTutorial(sceneName))
+        {
+            LoadGameplayScene(0);
+            return;
+        }
+
         StartCoroutine(TransitionRoutine(() => SceneManager.LoadScene(sceneName)));
     }
 
@@ -53,12 +60,44 @@ public class SceneTransitionManager : MonoBehaviour
     public void LoadGameplayScene(int level)
     {
         if (isTransitioning) return;
+
+        // Never allow gameplay routes to bypass an unfinished first-run tutorial.
+        if (level > 0 && IsTutorialIncomplete())
+            level = 0;
+
         StartCoroutine(TransitionRoutine(() => SceneManager.LoadScene("Level_" + level)));
     }
 
     public void ToSelectionScene()
     {
+        // Pause/menu routes must not expose the level map before the tutorial is complete.
+        if (IsTutorialIncomplete())
+        {
+            LoadGameplayScene(0);
+            return;
+        }
+
         LoadScene("LevelSelection");
+    }
+
+    private static bool IsTutorialIncomplete()
+    {
+        if (SaveManager.Instance != null)
+            return SaveManager.Instance.HasIncompleteTutorial();
+
+        bool started = PlayerPrefs.GetInt("TutorialStarted", 0) == 1;
+        bool completed = PlayerPrefs.GetInt("TutorialCompleted", 0) == 1 ||
+                         PlayerPrefs.GetInt("Level_1", 0) == 1;
+        return started && !completed;
+    }
+
+    private static bool IsRestrictedBeforeTutorial(string sceneName)
+    {
+        if (string.Equals(sceneName, "LevelSelection", System.StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        return sceneName.StartsWith("Level_", System.StringComparison.OrdinalIgnoreCase) &&
+               int.TryParse(sceneName.Substring("Level_".Length), out int level) && level > 0;
     }
 
     public void ToMainScene()

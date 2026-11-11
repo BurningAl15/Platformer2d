@@ -16,6 +16,7 @@ public class LSPlayerController : MonoBehaviour
     public float inputCooldown = 0.3f;
 
     private bool hasProcessedInput = false;
+    private bool currentPointInfoRefreshed;
     private float cooldownTimer = 0f;
     private Vector2 previousMoveInput;
 
@@ -24,7 +25,7 @@ public class LSPlayerController : MonoBehaviour
         if (InputManager.Instance != null)
         {
             InputManager.Instance.OnJumpPressed += HandleLevelSelect;
-            InputManager.Instance.OnSubmitPressed += HandleLevelSelect;
+            InputManager.Instance.OnPausePressed += OpenSettingsFromGamepad;
         }
     }
 
@@ -33,8 +34,15 @@ public class LSPlayerController : MonoBehaviour
         if (InputManager.Instance != null)
         {
             InputManager.Instance.OnJumpPressed -= HandleLevelSelect;
-            InputManager.Instance.OnSubmitPressed -= HandleLevelSelect;
+            InputManager.Instance.OnPausePressed -= OpenSettingsFromGamepad;
         }
+    }
+
+    private void OpenSettingsFromGamepad()
+    {
+        SettingsController settings = Object.FindFirstObjectByType<SettingsController>();
+        if (settings != null)
+            settings.OpenSettings();
     }
 
     public void SetCurrentPoint(MapPoint newPoint)
@@ -46,6 +54,7 @@ public class LSPlayerController : MonoBehaviour
         currentPoint = newPoint;
         transform.position = currentPoint.transform.position;
         currentPoint.Select();
+        RefreshSelectedLevelInfo();
     }
 
     private readonly Queue<MapPoint> pathQueue = new Queue<MapPoint>();
@@ -53,6 +62,8 @@ public class LSPlayerController : MonoBehaviour
 
     private void Update()
     {
+        if (currentPoint == null) return;
+
         transform.position = Vector3.MoveTowards(
             transform.position,
             currentPoint.transform.position,
@@ -82,11 +93,8 @@ public class LSPlayerController : MonoBehaviour
                 // Mostrar panel de info solo cuando estamos exactamente sobre el nodo
                 if (currentDistance <= 0.01f)
                 {
-                    if (currentPoint.isLevel && !currentPoint.isLocked)
-                    {
-                        if (UI_SelectController._instance != null)
-                            UI_SelectController._instance.Turn_On_Off(true);
-                    }
+                    if (!currentPointInfoRefreshed)
+                        RefreshSelectedLevelInfo();
                 }
             }
         }
@@ -339,18 +347,39 @@ public class LSPlayerController : MonoBehaviour
 
     private void SetNextPoint(MapPoint nextPoint)
     {
+        if (currentPoint == null || nextPoint == null) return;
+
         // Deseleccionar el punto actual
         currentPoint.Deselect();
 
         // Ocultar panel de info
-        UI_SelectController._instance.Turn_On_Off(false);
+        currentPointInfoRefreshed = false;
+        if (UI_SelectController._instance != null)
+            UI_SelectController._instance.Turn_On_Off(false);
 
         // Reproducir sonido de navegación
-        AudioMixerManager._instance.CallSFX(SFXType.Map_Movement);
+        AudioMixerManager._instance?.CallSFX(SFXType.Map_Movement);
 
         currentPoint = nextPoint;
         currentPoint.Select();
 
         Debug.Log($"[LSPlayerController] Navegando a: {nextPoint.name}");
+    }
+
+    private void RefreshSelectedLevelInfo()
+    {
+        if (UI_SelectController._instance == null || currentPoint == null) return;
+
+        if (currentPoint.isLevel && !currentPoint.isLocked)
+        {
+            UI_SelectController._instance.RenderLevelData(currentPoint);
+            UI_SelectController._instance.Turn_On_Off(true);
+        }
+        else
+        {
+            UI_SelectController._instance.Turn_On_Off(false);
+        }
+
+        currentPointInfoRefreshed = true;
     }
 }

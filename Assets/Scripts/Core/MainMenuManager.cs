@@ -26,6 +26,8 @@ public class MainMenuManager : MonoBehaviour
     [SerializeField] private GameObject newGameFirstButton;
     [Tooltip("Primer botón del panel de confirmación de nueva partida")]
     [SerializeField] private GameObject panelFirstButton;
+    [Tooltip("Botón de tienda; su navegación izquierda apunta dinámicamente a Continue o New Game.")]
+    [SerializeField] private Button storeButton;
 
     [Header("Versión")]
     [SerializeField] private TMPro.TextMeshProUGUI versionText;
@@ -39,11 +41,10 @@ public class MainMenuManager : MonoBehaviour
 
     private void Start()
     {
-        hasPlayedBefore = SaveManager.Instance != null
-            ? SaveManager.Instance.HasSaveData()
-            : PlayerPrefs.HasKey("Level_1");
+        hasPlayedBefore = HasContinueProgress();
 
         continueButton.SetActive(hasPlayedBefore);
+        ConfigureStoreNavigation();
         SelectButton(hasPlayedBefore ? continueFirstButton : newGameFirstButton);
 
         panelBG.alpha = 0;
@@ -135,7 +136,20 @@ public class MainMenuManager : MonoBehaviour
     /// </summary>
     public void ToNextScene() => StartNewGame();
 
-    public void ContinueScene() => SceneUtils.ToSelectionScene();
+    public void ContinueScene()
+    {
+        bool tutorialIncomplete = SaveManager.Instance != null
+            ? SaveManager.Instance.HasIncompleteTutorial()
+            : IsTutorialIncompleteInPrefs();
+
+        if (tutorialIncomplete)
+        {
+            SceneUtils.LoadGameplayScene(0);
+            return;
+        }
+
+        SceneUtils.ToSelectionScene();
+    }
 
     public void QuitGame() => Application.Quit();
 
@@ -146,9 +160,66 @@ public class MainMenuManager : MonoBehaviour
     private void StartNewGame()
     {
         if (SaveManager.Instance != null)
+        {
             SaveManager.Instance.ResetProgress();
+            SaveManager.Instance.MarkTutorialStarted();
+        }
+        else
+        {
+            PlayerPrefs.SetInt("TutorialStarted", 1);
+            PlayerPrefs.SetInt("TutorialCompleted", 0);
+            PlayerPrefs.Save();
+        }
 
         SceneUtils.LoadGameplayScene(0);
+    }
+
+    private bool HasContinueProgress()
+    {
+        if (SaveManager.Instance != null)
+            return SaveManager.Instance.HasSaveData();
+
+        if (IsTutorialIncompleteInPrefs())
+            return true;
+
+        for (int level = 1; level <= 10; level++)
+        {
+            if (PlayerPrefs.GetInt($"Level_{level}", 0) == 1)
+                return true;
+        }
+
+        return false;
+    }
+
+    private static bool IsTutorialIncompleteInPrefs()
+    {
+        bool tutorialStarted = PlayerPrefs.GetInt("TutorialStarted", 0) == 1;
+        bool tutorialCompleted = PlayerPrefs.GetInt("TutorialCompleted", 0) == 1 ||
+                                 PlayerPrefs.GetInt("Level_1", 0) == 1;
+        return tutorialStarted && !tutorialCompleted;
+    }
+
+    private void ConfigureStoreNavigation()
+    {
+        if (storeButton == null)
+        {
+            Transform storeTransform = transform.root.Find("Canvas/Store-Button");
+            if (storeTransform != null)
+                storeButton = storeTransform.GetComponent<Button>();
+        }
+
+        GameObject firstButton = hasPlayedBefore ? continueFirstButton : newGameFirstButton;
+        Selectable firstSelectable = firstButton != null
+            ? firstButton.GetComponent<Selectable>()
+            : null;
+
+        if (storeButton == null || firstSelectable == null)
+            return;
+
+        Navigation navigation = storeButton.navigation;
+        navigation.mode = Navigation.Mode.Explicit;
+        navigation.selectOnLeft = firstSelectable;
+        storeButton.navigation = navigation;
     }
 
     private void TurnOffPanel()

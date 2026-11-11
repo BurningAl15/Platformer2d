@@ -1,6 +1,7 @@
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
+[DefaultExecutionOrder(100)]
 public class PlatformRider : MonoBehaviour
 {
     [Header("Settings")]
@@ -14,7 +15,6 @@ public class PlatformRider : MonoBehaviour
     
     private MovingPlatform currentPlatform;
     private Vector2 platformVelocity;
-    private Vector2 lastPlatformPosition;
     private Rigidbody2D rb;
     private bool isAttached;
     private bool wasGroundedLastFrame;
@@ -112,8 +112,7 @@ public class PlatformRider : MonoBehaviour
             return;
         }
         
-        Transform platformTransform = currentPlatform.GetPlatformTransform();
-        float distance = Vector2.Distance(transform.position, platformTransform.position);
+        float distance = Vector2.Distance(rb.position, currentPlatform.GetPhysicsPosition());
         
         if (distance > maxAttachDistance)
         {
@@ -144,8 +143,6 @@ public class PlatformRider : MonoBehaviour
         isAttached = true;
         wasGroundedLastFrame = true;
         
-        Transform platformTransform = currentPlatform.GetPlatformTransform();
-        lastPlatformPosition = platformTransform.position;
         platformVelocity = currentPlatform.GetVelocity();
         
         if (showDebugLogs)
@@ -177,16 +174,19 @@ public class PlatformRider : MonoBehaviour
             return;
         }
         
-        Transform platformTransform = currentPlatform.GetPlatformTransform();
-        Vector2 currentPlatformPosition = platformTransform.position;
-        Vector2 platformDelta = currentPlatformPosition - lastPlatformPosition;
-        
-        if (platformDelta.sqrMagnitude > 0.0001f)
+        Vector2 platformDelta = currentPlatform.GetFixedStepDelta();
+
+        // The solver keeps contact with vertical platforms, but this project’s
+        // horizontal one-way platforms do not carry the player laterally. Apply
+        // X explicitly; keep upward Y to the solver to avoid the prior jitter.
+        // Descending platforms also need explicit Y because they cannot pull a
+        // dynamic passenger down with them.
+        Vector2 carryDelta = new Vector2(platformDelta.x, Mathf.Min(0f, platformDelta.y));
+        if (carryDelta.sqrMagnitude > 0.000001f)
         {
-            transform.position += (Vector3)platformDelta;
+            rb.MovePosition(rb.position + carryDelta);
         }
         
-        lastPlatformPosition = currentPlatformPosition;
         platformVelocity = currentPlatform.GetVelocity();
     }
     

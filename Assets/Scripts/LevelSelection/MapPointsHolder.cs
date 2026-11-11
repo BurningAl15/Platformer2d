@@ -33,14 +33,10 @@ public class MapPointsHolder : MonoBehaviour
 
     private void ConfigureMapPoints()
     {
-        bool hasSaveData = SaveManager.Instance != null
-            ? SaveManager.Instance.HasSaveData()
-            : PlayerPrefs.HasKey("Level_1");
-
-        if (!hasSaveData) return;
-
         for (int i = 0; i < _mapPoints.Count; i++)
         {
+            if (_mapPoints[i] == null) continue;
+
             // Obtener el número de nivel: desde WorldData si está asignado, o secuencial
             int levelNumber = GetLevelNumber(i);
             if (levelNumber < 0) continue;
@@ -75,9 +71,24 @@ public class MapPointsHolder : MonoBehaviour
 
     private void PositionPlayer()
     {
+        if (player == null || _mapPoints == null || _mapPoints.Count == 0)
+        {
+            Debug.LogError("[MapPointsHolder] Cannot position the selector: player or map points are missing.");
+            return;
+        }
+
         int mapIndex = SaveManager.Instance != null
             ? SaveManager.Instance.LoadMapIndex()
             : Mathf.Max(0, PlayerPrefs.GetInt(StringUtils.playerPref_mapIndex, 0));
+
+        // Reconcile older builds that persisted an index one point behind the
+        // newly unlocked level. The map list is ordered Level_1, Level_2, ... .
+        for (int i = 0; i < _mapPoints.Count; i++)
+        {
+            MapPoint point = _mapPoints[i];
+            if (point != null && point.isLevel && !point.isLocked)
+                mapIndex = Mathf.Max(mapIndex, i);
+        }
 
         mapIndex = Mathf.Clamp(mapIndex, 0, _mapPoints.Count - 1);
         player.SetCurrentPoint(_mapPoints[mapIndex]);
