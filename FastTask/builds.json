@@ -22,7 +22,7 @@
         "sha256": "4fb7e7dc0aa1080426ee64dc5c1bfb6be47fbd5f84baf6dad7e03bbdbd1cd7e5",
         "unityLog": "Builds/CI/logs/ios_20.log",
         "testflightUpload": "App Store Connect TestFlight > iOS Builds > Build Uploads lists version 1.0.1, build 20, Processing, uploaded Nov 12 2026 5:55 PM Lima.",
-        "sourceCommit": "Uncommitted worktree on refactor/trying-refactor"
+        "sourceCommit": "17dbf65"
       }
     },
     {
@@ -48,7 +48,7 @@
         "playTrack": "internal",
         "playReleaseId": "22",
         "playConsole": "Release details show app bundle version 23 (1.0.1), available to internal testers; published 2026-11-12 17:45 Lima; 19,874 devices. Target SDK 36.",
-        "sourceCommit": "Uncommitted worktree on refactor/trying-refactor"
+        "sourceCommit": "17dbf65"
       }
     },
     {
