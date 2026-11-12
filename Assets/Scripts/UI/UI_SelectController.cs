@@ -56,6 +56,7 @@ public class UI_SelectController : MonoBehaviour
         }
         _instance = this;
 
+        if (levelInfoContainer == null) return;
         panelRect = levelInfoContainer.GetComponent<RectTransform>();
 
         // Asegura que el panel empieza oculto y fuera de pantalla
@@ -72,36 +73,14 @@ public class UI_SelectController : MonoBehaviour
         }
 
         // Configurar auto-sizing y no-wrap para que nunca hagan overflow
-        ConfigureAutoResize(levelNameText, 20f, 60f);
+        ConfigureAutoResize(levelNameText, 16f, 48f);
         ConfigureAutoResize(gemsFoundText, 14f, 40f);
         ConfigureAutoResize(gemsTargetText, 14f, 40f);
         ConfigureAutoResize(bestTimeText, 14f, 40f);
         ConfigureAutoResize(timeTargetText, 14f, 40f);
         ConfigureAutoResize(cloverText, 14f, 40f);
 
-        // Permitir iniciar el nivel al tocar directamente la tarjeta en pantallas táctiles
-        if (levelInfoContainer != null)
-        {
-            var btn = levelInfoContainer.GetComponent<UnityEngine.UI.Button>();
-            if (btn == null)
-            {
-                btn = levelInfoContainer.AddComponent<UnityEngine.UI.Button>();
-                btn.transition = UnityEngine.UI.Selectable.Transition.None;
-            }
-            btn.onClick.RemoveListener(OnLevelCardClicked);
-            btn.onClick.AddListener(OnLevelCardClicked);
-        }
-
         levelInfoContainer.SetActive(false);
-    }
-
-    private void OnLevelCardClicked()
-    {
-        LSPlayerController player = Object.FindFirstObjectByType<LSPlayerController>();
-        if (player != null)
-        {
-            player.HandleLevelSelect();
-        }
     }
 
     private static void ConfigureAutoResize(TextMeshProUGUI tmp, float minSize, float maxSize)
@@ -118,7 +97,22 @@ public class UI_SelectController : MonoBehaviour
     {
         if (levelInfo == null) return;
 
-        if (levelNameText != null) levelNameText.text = levelInfo.levelName;
+        if (levelNameText != null)
+        {
+            string language = PlayerPrefs.GetString("SelectedLanguage", "EN");
+            int fragments = SaveManager.Instance != null ? SaveManager.Instance.LoadHeartFragmentCount() : 0;
+            int permanentHearts = SaveManager.Instance != null ? SaveManager.Instance.LoadPermanentHeartCount() : 0;
+            string heartSummary = language == "ES"
+                ? $"CORAZONES: {3 + permanentHearts}  FRAGMENTOS: {fragments % 2}/2"
+                : $"HEARTS: {3 + permanentHearts}  FRAGMENTS: {fragments % 2}/2";
+            string fragmentFound = levelInfo.hasHeartFragment
+                ? (language == "ES" ? "\nFRAGMENTO ENCONTRADO" : "\nFRAGMENT FOUND")
+                : string.Empty;
+            string confirmPrompt = language == "ES"
+                ? "\nTOCA EL NIVEL O PRESIONA A PARA ENTRAR"
+                : "\nTAP LEVEL OR PRESS A TO ENTER";
+            levelNameText.text = $"{levelInfo.levelName}\n{heartSummary}{fragmentFound}{confirmPrompt}";
+        }
         if (gemsFoundText != null) gemsFoundText.text = "FOUND: " + levelInfo.gemsCollected;
         if (gemsTargetText != null) gemsTargetText.text = "IN LEVEL: " + levelInfo.totalGems;
         if (timeTargetText != null) timeTargetText.text = "TARGET: " + levelInfo.targetTime.ToString("F1") + "s";
@@ -140,7 +134,12 @@ public class UI_SelectController : MonoBehaviour
                     : new Color(0.48f, 0.48f, 0.48f, 0.9f);
         }
         if (cloverText != null)
-            cloverText.text = levelInfo.hasTrebol ? "FOUND" : "--";
+        {
+            string language = PlayerPrefs.GetString("SelectedLanguage", "EN");
+            cloverText.text = levelInfo.hasTrebol
+                ? (language == "ES" ? "ENCONTRADO" : "FOUND")
+                : (language == "ES" ? "NO ENCONTRADO" : "NOT FOUND");
+        }
     }
 
     /// <summary>

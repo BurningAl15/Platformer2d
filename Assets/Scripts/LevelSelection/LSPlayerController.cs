@@ -155,7 +155,8 @@ public class LSPlayerController : MonoBehaviour
 
         if (target == currentPoint)
         {
-            // Tocado el mismo nodo: si es nivel, entrar directamente
+            // The selected card is the confirmation step; activating the
+            // selected point a second time confirms entry.
             HandleLevelSelect();
             return true;
         }
@@ -267,17 +268,8 @@ public class LSPlayerController : MonoBehaviour
                     return;
                 }
 
-                // Deslizamiento con el dedo (SWIPE)
-                if (delta.magnitude >= 40f && currentDistance < 0.025f)
-                {
-                    Vector2 dir = Vector2.zero;
-                    if (Mathf.Abs(delta.x) > Mathf.Abs(delta.y))
-                        dir = delta.x > 0 ? Vector2.right : Vector2.left;
-                    else
-                        dir = delta.y > 0 ? Vector2.up : Vector2.down;
-
-                    TryNavigate(dir);
-                }
+                // Drag gestures are owned by LSCameraController so the map
+                // can be explored freely without moving Fox between nodes.
             }
         }
 
@@ -362,6 +354,7 @@ public class LSPlayerController : MonoBehaviour
 
         currentPoint = nextPoint;
         currentPoint.Select();
+        FindFirstObjectByType<LSCameraController>()?.FollowPlayer();
 
         Debug.Log($"[LSPlayerController] Navegando a: {nextPoint.name}");
     }

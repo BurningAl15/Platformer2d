@@ -86,6 +86,21 @@ public class DiceRollController : MonoBehaviour
         ConfigureButtonAutoResize(stopButton, 14f, 28f);
         ConfigureButtonAutoResize(upgradeWithTrebolButton, 14f, 28f);
         ConfigureButtonAutoResize(closeButton, 14f, 28f);
+        ConfigureDisabledStateVisual(rollButton);
+        ConfigureDisabledStateVisual(stopButton);
+        ConfigureDisabledStateVisual(upgradeWithTrebolButton);
+        ConfigureDisabledStateVisual(closeButton);
+    }
+
+    private static void ConfigureDisabledStateVisual(Button button)
+    {
+        if (button == null) return;
+
+        ColorBlock colors = button.colors;
+        colors.disabledColor = new Color(0.55f, 0.55f, 0.55f, 0.45f);
+        colors.colorMultiplier = 1f;
+        button.colors = colors;
+        button.transition = Selectable.Transition.ColorTint;
     }
 
     private static void ConfigureAutoResize(TextMeshProUGUI tmp, float minSize, float maxSize)

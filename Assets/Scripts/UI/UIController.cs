@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -20,7 +21,10 @@ public class HeartUI
     {
         heartEmpty = empty;
         heartHalf  = half;
-        heartImage.sprite = heartFull;
+        heartFull  = full;
+
+        if (heartImage != null)
+            heartImage.sprite = heartFull;
     }
 
     public void UpdateHeartSprite_Damage(int currentHealth)
@@ -107,6 +111,7 @@ public class UIController : MonoBehaviour
     [SerializeField] private Sprite starEmpty;
 
     private Coroutine currentCoroutine = null;
+    private Coroutine heartGainAnimation;
 
     // ─────────────────────────────────────────────────────────────────────────
     //  Ciclo de vida
@@ -218,6 +223,29 @@ public class UIController : MonoBehaviour
                 bonusHeartIcon.sprite = bonusHealth >= 2 ? heartFull : bonusHealth == 1 ? heartHalf : heartEmpty;
             }
         }
+    }
+
+    public void AnimatePermanentHeartGain()
+    {
+        if (hearts == null || hearts.Count == 0 || PlayerHealth._instance == null) return;
+
+        int heartIndex = Mathf.Clamp(PlayerHealth._instance.MaxHealth / 2 - 1, 0, hearts.Count - 1);
+        Image image = hearts[heartIndex]?.heartImage;
+        if (image == null || !image.gameObject.activeInHierarchy) return;
+
+        if (heartGainAnimation != null)
+            StopCoroutine(heartGainAnimation);
+        heartGainAnimation = StartCoroutine(AnimateHeartScale(image.transform));
+    }
+
+    private IEnumerator AnimateHeartScale(Transform target)
+    {
+        Vector3 baseScale = target.localScale;
+        target.DOKill();
+        target.DOPunchScale(Vector3.one * 0.35f, 0.45f, 8, 0.65f);
+        yield return new WaitForSecondsRealtime(0.5f);
+        if (target != null) target.localScale = baseScale;
+        heartGainAnimation = null;
     }
 
     // ─────────────────────────────────────────────────────────────────────────

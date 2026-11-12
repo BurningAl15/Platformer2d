@@ -1,4 +1,5 @@
 using System.Collections;
+using DG.Tweening;
 using UnityEngine;
 
 /// <summary>
@@ -49,7 +50,10 @@ public sealed class HeartFragmentPickup : MonoBehaviour
 
         isCollected = true;
         if (grantedPermanentHeart)
+        {
             player.AddPermanentHeart();
+            UIController._instance?.AnimatePermanentHeartGain();
+        }
 
         if (AudioMixerManager._instance != null)
             AudioMixerManager._instance.CallSFX(SFXType.Player_Pickup_Health);
@@ -60,7 +64,13 @@ public sealed class HeartFragmentPickup : MonoBehaviour
     private IEnumerator CollectEffect()
     {
         if (pickupCollider != null) pickupCollider.enabled = false;
-        if (spriteRenderer != null) spriteRenderer.enabled = false;
+
+        if (spriteRenderer != null)
+        {
+            transform.DOKill();
+            transform.DOPunchScale(Vector3.one * 0.35f, Mathf.Max(0.2f, fadeDuration), 8, 0.7f);
+            spriteRenderer.DOFade(0f, Mathf.Max(0.2f, fadeDuration));
+        }
 
         if (effect != null)
         {
@@ -76,6 +86,7 @@ public sealed class HeartFragmentPickup : MonoBehaviour
             yield return new WaitForSeconds(fadeDuration);
         }
 
+        if (spriteRenderer != null) spriteRenderer.enabled = false;
         Destroy(gameObject);
     }
 }

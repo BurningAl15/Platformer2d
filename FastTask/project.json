@@ -11,7 +11,7 @@
   ],
   "releaseReadiness": {
     "schemaVersion": 1,
-    "updatedAt": "2026-11-11",
+    "updatedAt": "2026-11-12",
     "platforms": {
       "android": {
         "store": "google_play",
@@ -28,10 +28,10 @@
           "evidenceBuildId": "488949e5-a096-4a21-99f3-1048821f8c80"
         },
         "availability": {
-          "status": "available_internal_track_api_verified",
-          "checkedAt": "2026-11-11",
-          "evidenceBuildId": "785fa3c0-d87b-49ab-8843-c88f01bc8a49",
-          "nextAction": "La API Android Publisher confirma el release 1.0.1, versionCode 19, status completed en el track internal. Testers inscritos deberían verlo en el enlace de prueba interna. Falta que el propietario confirme instalación/actualización en su teléfono y completar QA de dispositivo.",
+          "status": "available_internal_track_console_verified",
+          "checkedAt": "2026-11-12",
+          "evidenceBuildId": "d00acfd4-d219-4558-a72f-b4daf5c1b95e",
+          "nextAction": "Install versionCode 23 on the owner’s Android device and run the gameplay/UI QA matrix; no physical-device verification has been performed.",
           "source": ".kiro/handoff.md"
         }
       },
@@ -50,10 +50,10 @@
           "evidenceBuildId": "bb610d1e-313d-4a44-9c75-31855c236ddd"
         },
         "availability": {
-          "status": "upload_accepted",
-          "checkedAt": "2026-11-11",
-          "evidenceBuildId": "cb6ad2e6-25b4-4e4c-9829-eae9f7454f25",
-          "nextAction": "Commit 457890e está publicado en refactor/trying-refactor. Build 18 sigue siendo el último de tiendas y no incluye este commit. Revisar en Unity/Play Mode el layout móvil y la colocación de los fragmentos, además de daño/caídas e invulnerabilidad, antes de preparar el siguiente candidato. Build, procesamiento de tienda, disponibilidad del tester y QA de dispositivo se registran por separado.",
+          "status": "uploaded_processing",
+          "checkedAt": "2026-11-12",
+          "evidenceBuildId": "4c825c1a-a7da-4741-9183-d378a527daa8",
+          "nextAction": "Wait for App Store Connect processing of TestFlight build 20, then verify tester availability and install on the owner’s iPhone; device QA has not been performed.",
           "source": ".kiro/handoff.md"
         }
       }

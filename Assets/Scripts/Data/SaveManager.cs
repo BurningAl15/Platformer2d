@@ -242,6 +242,9 @@ public class SaveManager : MonoBehaviour
     public int LoadPermanentHeartCount()
         => Mathf.Max(0, PlayerPrefs.GetInt(KEY_PERMANENT_HEART_COUNT, 0));
 
+    public int LoadHeartFragmentCount()
+        => Mathf.Max(0, PlayerPrefs.GetInt(KEY_HEART_FRAGMENT_COUNT, 0));
+
     /// <summary>Fragmentos que faltan para el siguiente corazón permanente (0 o 1).</summary>
     public int LoadHeartFragmentsTowardNextHeart()
         => Mathf.Max(0, PlayerPrefs.GetInt(KEY_HEART_FRAGMENT_COUNT, 0)) % 2;

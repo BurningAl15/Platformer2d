@@ -398,6 +398,21 @@ public class GameOverController : MonoBehaviour
             bool secretUnlocked = SaveManager.Instance.IsSecretDiceUnlocked(1);
             useSecretDiceButton.gameObject.SetActive(secretUnlocked);
         }
+
+        ConfigureDisabledStateVisual(spendGemsButton);
+        ConfigureDisabledStateVisual(useTrebolButton);
+        ConfigureDisabledStateVisual(watchAdButton);
+    }
+
+    private static void ConfigureDisabledStateVisual(Button button)
+    {
+        if (button == null) return;
+
+        ColorBlock colors = button.colors;
+        colors.disabledColor = new Color(0.55f, 0.55f, 0.55f, 0.45f);
+        colors.colorMultiplier = 1f;
+        button.colors = colors;
+        button.transition = Selectable.Transition.ColorTint;
     }
 
     private void ShowAdUnavailableFeedback()

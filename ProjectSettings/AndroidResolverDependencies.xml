@@ -1,7 +1,10 @@
 <dependencies>
   <packages>
     <package>androidx.annotation:annotation:[1.2.0]</package>
+    <package>com.google.android.gms:play-services-ads-identifier:18.1.0</package>
     <package>com.revenuecat.purchases:purchases-hybrid-common:[19.14.1]</package>
+    <package>com.unity3d.ads-mediation:mediation-sdk:9.7.0</package>
+    <package>com.unity3d.ads-mediation:unityads-adapter:5.15.0</package>
   </packages>
   <files />
   <settings>

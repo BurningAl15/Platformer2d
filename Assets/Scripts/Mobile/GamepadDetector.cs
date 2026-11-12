@@ -148,28 +148,31 @@ public class GamepadDetector : MonoBehaviour
         string interfaceName = device.description.interfaceName.ToLowerInvariant();
         string deviceClass = device.description.deviceClass.ToLowerInvariant();
 
-        // Mobile backends can expose an unnamed/generic Joystick even when no
-        // controller is attached. Require a recognizable identity for Joystick
-        // layouts (e.g. "GameSir X5s"); keep standard physical Gamepads.
+        // Mobile backends can expose generic Gamepad/Joystick devices without
+        // physical hardware. Only treat devices with a recognizable product or
+        // display identity as controllers (e.g. "GameSir X5s" or "Xbox Wireless Controller").
         string product = (device.description.product ?? string.Empty).ToLowerInvariant();
-        bool hasIdentifiableJoystick =
+        bool hasIdentifiableController =
             (!string.IsNullOrWhiteSpace(product) && !IsGenericJoystickIdentity(product)) ||
-            (!string.IsNullOrWhiteSpace(display) && !IsGenericJoystickIdentity(display));
-        bool genericJoystick = device is Joystick && !hasIdentifiableJoystick;
-        if (genericJoystick) return false;
+            (!string.IsNullOrWhiteSpace(display) && !IsGenericJoystickIdentity(display)) ||
+            (!string.IsNullOrWhiteSpace(name) && !IsGenericJoystickIdentity(name));
+        if (!hasIdentifiableController) return false;
 
         return !name.Contains("virtual") && !name.Contains("onscreen") && !name.Contains("touch") &&
                !display.Contains("virtual") && !display.Contains("onscreen") && !display.Contains("touch") &&
                !interfaceName.Contains("onscreen") && !interfaceName.Contains("virtual") &&
                !deviceClass.Contains("onscreen") && !deviceClass.Contains("virtual") &&
                !product.Contains("virtual") && !product.Contains("onscreen") && !product.Contains("touch") &&
-               !display.Contains("sensor") && !display.Contains("accelerometer") && !display.Contains("gyro");
+               !name.Contains("sensor") && !display.Contains("sensor") && !product.Contains("sensor") &&
+               !display.Contains("accelerometer") && !display.Contains("gyro");
     }
 
     private static bool IsGenericJoystickIdentity(string identity)
     {
         return identity.Contains("joystick") || identity.Contains("generic") ||
-               identity.Contains("unknown") || identity == "controller" || identity == "gamepad";
+               identity.Contains("unknown") || identity.Contains("android") ||
+               identity.Contains("touchscreen") || identity.Contains("touch screen") ||
+               identity == "controller" || identity == "gamepad";
     }
 
     /// <summary>

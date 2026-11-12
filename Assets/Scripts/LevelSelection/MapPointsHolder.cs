@@ -66,6 +66,10 @@ public class MapPointsHolder : MonoBehaviour
                 ? SaveManager.Instance.HasTrebol(levelNumber)
                 : PlayerPrefs.GetInt($"Trebol_Level_{levelNumber}", 0) == 1;
             _mapPoints[i].CheckTrebol();
+
+            _mapPoints[i].hasHeartFragment = SaveManager.Instance != null
+                ? SaveManager.Instance.HasHeartFragment(levelNumber)
+                : PlayerPrefs.GetInt($"HeartFragment_Level_{levelNumber}", 0) == 1;
         }
     }
 

@@ -21,6 +21,7 @@ public class MapPoint : MonoBehaviour
     public int gemsCollected, totalGems;
     public float bestTime, targetTime;
     public bool hasTrebol;
+    public bool hasHeartFragment;
 
     [Header("Badges")]
     [SerializeField] private GameObject timeBadge, gemsBadge, trebolBadge;

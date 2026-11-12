@@ -126,7 +126,8 @@ public class AdsManager : MonoBehaviour
         if (RevenueCatManager.Instance != null)
             RevenueCatManager.Instance.EntitlementStatusResolved += OnEntitlementStatusResolved;
 
-        SetPrivacyEligibilityResolved(true);
+        // Ads remain closed until a real consent and eligibility flow resolves.
+        // A hard-coded approval here would bypass the privacy gate.
     }
 
     private void OnDestroy()

@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.Collections;
 
 public class PlatformDetector : MonoBehaviour
 {
@@ -95,8 +96,15 @@ public class PlatformDetector : MonoBehaviour
     {
         gameplayControlsSuppressed = false;
         EnsureCanvasSetup();
-        // Cada vez que carga una escena nueva, reconfigurar UI usando el nombre de la escena recién cargada
         ConfigureMobileUIForScene(scene.name);
+        StartCoroutine(ReapplyAfterSceneActivation(scene.name));
+    }
+
+    private IEnumerator ReapplyAfterSceneActivation(string sceneName)
+    {
+        yield return null;
+        yield return new WaitForEndOfFrame();
+        ConfigureMobileUIForScene(sceneName);
     }
 
     private static bool ShouldShowTouchControls(bool isMobile)
@@ -122,7 +130,7 @@ public class PlatformDetector : MonoBehaviour
             SetGameplayUI(false);
             SetLevelSelectorUI(false);
             
-            Debug.Log($"[PlatformDetector] MainMenu detected. Mobile UI: OFF");
+            Debug.Log("[PlatformDetector] MainMenu detected. Gameplay controls hidden.");
         }
         else if (IsLevelSelectorScene(currentSceneName))
         {
@@ -130,7 +138,7 @@ public class PlatformDetector : MonoBehaviour
             SetGameplayUI(false);
             SetLevelSelectorUI(false);
             
-            Debug.Log($"[PlatformDetector] LevelSelector detected. Touch map navigation enabled, virtual sticks: OFF");
+            Debug.Log("[PlatformDetector] Level selector detected. Gameplay controls hidden.");
         }
         else if (IsGameplayLevelScene(currentSceneName))
         {
@@ -139,7 +147,7 @@ public class PlatformDetector : MonoBehaviour
             SetGameplayUI(showTouchControls);
             SetLevelSelectorUI(false);
             
-            Debug.Log($"[PlatformDetector] Gameplay Level '{currentSceneName}' detected. Touch controls: {showTouchControls}");
+            Debug.Log($"[PlatformDetector] Gameplay level '{currentSceneName}' detected. Touch controls: {showTouchControls}.");
         }
         else
         {
@@ -147,7 +155,7 @@ public class PlatformDetector : MonoBehaviour
             SetGameplayUI(false);
             SetLevelSelectorUI(false);
             
-            Debug.LogWarning($"[PlatformDetector] Unknown scene '{currentSceneName}'. Mobile UI: OFF");
+            Debug.LogWarning($"[PlatformDetector] Unknown scene '{currentSceneName}'. Gameplay controls hidden.");
         }
     }
     
