@@ -2,6 +2,28 @@
   "schemaVersion": 1,
   "builds": [
     {
+      "id": "366ecb17-c935-4b8f-be7c-61093b15bf0a",
+      "platform": "android",
+      "number": "27",
+      "androidCode": "27",
+      "uploadRequested": true,
+      "status": "uploaded_processing_unverified",
+      "finishedAt": "2026-11-13T14:08:00-05:00",
+      "source": ".kiro/handoff.md",
+      "storeStatus": "Fastlane reported successful upload to Google Play Internal Testing; Play processing and tester availability have not been checked.",
+      "pipelineResult": "succeeded",
+      "storeUpload": "accepted",
+      "storeProcessing": "not_checked",
+      "testerAvailability": "not_checked",
+      "deviceQA": "pending",
+      "evidence": {
+        "artifact": "Builds/CI/Android/FoxsTale_27.aab",
+        "bytes": 56459761,
+        "sha256": "db39aabce2e46d845fb1254ddaa3081f2f4eac38e9fc0342516fca0e4bd18ef8",
+        "sourceCommit": "ed138f1"
+      }
+    },
+    {
       "id": "81b998ac-923e-411f-a601-177f8cbf9c30",
       "platform": "ios",
       "number": "23",

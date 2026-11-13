@@ -1455,3 +1455,12 @@ El propietario reporta que Settings no aparece al pulsar desde MainMenu ni Level
 - Clover pickups now rise, turn, enlarge, and fade before the existing effect. The pickup queues its normalized viewport position for the next `LevelSelection` load; `MapPointsHolder` routes a temporary sprite to the existing per-level badge, then reveals its saved color with a punch. This reuses the current map badge and creates no parallel HUD or manager.
 - Heart fragments now rise/spin/fade as the existing effect plays; a newly granted permanent heart continues to pulse through `UIController`. Dice faces rock and scale during the existing face cycle, settle when the roll stops, and pop/punch on the result. The existing `LivesContainer` (fox icon plus count) pulses after the reward.
 - Backed up the affected scripts at `/private/tmp/foxtale-dotween-before-20261113-1235`. Static diff/API and call-site checks passed; `git diff --check` is clean. No Unity Editor/Pipeline is connected, so no compilation, Play Mode, visual review, build, or device QA was performed. FastTask `2c67c5e7-4ee7-43e8-a34b-7f9704694ec6` is `testing`: the requested integration is implemented and awaits Android compilation and device visual validation. FastTask cloud sync is unavailable.
+
+
+## Android candidate 27 — 2026-11-13
+
+- Branch: `codex/fix-horizontal-platform-riding`; source commit: `ed138f1` (`Add DOTween pickup and dice feedback`). The preceding architecture and audio configuration commits are `0d9c4ad` and `700bf4c`.
+- Command: `scripts/release-test.sh android --android-code 27 --upload-test`. Unity 6000.6.0f1 build and the Fastlane Android internal lane completed successfully.
+- Artifact: `Builds/CI/Android/FoxsTale_27.aab`, 56,459,761 bytes; SHA-256 `db39aabce2e46d845fb1254ddaa3081f2f4eac38e9fc0342516fca0e4bd18ef8`. Build info resource now reports build 27.
+- Fastlane reported successful upload to Google Play Internal Testing. Play processing and tester availability have not been checked directly; do not report it as installable yet. Physical-device QA for DOTween pickup/dice feedback remains pending.
+- FastTask build record added; release task `76c214fc-b5c1-4a14-a610-9b7516314de6` remains `testing`. FastTask cloud sync is unavailable in this session.
