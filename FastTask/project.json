@@ -30,8 +30,8 @@
         "availability": {
           "status": "available_internal_track_console_verified",
           "checkedAt": "2026-11-12",
-          "evidenceBuildId": "d00acfd4-d219-4558-a72f-b4daf5c1b95e",
-          "nextAction": "Install versionCode 23 on the owner’s Android device and run the gameplay/UI QA matrix; no physical-device verification has been performed.",
+          "evidenceBuildId": "58b220ae-2464-4189-afb1-d90d040f16e3",
+          "nextAction": "Install Android versionCode 24 and run device QA for touch controls, gamepad connect/disconnect, and map gestures; installation is not verified.",
           "source": ".kiro/handoff.md"
         }
       },
@@ -52,8 +52,8 @@
         "availability": {
           "status": "uploaded_processing",
           "checkedAt": "2026-11-12",
-          "evidenceBuildId": "4c825c1a-a7da-4741-9183-d378a527daa8",
-          "nextAction": "Wait for App Store Connect processing of TestFlight build 20, then verify tester availability and install on the owner’s iPhone; device QA has not been performed.",
+          "evidenceBuildId": "eb6eaea0-0273-4669-8b2e-142e105f88e9",
+          "nextAction": "Wait for App Store Connect processing of TestFlight build 21, resolve the export-compliance prompt, then verify tester availability and install on iPhone; device QA is not performed.",
           "source": ".kiro/handoff.md"
         }
       }

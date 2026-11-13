@@ -2,6 +2,57 @@
   "schemaVersion": 1,
   "builds": [
     {
+      "id": "58b220ae-2464-4189-afb1-d90d040f16e3",
+      "platform": "android",
+      "number": "24",
+      "androidCode": "24",
+      "uploadRequested": true,
+      "status": "internal_release_available",
+      "finishedAt": "2026-11-12T18:54:00-05:00",
+      "source": ".kiro/handoff.md",
+      "storeStatus": "Unity 6000.6.0f1 built FoxsTale_24.aab; Fastlane accepted the upload to Google Play Internal Testing. Play Console directly confirms release ID 23, app bundle versionCode 24 (version 1.0.1), available to internal testers, published Nov 12 2026 at 18:54 Lima, available on 19,874 devices. Device installation and gameplay QA are not verified.",
+      "pipelineResult": "succeeded",
+      "storeUpload": "accepted",
+      "storeProcessing": "completed",
+      "testerAvailability": "available_internal_track_install_not_verified",
+      "deviceQA": "not_run_no_physical_devices_connected",
+      "evidence": {
+        "android": "Builds/CI/Android/FoxsTale_24.aab",
+        "bytes": 56433680,
+        "sha256": "6f7c3acb8edbf614a2e63a9de90201453690af3ecaa75ab14df07b7744cc21a4",
+        "unityLog": "Builds/CI/logs/android_24.log",
+        "playTrack": "internal",
+        "playReleaseId": "23",
+        "playConsole": "Release details show versionCode 24 (1.0.1), Available to internal testers, published 2026-11-12 18:54 Lima, 19,874 devices; target SDK 36.",
+        "sourceCommit": "d8b816e"
+      }
+    },
+    {
+      "id": "eb6eaea0-0273-4669-8b2e-142e105f88e9",
+      "platform": "ios",
+      "number": "21",
+      "iosBuild": "21",
+      "uploadRequested": true,
+      "status": "uploaded_processing",
+      "finishedAt": "2026-11-12T19:00:00-05:00",
+      "source": ".kiro/handoff.md",
+      "storeStatus": "Unity 6000.6.0f1 exported, archived and signed FoxsTale.ipa. Fastlane successfully uploaded version 1.0.1 build 21 to App Store Connect/TestFlight. App Store Connect Build Uploads directly shows Processing as of 2026-11-12 19:00 Lima. Tester availability is pending processing and compliance.",
+      "pipelineResult": "succeeded",
+      "storeUpload": "accepted",
+      "storeProcessing": "processing",
+      "testerAvailability": "pending_processing_and_compliance",
+      "deviceQA": "not_run_no_physical_devices_connected",
+      "evidence": {
+        "ipa": "Builds/CI/iOS/ipa/FoxsTale.ipa",
+        "bytes": 96619796,
+        "sha256": "3c105593893065f267c4f8b47eb2c5c6613c95659f5fa220864f558737ebb6a3",
+        "xcodeProject": "Builds/CI/iOS/XcodeProject_21",
+        "unityLog": "Builds/CI/logs/ios_21.log",
+        "testflightUpload": "App Store Connect TestFlight > iOS Builds > Build Uploads lists version 1.0.1 build 21 as Processing, uploaded Nov 12 2026 7:00 PM Lima. Build 20 remains listed with Missing Compliance; complete the correct export-compliance response for build 21 after processing.",
+        "sourceCommit": "d8b816e"
+      }
+    },
+    {
       "id": "4c825c1a-a7da-4741-9183-d378a527daa8",
       "platform": "ios",
       "number": "20",
