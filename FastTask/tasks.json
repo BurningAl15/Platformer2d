@@ -128,6 +128,14 @@
       "status": "done",
       "createdAt": "2026-11-13T11:30:20-05:00",
       "updatedAt": "2026-11-13T11:36:07-05:00"
+    },
+    {
+      "id": "a769d067-a1ff-490e-a6b3-7b5d16278373",
+      "title": "Restore serialized audio references in scenes and prefabs",
+      "description": "P1 configuration repair. Verify that MainMenu AppBootstrap and SaveManager share the same GameObject, then restore current AudioMixerManager serialized references for the existing health-pickup and smash-impact audio assets in canonical reusable prefabs and affected scenes. Preserve current serialized field names and scene/prefab hierarchy. Back up affected Unity assets before editing. Acceptance: all gameplay manager instances reference the intended clip and dedicated AudioSource; prefab-backed Level_1 inherits valid references; MainMenu SaveManager attachment is verified; static GUID/reference checks pass; Unity Editor playback validation is separate if the Editor is unavailable.\n\n2026-11-13 Codex — Verified and repaired serialized configuration. MainMenu already had AppBootstrap and SaveManager on the same GameObject (fileID 1587491561); restored its health pickup clip/source. Restored health and smash-impact clips/sources in standalone gameplay scenes Level_0 and Level_2–Level_10, plus reusable LevelPrefab and Level-Managers prefabs (Level_1 inherits Level-Managers). Corrected stale serialized keys `pickup_helth_clip` and `SmashImpact_Clip` to current AudioMixerManager field names in Level-Managers and LevelSelector-Managers. Selector health uses its existing health source; smash impact remains null there because the selector prefab has no dedicated impact source. Backed up affected Unity assets before editing at `/private/tmp/foxtale-audio-config-before-20261113-1225`. Static GUID/source-GameObject validation and `git diff --check` pass. Static GUID/source ownership acceptance is met. Unity Editor playback validation was unavailable and is recorded as a separate follow-up, not a reason to leave the configuration task open.",
+      "status": "done",
+      "createdAt": "2026-11-13T12:25:03-05:00",
+      "updatedAt": "2026-11-13T14:00:02-05:00"
     }
   ]
 }

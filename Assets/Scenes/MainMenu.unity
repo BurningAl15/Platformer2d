@@ -10684,8 +10684,8 @@ MonoBehaviour:
     clip: {fileID: 8300000, guid: f7faa367df8ac0c47bb04fc0fa499e74, type: 3}
     source: {fileID: 5082256297323632002}
   pickup_health_clip:
-    clip: {fileID: 0}
-    source: {fileID: 0}
+    clip: {fileID: 8300000, guid: 00eaa619228f92c4f8cf7f71aff094da, type: 3}
+    source: {fileID: 5082256296948742393}
   pickup_gem_clip:
     clip: {fileID: 8300000, guid: cc90dc27dc00d9d488db4c35489dcd18, type: 3}
     source: {fileID: 5082256297184290412}

@@ -843,7 +843,7 @@ MonoBehaviour:
   warpJingle_Clip:
     clip: {fileID: 8300000, guid: 354a0e65ffdcc384192c4fb397a1373c, type: 3}
     source: {fileID: 4495562545975416381}
-  SmashImpact_Clip:
+  smashImpact_Clip:
     clip: {fileID: 8300000, guid: 63f1fc637fd5e3b4fb932807e30bfdb6, type: 3}
     source: {fileID: 6534249687063001328}
   bossHit_Clip:
@@ -864,9 +864,9 @@ MonoBehaviour:
   pickup_gem_clip:
     clip: {fileID: 8300000, guid: cc90dc27dc00d9d488db4c35489dcd18, type: 3}
     source: {fileID: 4495562546838630753}
-  pickup_helth_clip:
+  pickup_health_clip:
     clip: {fileID: 8300000, guid: 00eaa619228f92c4f8cf7f71aff094da, type: 3}
-    source: {fileID: 4495562546810639613}
+    source: {fileID: 4495562546838630753}
   jump_Clip:
     clip: {fileID: 8300000, guid: f62b85f9911a2e940a860a168aa83329, type: 3}
     source: {fileID: 4495562546810639613}

@@ -48690,8 +48690,8 @@ MonoBehaviour:
     clip: {fileID: 8300000, guid: f7faa367df8ac0c47bb04fc0fa499e74, type: 3}
     source: {fileID: 3943454754222868564}
   pickup_health_clip:
-    clip: {fileID: 0}
-    source: {fileID: 0}
+    clip: {fileID: 8300000, guid: 00eaa619228f92c4f8cf7f71aff094da, type: 3}
+    source: {fileID: 3943454754053498159}
   pickup_gem_clip:
     clip: {fileID: 8300000, guid: cc90dc27dc00d9d488db4c35489dcd18, type: 3}
     source: {fileID: 3943454754053498159}
@@ -48717,8 +48717,8 @@ MonoBehaviour:
     clip: {fileID: 8300000, guid: 354a0e65ffdcc384192c4fb397a1373c, type: 3}
     source: {fileID: 3943454755419357811}
   smashImpact_Clip:
-    clip: {fileID: 0}
-    source: {fileID: 0}
+    clip: {fileID: 8300000, guid: 63f1fc637fd5e3b4fb932807e30bfdb6, type: 3}
+    source: {fileID: 5941607032278363326}
   musicButton: {fileID: 0}
   sfxButton: {fileID: 0}
   musicOn: {fileID: 0}
