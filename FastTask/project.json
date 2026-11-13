@@ -30,8 +30,8 @@
         "availability": {
           "status": "available_internal_track_console_verified",
           "checkedAt": "2026-11-12",
-          "evidenceBuildId": "58b220ae-2464-4189-afb1-d90d040f16e3",
-          "nextAction": "Install Android versionCode 24 and run device QA for touch controls, gamepad connect/disconnect, and map gestures; installation is not verified.",
+          "evidenceBuildId": "257FAF69-8632-45DA-A4F0-1589387FB861",
+          "nextAction": "Install Android versionCode 25 and verify touch controls in gameplay without a controller, then connect and disconnect a GameSir; device QA is not yet verified.",
           "source": ".kiro/handoff.md"
         }
       },
@@ -50,10 +50,10 @@
           "evidenceBuildId": "bb610d1e-313d-4a44-9c75-31855c236ddd"
         },
         "availability": {
-          "status": "uploaded_processing",
+          "status": "uploaded_processing_unverified",
           "checkedAt": "2026-11-12",
-          "evidenceBuildId": "eb6eaea0-0273-4669-8b2e-142e105f88e9",
-          "nextAction": "Wait for App Store Connect processing of TestFlight build 21, resolve the export-compliance prompt, then verify tester availability and install on iPhone; device QA is not performed.",
+          "evidenceBuildId": "2716B461-F449-4EAB-A576-012E2633848E",
+          "nextAction": "Sign in to App Store Connect, verify processing and export compliance for build 22, then verify tester availability and test touch controls on iPhone.",
           "source": ".kiro/handoff.md"
         }
       }

@@ -2,6 +2,57 @@
   "schemaVersion": 1,
   "builds": [
     {
+      "id": "257FAF69-8632-45DA-A4F0-1589387FB861",
+      "platform": "android",
+      "number": "25",
+      "androidCode": "25",
+      "uploadRequested": true,
+      "status": "internal_release_available",
+      "finishedAt": "2026-11-12T21:20:00-05:00",
+      "source": ".kiro/handoff.md",
+      "storeStatus": "Unity 6000.6.0f1 built FoxsTale_25.aab and Fastlane accepted the Google Play Internal Testing upload. Play Console directly confirms versionCode 25 (1.0.1) is available to internal testers, published Nov 12 2026 at 21:15 Lima, available on 19,874 devices. Device installation and touch-control QA are not verified.",
+      "pipelineResult": "succeeded",
+      "storeUpload": "accepted",
+      "storeProcessing": "completed",
+      "testerAvailability": "available_internal_track_install_not_verified",
+      "deviceQA": "not_run_no_physical_devices_connected",
+      "evidence": {
+        "android": "Builds/CI/Android/FoxsTale_25.aab",
+        "bytes": 56434410,
+        "sha256": "dbc6c5a72a5048e6b816390d9ad2257fbce0f7e5ab94009f08f13f3790654b16",
+        "unityLog": "Builds/CI/logs/android_25.log",
+        "playTrack": "internal",
+        "playReleaseId": "24",
+        "playConsole": "Release details show versionCode 25 (1.0.1), Available to internal testers, published 2026-11-12 21:15 Lima, available on 19,874 devices; target SDK 36.",
+        "sourceCommit": "pending"
+      }
+    },
+    {
+      "id": "2716B461-F449-4EAB-A576-012E2633848E",
+      "platform": "ios",
+      "number": "22",
+      "iosBuild": "22",
+      "uploadRequested": true,
+      "status": "uploaded_processing_unverified",
+      "finishedAt": "2026-11-12T21:20:00-05:00",
+      "source": ".kiro/handoff.md",
+      "storeStatus": "Unity 6000.6.0f1 exported, archived and signed FoxsTale.ipa. Fastlane confirmed upload of version 1.0.1 build 22 to App Store Connect/TestFlight. Direct TestFlight processing and tester availability were not checked because App Store Connect redirected to login with authResult=FAILED.",
+      "pipelineResult": "succeeded",
+      "storeUpload": "accepted",
+      "storeProcessing": "not_checked_after_upload",
+      "testerAvailability": "not_checked",
+      "deviceQA": "not_run_no_physical_devices_connected",
+      "evidence": {
+        "ipa": "Builds/CI/iOS/ipa/FoxsTale.ipa",
+        "bytes": 96617865,
+        "sha256": "55159673b29070e7336faaa507b5f3909a9cdf863167f7daf3f1d959dd01c0c4",
+        "xcodeProject": "Builds/CI/iOS/XcodeProject_22",
+        "unityLog": "Builds/CI/logs/ios_22.log",
+        "testflightUpload": "Fastlane confirmed the upload at 2026-11-12 21:20 Lima. The ASC page redirected to login with authResult=FAILED; processing, compliance, and tester availability remain unverified.",
+        "sourceCommit": "pending"
+      }
+    },
+    {
       "id": "58b220ae-2464-4189-afb1-d90d040f16e3",
       "platform": "android",
       "number": "24",

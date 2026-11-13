@@ -59,6 +59,22 @@ public class PlatformDetector : MonoBehaviour
         Invoke(nameof(ConfigureMobileUIForCurrentScene), 0.15f);
     }
 
+    private void LateUpdate()
+    {
+        string sceneName = SceneManager.GetActiveScene().name;
+        if (!IsGameplayLevelScene(sceneName) || gameplayMobileUI == null)
+            return;
+
+        bool shouldShow = ShouldShowTouchControls(IsMobile()) && !gameplayControlsSuppressed;
+        if (gameplayMobileUI.activeSelf == shouldShow)
+            return;
+
+        SetGameplayUI(shouldShow);
+        bool hasPhysicalGamepad = GamepadDetector.Instance != null &&
+                                  GamepadDetector.Instance.HasPhysicalGamepad();
+        LogGameplayControlsState(sceneName, IsMobile(), hasPhysicalGamepad, shouldShow);
+    }
+
     private void EnsureCanvasSetup()
     {
         Canvas canvas = GetComponent<Canvas>();

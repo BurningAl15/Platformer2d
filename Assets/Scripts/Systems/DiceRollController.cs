@@ -163,8 +163,7 @@ public class DiceRollController : MonoBehaviour
 
         RefreshUI();
 
-        if (PlatformDetector.Instance != null)
-            PlatformDetector.Instance.ForceSetMobileUIActive(false, false);
+        PlatformDetector.Instance?.SetGameplayControlsSuppressed(true);
 
         if (panelGroup != null)
         {
@@ -190,9 +189,6 @@ public class DiceRollController : MonoBehaviour
 
     public void Hide(Action onHidden = null)
     {
-        if (PlatformDetector.Instance != null)
-            PlatformDetector.Instance.ForceSetMobileUIActive(PlatformDetector.IsMobile(), false);
-
         if (panelRect != null)
         {
             panelRect.DOKill();
@@ -205,7 +201,7 @@ public class DiceRollController : MonoBehaviour
                              panelGroup.interactable = false;
                              panelGroup.blocksRaycasts = false;
                          }
-                         onHidden?.Invoke();
+                         CompleteHide(onHidden);
                      });
         }
         else if (panelGroup != null)
@@ -213,12 +209,18 @@ public class DiceRollController : MonoBehaviour
             panelGroup.alpha = 0f;
             panelGroup.interactable = false;
             panelGroup.blocksRaycasts = false;
-            onHidden?.Invoke();
+            CompleteHide(onHidden);
         }
         else
         {
-            onHidden?.Invoke();
+            CompleteHide(onHidden);
         }
+    }
+
+    private void CompleteHide(Action onHidden)
+    {
+        PlatformDetector.Instance?.SetGameplayControlsSuppressed(false);
+        onHidden?.Invoke();
     }
 
     public void OnRollPressed()
