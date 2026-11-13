@@ -1,4 +1,5 @@
 using System.Collections;
+using DG.Tweening;
 using UnityEngine;
 
 /// <summary>
@@ -61,6 +62,13 @@ public class TrebolPickup : MonoBehaviour
             SaveManager.Instance.SetTrebolCollected(levelNumber);
         }
 
+        Vector3 viewportPosition = Camera.main != null
+            ? Camera.main.WorldToViewportPoint(transform.position)
+            : new Vector3(0.5f, 0.5f, 0f);
+        MapPointsHolder.QueueCloverArrival(
+            levelNumber,
+            new Vector2(Mathf.Clamp01(viewportPosition.x), Mathf.Clamp01(viewportPosition.y)));
+
         if (UIController._instance != null)
         {
             UIController._instance.RefreshTrebolUI();
@@ -78,7 +86,20 @@ public class TrebolPickup : MonoBehaviour
     private IEnumerator CollectEffect()
     {
         if (col != null) col.enabled = false;
-        if (spriteRenderer != null) spriteRenderer.enabled = false;
+
+        if (spriteRenderer != null)
+        {
+            float duration = Mathf.Max(0.2f, fadeDuration);
+            Vector3 startScale = transform.localScale;
+            Sequence collectSequence = DOTween.Sequence()
+                .Join(transform.DOScale(startScale * 1.3f, duration).SetEase(Ease.OutBack))
+                .Join(transform.DOMoveY(transform.position.y + 0.3f, duration).SetEase(Ease.OutQuad))
+                .Join(transform.DORotate(transform.eulerAngles + Vector3.forward * 180f, duration, RotateMode.FastBeyond360))
+                .Join(spriteRenderer.DOFade(0f, duration))
+                .SetLink(gameObject, LinkBehaviour.KillOnDestroy);
+            yield return collectSequence.WaitForCompletion();
+            if (spriteRenderer != null) spriteRenderer.enabled = false;
+        }
 
         if (effect != null)
         {
@@ -87,7 +108,7 @@ public class TrebolPickup : MonoBehaviour
             if (turnOff != null)
                 yield return new WaitUntil(() => turnOff.finish);
             else
-                yield return new WaitForSeconds(fadeDuration);
+                yield return new WaitForSecondsRealtime(fadeDuration);
         }
 
         Destroy(gameObject);

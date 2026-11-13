@@ -74,7 +74,7 @@ public class LevelManager : MonoBehaviour
     //  Gemas
     // ───────────────────────────────────────────────
 
-    public void UpdateGemsCollected()
+    public void UpdateGemsCollected(bool refreshHud = true)
     {
         if (gemsCollected >= totalGemsInLevel)
         {
@@ -83,7 +83,8 @@ public class LevelManager : MonoBehaviour
         }
 
         gemsCollected++;
-        UIController._instance?.UpdateGems_UI(gemsCollected, totalGemsInLevel);
+        if (refreshHud)
+            UIController._instance?.UpdateGems_UI(gemsCollected, totalGemsInLevel);
 
         if (AnalyticsManager.Instance != null)
             AnalyticsManager.Instance.TrackGemCollected(SceneUtils.Get_CurrentLevelName(), gemsCollected);

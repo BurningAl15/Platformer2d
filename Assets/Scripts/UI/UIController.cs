@@ -268,6 +268,41 @@ public class UIController : MonoBehaviour
         }
     }
 
+    /// <summary>Moves a collected gem to the existing HUD counter before updating its displayed value.</summary>
+    public Tween AnimateGemPickup(Transform gemTransform, int currentGems, int totalGems)
+    {
+        if (gemTransform == null || gemsLevelText == null || Camera.main == null)
+            return null;
+
+        Canvas canvas = gemsLevelText.canvas;
+        Camera uiCamera = canvas != null && canvas.renderMode != RenderMode.ScreenSpaceOverlay
+            ? (canvas.worldCamera != null ? canvas.worldCamera : Camera.main)
+            : null;
+        Vector2 targetScreenPosition = RectTransformUtility.WorldToScreenPoint(
+            uiCamera,
+            gemsLevelText.rectTransform.position);
+        float cameraDistance = Camera.main.WorldToScreenPoint(gemTransform.position).z;
+        Vector3 targetWorldPosition = Camera.main.ScreenToWorldPoint(
+            new Vector3(targetScreenPosition.x, targetScreenPosition.y, cameraDistance));
+        targetWorldPosition.z = gemTransform.position.z;
+
+        Sequence sequence = DOTween.Sequence()
+            .Append(gemTransform.DOMove(targetWorldPosition, 0.38f).SetEase(Ease.InCubic))
+            .Join(gemTransform.DOScale(gemTransform.localScale * 0.7f, 0.38f).SetEase(Ease.InQuad))
+            .AppendCallback(() =>
+            {
+                UpdateGems_UI(currentGems, totalGems);
+                if (gemsLevelText != null)
+                {
+                    gemsLevelText.transform.DOKill();
+                    gemsLevelText.transform.DOPunchScale(Vector3.one * 0.12f, 0.22f, 5, 0.5f);
+                }
+            })
+            .SetLink(gemTransform.gameObject, LinkBehaviour.KillOnDestroy);
+
+        return sequence;
+    }
+
     private static void ConfigureAutoResize(TextMeshProUGUI tmp, float minSize, float maxSize)
     {
         if (tmp == null) return;
@@ -303,6 +338,19 @@ public class UIController : MonoBehaviour
     {
         if (livesText == null || SaveManager.Instance == null) return;
         livesText.text = $"x{SaveManager.Instance.LoadLives()}";
+    }
+
+    /// <summary>Pulses the existing fox icon and lives count after a reward.</summary>
+    public void AnimateLifeRewardFeedback()
+    {
+        if (livesText == null)
+            return;
+
+        Transform livesContainer = livesText.transform.parent != null
+            ? livesText.transform.parent
+            : livesText.transform;
+        livesContainer.DOKill();
+        livesContainer.DOPunchScale(Vector3.one * 0.22f, 0.38f, 8, 0.65f);
     }
 
     // ─────────────────────────────────────────────────────────────────────────

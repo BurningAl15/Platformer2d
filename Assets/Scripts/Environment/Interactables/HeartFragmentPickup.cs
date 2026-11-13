@@ -67,9 +67,16 @@ public sealed class HeartFragmentPickup : MonoBehaviour
 
         if (spriteRenderer != null)
         {
-            transform.DOKill();
-            transform.DOPunchScale(Vector3.one * 0.35f, Mathf.Max(0.2f, fadeDuration), 8, 0.7f);
-            spriteRenderer.DOFade(0f, Mathf.Max(0.2f, fadeDuration));
+            float duration = Mathf.Max(0.2f, fadeDuration);
+            Vector3 startScale = transform.localScale;
+            Sequence collectSequence = DOTween.Sequence()
+                .Join(transform.DOPunchScale(Vector3.one * 0.35f, duration, 8, 0.7f))
+                .Join(transform.DOMoveY(transform.position.y + 0.25f, duration).SetEase(Ease.OutQuad))
+                .Join(transform.DORotate(transform.eulerAngles + Vector3.forward * 360f, duration, RotateMode.FastBeyond360))
+                .Join(spriteRenderer.DOFade(0f, duration))
+                .SetLink(gameObject, LinkBehaviour.KillOnDestroy);
+            yield return collectSequence.WaitForCompletion();
+            if (transform != null) transform.localScale = startScale;
         }
 
         if (effect != null)

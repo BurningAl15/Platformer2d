@@ -1,6 +1,5 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections;
+using DG.Tweening;
 using UnityEngine;
 
 public class Pickup : MonoBehaviour
@@ -21,9 +20,14 @@ public class Pickup : MonoBehaviour
     [SerializeField] private Transform pickupTransform;
     public Transform PickupTransform => pickupTransform;
 
+    private SpriteRenderer spriteRenderer;
+    private Collider2D pickupCollider;
+
     private void Awake()
     {
         pickupTransform = transform;
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        pickupCollider = GetComponent<Collider2D>();
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -37,10 +41,11 @@ public class Pickup : MonoBehaviour
             // callbacks before the collect animation destroys this object.
             // Claim this pickup before changing the level total.
             hasBeenCollected = true;
-            LevelManager._instance?.UpdateGemsCollected();
+            LevelManager levelManager = LevelManager._instance;
+            levelManager?.UpdateGemsCollected(false);
             AudioMixerManager._instance?.CallSFX_Gems();
-            // Las gemas globales se acumulan al completar el nivel.
-            currentCoroutine = StartCoroutine(CollectEffect());
+            // Global gems are awarded when the level is completed.
+            currentCoroutine = StartCoroutine(CollectGemEffect(levelManager));
             return;
         }
 
@@ -54,13 +59,44 @@ public class Pickup : MonoBehaviour
         }
     }
 
-    IEnumerator CollectEffect()
+    private IEnumerator CollectGemEffect(LevelManager levelManager)
     {
-        GetComponent<SpriteRenderer>().enabled = false;
-        effect.SetActive(true);
-        yield return new WaitUntil(() => effect.GetComponent<TurnOff_OnTime>().finish);
-        // gameObject.SetActive(false);
-        Destroy(this.gameObject);
+        if (pickupCollider != null)
+            pickupCollider.enabled = false;
+
+        int collected = levelManager != null ? levelManager.GetGemsCollected() : 0;
+        int total = levelManager != null ? levelManager.GetTotalGemsInLevel() : 0;
+        Tween travelTween = UIController._instance != null && spriteRenderer != null
+            ? UIController._instance.AnimateGemPickup(transform, collected, total)
+            : null;
+
+        if (travelTween != null)
+            yield return travelTween.WaitForCompletion();
+        else
+            UIController._instance?.UpdateGems_UI(collected, total);
+
+        yield return CollectEffect();
+    }
+
+    private IEnumerator CollectEffect()
+    {
+        if (pickupCollider != null)
+            pickupCollider.enabled = false;
+
+        if (spriteRenderer != null)
+            spriteRenderer.enabled = false;
+
+        if (effect != null)
+        {
+            effect.SetActive(true);
+            TurnOff_OnTime effectTimer = effect.GetComponent<TurnOff_OnTime>();
+            if (effectTimer != null)
+                yield return new WaitUntil(() => effectTimer == null || effectTimer.finish);
+            else
+                yield return new WaitForSeconds(0.35f);
+        }
+
+        Destroy(gameObject);
     }
 
     public bool IsGem()

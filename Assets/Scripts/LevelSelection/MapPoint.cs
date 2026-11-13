@@ -64,7 +64,59 @@ public class MapPoint : MonoBehaviour
         trebolBadge.SetActive(true);
         SpriteRenderer badgeRenderer = trebolBadge.GetComponent<SpriteRenderer>();
         if (badgeRenderer != null)
+        {
             badgeRenderer.color = hasTrebol ? Color.white : new Color(0.35f, 0.35f, 0.35f, 0.7f);
+        }
+    }
+
+    public bool AnimateCloverArrival(Vector2 sourceViewportPosition)
+    {
+        if (!hasTrebol || trebolBadge == null || Camera.main == null)
+            return false;
+
+        SpriteRenderer badgeRenderer = trebolBadge.GetComponent<SpriteRenderer>();
+        if (badgeRenderer == null || badgeRenderer.sprite == null)
+            return false;
+
+        Camera mapCamera = Camera.main;
+        Vector3 targetPosition = badgeRenderer.transform.position;
+        float cameraDepth = targetPosition.z - mapCamera.transform.position.z;
+        Vector3 sourcePosition = mapCamera.ViewportToWorldPoint(
+            new Vector3(sourceViewportPosition.x, sourceViewportPosition.y, cameraDepth));
+        sourcePosition.z = targetPosition.z;
+
+        GameObject travelObject = new GameObject("CloverArrivalFeedback");
+        travelObject.transform.position = sourcePosition;
+        SpriteRenderer travelRenderer = travelObject.AddComponent<SpriteRenderer>();
+        travelRenderer.sprite = badgeRenderer.sprite;
+        travelRenderer.sortingLayerID = badgeRenderer.sortingLayerID;
+        travelRenderer.sortingOrder = badgeRenderer.sortingOrder + 1;
+
+        Vector3 targetScale = badgeRenderer.transform.lossyScale;
+        badgeRenderer.color = new Color(0.35f, 0.35f, 0.35f, 0.7f);
+
+        DOTween.Sequence()
+            .Append(travelObject.transform.DOMove(targetPosition, 0.48f).SetEase(Ease.InCubic))
+            .Join(travelObject.transform.DOScale(targetScale, 0.48f).SetEase(Ease.InQuad))
+            .Join(travelObject.transform.DORotate(new Vector3(0f, 0f, 360f), 0.48f, RotateMode.FastBeyond360))
+            .AppendCallback(() =>
+            {
+                if (badgeRenderer == null)
+                    return;
+
+                badgeRenderer.DOColor(Color.white, 0.18f).SetEase(Ease.OutQuad)
+                    .SetLink(trebolBadge, LinkBehaviour.KillOnDestroy);
+                badgeRenderer.transform.DOPunchScale(Vector3.one * 0.22f, 0.32f, 8, 0.65f)
+                    .SetLink(trebolBadge, LinkBehaviour.KillOnDestroy);
+            })
+            .OnComplete(() =>
+            {
+                if (travelObject != null)
+                    Destroy(travelObject);
+            })
+            .SetLink(travelObject, LinkBehaviour.KillOnDestroy);
+
+        return true;
     }
 
     // ───────────────────────────────────────────────

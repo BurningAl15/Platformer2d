@@ -53,6 +53,9 @@ public class DiceRollController : MonoBehaviour
     private bool hasRolledThisPresentation;
     private Coroutine rollRoutine;
     private int lastRollResult = 1;
+    private Tween diceRollTween;
+    private Vector3 diceRestScale;
+    private Vector3 diceRestRotation;
 
     private void Awake()
     {
@@ -126,6 +129,11 @@ public class DiceRollController : MonoBehaviour
         if (stopButton != null) stopButton.onClick.AddListener(OnStopPressed);
         if (upgradeWithTrebolButton != null) upgradeWithTrebolButton.onClick.AddListener(OnUpgradeWithTrebolPressed);
         if (closeButton != null) closeButton.onClick.AddListener(OnClosePressed);
+    }
+
+    private void OnDestroy()
+    {
+        diceRollTween?.Kill();
     }
 
     private System.Action<int> onGameOverComplete;
@@ -309,6 +317,8 @@ public class DiceRollController : MonoBehaviour
 
         float timer = 0f;
         int lastValue = GetRandomValueForType(currentDiceType);
+        UpdateDiceVisual(lastValue);
+        StartDiceRollFeedback();
 
         while (isRolling && timer < rollDuration)
         {
@@ -324,13 +334,8 @@ public class DiceRollController : MonoBehaviour
         lastRollResult = finalResult;
 
         UpdateDiceVisual(finalResult);
-
-        Transform visualTransform = (diceFaceImage != null && diceFaceImage.gameObject.activeSelf)
-            ? diceFaceImage.transform
-            : (diceNumberText != null ? diceNumberText.transform : null);
-
-        if (visualTransform != null)
-            visualTransform.DOPunchScale(Vector3.one * 0.3f, 0.3f).SetUpdate(true);
+        StopDiceRollFeedback();
+        PlayDiceResultFeedback();
 
         // Otorgar vidas ganadas
         if (SaveManager.Instance != null)
@@ -349,6 +354,7 @@ public class DiceRollController : MonoBehaviour
         // Notificar cambio de vidas a LivesManager para que dispare OnLivesChanged
         if (LivesManager.Instance != null)
             LivesManager.Instance.NotifyLivesChanged();
+        UIController._instance?.AnimateLifeRewardFeedback();
 
         if (diceStatusText != null && currentDiceType != DiceType.Secret)
             diceStatusText.text = $"You won +{finalResult} lives!";
@@ -376,6 +382,67 @@ public class DiceRollController : MonoBehaviour
             default:
                 return UnityEngine.Random.Range(1, 4); // 1, 2, 3
         }
+    }
+
+    private Transform GetDiceVisualTransform()
+    {
+        if (diceFaceImage != null && diceFaceImage.gameObject.activeSelf)
+            return diceFaceImage.transform;
+        if (diceNumberText != null && diceNumberText.gameObject.activeSelf)
+            return diceNumberText.transform;
+        return null;
+    }
+
+    private void StartDiceRollFeedback()
+    {
+        Transform visual = GetDiceVisualTransform();
+        if (visual == null)
+            return;
+
+        diceRollTween?.Kill();
+        diceRestScale = visual.localScale;
+        diceRestRotation = visual.localEulerAngles;
+
+        Sequence sequence = DOTween.Sequence()
+            .Append(visual.DOScale(diceRestScale * 1.12f, 0.14f).SetEase(Ease.OutQuad))
+            .Join(visual.DOLocalRotate(diceRestRotation + new Vector3(0f, 0f, 18f), 0.14f))
+            .Append(visual.DOScale(diceRestScale * 0.92f, 0.14f).SetEase(Ease.InOutSine))
+            .Join(visual.DOLocalRotate(diceRestRotation - new Vector3(0f, 0f, 18f), 0.14f))
+            .Append(visual.DOScale(diceRestScale, 0.12f).SetEase(Ease.OutBack))
+            .Join(visual.DOLocalRotate(diceRestRotation, 0.12f))
+            .SetLoops(-1, LoopType.Restart)
+            .SetUpdate(true)
+            .SetLink(visual.gameObject, LinkBehaviour.KillOnDestroy);
+
+        diceRollTween = sequence;
+    }
+
+    private void StopDiceRollFeedback()
+    {
+        diceRollTween?.Kill();
+        diceRollTween = null;
+
+        Transform visual = GetDiceVisualTransform();
+        if (visual == null)
+            return;
+
+        visual.localScale = diceRestScale;
+        visual.localEulerAngles = diceRestRotation;
+    }
+
+    private void PlayDiceResultFeedback()
+    {
+        Transform visual = GetDiceVisualTransform();
+        if (visual == null)
+            return;
+
+        visual.DOKill();
+        DOTween.Sequence()
+            .Append(visual.DOScale(diceRestScale * 1.28f, 0.12f).SetEase(Ease.OutBack))
+            .Append(visual.DOScale(diceRestScale, 0.24f).SetEase(Ease.OutBounce))
+            .Join(visual.DOPunchRotation(new Vector3(0f, 0f, 24f), 0.36f, 8, 0.7f))
+            .SetUpdate(true)
+            .SetLink(visual.gameObject, LinkBehaviour.KillOnDestroy);
     }
 
     private void RefreshUI()

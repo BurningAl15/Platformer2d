@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 /// <summary>
 /// Lee el progreso guardado (vía SaveManager) y configura el estado
@@ -15,6 +16,10 @@ using UnityEngine;
 /// </summary>
 public class MapPointsHolder : MonoBehaviour
 {
+    private static int pendingCloverLevel = -1;
+    private static Vector2 pendingCloverViewportPosition;
+    private static bool hasPendingCloverArrival;
+
     [Header("Modo legacy (1 mundo)")]
     [SerializeField] private List<MapPoint> _mapPoints = new List<MapPoint>();
 
@@ -29,6 +34,49 @@ public class MapPointsHolder : MonoBehaviour
     {
         ConfigureMapPoints();
         PositionPlayer();
+        PlayPendingCloverArrival();
+    }
+
+    public static void QueueCloverArrival(int levelNumber, Vector2 viewportPosition)
+    {
+        pendingCloverLevel = levelNumber;
+        pendingCloverViewportPosition = viewportPosition;
+        hasPendingCloverArrival = true;
+
+        SceneManager.sceneLoaded -= ClearCloverArrivalOnOtherScene;
+        SceneManager.sceneLoaded += ClearCloverArrivalOnOtherScene;
+    }
+
+    private static void ClearCloverArrivalOnOtherScene(Scene scene, LoadSceneMode mode)
+    {
+        if (scene.name == "LevelSelection")
+            return;
+
+        ClearPendingCloverArrival();
+    }
+
+    private static void ClearPendingCloverArrival()
+    {
+        pendingCloverLevel = -1;
+        hasPendingCloverArrival = false;
+        SceneManager.sceneLoaded -= ClearCloverArrivalOnOtherScene;
+    }
+
+    private void PlayPendingCloverArrival()
+    {
+        if (!hasPendingCloverArrival)
+            return;
+
+        for (int i = 0; i < _mapPoints.Count; i++)
+        {
+            if (_mapPoints[i] == null || GetLevelNumber(i) != pendingCloverLevel)
+                continue;
+
+            _mapPoints[i].AnimateCloverArrival(pendingCloverViewportPosition);
+            break;
+        }
+
+        ClearPendingCloverArrival();
     }
 
     private void ConfigureMapPoints()
