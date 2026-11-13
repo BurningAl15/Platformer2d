@@ -12,6 +12,8 @@ These instructions apply to Codex, Antigravity, and other coding agents working 
 - At the start of work, move the existing task to `doing` and update `updatedAt`. When implementation is ready but awaits build/device/store verification, use `testing`. Mark `done` only when its stated completion evidence exists. Preserve IDs, completed history, and unrelated fields.
 - Keep the current task, build milestones, and handoff aligned. Record build, store upload, store processing, tester availability, and device QA as separate facts. A successful build is not proof of store availability or QA.
 - If FastTask cloud sync is available, sync after local task/status changes. Otherwise keep `FastTask/` current and report the cloud sync still needed.
+- Before implementation, choose the lowest-usage model suited to the task using [`docs/AI/MODEL_AND_TASK_REPORTING.md`](docs/AI/MODEL_AND_TASK_REPORTING.md). Model choice must not broaden scope: use the smallest complete change, preserve existing architecture, and avoid unrelated refactors or new scripts.
+- At the end of each task, give a concise report with FastTask ID/status, who performed the work, who owns the next action, whether implementation is complete, verification performed, and any testing still pending. Never imply `done` when build/device/store verification remains.
 
 ## Unity and release work
 - Confirm the Unity project root and inspect its existing architecture, scenes/prefabs, and project-specific instructions before implementation. Follow existing build scripts and project conventions.

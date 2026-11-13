@@ -1423,3 +1423,9 @@ El propietario reporta que Settings no aparece al pulsar desde MainMenu ni Level
 - **Enemy stomp/damage investigation:** `StompBox` currently kills on any trigger contact tagged `Enemy`, regardless of direction. The scanned ordinary enemy prefabs do not carry `DamagePlayer`; direct damage calls exist in separate hazards/projectiles and boss objects. The report needs a concrete level/enemy reproduction before changing collider geometry or stomp priority, to avoid hiding legitimate damage.
 - **Requested follow-up backlog:** localization, stomp/damage priority, DOTween pickup/dice feedback, haptics plus keep-screen-awake preference, HUD iconography, ads, and level/boss/secret-route design are tracked in `FastTask/tasks.json`. Ads continue under the existing consent/LevelPlay task.
 - **FastTask cloud sync:** unavailable in this session; local project/task/build files remain the source of truth until synced.
+
+### 2026-11-13 — Model routing and task-completion reporting
+
+- Added `docs/AI/MODEL_AND_TASK_REPORTING.md` with economical model recommendations by work type and each current FastTask ID. Default is GPT-6.1 Sol Medium for Unity implementation; GPT-6 Luna for bounded/repetitive work; GPT-6.1 Terra for visual/computer-use work; Astra is reserved for unusually difficult unresolved analysis.
+- Updated `AGENTS.md` so agents must consult the guide, keep scope narrow, and end each task with FastTask status, implementer, implementation completeness, verified evidence, next owner, pending test state, and branch/build evidence.
+- FastTask task `e8d3e6d7-9548-429a-b4ad-43132cf8684f` is done. Validation was static: task JSON parses and `git diff --check` is clean. No Unity test or build was requested or run. FastTask cloud sync is unavailable.

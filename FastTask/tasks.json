@@ -112,6 +112,14 @@
       "status": "todo",
       "createdAt": "2026-11-12T23:26:25-05:00",
       "updatedAt": "2026-11-12T23:26:25-05:00"
+    },
+    {
+      "id": "e8d3e6d7-9548-429a-b4ad-43132cf8684f",
+      "title": "Document model selection and task completion reports",
+      "description": "Add durable project guidance mapping task types to economical suitable Codex models and requiring completion reports to distinguish implementation from verification, identify who acted and who owns the next step, and state whether testing remains. Update AGENTS.md and the project handoff.\n\n2026-11-13 Codex: Added docs/AI/MODEL_AND_TASK_REPORTING.md and linked it from AGENTS.md. Model routing covers all current active/backlog task IDs and recommends Sol Medium by default, Luna for bounded/repetitive work, Terra for visual/computer-use workflows, and Astra only for difficult unresolved analysis. Completion reports now require task status, implementer, implementation state, evidence actually obtained, next owner, pending tests, and branch/build evidence. Static review only; JSON parsing and git diff --check passed. FastTask cloud sync is unavailable.",
+      "status": "done",
+      "createdAt": "2026-11-13T10:23:13-05:00",
+      "updatedAt": "2026-11-13T10:24:33-05:00"
     }
   ]
 }
