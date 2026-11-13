@@ -2,6 +2,51 @@
   "schemaVersion": 1,
   "builds": [
     {
+      "id": "81b998ac-923e-411f-a601-177f8cbf9c30",
+      "platform": "ios",
+      "number": "23",
+      "iosBuild": "23",
+      "uploadRequested": true,
+      "status": "uploaded_processing_unverified",
+      "finishedAt": "2026-11-12T22:26:29-05:00",
+      "source": ".kiro/handoff.md",
+      "storeStatus": "Fastlane upload succeeded; build 23 was not yet listed in the latest App Store Connect status check.",
+      "pipelineResult": "succeeded",
+      "storeUpload": "accepted",
+      "storeProcessing": "unverified_after_upload_acceptance",
+      "testerAvailability": "unverified",
+      "deviceQA": "not_run",
+      "evidence": {
+        "artifact": "Builds/CI/iOS/ipa/FoxsTale.ipa",
+        "bytes": 96611055,
+        "sha256": "ea6e43959a51035095124f4c1551a436a3bbde9efb1886b598424673e9ea8b23",
+        "sourceCommit": "2b01a2c"
+      }
+    },
+    {
+      "id": "a48b4a40-0672-40eb-8f2a-84777c09cdf7",
+      "platform": "android",
+      "number": "26",
+      "androidCode": "26",
+      "uploadRequested": true,
+      "status": "internal_release_available",
+      "finishedAt": "2026-11-12T22:26:29-05:00",
+      "source": ".kiro/handoff.md",
+      "storeStatus": "Google Play API reports versionCode 26 completed on the internal track.",
+      "pipelineResult": "succeeded",
+      "storeUpload": "accepted",
+      "storeProcessing": "completed",
+      "testerAvailability": "internal_track_available",
+      "deviceQA": "android_emulator_verified_physical_pending",
+      "evidence": {
+        "artifact": "Builds/CI/Android/FoxsTale_26.aab",
+        "bytes": 56430637,
+        "sha256": "87439ae95aff6dc736437e00791ba0e3d7b73a55c9ef256d35b1401d8c5d5b09",
+        "sourceCommit": "2b01a2c",
+        "qa": "Builds/CI/QA/Android_26"
+      }
+    },
+    {
       "id": "257FAF69-8632-45DA-A4F0-1589387FB861",
       "platform": "android",
       "number": "25",

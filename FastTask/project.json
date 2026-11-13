@@ -29,9 +29,9 @@
         },
         "availability": {
           "status": "available_internal_track_console_verified",
-          "checkedAt": "2026-11-12",
-          "evidenceBuildId": "257FAF69-8632-45DA-A4F0-1589387FB861",
-          "nextAction": "Install Android versionCode 25 and verify touch controls in gameplay without a controller, then connect and disconnect a GameSir; device QA is not yet verified.",
+          "checkedAt": "2026-11-12T22:26:29-05:00",
+          "evidenceBuildId": "a48b4a40-0672-40eb-8f2a-84777c09cdf7",
+          "nextAction": "Install versionCode 26 on the physical Android phone and verify touch controls with no controller, with GameSir connected, and after disconnecting it.",
           "source": ".kiro/handoff.md"
         }
       },
@@ -51,9 +51,9 @@
         },
         "availability": {
           "status": "uploaded_processing_unverified",
-          "checkedAt": "2026-11-12",
-          "evidenceBuildId": "2716B461-F449-4EAB-A576-012E2633848E",
-          "nextAction": "Sign in to App Store Connect, verify processing and export compliance for build 22, then verify tester availability and test touch controls on iPhone.",
+          "checkedAt": "2026-11-12T22:26:29-05:00",
+          "evidenceBuildId": "81b998ac-923e-411f-a601-177f8cbf9c30",
+          "nextAction": "Check App Store Connect processing and TestFlight tester availability for build 23.",
           "source": ".kiro/handoff.md"
         }
       }
