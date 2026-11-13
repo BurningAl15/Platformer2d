@@ -16,6 +16,7 @@ public class PlatformDetector : MonoBehaviour
 
     [Header("Debug")]
     [SerializeField] private bool forceMobileUI = false;
+    [SerializeField] private CanvasGroup gameplayGroup;
     private bool gameplayControlsSuppressed;
     
     public static PlatformDetector Instance { get; private set; }
@@ -57,22 +58,6 @@ public class PlatformDetector : MonoBehaviour
         // have settled. This makes the persisted HUD state deterministic when
         // the app resumes directly into a gameplay scene.
         Invoke(nameof(ConfigureMobileUIForCurrentScene), 0.15f);
-    }
-
-    private void LateUpdate()
-    {
-        string sceneName = SceneManager.GetActiveScene().name;
-        if (!IsGameplayLevelScene(sceneName) || gameplayMobileUI == null)
-            return;
-
-        bool shouldShow = ShouldShowTouchControls(IsMobile()) && !gameplayControlsSuppressed;
-        if (gameplayMobileUI.activeSelf == shouldShow)
-            return;
-
-        SetGameplayUI(shouldShow);
-        bool hasPhysicalGamepad = GamepadDetector.Instance != null &&
-                                  GamepadDetector.Instance.HasPhysicalGamepad();
-        LogGameplayControlsState(sceneName, IsMobile(), hasPhysicalGamepad, shouldShow);
     }
 
     private void EnsureCanvasSetup()
@@ -207,7 +192,16 @@ public class PlatformDetector : MonoBehaviour
         active = active && !gameplayControlsSuppressed;
         if (gameplayMobileUI != null)
         {
-            gameplayMobileUI.SetActive(active);
+            if (gameplayGroup != null)
+            {
+                gameplayGroup.alpha = active ? 1f : 0f;
+                gameplayGroup.interactable = active;
+                gameplayGroup.blocksRaycasts = active;
+            }
+            else
+            {
+                gameplayMobileUI.SetActive(active);
+            }
         }
     }
 
@@ -228,7 +222,7 @@ public class PlatformDetector : MonoBehaviour
             state.Append(current.name).Append("[").Append(current.gameObject.activeSelf ? "on" : "off").Append("]");
         }
 
-        Debug.Log($"[PlatformDetector] Gameplay controls: scene='{sceneName}', mobile={isMobile}, physicalGamepad={hasPhysicalGamepad}, suppressed={gameplayControlsSuppressed}, requested={requested}, rootActive={gameplayMobileUI.activeSelf}, hierarchyActive={gameplayMobileUI.activeInHierarchy}, canvas={(canvas != null ? $"enabled={canvas.enabled}, renderMode={canvas.renderMode}, order={canvas.sortingOrder}" : "missing")}, hierarchy={state}.", gameplayMobileUI);
+        Debug.Log($"[PlatformDetector] Gameplay controls: scene='{sceneName}', mobile={isMobile}, physicalGamepad={hasPhysicalGamepad}, suppressed={gameplayControlsSuppressed}, requested={requested}, alpha={gameplayGroup?.alpha}, interactive={gameplayGroup?.interactable}, rootActive={gameplayMobileUI.activeSelf}, hierarchyActive={gameplayMobileUI.activeInHierarchy}, canvas={(canvas != null ? $"enabled={canvas.enabled}, renderMode={canvas.renderMode}, order={canvas.sortingOrder}" : "missing")}, hierarchy={state}.", gameplayMobileUI);
     }
     
     private void SetLevelSelectorUI(bool active)
