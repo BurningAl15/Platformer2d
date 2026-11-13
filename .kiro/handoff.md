@@ -1429,3 +1429,11 @@ El propietario reporta que Settings no aparece al pulsar desde MainMenu ni Level
 - Added `docs/AI/MODEL_AND_TASK_REPORTING.md` with economical model recommendations by work type and each current FastTask ID. Default is GPT-6.1 Sol Medium for Unity implementation; GPT-6 Luna for bounded/repetitive work; GPT-6.1 Terra for visual/computer-use work; Astra is reserved for unusually difficult unresolved analysis.
 - Updated `AGENTS.md` so agents must consult the guide, keep scope narrow, and end each task with FastTask status, implementer, implementation completeness, verified evidence, next owner, pending test state, and branch/build evidence.
 - FastTask task `e8d3e6d7-9548-429a-b4ad-43132cf8684f` is done. Validation was static: task JSON parses and `git diff --check` is clean. No Unity test or build was requested or run. FastTask cloud sync is unavailable.
+
+
+### 2026-11-13 — Current architecture map and modularization review
+
+- FastTask `cdac3784-640f-452b-ae67-2112e6719cf2` completed as a read-only architecture review. The current review is documented in `docs/AI/UNITY_PROJECT_CONTEXT.md`; it inventories the 100 first-party runtime C# files and 9 first-party Editor scripts, records the Unity/package/input/UI/build baseline, summarizes scene flow, and prioritizes modularization for the story campaign and future player-created levels.
+- Compared the current source with `.kiro/fase-2-reporte.md`: that earlier targeted refactor remains useful history, but no consolidated current architecture map existed.
+- Main evidence-based seams: direct PlayerPrefs access outside SaveManager; no first-party asmdef boundaries; large orchestration/UI/ad/purchase controllers; bidirectional AdsManager/RevenueCatManager references; multiple level/build scene registries; and current authored-scene content does not yet serialize player-created levels. Existing gameplay components are already granular in many areas and should not be broadly rewritten.
+- Review is static only. Unity Editor Pipeline unavailable; no scenes were opened or saved, no runtime code/assets were changed, and no tests or builds were run. Git branch `codex/fix-horizontal-platform-riding`, revision `ffffd32`; the architecture document, FastTask status, and this handoff update are local and not committed/pushed. FastTask cloud sync is unavailable in this session.

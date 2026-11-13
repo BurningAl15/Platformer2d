@@ -120,6 +120,14 @@
       "status": "done",
       "createdAt": "2026-11-13T10:23:13-05:00",
       "updatedAt": "2026-11-13T10:24:33-05:00"
+    },
+    {
+      "id": "cdac3784-640f-452b-ae67-2112e6719cf2",
+      "title": "Map project architecture and modularization opportunities",
+      "description": "P1 architecture review. Produce a read-only, evidence-based map of all first-party runtime and editor code, data/persistence, scenes/prefabs, build/package tooling, and existing architecture documentation. Compare this review with prior reports to avoid repeating stale conclusions. Identify system ownership, cross-system dependencies, high-responsibility classes, existing extension points relevant to a future story campaign and player-created levels, and a prioritized incremental modularization plan. Do not refactor code, install packages, change Unity assets, run tests, or build. Acceptance: persistent English report with inventory coverage, confirmed facts versus hypotheses, risks/priorities, evidence paths, scope/limitations, and model/next-task ownership; update handoff and FastTask only.\n\n2026-11-13 Codex — completed read-only map at `docs/AI/UNITY_PROJECT_CONTEXT.md`. Inventory coverage checked against all 100 `Assets/Scripts/**/*.cs` files and 9 first-party Editor scripts. Compared with the historical phase-2 architecture report, recorded current environment, scenes/build-list discrepancy, architectural boundaries, responsibility hotspots, UGC/editor gap, prioritized incremental plan, and audit limits. No Unity asset/source edits, tests, builds, or runtime validation. Unity Editor Pipeline unavailable; local handoff updated; FastTask cloud sync unavailable.",
+      "status": "done",
+      "createdAt": "2026-11-13T11:30:20-05:00",
+      "updatedAt": "2026-11-13T11:36:07-05:00"
     }
   ]
 }
