@@ -101,7 +101,10 @@ public class PlayerJump : MonoBehaviour
             platformRider.ForceDetach();
         }
         
-        rb.linearVelocity = new Vector2(rb.linearVelocity.x + inheritedVelocity.x, jumpVelocity);
+        // PlatformRider already composes horizontal platform speed into the
+        // player's Rigidbody2D velocity while attached. Re-adding inherited X
+        // here would double the carry when jumping from a moving platform.
+        rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpVelocity);
         IsJumping = true;
         
         OnJumpPerformed?.Invoke();

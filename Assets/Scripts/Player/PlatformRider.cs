@@ -124,7 +124,9 @@ public class PlatformRider : MonoBehaviour
             return;
         }
         
-        if (!wasGroundedLastFrame && rb.linearVelocity.y < -1f)
+        float platformVerticalSpeed = currentPlatform.GetVelocity().y;
+        float relativeVerticalSpeed = rb.linearVelocity.y - platformVerticalSpeed;
+        if (!wasGroundedLastFrame && relativeVerticalSpeed < -1f)
         {
             if (showDebugLogs)
             {
@@ -175,18 +177,16 @@ public class PlatformRider : MonoBehaviour
         }
         
         Vector2 platformDelta = currentPlatform.GetFixedStepDelta();
+        Vector2 platformStepVelocity = platformDelta / Time.fixedDeltaTime;
 
-        // The solver keeps contact with vertical platforms, but this project’s
-        // horizontal one-way platforms do not carry the player laterally. Apply
-        // X explicitly; keep upward Y to the solver to avoid the prior jitter.
-        // Descending platforms also need explicit Y because they cannot pull a
-        // dynamic passenger down with them.
-        Vector2 carryDelta = new Vector2(platformDelta.x, Mathf.Min(0f, platformDelta.y));
-        if (carryDelta.sqrMagnitude > 0.000001f)
-        {
-            rb.MovePosition(rb.position + carryDelta);
-        }
-        
+        // Compose platform carry with the player's velocity. MovePosition on a
+        // dynamic player body replaces its motion for this physics step, which
+        // prevented PlayerMovement input from moving the player while riding.
+        // The contact solver remains responsible for upward platform motion;
+        // explicit downward carry keeps a descending platform from moving away.
+        Vector2 carryVelocity = new Vector2(platformStepVelocity.x, Mathf.Min(0f, platformStepVelocity.y));
+        rb.linearVelocity += carryVelocity;
+
         platformVelocity = currentPlatform.GetVelocity();
     }
     
