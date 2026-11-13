@@ -24,7 +24,7 @@
         "playTrack": "internal",
         "playReleaseId": "24",
         "playConsole": "Release details show versionCode 25 (1.0.1), Available to internal testers, published 2026-11-12 21:15 Lima, available on 19,874 devices; target SDK 36.",
-        "sourceCommit": "pending"
+        "sourceCommit": "694efa8"
       }
     },
     {
@@ -49,7 +49,7 @@
         "xcodeProject": "Builds/CI/iOS/XcodeProject_22",
         "unityLog": "Builds/CI/logs/ios_22.log",
         "testflightUpload": "Fastlane confirmed the upload at 2026-11-12 21:20 Lima. The ASC page redirected to login with authResult=FAILED; processing, compliance, and tester availability remain unverified.",
-        "sourceCommit": "pending"
+        "sourceCommit": "694efa8"
       }
     },
     {
