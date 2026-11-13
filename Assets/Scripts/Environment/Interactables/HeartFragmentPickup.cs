@@ -49,6 +49,7 @@ public sealed class HeartFragmentPickup : MonoBehaviour
         }
 
         isCollected = true;
+        AppBootstrap.TriggerHapticFeedback();
         if (grantedPermanentHeart)
         {
             player.AddPermanentHeart();

@@ -93,9 +93,9 @@
       "id": "5504d8d9-6a83-4b3d-b861-9233ed4eea6e",
       "title": "Make haptics and screen-awake behavior observable and configurable",
       "description": "P2 mobile settings. Trace the saved haptics preference to actual platform vibration calls and add a user setting to keep the screen awake during play, with a default and lifecycle restoration that respects the preference. Acceptance: representative jump, damage, stomp, and collectible events emit haptics when enabled; disabled mode emits none; sleep behavior follows the setting after pause/resume and app restart.",
-      "status": "todo",
+      "status": "doing",
       "createdAt": "2026-11-12T23:26:25-05:00",
-      "updatedAt": "2026-11-12T23:26:25-05:00"
+      "updatedAt": "2026-11-13T14:10:00-05:00"
     },
     {
       "id": "bd4253e4-e95b-4a89-b117-2e2f8ba8f123",

@@ -61,6 +61,7 @@ public class TrebolPickup : MonoBehaviour
         {
             SaveManager.Instance.SetTrebolCollected(levelNumber);
         }
+        AppBootstrap.TriggerHapticFeedback();
 
         Vector3 viewportPosition = Camera.main != null
             ? Camera.main.WorldToViewportPoint(transform.position)

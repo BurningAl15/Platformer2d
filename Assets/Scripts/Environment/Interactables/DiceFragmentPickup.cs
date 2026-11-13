@@ -66,6 +66,7 @@ public class DiceFragmentPickup : MonoBehaviour
         {
             SaveManager.Instance.SetDiceFragmentCollected(worldNumber, levelNumber);
         }
+        AppBootstrap.TriggerHapticFeedback();
 
         if (AudioMixerManager._instance != null)
         {

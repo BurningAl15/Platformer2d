@@ -37,6 +37,7 @@ public class StompBox : MonoBehaviour
         parent.GetComponent<EnemyParent>().Death();
         
         PlayerController2d._instance.Bounce();
+        AppBootstrap.TriggerHapticFeedback();
         AudioMixerManager._instance.CallSFX(SFXType.Enemy_Death);
 
         DropItem(lastPos);

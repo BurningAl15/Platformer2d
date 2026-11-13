@@ -54,6 +54,7 @@ public class Pickup : MonoBehaviour
         {
             hasBeenCollected = true;
             PlayerHealth._instance.CureDamage();
+            AppBootstrap.TriggerHapticFeedback();
             AudioMixerManager._instance?.CallSFX(SFXType.Player_Pickup_Health);
             currentCoroutine = StartCoroutine(CollectEffect());
         }

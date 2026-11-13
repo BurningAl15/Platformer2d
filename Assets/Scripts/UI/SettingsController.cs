@@ -31,6 +31,8 @@ public class SettingsController : MonoBehaviour
     [Header("Controles de Jugabilidad & Idioma")]
     [SerializeField] private Button hapticsToggleButton;
     [SerializeField] private TextMeshProUGUI hapticsStatusText;
+    [SerializeField] private Button keepScreenAwakeToggleButton;
+    [SerializeField] private TextMeshProUGUI keepScreenAwakeStatusText;
     [SerializeField] private Button languageToggleButton;
     [SerializeField] private TextMeshProUGUI languageStatusText;
 
@@ -68,6 +70,7 @@ public class SettingsController : MonoBehaviour
         BindButtonListener(musicToggleButton, ToggleMusic);
         BindButtonListener(sfxToggleButton, ToggleSFX);
         BindButtonListener(hapticsToggleButton, ToggleHaptics);
+        BindButtonListener(keepScreenAwakeToggleButton, ToggleKeepScreenAwake);
         BindButtonListener(languageToggleButton, ToggleLanguage);
         BindButtonListener(resetProgressButton, OnResetProgressPressed);
         BindButtonListener(confirmResetButton, ConfirmResetProgress);
@@ -142,7 +145,7 @@ public class SettingsController : MonoBehaviour
         RectTransform crt = container.GetComponent<RectTransform>();
         if (crt != null)
         {
-            crt.sizeDelta = new Vector2(Mathf.Max(crt.sizeDelta.x, 620f), 600f);
+            crt.sizeDelta = new Vector2(Mathf.Max(crt.sizeDelta.x, 620f), 740f);
         }
 
         // Título arriba
@@ -215,7 +218,24 @@ public class SettingsController : MonoBehaviour
             hapticsStatusText = hObj.GetComponentInChildren<TextMeshProUGUI>();
         }
 
-        // 3. Language Button
+        // 3. Keep-screen-awake Button
+        if (keepScreenAwakeToggleButton == null && musicToggleButton != null)
+        {
+            Transform existing = container.Find("KeepScreenAwakeToggleButton");
+            Button clonedButton = existing != null
+                ? existing.GetComponent<Button>()
+                : CloneButtonWithoutSerializedActions(musicToggleButton, container, "KeepScreenAwakeToggleButton");
+            GameObject awakeObject = clonedButton.gameObject;
+            awakeObject.name = "KeepScreenAwakeToggleButton";
+            RectTransform awakeRect = awakeObject.GetComponent<RectTransform>();
+            awakeRect.anchoredPosition = new Vector2(0f, -100f);
+            awakeRect.sizeDelta = new Vector2(420f, 60f);
+
+            keepScreenAwakeToggleButton = clonedButton;
+            keepScreenAwakeStatusText = awakeObject.GetComponentInChildren<TextMeshProUGUI>();
+        }
+
+        // 4. Language Button
         if (languageToggleButton == null && musicToggleButton != null)
         {
             Transform existing = container.Find("LanguageToggleButton");
@@ -225,14 +245,14 @@ public class SettingsController : MonoBehaviour
             GameObject lObj = clonedButton.gameObject;
             lObj.name = "LanguageToggleButton";
             RectTransform lrt = lObj.GetComponent<RectTransform>();
-            lrt.anchoredPosition = new Vector2(0f, -100f);
+            lrt.anchoredPosition = new Vector2(0f, -170f);
             lrt.sizeDelta = new Vector2(420f, 60f);
 
             languageToggleButton = clonedButton;
             languageStatusText = lObj.GetComponentInChildren<TextMeshProUGUI>();
         }
 
-        // 4. Reset Progress Button
+        // 5. Reset Progress Button
         if (resetProgressButton == null && closeButton != null)
         {
             Transform existing = container.Find("ResetProgressButton");
@@ -242,7 +262,7 @@ public class SettingsController : MonoBehaviour
             GameObject rObj = clonedButton.gameObject;
             rObj.name = "ResetProgressButton";
             RectTransform rrt = rObj.GetComponent<RectTransform>();
-            rrt.anchoredPosition = new Vector2(0f, -170f);
+            rrt.anchoredPosition = new Vector2(0f, -240f);
             rrt.sizeDelta = new Vector2(420f, 55f);
 
             resetProgressButton = clonedButton;
@@ -253,7 +273,7 @@ public class SettingsController : MonoBehaviour
         if (closeButton != null)
         {
             RectTransform clrt = closeButton.GetComponent<RectTransform>();
-            clrt.anchoredPosition = new Vector2(0f, -240f);
+            clrt.anchoredPosition = new Vector2(0f, -310f);
             clrt.sizeDelta = new Vector2(260f, 55f);
         }
 
@@ -273,7 +293,7 @@ public class SettingsController : MonoBehaviour
                 vrt.anchorMin = new Vector2(0.5f, 0.5f);
                 vrt.anchorMax = new Vector2(0.5f, 0.5f);
                 vrt.pivot = new Vector2(0.5f, 0.5f);
-                vrt.anchoredPosition = new Vector2(0f, -282f);
+                vrt.anchoredPosition = new Vector2(0f, -352f);
                 vrt.sizeDelta = new Vector2(300f, 24f);
 
                 versionText = vObj.AddComponent<TextMeshProUGUI>();
@@ -339,6 +359,7 @@ public class SettingsController : MonoBehaviour
             musicToggleButton,
             sfxToggleButton,
             hapticsToggleButton,
+            keepScreenAwakeToggleButton,
             languageToggleButton,
             resetProgressButton,
             closeButton
@@ -442,6 +463,17 @@ public class SettingsController : MonoBehaviour
         bool current = PlayerPrefs.GetInt("HapticsEnabled", 1) == 1;
         PlayerPrefs.SetInt("HapticsEnabled", current ? 0 : 1);
         PlayerPrefs.Save();
+        RefreshUI();
+        if (!current)
+            AppBootstrap.TriggerHapticFeedback();
+    }
+
+    public void ToggleKeepScreenAwake()
+    {
+        bool current = PlayerPrefs.GetInt("KeepScreenAwake", 0) == 1;
+        PlayerPrefs.SetInt("KeepScreenAwake", current ? 0 : 1);
+        PlayerPrefs.Save();
+        AppBootstrap.ApplyScreenAwakePreference();
         RefreshUI();
     }
 
@@ -566,6 +598,15 @@ public class SettingsController : MonoBehaviour
         {
             hapticsStatusText.text = hapticsOn ? (isEs ? "VIBRACION: SI" : "HAPTICS: ON") : (isEs ? "VIBRACION: NO" : "HAPTICS: OFF");
             hapticsStatusText.color = hapticsOn ? enabledColor : disabledColor;
+        }
+
+        bool keepScreenAwake = PlayerPrefs.GetInt("KeepScreenAwake", 0) == 1;
+        if (keepScreenAwakeStatusText != null)
+        {
+            keepScreenAwakeStatusText.text = keepScreenAwake
+                ? (isEs ? "PANTALLA: SIEMPRE ACTIVA" : "SCREEN: ALWAYS AWAKE")
+                : (isEs ? "PANTALLA: REPOSO NORMAL" : "SCREEN: NORMAL SLEEP");
+            keepScreenAwakeStatusText.color = keepScreenAwake ? enabledColor : disabledColor;
         }
 
         // Idioma / Language

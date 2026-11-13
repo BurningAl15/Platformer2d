@@ -1464,3 +1464,14 @@ El propietario reporta que Settings no aparece al pulsar desde MainMenu ni Level
 - Artifact: `Builds/CI/Android/FoxsTale_27.aab`, 56,459,761 bytes; SHA-256 `db39aabce2e46d845fb1254ddaa3081f2f4eac38e9fc0342516fca0e4bd18ef8`. Build info resource now reports build 27.
 - Fastlane reported successful upload to Google Play Internal Testing. Play processing and tester availability have not been checked directly; do not report it as installable yet. Physical-device QA for DOTween pickup/dice feedback remains pending.
 - FastTask build record added; release task `76c214fc-b5c1-4a14-a610-9b7516314de6` remains `testing`. FastTask cloud sync is unavailable in this session.
+
+## DOTween feedback validation — 2026-11-13
+
+- Android candidate 27 compiles the pickup, heart, Clover, and dice DOTween integration from source commit `ed138f1`. Fastlane accepted its upload to Google Play Internal Testing.
+- This confirms Unity compile/build and upload acceptance only. Play processing, tester availability, and physical-device visual QA have not been checked. FastTask `2c67c5e7-4ee7-43e8-a34b-7f9704694ec6` remains `testing` until those checks are complete.
+
+## Haptics and screen-awake implementation — 2026-11-13
+
+- Added setting-gated vibration through the existing persistent `AppBootstrap` for jump/double jump, applied damage, enemy stomp, health pickup, Clover, heart fragment, and dice fragment.
+- Added the bilingual Keep Screen Awake control to the existing `SettingsController`-generated settings controls. The preference applies `NeverSleep` only while the app is foregrounded and enabled; focus/pause callbacks restore system sleep and reapply the preference on resume. Default is normal system sleep.
+- Backed up affected scripts at `/private/tmp/foxtale-haptics-screen-awake-before-20261113` before editing. `git diff --check` and FastTask JSON parsing pass. No Unity build or device test has been run for this task. FastTask `5504d8d9-6a83-4b3d-b861-9233ed4eea6e` remains `testing` pending compile, settings layout review, haptic verification, and pause/resume screen-sleep verification.

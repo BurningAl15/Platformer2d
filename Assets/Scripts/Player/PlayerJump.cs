@@ -106,6 +106,7 @@ public class PlayerJump : MonoBehaviour
         // here would double the carry when jumping from a moving platform.
         rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpVelocity);
         IsJumping = true;
+        AppBootstrap.TriggerHapticFeedback();
         
         OnJumpPerformed?.Invoke();
     }
@@ -115,6 +116,7 @@ public class PlayerJump : MonoBehaviour
         rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
         IsJumping = true;
         canDoubleJump = false;
+        AppBootstrap.TriggerHapticFeedback();
         
         OnDoubleJumpPerformed?.Invoke();
     }

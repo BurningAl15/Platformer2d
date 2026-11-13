@@ -29,6 +29,9 @@ public class AppBootstrap : MonoBehaviour
     [Header("Framerate")]
     [SerializeField] private int targetFrameRate = 60;
 
+    private bool isApplicationPaused;
+    private bool isApplicationFocused = true;
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -43,6 +46,50 @@ public class AppBootstrap : MonoBehaviour
         InitializeDOTween();
         ConfigureFramerate();
         ConfigureLandscapeOrientation();
+        ApplyScreenAwakePreference();
+    }
+
+    private void OnApplicationPause(bool paused)
+    {
+        isApplicationPaused = paused;
+        ApplyScreenAwakePreference();
+    }
+
+    private void OnApplicationFocus(bool hasFocus)
+    {
+        isApplicationFocused = hasFocus;
+        ApplyScreenAwakePreference();
+    }
+
+    private void OnApplicationQuit()
+    {
+        Screen.sleepTimeout = SleepTimeout.SystemSetting;
+    }
+
+    private void OnDestroy()
+    {
+        if (Instance != this) return;
+        Screen.sleepTimeout = SleepTimeout.SystemSetting;
+        Instance = null;
+    }
+
+    public static void TriggerHapticFeedback()
+    {
+        if (PlayerPrefs.GetInt("HapticsEnabled", 1) != 1 || !Application.isMobilePlatform)
+            return;
+
+#if UNITY_ANDROID || UNITY_IOS
+        Handheld.Vibrate();
+#endif
+    }
+
+    public static void ApplyScreenAwakePreference()
+    {
+        bool shouldKeepAwake = PlayerPrefs.GetInt("KeepScreenAwake", 0) == 1;
+        bool appIsActive = Instance == null || (!Instance.isApplicationPaused && Instance.isApplicationFocused);
+        Screen.sleepTimeout = shouldKeepAwake && appIsActive
+            ? SleepTimeout.NeverSleep
+            : SleepTimeout.SystemSetting;
     }
 
     private static void ConfigureLandscapeOrientation()
