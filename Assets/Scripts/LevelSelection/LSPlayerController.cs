@@ -233,6 +233,17 @@ public class LSPlayerController : MonoBehaviour
     private Vector2 touchStartPos;
     private bool isTouching;
     private float touchStartTime;
+    private Vector2 mouseStartPos;
+    private bool isMousePointerDown;
+
+    private float MapTapThresholdPixels
+    {
+        get
+        {
+            LSCameraController cameraController = FindFirstObjectByType<LSCameraController>();
+            return cameraController != null ? cameraController.DragThresholdPixels : 12f;
+        }
+    }
 
     private void UpdateTouchMapInteraction(float currentDistance)
     {
@@ -245,9 +256,11 @@ public class LSPlayerController : MonoBehaviour
             var touch = ts.primaryTouch;
             if (touch.press.wasPressedThisFrame)
             {
+                int touchId = touch.touchId.ReadValue();
                 if (UnityEngine.EventSystems.EventSystem.current != null &&
-                    UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject())
+                    UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject(touchId))
                 {
+                    isTouching = false;
                     return;
                 }
                 touchStartPos = touch.position.ReadValue();
@@ -262,7 +275,7 @@ public class LSPlayerController : MonoBehaviour
                 float duration = Time.unscaledTime - touchStartTime;
 
                 // Toque directo (TAP / CLICK)
-                if (delta.magnitude < 35f && duration < 0.45f)
+                if (delta.magnitude < MapTapThresholdPixels && duration < 0.45f)
                 {
                     ProcessScreenTap(releasePos);
                     return;
@@ -273,17 +286,26 @@ public class LSPlayerController : MonoBehaviour
             }
         }
 
-        // 2. Ratón en Unity Editor / PC
+        // 2. Mouse in the Unity Editor / desktop. Match the camera threshold
+        // so a pan never also selects a level on release.
         var mouse = UnityEngine.InputSystem.Mouse.current;
-        if (mouse != null && mouse.leftButton.wasReleasedThisFrame)
+        if (mouse != null && mouse.leftButton.wasPressedThisFrame)
         {
             if (UnityEngine.EventSystems.EventSystem.current != null &&
                 UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject())
             {
+                isMousePointerDown = false;
                 return;
             }
+            mouseStartPos = mouse.position.ReadValue();
+            isMousePointerDown = true;
+        }
+        else if (mouse != null && mouse.leftButton.wasReleasedThisFrame && isMousePointerDown)
+        {
+            isMousePointerDown = false;
             Vector2 mousePos = mouse.position.ReadValue();
-            ProcessScreenTap(mousePos);
+            if (Vector2.Distance(mouseStartPos, mousePos) < MapTapThresholdPixels)
+                ProcessScreenTap(mousePos);
         }
     }
 

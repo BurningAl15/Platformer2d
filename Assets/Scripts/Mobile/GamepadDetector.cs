@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Utilities;
+using System.Collections.Generic;
 
 /// <summary>
 /// Detecta la conexión y desconexión de gamepads físicos (GameSir X5s,
@@ -104,7 +105,7 @@ public class GamepadDetector : MonoBehaviour
             case InputDeviceChange.Reconnected:
             case InputDeviceChange.Enabled:
                 if (debugLog)
-                    Debug.Log($"[GamepadDetector] Gamepad conectado: {device.displayName}");
+                    Debug.Log($"[GamepadDetector] Input device changed: name='{device.displayName}', layout='{device.layout}', onScreen={IsOnScreenDevice(device)}, physicalMatch={IsPhysicalGamepad(device)}.");
                 // Let OnScreenControl set its usage before classifying its virtual pad.
                 CancelInvoke(nameof(RefreshGamepadState));
                 Invoke(nameof(RefreshGamepadState), 0.1f);
@@ -114,7 +115,7 @@ public class GamepadDetector : MonoBehaviour
             case InputDeviceChange.Disconnected:
             case InputDeviceChange.Disabled:
                 if (debugLog)
-                    Debug.Log($"[GamepadDetector] Gamepad desconectado: {device.displayName}");
+                    Debug.Log($"[GamepadDetector] Input device removed or disabled: name='{device.displayName}', layout='{device.layout}'.");
                 CancelInvoke(nameof(RefreshGamepadState));
                 Invoke(nameof(RefreshGamepadState), 0.1f);
                 break;
@@ -124,7 +125,21 @@ public class GamepadDetector : MonoBehaviour
     private void RefreshGamepadState()
     {
         physicalGamepadConnected = HasPhysicalGamepadFromDevices();
+        if (debugLog)
+            Debug.Log($"[GamepadDetector] Physical gamepad present={physicalGamepadConnected}; devices=[{GetPhysicalGamepadSummary()}].");
         ApplyGamepadState();
+    }
+
+    private static string GetPhysicalGamepadSummary()
+    {
+        var detectedDevices = new List<string>();
+        foreach (InputDevice device in InputSystem.devices)
+        {
+            if (IsPhysicalGamepad(device))
+                detectedDevices.Add($"{device.displayName} ({device.layout})");
+        }
+
+        return detectedDevices.Count == 0 ? "none" : string.Join(", ", detectedDevices);
     }
 
     private bool HasPhysicalGamepadFromDevices()
@@ -191,14 +206,14 @@ public class GamepadDetector : MonoBehaviour
             // Usamos ForceSet para que funcione también en plataforma mobile
             PlatformDetector.Instance.ForceSetMobileUIActive(false, false);
             if (debugLog)
-                Debug.Log("[GamepadDetector] Controles on-screen OCULTADOS (gamepad activo).");
+                Debug.Log("[GamepadDetector] Virtual controls hidden because a physical gamepad is active.");
         }
         else
         {
             // Sin gamepad → dejar que PlatformDetector decida según la plataforma
             PlatformDetector.Instance.ForceReconfigure();
             if (debugLog)
-                Debug.Log("[GamepadDetector] Sin gamepad — PlatformDetector reconfigura UI mobile.");
+                Debug.Log("[GamepadDetector] No physical gamepad. PlatformDetector is restoring scene-appropriate mobile UI.");
         }
     }
 }

@@ -18,6 +18,8 @@ public class LSCameraController : MonoBehaviour
     private Vector2 previousPointerPosition;
     private float orthographicUnitsPerPixel;
 
+    public float DragThresholdPixels => Mathf.Max(0f, dragThreshold);
+
     private void Awake()
     {
         CacheWorldScale();
@@ -120,7 +122,8 @@ public class LSCameraController : MonoBehaviour
 
     private void PanByScreenDelta(Vector2 screenDelta)
     {
-        Vector3 worldDelta = new Vector3(screenDelta.x, screenDelta.y, 0f) * orthographicUnitsPerPixel;
+        // Move the camera opposite the finger so the map follows the drag.
+        Vector3 worldDelta = new Vector3(-screenDelta.x, -screenDelta.y, 0f) * orthographicUnitsPerPixel;
         SetClampedPosition(transform.position + worldDelta);
     }
 

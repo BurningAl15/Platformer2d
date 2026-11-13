@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Collections;
+using System.Text;
 
 public class PlatformDetector : MonoBehaviour
 {
@@ -91,6 +92,12 @@ public class PlatformDetector : MonoBehaviour
         // Desuscribirse del evento
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
+
+    private void OnApplicationFocus(bool hasFocus)
+    {
+        if (hasFocus)
+            StartCoroutine(ReapplyAfterSceneActivation(SceneManager.GetActiveScene().name));
+    }
     
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
@@ -143,11 +150,13 @@ public class PlatformDetector : MonoBehaviour
         else if (IsGameplayLevelScene(currentSceneName))
         {
             // Niveles de gameplay: Activar controles de gameplay en móvil (Stick, Jump, Pause)
+            bool hasPhysicalGamepad = GamepadDetector.Instance != null &&
+                                      GamepadDetector.Instance.HasPhysicalGamepad();
             bool showTouchControls = ShouldShowTouchControls(isMobile);
             SetGameplayUI(showTouchControls);
             SetLevelSelectorUI(false);
-            
-            Debug.Log($"[PlatformDetector] Gameplay level '{currentSceneName}' detected. Touch controls: {showTouchControls}.");
+
+            LogGameplayControlsState(currentSceneName, isMobile, hasPhysicalGamepad, showTouchControls);
         }
         else
         {
@@ -184,6 +193,26 @@ public class PlatformDetector : MonoBehaviour
         {
             gameplayMobileUI.SetActive(active);
         }
+    }
+
+    private void LogGameplayControlsState(string sceneName, bool isMobile, bool hasPhysicalGamepad, bool requested)
+    {
+        if (gameplayMobileUI == null)
+        {
+            Debug.LogError($"[PlatformDetector] Gameplay controls are not assigned. scene='{sceneName}', mobile={isMobile}, physicalGamepad={hasPhysicalGamepad}.", this);
+            return;
+        }
+
+        Canvas canvas = gameplayMobileUI.GetComponentInParent<Canvas>();
+        var state = new StringBuilder();
+        for (Transform current = gameplayMobileUI.transform; current != null; current = current.parent)
+        {
+            if (state.Length > 0)
+                state.Append(" <- ");
+            state.Append(current.name).Append("[").Append(current.gameObject.activeSelf ? "on" : "off").Append("]");
+        }
+
+        Debug.Log($"[PlatformDetector] Gameplay controls: scene='{sceneName}', mobile={isMobile}, physicalGamepad={hasPhysicalGamepad}, suppressed={gameplayControlsSuppressed}, requested={requested}, rootActive={gameplayMobileUI.activeSelf}, hierarchyActive={gameplayMobileUI.activeInHierarchy}, canvas={(canvas != null ? $"enabled={canvas.enabled}, renderMode={canvas.renderMode}, order={canvas.sortingOrder}" : "missing")}, hierarchy={state}.", gameplayMobileUI);
     }
     
     private void SetLevelSelectorUI(bool active)
