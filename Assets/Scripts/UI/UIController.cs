@@ -112,6 +112,7 @@ public class UIController : MonoBehaviour
 
     private Coroutine currentCoroutine = null;
     private Coroutine heartGainAnimation;
+    private Image livesIcon;
 
     // ─────────────────────────────────────────────────────────────────────────
     //  Ciclo de vida
@@ -121,6 +122,13 @@ public class UIController : MonoBehaviour
     {
         if (_instance != null && _instance != this) { Destroy(gameObject); return; }
         _instance = this;
+
+        if (livesText != null && livesText.transform.parent != null)
+        {
+            Transform iconTransform = livesText.transform.parent.Find("Lives_Img");
+            if (iconTransform != null)
+                livesIcon = iconTransform.GetComponent<Image>();
+        }
 
         foreach (var heart in hearts)
             heart.Init(heartEmpty, heartHalf, heartFull);
@@ -274,20 +282,15 @@ public class UIController : MonoBehaviour
         if (gemTransform == null || gemsLevelText == null || Camera.main == null)
             return null;
 
-        Canvas canvas = gemsLevelText.canvas;
-        Camera uiCamera = canvas != null && canvas.renderMode != RenderMode.ScreenSpaceOverlay
-            ? (canvas.worldCamera != null ? canvas.worldCamera : Camera.main)
-            : null;
-        Vector2 targetScreenPosition = RectTransformUtility.WorldToScreenPoint(
-            uiCamera,
-            gemsLevelText.rectTransform.position);
-        float cameraDistance = Camera.main.WorldToScreenPoint(gemTransform.position).z;
-        Vector3 targetWorldPosition = Camera.main.ScreenToWorldPoint(
-            new Vector3(targetScreenPosition.x, targetScreenPosition.y, cameraDistance));
-        targetWorldPosition.z = gemTransform.position.z;
-
+        Vector3 startPosition = gemTransform.position;
         Sequence sequence = DOTween.Sequence()
-            .Append(gemTransform.DOMove(targetWorldPosition, 0.38f).SetEase(Ease.InCubic))
+            .Append(DOTween.To(() => 0f, progress =>
+            {
+                if (gemTransform == null) return;
+                Vector3 targetPosition = GetGemCounterWorldPosition(gemTransform);
+                float easedProgress = progress * progress * progress;
+                gemTransform.position = Vector3.LerpUnclamped(startPosition, targetPosition, easedProgress);
+            }, 1f, 0.38f).SetEase(Ease.Linear))
             .Join(gemTransform.DOScale(gemTransform.localScale * 0.7f, 0.38f).SetEase(Ease.InQuad))
             .AppendCallback(() =>
             {
@@ -301,6 +304,22 @@ public class UIController : MonoBehaviour
             .SetLink(gemTransform.gameObject, LinkBehaviour.KillOnDestroy);
 
         return sequence;
+    }
+
+    private Vector3 GetGemCounterWorldPosition(Transform gemTransform)
+    {
+        Canvas canvas = gemsLevelText.canvas;
+        Camera uiCamera = canvas != null && canvas.renderMode != RenderMode.ScreenSpaceOverlay
+            ? (canvas.worldCamera != null ? canvas.worldCamera : Camera.main)
+            : null;
+        Vector2 targetScreenPosition = RectTransformUtility.WorldToScreenPoint(
+            uiCamera,
+            gemsLevelText.rectTransform.position);
+        float cameraDistance = Camera.main.WorldToScreenPoint(gemTransform.position).z;
+        Vector3 targetWorldPosition = Camera.main.ScreenToWorldPoint(
+            new Vector3(targetScreenPosition.x, targetScreenPosition.y, cameraDistance));
+        targetWorldPosition.z = gemTransform.position.z;
+        return targetWorldPosition;
     }
 
     private static void ConfigureAutoResize(TextMeshProUGUI tmp, float minSize, float maxSize)
@@ -340,15 +359,116 @@ public class UIController : MonoBehaviour
         livesText.text = $"x{SaveManager.Instance.LoadLives()}";
     }
 
-    /// <summary>Pulses the existing fox icon and lives count after a reward.</summary>
-    public void AnimateLifeRewardFeedback()
+    /// <summary>Sends fox-life tokens from a reward source to the existing lives HUD.</summary>
+    public void AnimateLifeRewardFeedback(int awardedLives, Transform source)
     {
-        if (livesText == null)
+        if (livesText == null || awardedLives <= 0 || livesIcon == null || livesIcon.sprite == null ||
+            source == null || livesText.canvas == null)
+        {
+            RefreshLivesUI();
+            PunchLivesCounter();
             return;
+        }
 
-        Transform livesContainer = livesText.transform.parent != null
+        Canvas canvas = livesText.canvas;
+        RectTransform canvasRect = canvas.transform as RectTransform;
+        if (canvasRect == null)
+        {
+            RefreshLivesUI();
+            PunchLivesCounter();
+            return;
+        }
+
+        Camera uiCamera = canvas.renderMode == RenderMode.ScreenSpaceOverlay
+            ? null
+            : (canvas.worldCamera != null ? canvas.worldCamera : Camera.main);
+        int finalLives = SaveManager.Instance != null ? SaveManager.Instance.LoadLives() : 0;
+        int startingLives = Mathf.Max(0, finalLives - awardedLives);
+        livesText.text = $"x{startingLives}";
+
+        for (int i = 0; i < awardedLives; i++)
+        {
+            int lifeIndex = i;
+            Image token = CreateLifeRewardToken(canvasRect, uiCamera, source, livesIcon);
+            if (token == null) continue;
+
+            RectTransform tokenRect = token.rectTransform;
+            Vector2 startPosition = tokenRect.anchoredPosition;
+            Sequence flight = DOTween.Sequence();
+            flight.SetDelay(lifeIndex * 0.09f);
+            flight.OnStart(() =>
+            {
+                if (token == null || source == null) return;
+                tokenRect.anchoredPosition = GetCanvasLocalPosition(
+                    canvasRect, source as RectTransform, uiCamera, source.position);
+                token.color = Color.white;
+            });
+            flight.Append(DOTween.To(() => 0f, progress =>
+                {
+                    if (tokenRect == null || livesIcon == null) return;
+                    Vector2 targetPosition = GetCanvasLocalPosition(canvasRect, livesIcon.rectTransform, uiCamera);
+                    float easedProgress = progress * progress * progress;
+                    tokenRect.anchoredPosition = Vector2.LerpUnclamped(startPosition, targetPosition, easedProgress);
+                    tokenRect.localScale = Vector3.one * Mathf.Lerp(1f, 0.55f, progress);
+                }, 1f, 0.42f).SetEase(Ease.Linear));
+            flight.OnComplete(() =>
+            {
+                if (token != null) Destroy(token.gameObject);
+                if (livesText != null) livesText.text = $"x{startingLives + lifeIndex + 1}";
+                PunchLivesCounter();
+            });
+            flight.OnKill(() =>
+            {
+                if (token != null) Destroy(token.gameObject);
+            });
+            flight.SetUpdate(true);
+            flight.SetLink(token.gameObject, LinkBehaviour.KillOnDestroy);
+        }
+
+        DOVirtual.DelayedCall((awardedLives - 1) * 0.09f + 0.5f, RefreshLivesUI, true)
+            .SetLink(gameObject, LinkBehaviour.KillOnDestroy);
+    }
+
+    private static Image CreateLifeRewardToken(RectTransform canvasRect, Camera uiCamera, Transform source, Image livesIcon)
+    {
+        Vector2 sourceScreenPosition = RectTransformUtility.WorldToScreenPoint(uiCamera, source.position);
+        if (!RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                canvasRect, sourceScreenPosition, uiCamera, out Vector2 startPosition))
+            return null;
+
+        GameObject tokenObject = new GameObject("LifeRewardToken", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
+        tokenObject.transform.SetParent(canvasRect, false);
+        Image token = tokenObject.GetComponent<Image>();
+        token.sprite = livesIcon.sprite;
+        token.preserveAspect = true;
+        token.raycastTarget = false;
+        token.color = new Color(1f, 1f, 1f, 0f);
+        token.rectTransform.sizeDelta = livesIcon.rectTransform.rect.size;
+        token.rectTransform.anchoredPosition = startPosition;
+        return token;
+    }
+
+    private static Vector2 GetCanvasLocalPosition(RectTransform canvasRect, RectTransform target, Camera uiCamera)
+    {
+        return GetCanvasLocalPosition(canvasRect, target, uiCamera, target.position);
+    }
+
+    private static Vector2 GetCanvasLocalPosition(RectTransform canvasRect, RectTransform target, Camera uiCamera, Vector3 worldPosition)
+    {
+        Vector2 targetScreenPosition = RectTransformUtility.WorldToScreenPoint(uiCamera, worldPosition);
+        return RectTransformUtility.ScreenPointToLocalPointInRectangle(
+            canvasRect, targetScreenPosition, uiCamera, out Vector2 targetLocalPosition)
+            ? targetLocalPosition
+            : target != null ? target.anchoredPosition : Vector2.zero;
+    }
+
+    private void PunchLivesCounter()
+    {
+        Transform livesContainer = livesText != null && livesText.transform.parent != null
             ? livesText.transform.parent
-            : livesText.transform;
+            : livesText != null ? livesText.transform : null;
+        if (livesContainer == null) return;
+
         livesContainer.DOKill();
         livesContainer.DOPunchScale(Vector3.one * 0.22f, 0.38f, 8, 0.65f);
     }

@@ -1475,3 +1475,10 @@ El propietario reporta que Settings no aparece al pulsar desde MainMenu ni Level
 - Added setting-gated vibration through the existing persistent `AppBootstrap` for jump/double jump, applied damage, enemy stomp, health pickup, Clover, heart fragment, and dice fragment.
 - Added the bilingual Keep Screen Awake control to the existing `SettingsController`-generated settings controls. The preference applies `NeverSleep` only while the app is foregrounded and enabled; focus/pause callbacks restore system sleep and reapply the preference on resume. Default is normal system sleep.
 - Backed up affected scripts at `/private/tmp/foxtale-haptics-screen-awake-before-20261113` before editing. `git diff --check` and FastTask JSON parsing pass. No Unity build or device test has been run for this task. FastTask `5504d8d9-6a83-4b3d-b861-9233ed4eea6e` remains `testing` pending compile, settings layout review, haptic verification, and pause/resume screen-sleep verification.
+
+## DOTween presentation follow-up — 2026-11-13
+
+- Owner QA found that the gem tween converted the HUD target to world coordinates once; with a moving camera, the gem reached a stale world point. The tween now resolves the current HUD screen position each update and follows its current projection.
+- Dice presentation now shows the existing Clover collectible sprite beside a compact count, uses shorter roll/result labels, and launches transient copies of the existing `Lives_Img` fox sprite from the dice face to the live HUD lives icon. The counter increments as each icon arrives.
+- Reused `UIController`, `DiceRollController`, and the existing `UI-Canvas` prefab. No new script or duplicate HUD. Backup: `/private/tmp/foxtale-dotween-followup-before-20261113`.
+- Static diff and serialized reference checks are pending final run. Build/device visual QA remain pending. FastTask `2c67c5e7-4ee7-43e8-a34b-7f9704694ec6` is `testing`.

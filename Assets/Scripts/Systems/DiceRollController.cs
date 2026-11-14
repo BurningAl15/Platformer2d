@@ -39,6 +39,7 @@ public class DiceRollController : MonoBehaviour
     [SerializeField] private Image diceFaceImage;
     [Tooltip("Sprites para las 6 caras del dado (índice 0 = cara 1, ..., índice 5 = cara 6)")]
     [SerializeField] private Sprite[] diceFaceSprites;
+    [SerializeField] private Image cloverIcon;
 
     [Header("Configuración de Animación")]
     [SerializeField] private float rollDuration = 2.0f;
@@ -348,16 +349,16 @@ public class DiceRollController : MonoBehaviour
         {
             PlayerHealth._instance.AddBonusHeart();
             if (diceStatusText != null)
-                diceStatusText.text = $"You won +{finalResult} lives and +1 bonus heart!";
+                diceStatusText.text = $"+{finalResult} LIVES  +1 HEART";
         }
 
         // Notificar cambio de vidas a LivesManager para que dispare OnLivesChanged
         if (LivesManager.Instance != null)
             LivesManager.Instance.NotifyLivesChanged();
-        UIController._instance?.AnimateLifeRewardFeedback();
+        UIController._instance?.AnimateLifeRewardFeedback(finalResult, GetDiceVisualTransform());
 
         if (diceStatusText != null && currentDiceType != DiceType.Secret)
-            diceStatusText.text = $"You won +{finalResult} lives!";
+            diceStatusText.text = $"+{finalResult} LIVES";
 
         if (stopButton != null) stopButton.interactable = false;
         if (closeButton != null) closeButton.interactable = true;
@@ -450,7 +451,10 @@ public class DiceRollController : MonoBehaviour
         int trebols = SaveManager.Instance != null ? SaveManager.Instance.LoadTotalTrebols() : 0;
 
         if (trebolAvailableText != null)
-            trebolAvailableText.text = $"Clovers: {trebols}";
+            trebolAvailableText.text = $"x{trebols}";
+
+        if (cloverIcon != null)
+            cloverIcon.color = trebols > 0 ? Color.white : new Color(0.45f, 0.45f, 0.45f, 0.6f);
 
         if (upgradeWithTrebolButton != null)
             upgradeWithTrebolButton.interactable = trebols > 0 && currentDiceType == DiceType.Normal;
@@ -460,16 +464,16 @@ public class DiceRollController : MonoBehaviour
             switch (currentDiceType)
             {
                 case DiceType.Upgraded_3_5:
-                    diceStatusText.text = "Upgraded Dice (3 - 5 Lives)";
+                    diceStatusText.text = "3–5 LIVES";
                     break;
                 case DiceType.Upgraded_2_6:
-                    diceStatusText.text = "Upgraded Dice (2 - 6 Lives)";
+                    diceStatusText.text = "2–6 LIVES";
                     break;
                 case DiceType.Secret:
-                    diceStatusText.text = "Secret Dice (4 - 6 Lives)";
+                    diceStatusText.text = "4–6 LIVES  + HEART";
                     break;
                 default:
-                    diceStatusText.text = "Normal Dice (1 - 3 Lives)";
+                    diceStatusText.text = "1–3 LIVES";
                     break;
             }
         }
