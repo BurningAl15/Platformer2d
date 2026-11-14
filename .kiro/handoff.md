@@ -1482,3 +1482,11 @@ El propietario reporta que Settings no aparece al pulsar desde MainMenu ni Level
 - Dice presentation now shows the existing Clover collectible sprite beside a compact count, uses shorter roll/result labels, and launches transient copies of the existing `Lives_Img` fox sprite from the dice face to the live HUD lives icon. The counter increments as each icon arrives.
 - Reused `UIController`, `DiceRollController`, and the existing `UI-Canvas` prefab. No new script or duplicate HUD. Backup: `/private/tmp/foxtale-dotween-followup-before-20261113`.
 - Static diff and serialized reference checks are pending final run. Build/device visual QA remain pending. FastTask `2c67c5e7-4ee7-43e8-a34b-7f9704694ec6` is `testing`.
+
+
+## Android candidate 28 — 2026-11-13
+
+- Source commit: `3b05275` (`Polish gem and life reward animations`). This candidate also includes the preceding pushed haptics/screen-awake implementation (`806c5b4`).
+- Command: `scripts/release-test.sh android --android-code 28 --upload-test`. Unity 6000.6.0f1 completed the Android build; Fastlane reported successful upload to Google Play Internal Testing.
+- Artifact: `Builds/CI/Android/FoxsTale_28.aab`, 56,472,592 bytes; SHA-256 `db6636278679cda1a4aa0be0f623c12000c6874e7b89b1065171e427c1a21991`. `Assets/Resources/build_info.txt` reports build 28.
+- Play processing and tester availability have not been checked directly. Physical-device visual QA remains pending for live gem tracking, Clover/dice UI, life-token travel, haptics, and screen-sleep behavior. FastTask build record is local; cloud sync is unavailable.

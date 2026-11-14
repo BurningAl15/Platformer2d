@@ -2,6 +2,28 @@
   "schemaVersion": 1,
   "builds": [
     {
+      "id": "df29b722-3117-4834-bb69-e5c308b72634",
+      "platform": "android",
+      "number": "28",
+      "androidCode": "28",
+      "uploadRequested": true,
+      "status": "uploaded_processing_unverified",
+      "finishedAt": "2026-11-13T14:50:00-05:00",
+      "source": ".kiro/handoff.md",
+      "storeStatus": "Unity Android AAB build completed. Fastlane reported successful upload to Google Play Internal Testing. Processing and tester availability have not been checked.",
+      "pipelineResult": "succeeded",
+      "storeUpload": "accepted",
+      "storeProcessing": "not_checked",
+      "testerAvailability": "not_checked",
+      "deviceQA": "pending",
+      "evidence": {
+        "artifact": "Builds/CI/Android/FoxsTale_28.aab",
+        "bytes": 56472592,
+        "sha256": "db6636278679cda1a4aa0be0f623c12000c6874e7b89b1065171e427c1a21991",
+        "sourceCommit": "3b05275"
+      }
+    },
+    {
       "id": "366ecb17-c935-4b8f-be7c-61093b15bf0a",
       "platform": "android",
       "number": "27",
