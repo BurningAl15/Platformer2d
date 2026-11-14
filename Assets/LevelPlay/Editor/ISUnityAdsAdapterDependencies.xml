@@ -1,7 +1,7 @@
 <dependencies>
-  <unityversion>5.16.0.0</unityversion>
+  <unityversion>5.17.0.0</unityversion>
   <androidPackages>
-    <androidPackage spec="com.unity3d.ads-mediation:unityads-adapter:5.15.0">
+    <androidPackage spec="com.unity3d.ads-mediation:unityads-adapter:5.16.0">
     </androidPackage>
   </androidPackages>
   <iosPods>
