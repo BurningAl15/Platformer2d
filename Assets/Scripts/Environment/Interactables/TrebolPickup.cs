@@ -70,11 +70,6 @@ public class TrebolPickup : MonoBehaviour
             levelNumber,
             new Vector2(Mathf.Clamp01(viewportPosition.x), Mathf.Clamp01(viewportPosition.y)));
 
-        if (UIController._instance != null)
-        {
-            UIController._instance.RefreshTrebolUI();
-        }
-
         // SFX feedback
         if (AudioMixerManager._instance != null)
         {
@@ -87,31 +82,33 @@ public class TrebolPickup : MonoBehaviour
     private IEnumerator CollectEffect()
     {
         if (col != null) col.enabled = false;
+        Pickup.PlayCollectBurstAt(effect, transform.position);
 
-        if (spriteRenderer != null)
+        Tween travelTween = UIController._instance != null
+            ? UIController._instance.AnimateCloverPickup(transform)
+            : null;
+        if (travelTween != null)
         {
-            float duration = Mathf.Max(0.2f, fadeDuration);
-            Vector3 startScale = transform.localScale;
-            Sequence collectSequence = DOTween.Sequence()
-                .Join(transform.DOScale(startScale * 1.3f, duration).SetEase(Ease.OutBack))
-                .Join(transform.DOMoveY(transform.position.y + 0.3f, duration).SetEase(Ease.OutQuad))
-                .Join(transform.DORotate(transform.eulerAngles + Vector3.forward * 180f, duration, RotateMode.FastBeyond360))
-                .Join(spriteRenderer.DOFade(0f, duration))
-                .SetLink(gameObject, LinkBehaviour.KillOnDestroy);
-            yield return collectSequence.WaitForCompletion();
-            if (spriteRenderer != null) spriteRenderer.enabled = false;
+            yield return travelTween.WaitForCompletion();
+        }
+        else
+        {
+            UIController._instance?.RefreshTrebolUI();
+
+            if (spriteRenderer != null)
+            {
+                float duration = Mathf.Max(0.2f, fadeDuration);
+                Sequence collectSequence = DOTween.Sequence()
+                    .Join(transform.DOScale(transform.localScale * 1.3f, duration).SetEase(Ease.OutBack))
+                    .Join(transform.DOMoveY(transform.position.y + 0.3f, duration).SetEase(Ease.OutQuad))
+                    .Join(transform.DORotate(transform.eulerAngles + Vector3.forward * 180f, duration, RotateMode.FastBeyond360))
+                    .Join(spriteRenderer.DOFade(0f, duration))
+                    .SetLink(gameObject, LinkBehaviour.KillOnDestroy);
+                yield return collectSequence.WaitForCompletion();
+            }
         }
 
-        if (effect != null)
-        {
-            effect.SetActive(true);
-            var turnOff = effect.GetComponent<TurnOff_OnTime>();
-            if (turnOff != null)
-                yield return new WaitUntil(() => turnOff.finish);
-            else
-                yield return new WaitForSecondsRealtime(fadeDuration);
-        }
-
+        if (spriteRenderer != null) spriteRenderer.enabled = false;
         Destroy(gameObject);
     }
 }

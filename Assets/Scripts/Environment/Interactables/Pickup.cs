@@ -65,6 +65,8 @@ public class Pickup : MonoBehaviour
         if (pickupCollider != null)
             pickupCollider.enabled = false;
 
+        PlayCollectBurstAt(effect, transform.position);
+
         int collected = levelManager != null ? levelManager.GetGemsCollected() : 0;
         int total = levelManager != null ? levelManager.GetTotalGemsInLevel() : 0;
         Tween travelTween = UIController._instance != null && spriteRenderer != null
@@ -84,20 +86,23 @@ public class Pickup : MonoBehaviour
         if (pickupCollider != null)
             pickupCollider.enabled = false;
 
+        PlayCollectBurstAt(effect, transform.position);
+
         if (spriteRenderer != null)
             spriteRenderer.enabled = false;
 
-        if (effect != null)
-        {
-            effect.SetActive(true);
-            TurnOff_OnTime effectTimer = effect.GetComponent<TurnOff_OnTime>();
-            if (effectTimer != null)
-                yield return new WaitUntil(() => effectTimer == null || effectTimer.finish);
-            else
-                yield return new WaitForSeconds(0.35f);
-        }
-
         Destroy(gameObject);
+        yield break;
+    }
+
+    /// <summary>Plays an independent copy of the pickup burst at the original collection point.</summary>
+    public static void PlayCollectBurstAt(GameObject effectPrefab, Vector3 worldPosition)
+    {
+        if (effectPrefab == null) return;
+
+        GameObject burst = Instantiate(effectPrefab, worldPosition, Quaternion.identity);
+        burst.SetActive(true);
+        Destroy(burst, 1.25f);
     }
 
     public bool IsGem()

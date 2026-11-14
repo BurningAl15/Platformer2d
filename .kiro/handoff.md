@@ -1490,3 +1490,11 @@ El propietario reporta que Settings no aparece al pulsar desde MainMenu ni Level
 - Command: `scripts/release-test.sh android --android-code 28 --upload-test`. Unity 6000.6.0f1 completed the Android build; Fastlane reported successful upload to Google Play Internal Testing.
 - Artifact: `Builds/CI/Android/FoxsTale_28.aab`, 56,472,592 bytes; SHA-256 `db6636278679cda1a4aa0be0f623c12000c6874e7b89b1065171e427c1a21991`. `Assets/Resources/build_info.txt` reports build 28.
 - Play processing and tester availability have not been checked directly. Physical-device visual QA remains pending for live gem tracking, Clover/dice UI, life-token travel, haptics, and screen-sleep behavior. FastTask build record is local; cloud sync is unavailable.
+
+## Pickup feedback and Clover HUD follow-up — 2026-11-14
+
+- `UIController` now uses the existing serialized `CloverContainer/Clover_Img`: it remains visible in the prefab's disabled tint until `SaveManager` says the current level's Clover was collected, then switches to the unlocked tint when the pickup reaches it.
+- Gem and Clover source sprites travel to their current HUD projection while an independent instance of the existing `Collect_Effect` plays at the pickup's original world position. Clover and heart-fragment prefabs now reference that same existing effect asset.
+- On every second heart fragment, the fragment travels to the next existing heart slot. Only on arrival does `PlayerHealth` grant the permanent heart, refresh the slot, and pulse the new heart. A single fragment still gets its source burst and short pickup animation.
+- No duplicate HUD, runtime hierarchy, new script, or VFX asset was added. Backups: `/private/tmp/foxtale-pickup-vfx-before-20261114`.
+- `git diff --check`, FastTask JSON parsing, and serialized Clover/effect references reviewed. Unity compile/build and device visual QA remain pending. FastTask `2c67c5e7-4ee7-43e8-a34b-7f9704694ec6` is `testing`; cloud sync unavailable.

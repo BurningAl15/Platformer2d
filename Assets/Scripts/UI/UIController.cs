@@ -139,9 +139,6 @@ public class UIController : MonoBehaviour
             bonusHeartIcon.gameObject.SetActive(false);
         }
 
-        if (cloverImg != null)
-            cloverImg.gameObject.SetActive(false);
-
         if (endLevel_animator != null) endLevel_animator.gameObject.SetActive(false);
         if (amazingJob_animator != null) amazingJob_animator.gameObject.SetActive(false);
     }
@@ -282,43 +279,83 @@ public class UIController : MonoBehaviour
         if (gemTransform == null || gemsLevelText == null || Camera.main == null)
             return null;
 
-        Vector3 startPosition = gemTransform.position;
+        return AnimatePickupToImage(gemTransform, gemsLevelText, 0.38f, () =>
+        {
+            UpdateGems_UI(currentGems, totalGems);
+            if (gemsLevelText != null)
+            {
+                gemsLevelText.transform.DOKill();
+                gemsLevelText.transform.DOPunchScale(Vector3.one * 0.12f, 0.22f, 5, 0.5f);
+            }
+        });
+    }
+
+    /// <summary>Moves a collected Clover to its existing gameplay HUD icon.</summary>
+    public Tween AnimateCloverPickup(Transform cloverTransform)
+    {
+        if (cloverTransform == null || cloverImg == null || Camera.main == null)
+            return null;
+
+        return AnimatePickupToImage(cloverTransform, cloverImg, 0.48f, () =>
+        {
+            RefreshTrebolUI();
+            cloverImg.transform.DOKill();
+            cloverImg.transform.DOPunchScale(Vector3.one * 0.22f, 0.32f, 7, 0.6f);
+        });
+    }
+
+    /// <summary>Moves a completing heart fragment to the next heart slot before granting it.</summary>
+    public Tween AnimateHeartFragmentPickup(Transform fragmentTransform, Action onArrival)
+    {
+        if (fragmentTransform == null || Camera.main == null || PlayerHealth._instance == null)
+            return null;
+
+        int nextHeartIndex = PlayerHealth._instance.MaxHealth / 2;
+        if (hearts == null || nextHeartIndex < 0 || nextHeartIndex >= hearts.Count ||
+            hearts[nextHeartIndex]?.heartImage == null)
+            return null;
+
+        return AnimatePickupToImage(fragmentTransform, hearts[nextHeartIndex].heartImage, 0.62f, () =>
+        {
+            onArrival?.Invoke();
+            AnimatePermanentHeartGain();
+        });
+    }
+
+    private Tween AnimatePickupToImage(Transform pickupTransform, Graphic target, float duration, Action onArrival)
+    {
+        if (pickupTransform == null || target == null || Camera.main == null)
+            return null;
+
+        Vector3 startPosition = pickupTransform.position;
+        Vector3 startScale = pickupTransform.localScale;
         Sequence sequence = DOTween.Sequence()
             .Append(DOTween.To(() => 0f, progress =>
             {
-                if (gemTransform == null) return;
-                Vector3 targetPosition = GetGemCounterWorldPosition(gemTransform);
-                float easedProgress = progress * progress * progress;
-                gemTransform.position = Vector3.LerpUnclamped(startPosition, targetPosition, easedProgress);
-            }, 1f, 0.38f).SetEase(Ease.Linear))
-            .Join(gemTransform.DOScale(gemTransform.localScale * 0.7f, 0.38f).SetEase(Ease.InQuad))
-            .AppendCallback(() =>
-            {
-                UpdateGems_UI(currentGems, totalGems);
-                if (gemsLevelText != null)
-                {
-                    gemsLevelText.transform.DOKill();
-                    gemsLevelText.transform.DOPunchScale(Vector3.one * 0.12f, 0.22f, 5, 0.5f);
-                }
-            })
-            .SetLink(gemTransform.gameObject, LinkBehaviour.KillOnDestroy);
-
+                if (pickupTransform == null) return;
+                Vector3 targetPosition = GetHudWorldPosition(pickupTransform, target.rectTransform);
+                float easedProgress = 1f - Mathf.Pow(1f - progress, 3f);
+                pickupTransform.position = Vector3.LerpUnclamped(startPosition, targetPosition, easedProgress);
+            }, 1f, duration).SetEase(Ease.Linear))
+            .Join(pickupTransform.DOScale(startScale * 0.68f, duration).SetEase(Ease.InQuad))
+            .AppendCallback(() => onArrival?.Invoke())
+            .SetLink(pickupTransform.gameObject, LinkBehaviour.KillOnDestroy);
         return sequence;
     }
 
-    private Vector3 GetGemCounterWorldPosition(Transform gemTransform)
+    private Vector3 GetHudWorldPosition(Transform pickupTransform, RectTransform targetRect)
     {
-        Canvas canvas = gemsLevelText.canvas;
+        Canvas canvas = targetRect.GetComponentInParent<Canvas>();
         Camera uiCamera = canvas != null && canvas.renderMode != RenderMode.ScreenSpaceOverlay
             ? (canvas.worldCamera != null ? canvas.worldCamera : Camera.main)
             : null;
         Vector2 targetScreenPosition = RectTransformUtility.WorldToScreenPoint(
             uiCamera,
-            gemsLevelText.rectTransform.position);
-        float cameraDistance = Camera.main.WorldToScreenPoint(gemTransform.position).z;
+            targetRect.position);
+        float cameraDistance = Camera.main.WorldToScreenPoint(pickupTransform.position).z;
         Vector3 targetWorldPosition = Camera.main.ScreenToWorldPoint(
             new Vector3(targetScreenPosition.x, targetScreenPosition.y, cameraDistance));
-        targetWorldPosition.z = gemTransform.position.z;
+        targetWorldPosition.z = pickupTransform.position.z;
         return targetWorldPosition;
     }
 
@@ -339,12 +376,16 @@ public class UIController : MonoBehaviour
         gemsGlobalText.text = SaveManager.Instance.LoadGlobalGems().ToString();
     }
 
-    /// <summary>Refresca el contador de tréboles acumulados en el HUD.</summary>
+    /// <summary>Refreshes the current level's Clover HUD state.</summary>
     public void RefreshTrebolUI()
     {
-        // Clover progress is represented on each level-map point, not in the gameplay HUD.
-        if (cloverImg != null && cloverImg.gameObject.activeSelf)
-            cloverImg.gameObject.SetActive(false);
+        if (cloverImg == null) return;
+
+        cloverImg.gameObject.SetActive(true);
+        int levelNumber = SceneUtils.Get_CurrentLevelName();
+        bool hasCollectedClover = levelNumber > 0 && SaveManager.Instance != null &&
+                                  SaveManager.Instance.HasTrebol(levelNumber);
+        cloverImg.color = hasCollectedClover ? gotColor : disabledColor;
     }
 
     // ─────────────────────────────────────────────────────────────────────────

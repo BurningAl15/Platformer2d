@@ -50,21 +50,38 @@ public sealed class HeartFragmentPickup : MonoBehaviour
 
         isCollected = true;
         AppBootstrap.TriggerHapticFeedback();
-        if (grantedPermanentHeart)
-        {
-            player.AddPermanentHeart();
-            UIController._instance?.AnimatePermanentHeartGain();
-        }
 
         if (AudioMixerManager._instance != null)
             AudioMixerManager._instance.CallSFX(SFXType.Player_Pickup_Health);
 
-        StartCoroutine(CollectEffect());
+        StartCoroutine(CollectEffect(player, grantedPermanentHeart));
     }
 
-    private IEnumerator CollectEffect()
+    private IEnumerator CollectEffect(PlayerHealth player, bool grantsPermanentHeart)
     {
         if (pickupCollider != null) pickupCollider.enabled = false;
+        Pickup.PlayCollectBurstAt(effect, transform.position);
+
+        if (grantsPermanentHeart)
+        {
+            Tween travelTween = UIController._instance != null
+                ? UIController._instance.AnimateHeartFragmentPickup(transform, player.AddPermanentHeart)
+                : null;
+
+            if (travelTween != null)
+            {
+                yield return travelTween.WaitForCompletion();
+            }
+            else
+            {
+                player.AddPermanentHeart();
+                UIController._instance?.AnimatePermanentHeartGain();
+            }
+
+            if (spriteRenderer != null) spriteRenderer.enabled = false;
+            Destroy(gameObject);
+            yield break;
+        }
 
         if (spriteRenderer != null)
         {
@@ -78,20 +95,6 @@ public sealed class HeartFragmentPickup : MonoBehaviour
                 .SetLink(gameObject, LinkBehaviour.KillOnDestroy);
             yield return collectSequence.WaitForCompletion();
             if (transform != null) transform.localScale = startScale;
-        }
-
-        if (effect != null)
-        {
-            effect.SetActive(true);
-            TurnOff_OnTime turnOff = effect.GetComponent<TurnOff_OnTime>();
-            if (turnOff != null)
-                yield return new WaitUntil(() => turnOff.finish);
-            else
-                yield return new WaitForSeconds(fadeDuration);
-        }
-        else if (fadeDuration > 0f)
-        {
-            yield return new WaitForSeconds(fadeDuration);
         }
 
         if (spriteRenderer != null) spriteRenderer.enabled = false;

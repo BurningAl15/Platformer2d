@@ -143,5 +143,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HeartFragmentPickup
   levelNumber: 0
-  effect: {fileID: 0}
+  effect: {fileID: 5059461786325610233, guid: 3134b116c6ffe3541b63f4fd45408c9d, type: 3}
   fadeDuration: 0.5
