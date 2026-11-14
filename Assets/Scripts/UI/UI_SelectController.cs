@@ -80,7 +80,24 @@ public class UI_SelectController : MonoBehaviour
         ConfigureAutoResize(timeTargetText, 14f, 40f);
         ConfigureAutoResize(cloverText, 14f, 40f);
 
+        ClearLevelInfoPlaceholders();
+
+        if (gemsTargetText != null)
+            gemsTargetText.gameObject.SetActive(false);
+        if (cloverText != null)
+            cloverText.gameObject.SetActive(false);
+
         levelInfoContainer.SetActive(false);
+    }
+
+    private void ClearLevelInfoPlaceholders()
+    {
+        if (levelNameText != null) levelNameText.text = string.Empty;
+        if (gemsFoundText != null) gemsFoundText.text = string.Empty;
+        if (gemsTargetText != null) gemsTargetText.text = string.Empty;
+        if (bestTimeText != null) bestTimeText.text = string.Empty;
+        if (timeTargetText != null) timeTargetText.text = string.Empty;
+        if (cloverText != null) cloverText.text = string.Empty;
     }
 
     private static void ConfigureAutoResize(TextMeshProUGUI tmp, float minSize, float maxSize)
@@ -98,30 +115,23 @@ public class UI_SelectController : MonoBehaviour
         if (levelInfo == null) return;
 
         if (levelNameText != null)
+            levelNameText.text = levelInfo.levelName;
+
+        if (gemsFoundText != null)
+            gemsFoundText.text = $"{levelInfo.gemsCollected} / {levelInfo.totalGems}";
+        if (gemsTargetText != null)
         {
-            string language = PlayerPrefs.GetString("SelectedLanguage", "EN");
-            int fragments = SaveManager.Instance != null ? SaveManager.Instance.LoadHeartFragmentCount() : 0;
-            int permanentHearts = SaveManager.Instance != null ? SaveManager.Instance.LoadPermanentHeartCount() : 0;
-            string heartSummary = language == "ES"
-                ? $"CORAZONES: {3 + permanentHearts}  FRAGMENTOS: {fragments % 2}/2"
-                : $"HEARTS: {3 + permanentHearts}  FRAGMENTS: {fragments % 2}/2";
-            string fragmentFound = levelInfo.hasHeartFragment
-                ? (language == "ES" ? "\nFRAGMENTO ENCONTRADO" : "\nFRAGMENT FOUND")
-                : string.Empty;
-            string confirmPrompt = language == "ES"
-                ? "\nTOCA EL NIVEL O PRESIONA A PARA ENTRAR"
-                : "\nTAP LEVEL OR PRESS A TO ENTER";
-            levelNameText.text = $"{levelInfo.levelName}\n{heartSummary}{fragmentFound}{confirmPrompt}";
+            gemsTargetText.text = string.Empty;
+            gemsTargetText.gameObject.SetActive(false);
         }
-        if (gemsFoundText != null) gemsFoundText.text = "FOUND: " + levelInfo.gemsCollected;
-        if (gemsTargetText != null) gemsTargetText.text = "IN LEVEL: " + levelInfo.totalGems;
-        if (timeTargetText != null) timeTargetText.text = "TARGET: " + levelInfo.targetTime.ToString("F1") + "s";
+        if (timeTargetText != null)
+            timeTargetText.text = $"{levelInfo.targetTime:F1}s";
 
         if (bestTimeText != null)
         {
             bestTimeText.text = levelInfo.bestTime >= 99999f
-                ? "Best: ----"
-                : "Best: " + levelInfo.bestTime.ToString("F1") + "s";
+                ? "--"
+                : $"{levelInfo.bestTime:F1}s";
         }
 
         if (cloverIndicator != null)
@@ -134,12 +144,7 @@ public class UI_SelectController : MonoBehaviour
                     : new Color(0.48f, 0.48f, 0.48f, 0.9f);
         }
         if (cloverText != null)
-        {
-            string language = PlayerPrefs.GetString("SelectedLanguage", "EN");
-            cloverText.text = levelInfo.hasTrebol
-                ? (language == "ES" ? "ENCONTRADO" : "FOUND")
-                : (language == "ES" ? "NO ENCONTRADO" : "NOT FOUND");
-        }
+            cloverText.gameObject.SetActive(false);
     }
 
     /// <summary>

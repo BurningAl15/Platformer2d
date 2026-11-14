@@ -274,12 +274,12 @@ public class UIController : MonoBehaviour
     }
 
     /// <summary>Moves a collected gem to the existing HUD counter before updating its displayed value.</summary>
-    public Tween AnimateGemPickup(Transform gemTransform, int currentGems, int totalGems)
+    public Tween AnimateGemPickup(SpriteRenderer gemRenderer, int currentGems, int totalGems)
     {
-        if (gemTransform == null || gemsLevelText == null || Camera.main == null)
+        if (gemRenderer == null || gemsLevelText == null)
             return null;
 
-        return AnimatePickupToImage(gemTransform, gemsLevelText, 0.38f, () =>
+        return AnimatePickupToImage(gemRenderer, gemsLevelText, 0.38f, () =>
         {
             UpdateGems_UI(currentGems, totalGems);
             if (gemsLevelText != null)
@@ -291,12 +291,12 @@ public class UIController : MonoBehaviour
     }
 
     /// <summary>Moves a collected Clover to its existing gameplay HUD icon.</summary>
-    public Tween AnimateCloverPickup(Transform cloverTransform)
+    public Tween AnimateCloverPickup(SpriteRenderer cloverRenderer)
     {
-        if (cloverTransform == null || cloverImg == null || Camera.main == null)
+        if (cloverRenderer == null || cloverImg == null)
             return null;
 
-        return AnimatePickupToImage(cloverTransform, cloverImg, 0.48f, () =>
+        return AnimatePickupToImage(cloverRenderer, cloverImg, 0.48f, () =>
         {
             RefreshTrebolUI();
             cloverImg.transform.DOKill();
@@ -305,9 +305,9 @@ public class UIController : MonoBehaviour
     }
 
     /// <summary>Moves a completing heart fragment to the next heart slot before granting it.</summary>
-    public Tween AnimateHeartFragmentPickup(Transform fragmentTransform, Action onArrival)
+    public Tween AnimateHeartFragmentPickup(SpriteRenderer fragmentRenderer, Action onArrival)
     {
-        if (fragmentTransform == null || Camera.main == null || PlayerHealth._instance == null)
+        if (fragmentRenderer == null || PlayerHealth._instance == null)
             return null;
 
         int nextHeartIndex = PlayerHealth._instance.MaxHealth / 2;
@@ -315,48 +315,89 @@ public class UIController : MonoBehaviour
             hearts[nextHeartIndex]?.heartImage == null)
             return null;
 
-        return AnimatePickupToImage(fragmentTransform, hearts[nextHeartIndex].heartImage, 0.62f, () =>
+        return AnimatePickupToImage(fragmentRenderer, hearts[nextHeartIndex].heartImage, 0.62f, () =>
         {
             onArrival?.Invoke();
             AnimatePermanentHeartGain();
         });
     }
 
-    private Tween AnimatePickupToImage(Transform pickupTransform, Graphic target, float duration, Action onArrival)
+    private Tween AnimatePickupToImage(SpriteRenderer source, Graphic target, float duration, Action onArrival)
     {
-        if (pickupTransform == null || target == null || Camera.main == null)
+        if (source == null || source.sprite == null || target == null || Camera.main == null)
             return null;
 
-        Vector3 startPosition = pickupTransform.position;
-        Vector3 startScale = pickupTransform.localScale;
+        Canvas canvas = target.canvas != null ? target.canvas.rootCanvas : null;
+        RectTransform canvasRect = canvas != null ? canvas.transform as RectTransform : null;
+        if (canvasRect == null)
+            return null;
+
+        Camera uiCamera = canvas.renderMode == RenderMode.ScreenSpaceOverlay
+            ? null
+            : (canvas.worldCamera != null ? canvas.worldCamera : Camera.main);
+        Vector3 sourceScreenPosition = Camera.main.WorldToScreenPoint(source.bounds.center);
+        if (sourceScreenPosition.z <= 0f)
+            return null;
+
+        if (!RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                canvasRect, sourceScreenPosition, uiCamera, out Vector2 startLocalPosition))
+            return null;
+
+        Vector3 boundsMin = Camera.main.WorldToScreenPoint(source.bounds.min);
+        Vector3 boundsMax = Camera.main.WorldToScreenPoint(source.bounds.max);
+        float scaleFactor = Mathf.Max(canvas.scaleFactor, 0.01f);
+        Vector2 flightSize = new Vector2(
+            Mathf.Abs(boundsMax.x - boundsMin.x),
+            Mathf.Abs(boundsMax.y - boundsMin.y)) / scaleFactor;
+
+        GameObject flightObject = new GameObject("PickupFlight", typeof(RectTransform),
+            typeof(CanvasRenderer), typeof(Image));
+        RectTransform flightRect = flightObject.GetComponent<RectTransform>();
+        flightRect.SetParent(canvasRect, false);
+        flightRect.anchorMin = flightRect.anchorMax = new Vector2(0.5f, 0.5f);
+        flightRect.pivot = new Vector2(0.5f, 0.5f);
+        flightRect.anchoredPosition = startLocalPosition;
+        flightRect.sizeDelta = flightSize;
+
+        Image flightImage = flightObject.GetComponent<Image>();
+        flightImage.sprite = source.sprite;
+        flightImage.color = source.color;
+        flightImage.preserveAspect = true;
+        flightImage.raycastTarget = false;
+
         Sequence sequence = DOTween.Sequence()
             .Append(DOTween.To(() => 0f, progress =>
             {
-                if (pickupTransform == null) return;
-                Vector3 targetPosition = GetHudWorldPosition(pickupTransform, target.rectTransform);
+                if (flightRect == null || target == null)
+                    return;
+
+                Vector2 targetLocalPosition = GetTargetCanvasPosition(target.rectTransform, canvasRect, uiCamera);
                 float easedProgress = 1f - Mathf.Pow(1f - progress, 3f);
-                pickupTransform.position = Vector3.LerpUnclamped(startPosition, targetPosition, easedProgress);
+                flightRect.anchoredPosition = Vector2.LerpUnclamped(
+                    startLocalPosition, targetLocalPosition, easedProgress);
             }, 1f, duration).SetEase(Ease.Linear))
-            .Join(pickupTransform.DOScale(startScale * 0.68f, duration).SetEase(Ease.InQuad))
-            .AppendCallback(() => onArrival?.Invoke())
-            .SetLink(pickupTransform.gameObject, LinkBehaviour.KillOnDestroy);
+            .SetUpdate(UpdateType.Late)
+            .AppendCallback(() =>
+            {
+                if (flightRect != null && target != null)
+                    flightRect.anchoredPosition = GetTargetCanvasPosition(target.rectTransform, canvasRect, uiCamera);
+                onArrival?.Invoke();
+                if (flightObject != null)
+                    Destroy(flightObject);
+            })
+            .SetLink(flightObject, LinkBehaviour.KillOnDestroy);
+        source.enabled = false;
         return sequence;
     }
 
-    private Vector3 GetHudWorldPosition(Transform pickupTransform, RectTransform targetRect)
+    private static Vector2 GetTargetCanvasPosition(RectTransform targetRect, RectTransform canvasRect, Camera uiCamera)
     {
-        Canvas canvas = targetRect.GetComponentInParent<Canvas>();
-        Camera uiCamera = canvas != null && canvas.renderMode != RenderMode.ScreenSpaceOverlay
-            ? (canvas.worldCamera != null ? canvas.worldCamera : Camera.main)
-            : null;
         Vector2 targetScreenPosition = RectTransformUtility.WorldToScreenPoint(
             uiCamera,
             targetRect.position);
-        float cameraDistance = Camera.main.WorldToScreenPoint(pickupTransform.position).z;
-        Vector3 targetWorldPosition = Camera.main.ScreenToWorldPoint(
-            new Vector3(targetScreenPosition.x, targetScreenPosition.y, cameraDistance));
-        targetWorldPosition.z = pickupTransform.position.z;
-        return targetWorldPosition;
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(
+            canvasRect, targetScreenPosition, uiCamera, out Vector2 localPosition);
+        return localPosition;
     }
 
     private static void ConfigureAutoResize(TextMeshProUGUI tmp, float minSize, float maxSize)

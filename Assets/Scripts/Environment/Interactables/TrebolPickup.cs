@@ -85,7 +85,7 @@ public class TrebolPickup : MonoBehaviour
         Pickup.PlayCollectBurstAt(effect, transform.position);
 
         Tween travelTween = UIController._instance != null
-            ? UIController._instance.AnimateCloverPickup(transform)
+            ? UIController._instance.AnimateCloverPickup(spriteRenderer)
             : null;
         if (travelTween != null)
         {

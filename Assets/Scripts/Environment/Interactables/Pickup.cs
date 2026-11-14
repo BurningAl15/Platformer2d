@@ -14,7 +14,6 @@ public class Pickup : MonoBehaviour
 
     [SerializeField] private GameObject effect;
 
-    private Coroutine currentCoroutine = null;
     private bool hasBeenCollected;
 
     [SerializeField] private Transform pickupTransform;
@@ -28,6 +27,8 @@ public class Pickup : MonoBehaviour
         pickupTransform = transform;
         spriteRenderer = GetComponent<SpriteRenderer>();
         pickupCollider = GetComponent<Collider2D>();
+        if (effect != null && effect.transform.IsChildOf(transform))
+            effect.SetActive(false);
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -45,7 +46,7 @@ public class Pickup : MonoBehaviour
             levelManager?.UpdateGemsCollected(false);
             AudioMixerManager._instance?.CallSFX_Gems();
             // Global gems are awarded when the level is completed.
-            currentCoroutine = StartCoroutine(CollectGemEffect(levelManager));
+            StartCoroutine(CollectGemEffect(levelManager));
             return;
         }
 
@@ -56,7 +57,8 @@ public class Pickup : MonoBehaviour
             PlayerHealth._instance.CureDamage();
             AppBootstrap.TriggerHapticFeedback();
             AudioMixerManager._instance?.CallSFX(SFXType.Player_Pickup_Health);
-            currentCoroutine = StartCoroutine(CollectEffect());
+            PlayCollectBurstAt(effect, transform.position);
+            CollectEffect();
         }
     }
 
@@ -70,7 +72,7 @@ public class Pickup : MonoBehaviour
         int collected = levelManager != null ? levelManager.GetGemsCollected() : 0;
         int total = levelManager != null ? levelManager.GetTotalGemsInLevel() : 0;
         Tween travelTween = UIController._instance != null && spriteRenderer != null
-            ? UIController._instance.AnimateGemPickup(transform, collected, total)
+            ? UIController._instance.AnimateGemPickup(spriteRenderer, collected, total)
             : null;
 
         if (travelTween != null)
@@ -78,21 +80,18 @@ public class Pickup : MonoBehaviour
         else
             UIController._instance?.UpdateGems_UI(collected, total);
 
-        yield return CollectEffect();
+        CollectEffect();
     }
 
-    private IEnumerator CollectEffect()
+    private void CollectEffect()
     {
         if (pickupCollider != null)
             pickupCollider.enabled = false;
-
-        PlayCollectBurstAt(effect, transform.position);
 
         if (spriteRenderer != null)
             spriteRenderer.enabled = false;
 
         Destroy(gameObject);
-        yield break;
     }
 
     /// <summary>Plays an independent copy of the pickup burst at the original collection point.</summary>

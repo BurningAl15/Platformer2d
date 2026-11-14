@@ -65,7 +65,7 @@ public sealed class HeartFragmentPickup : MonoBehaviour
         if (grantsPermanentHeart)
         {
             Tween travelTween = UIController._instance != null
-                ? UIController._instance.AnimateHeartFragmentPickup(transform, player.AddPermanentHeart)
+                ? UIController._instance.AnimateHeartFragmentPickup(spriteRenderer, player.AddPermanentHeart)
                 : null;
 
             if (travelTween != null)
