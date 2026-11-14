@@ -2,6 +2,29 @@
   "schemaVersion": 1,
   "builds": [
     {
+      "id": "f8af8f9f-8e4a-40cf-954b-c28f09942c29",
+      "platform": "android",
+      "number": "29",
+      "androidCode": "29",
+      "uploadRequested": true,
+      "status": "uploaded_processing_unverified",
+      "finishedAt": "2026-11-14T00:10:37-05:00",
+      "source": ".kiro/handoff.md",
+      "storeStatus": "Unity Android AAB build completed from source commit 170e1e3 before remote package-update commit 92b2c3c was fetched. Fastlane reported successful upload to Google Play Internal Testing. Processing and tester availability have not been checked.",
+      "pipelineResult": "succeeded",
+      "storeUpload": "accepted",
+      "storeProcessing": "not_checked",
+      "testerAvailability": "not_checked",
+      "deviceQA": "not_run",
+      "evidence": {
+        "artifact": "Builds/CI/Android/FoxsTale_29.aab",
+        "bytes": 56473723,
+        "sha256": "8dcea6ae10a464fcbfea7978c858c903fdb1eb92726a8ba18ee7b74839236781",
+        "sourceCommit": "170e1e3",
+        "unityLog": "Builds/CI/logs/android_29.log"
+      }
+    },
+    {
       "id": "df29b722-3117-4834-bb69-e5c308b72634",
       "platform": "android",
       "number": "28",

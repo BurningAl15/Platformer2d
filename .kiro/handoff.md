@@ -1498,3 +1498,10 @@ El propietario reporta que Settings no aparece al pulsar desde MainMenu ni Level
 - On every second heart fragment, the fragment travels to the next existing heart slot. Only on arrival does `PlayerHealth` grant the permanent heart, refresh the slot, and pulse the new heart. A single fragment still gets its source burst and short pickup animation.
 - No duplicate HUD, runtime hierarchy, new script, or VFX asset was added. Backups: `/private/tmp/foxtale-pickup-vfx-before-20261114`.
 - `git diff --check`, FastTask JSON parsing, and serialized Clover/effect references reviewed. Unity compile/build and device visual QA remain pending. FastTask `2c67c5e7-4ee7-43e8-a34b-7f9704694ec6` is `testing`; cloud sync unavailable.
+
+## Package/UI update merge and Editor review — 2026-11-14
+
+- Fetched remote commit `92b2c3c` (`Update packages and add other packages`) from `origin/codex/fix-horizontal-platform-riding`. Its package, LevelPlay, PlayerPrefs Editor, `UI-Canvas.prefab`, and `Level_1.unity` changes did not overlap any paths changed by local pickup commit `170e1e3`.
+- Merged with Git's `ort` strategy without conflicts. Merge commit: `b2ae362`. The owner’s package/UI edits are now part of the working branch together with the Clover HUD and pickup-feedback implementation.
+- No new build was started after merging. Android build 29 had been compiled and Fastlane accepted the Internal Testing upload **before** commit `92b2c3c` was fetched; it is based on `170e1e3` and does not include the package update. Artifact: `Builds/CI/Android/FoxsTale_29.aab`, 56,473,723 bytes, SHA-256 `8dcea6ae10a464fcbfea7978c858c903fdb1eb92726a8ba18ee7b74839236781`. Play processing/tester availability and device QA are unverified.
+- Owner wants to inspect/test the merged project in Unity Editor and will request a build separately. FastTask `2c67c5e7-4ee7-43e8-a34b-7f9704694ec6` remains `testing`; cloud sync unavailable.
