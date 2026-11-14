@@ -14,6 +14,6 @@ AssetOrigin:
   serializedVersion: 1
   productId: 167903
   packageName: PlayerPrefs Editor
-  packageVersion: 1.2.4
+  packageVersion: 1.2.5
   assetPath: Assets/PlayerPrefsEditor/Editor/PreferencesEditor/PreferenceEntry.cs
-  uploadId: 782444
+  uploadId: 961616

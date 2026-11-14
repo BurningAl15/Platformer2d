@@ -3790,10 +3790,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1654703424546847951}
     m_Modifications:
-    - target: {fileID: 6764061836549542464, guid: 52073add4951c934daba861871d7e9ed, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: -56.718506
-      objectReference: {fileID: 0}
     - target: {fileID: 8365330789968393666, guid: 52073add4951c934daba861871d7e9ed, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -34053,6 +34049,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1654703424546847951}
     m_Modifications:
+    - target: {fileID: 4951603493656759128, guid: e092f2c910aa18e478553d3c753a5bff, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7325780443926661530, guid: e092f2c910aa18e478553d3c753a5bff, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8351164106526625650, guid: e092f2c910aa18e478553d3c753a5bff, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8508318025138696209, guid: e092f2c910aa18e478553d3c753a5bff, type: 3}
       propertyPath: m_Name
       value: Player
