@@ -123,8 +123,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -89.600006}
-  m_SizeDelta: {x: 0, y: 179}
+  m_AnchoredPosition: {x: 0, y: -68.40222}
+  m_SizeDelta: {x: 0, y: 136.6045}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &837873372991467240
 CanvasRenderer:
@@ -202,7 +202,7 @@ MonoBehaviour:
   m_charWidthMaxAdj: 0
   m_TextWrappingMode: 1
   m_wordWrappingRatios: 0.4
-  m_overflowMode: 1
+  m_overflowMode: 3
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 1
@@ -263,8 +263,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -84.5}
-  m_SizeDelta: {x: 0, y: -264.2}
+  m_AnchoredPosition: {x: 0, y: -54.056}
+  m_SizeDelta: {x: 0, y: -165.3}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &7915351257005553993
 GameObject:
@@ -302,7 +302,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.1, y: 0.08}
   m_AnchorMax: {x: 0.9, y: 0.92}
-  m_AnchoredPosition: {x: -0.0000076293945, y: -940}
+  m_AnchoredPosition: {x: 0, y: -940}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5486310408410072019
@@ -385,7 +385,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4199726455294008377, guid: efd0f002e955e6b4d9d63618dda0f0c1, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 480
+      value: 360
       objectReference: {fileID: 0}
     - target: {fileID: 4199726455294008377, guid: efd0f002e955e6b4d9d63618dda0f0c1, type: 3}
       propertyPath: m_SizeDelta.y
@@ -459,17 +459,21 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: LevelSelection
       objectReference: {fileID: 0}
+    - target: {fileID: 4199726455294008379, guid: efd0f002e955e6b4d9d63618dda0f0c1, type: 3}
+      propertyPath: m_PixelsPerUnitMultiplier
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 4199726456231294285, guid: efd0f002e955e6b4d9d63618dda0f0c1, type: 3}
       propertyPath: m_text
       value: Level Select
       objectReference: {fileID: 0}
     - target: {fileID: 4199726456231294285, guid: efd0f002e955e6b4d9d63618dda0f0c1, type: 3}
       propertyPath: m_fontSize
-      value: 75
+      value: 60
       objectReference: {fileID: 0}
     - target: {fileID: 4199726456231294285, guid: efd0f002e955e6b4d9d63618dda0f0c1, type: 3}
       propertyPath: m_fontSizeMax
-      value: 75
+      value: 60
       objectReference: {fileID: 0}
     - target: {fileID: 4199726456231294285, guid: efd0f002e955e6b4d9d63618dda0f0c1, type: 3}
       propertyPath: m_fontSizeMin
@@ -594,7 +598,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4199726455294008377, guid: efd0f002e955e6b4d9d63618dda0f0c1, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 480
+      value: 360
       objectReference: {fileID: 0}
     - target: {fileID: 4199726455294008377, guid: efd0f002e955e6b4d9d63618dda0f0c1, type: 3}
       propertyPath: m_SizeDelta.y
@@ -668,17 +672,21 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: Pause
       objectReference: {fileID: 0}
+    - target: {fileID: 4199726455294008379, guid: efd0f002e955e6b4d9d63618dda0f0c1, type: 3}
+      propertyPath: m_PixelsPerUnitMultiplier
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 4199726456231294285, guid: efd0f002e955e6b4d9d63618dda0f0c1, type: 3}
       propertyPath: m_text
       value: Resume
       objectReference: {fileID: 0}
     - target: {fileID: 4199726456231294285, guid: efd0f002e955e6b4d9d63618dda0f0c1, type: 3}
       propertyPath: m_fontSize
-      value: 75
+      value: 60
       objectReference: {fileID: 0}
     - target: {fileID: 4199726456231294285, guid: efd0f002e955e6b4d9d63618dda0f0c1, type: 3}
       propertyPath: m_fontSizeMax
-      value: 75
+      value: 60
       objectReference: {fileID: 0}
     - target: {fileID: 4199726456231294285, guid: efd0f002e955e6b4d9d63618dda0f0c1, type: 3}
       propertyPath: m_fontSizeMin
@@ -799,7 +807,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4199726455294008377, guid: efd0f002e955e6b4d9d63618dda0f0c1, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 480
+      value: 360
       objectReference: {fileID: 0}
     - target: {fileID: 4199726455294008377, guid: efd0f002e955e6b4d9d63618dda0f0c1, type: 3}
       propertyPath: m_SizeDelta.y
@@ -873,6 +881,10 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: MainMenu
       objectReference: {fileID: 0}
+    - target: {fileID: 4199726455294008379, guid: efd0f002e955e6b4d9d63618dda0f0c1, type: 3}
+      propertyPath: m_PixelsPerUnitMultiplier
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 4199726456231294285, guid: efd0f002e955e6b4d9d63618dda0f0c1, type: 3}
       propertyPath: m_text
       value: 'Main Menu
@@ -881,11 +893,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4199726456231294285, guid: efd0f002e955e6b4d9d63618dda0f0c1, type: 3}
       propertyPath: m_fontSize
-      value: 75
+      value: 60
       objectReference: {fileID: 0}
     - target: {fileID: 4199726456231294285, guid: efd0f002e955e6b4d9d63618dda0f0c1, type: 3}
       propertyPath: m_fontSizeMax
-      value: 75
+      value: 60
       objectReference: {fileID: 0}
     - target: {fileID: 4199726456231294285, guid: efd0f002e955e6b4d9d63618dda0f0c1, type: 3}
       propertyPath: m_fontSizeMin
