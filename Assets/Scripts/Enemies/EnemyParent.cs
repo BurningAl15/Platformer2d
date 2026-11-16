@@ -10,6 +10,8 @@ public class EnemyParent : MonoBehaviour
     protected bool isDeath = false;
     protected Coroutine currentCoroutine = null;
 
+    public bool IsDying => isDeath;
+
     [SerializeField] protected Collider2D _collider2D;
     [SerializeField] protected SpriteRenderer _spriteRenderer;
 

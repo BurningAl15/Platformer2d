@@ -68,10 +68,17 @@
     {
       "id": "9cfdc6cd-84ee-41ed-93fc-65796253e32e",
       "title": "Resolve stomp-versus-damage priority",
-      "description": "P1 gameplay. Reproduce the reported simultaneous enemy stomp and player damage with the exact enemy prefab and level. The source shows StompBox kills any `Enemy` trigger contact; default enemy prefabs do not carry DamagePlayer, while projectile and hazard scripts can damage independently. Do not change collider sizes or damage rules until the overlapping callback/source is identified. Acceptance: a valid top stomp kills and bounces without damage; side/underside contact still damages as designed.",
-      "status": "todo",
+      "description": "P1 gameplay. Reproduce the reported simultaneous enemy stomp and player damage with the exact enemy prefab and level. Static review found StompBox kills on any `Enemy` trigger contact, while Rat/Frog/Eagle enemy prefabs also carry broad DamagePlayer triggers that can overlap the player body independently. Do not change collider sizes or damage rules until the overlapping callback/source is identified. Acceptance: a valid top stomp kills and bounces without damage; side/underside contact still damages as designed.\n\n2026-11-15 Codex — Static audit corrected the earlier handoff assumption: Rat/Frog/Eagle enemy prefabs have DamagePlayer triggers; Rat and Frog damage triggers are substantially larger than the Player StompBox. Implemented directional stomp qualification, a widened/raised foot sensor, and deferred enemy-only contact damage so a successful stomp can win the same overlap; hazards without EnemyParent remain immediate. Static checks only; Unity Editor compile and runtime cases pending.",
+      "status": "testing",
       "createdAt": "2026-11-12T23:26:25-05:00",
-      "updatedAt": "2026-11-12T23:26:25-05:00"
+      "updatedAt": "2026-11-15T19:32:00-05:00",
+      "events": [
+        {
+          "at": "2026-11-15T19:32:00-05:00",
+          "actor": "Codex",
+          "summary": "Backed up relevant files, then adjusted the existing stomp sensor geometry and added downward/top-contact qualification. Enemy damage is deferred briefly and suppressed when that enemy has been stomped; non-enemy hazard damage remains immediate. Static checks pass. Unity Editor/Play Mode verification remains pending."
+        }
+      ]
     },
     {
       "id": "ab99811b-7d16-467c-9e04-f10cfe9c254f",
