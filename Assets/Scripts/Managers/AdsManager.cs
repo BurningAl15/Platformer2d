@@ -37,6 +37,8 @@ using Unity.Services.LevelPlay;
 public class AdsManager : MonoBehaviour
 {
     public static AdsManager Instance { get; private set; }
+    public static bool SupportsAds => Application.platform == RuntimePlatform.Android ||
+                                      Application.platform == RuntimePlatform.IPhonePlayer;
 
     // ─────────────────────────────────────────────────────────────────────────
     //  Configuración
@@ -126,6 +128,7 @@ public class AdsManager : MonoBehaviour
 
     private void Start()
     {
+        if (!SupportsAds) return;
         sessionStartTime = Time.realtimeSinceStartup;
 
         // Leer el estado de NoAds desde el cache local (sincrónico, inmediato).
@@ -177,7 +180,7 @@ public class AdsManager : MonoBehaviour
     public void SetPrivacyEligibilityResolved(bool eligible)
     {
         privacyEligibilityResolved = true;
-        mayServeAds = eligible;
+        mayServeAds = eligible && SupportsAds;
         if (eligible)
             TryInitializeWhenEligible();
     }
@@ -195,15 +198,10 @@ public class AdsManager : MonoBehaviour
             return;
 
         RevenueCatManager manager = RevenueCatManager.Instance;
-        if (manager != null && manager.IsEntitlementStatusResolved)
-        {
-            _noAdsActive = manager.IsNoAdsPurchased();
-        }
-        else
-        {
-            _noAdsActive = PlayerPrefs.GetInt("IAP_NoAds_Purchased", 0) == 1;
-        }
+        if (manager == null || !manager.IsEntitlementStatusResolved)
+            return;
 
+        _noAdsActive = manager.IsNoAdsPurchased();
         if (!_noAdsActive)
             Initialize();
     }

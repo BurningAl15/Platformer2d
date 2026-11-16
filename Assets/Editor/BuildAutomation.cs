@@ -280,6 +280,7 @@ public static class BuildAutomation
 
         PlistDocument plist = new PlistDocument();
         plist.ReadFromFile(plistPath);
+        plist.root.SetString("GADApplicationIdentifier", "ca-app-pub-5832518550120319~9899814317");
         SetLandscapeOrientations(plist.root, "UISupportedInterfaceOrientations");
         SetLandscapeOrientations(plist.root, "UISupportedInterfaceOrientations~ipad");
         plist.WriteToFile(plistPath);

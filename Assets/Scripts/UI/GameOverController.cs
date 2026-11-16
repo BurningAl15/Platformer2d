@@ -153,7 +153,7 @@ public class GameOverController : MonoBehaviour
         if (adFeedbackText != null)
             adFeedbackText.text = string.Empty;
         if (watchAdButton != null)
-            watchAdButton.gameObject.SetActive(AdsManager.Instance == null || !AdsManager.Instance.IsNoAdsActive());
+            watchAdButton.gameObject.SetActive(AdsManager.SupportsAds && AdsManager.Instance != null && !AdsManager.Instance.IsNoAdsActive());
 
         // Mostrar panel con animación
         panelGroup.gameObject.SetActive(true);
