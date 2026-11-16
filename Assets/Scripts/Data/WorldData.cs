@@ -31,6 +31,15 @@ public class WorldData : ScriptableObject
     [Tooltip("Nombres de escena Unity en orden. Deben coincidir exactamente con los nombres en Build Settings.")]
     public string[] levelSceneNames = { "Level_0", "Level_1" };
 
+    [Tooltip("Par times in seconds, in the same order as the level scenes.")]
+    public float[] targetTimes;
+
+    public float GetTargetTime(string sceneName)
+    {
+        int index = System.Array.IndexOf(levelSceneNames ?? System.Array.Empty<string>(), sceneName);
+        return index >= 0 && targetTimes != null && index < targetTimes.Length ? targetTimes[index] : 0f;
+    }
+
     [Header("Desbloqueo")]
     [Tooltip("Estrellas totales del mundo ANTERIOR necesarias para desbloquear este mundo. 0 = siempre desbloqueado.")]
     public int starsRequiredToUnlock = 0;

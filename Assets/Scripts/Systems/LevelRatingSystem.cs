@@ -43,7 +43,7 @@ public class LevelRatingSystem : MonoBehaviour
     /// <summary>
     /// Calcula la calificación basándose en el tiempo y gemas obtenidas.
     /// </summary>
-    public LevelRating CalculateRating(float time, int gems, LevelRequirements req)
+    public static LevelRating CalculateRating(float time, int gems, LevelRequirements req)
     {
         int stars = 1; // completar el nivel ya da 1 estrella
 

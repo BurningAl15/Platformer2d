@@ -107,6 +107,8 @@ public class MapPointsHolder : MonoBehaviour
             _mapPoints[i].bestTime = SaveManager.Instance != null
                 ? SaveManager.Instance.LoadBestTime(levelNumber)
                 : PlayerPrefs.GetFloat(StringUtils.Get_TimeInLevel(levelNumber), 99999f);
+            float parTime = worldData != null ? worldData.GetTargetTime(worldData.GetLevelScene(i)) : 0f;
+            if (parTime > 0f) _mapPoints[i].targetTime = parTime;
             _mapPoints[i].CheckTime();
 
             // Trébol 🍀
