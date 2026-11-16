@@ -1,6 +1,8 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
+using UnityEngine.Localization.Settings;
+using UnityEngine.Localization.Components;
 using TMPro;
 
 /// <summary>
@@ -17,6 +19,8 @@ using TMPro;
 /// </summary>
 public class NoAdsPurchaseButton : MonoBehaviour
 {
+    private string localizedPrice;
+    private string statusKey;
     [Header("Panel de Tienda (Opcional)")]
     [Tooltip("CanvasGroup del panel completo de tienda para abrir/cerrar")]
     [SerializeField] private CanvasGroup storePanelGroup;
@@ -43,6 +47,12 @@ public class NoAdsPurchaseButton : MonoBehaviour
 
     private void Awake()
     {
+        LocalizeStringEvent labelLocalizer = purchaseButtonLabel != null
+            ? purchaseButtonLabel.GetComponent<LocalizeStringEvent>()
+            : null;
+        if (labelLocalizer != null)
+            labelLocalizer.enabled = false;
+
         BindButtonListener(openStoreButton, OpenPanel);
         BindButtonListener(closeStoreButton, ClosePanel);
         BindButtonListener(purchaseButton, OnPurchasePressed);
@@ -69,6 +79,7 @@ public class NoAdsPurchaseButton : MonoBehaviour
         ConfigureAllTextsAutoResize();
         RefreshUI();
         RefreshPriceWhenReady();
+        LocalizationSettings.SelectedLocaleChanged += OnLocaleChanged;
 
         // Keep this object active: it owns the listeners that open the store.
         // Its CanvasGroup controls visibility and input while the panel is closed.
@@ -129,8 +140,18 @@ public class NoAdsPurchaseButton : MonoBehaviour
 
     private void OnDestroy()
     {
+        LocalizationSettings.SelectedLocaleChanged -= OnLocaleChanged;
         if (RevenueCatManager.Instance != null)
             RevenueCatManager.Instance.PurchasesInitialized -= LoadLocalizedPrice;
+    }
+
+    private void OnLocaleChanged(UnityEngine.Localization.Locale locale)
+    {
+        RefreshUI();
+        if (!string.IsNullOrEmpty(localizedPrice) && purchaseButtonLabel != null)
+            purchaseButtonLabel.text = GameLocalization.Get("IAP_REMOVE_ADS_PRICE", localizedPrice);
+        if (!string.IsNullOrEmpty(statusKey))
+            SetStatus(statusKey);
     }
 
     private void RefreshPriceWhenReady()
@@ -156,14 +177,15 @@ public class NoAdsPurchaseButton : MonoBehaviour
         manager.GetNoAdsPrice(
             price =>
             {
+                localizedPrice = price;
                 if (purchaseButtonLabel != null)
-                    purchaseButtonLabel.text = $"Remove Ads - {price}";
+                    purchaseButtonLabel.text = GameLocalization.Get("IAP_REMOVE_ADS_PRICE", price);
             },
             error =>
             {
                 if (purchaseButtonLabel != null)
-                    purchaseButtonLabel.text = "Remove Ads";
-                SetStatus("Price unavailable. Please try again later.");
+                    purchaseButtonLabel.text = GameLocalization.Get("UI_REMOVE_ADS");
+                SetStatus("IAP_PRICE_UNAVAILABLE");
                 Debug.LogWarning($"[NoAdsPurchaseButton] No se pudo cargar el precio: {error}");
             });
     }
@@ -189,7 +211,7 @@ public class NoAdsPurchaseButton : MonoBehaviour
             noAdsActiveIndicator.SetActive(hasPurchased);
 
         if (purchaseButtonLabel != null && !hasPurchased)
-            purchaseButtonLabel.text = "Remove Ads";
+            purchaseButtonLabel.text = GameLocalization.Get("UI_REMOVE_ADS");
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -201,7 +223,7 @@ public class NoAdsPurchaseButton : MonoBehaviour
         SetStatus(string.Empty);
         if (RevenueCatManager.Instance == null)
         {
-            SetStatus("Purchases unavailable right now.");
+            SetStatus("IAP_PURCHASES_UNAVAILABLE");
             return;
         }
 
@@ -212,7 +234,7 @@ public class NoAdsPurchaseButton : MonoBehaviour
             {
                 SetLoading(false);
                 RefreshUI();
-                SetStatus("Purchase complete. Ads removed.");
+                SetStatus("IAP_PURCHASE_COMPLETE");
                 Debug.Log("[NoAdsPurchaseButton] Purchase successful. Ads removed.");
             },
             onError: errorMsg =>
@@ -220,7 +242,7 @@ public class NoAdsPurchaseButton : MonoBehaviour
                 SetLoading(false);
                 if (errorMsg != "cancelled")
                 {
-                    SetStatus("Purchase could not be completed. Please try again.");
+                    SetStatus("IAP_PURCHASE_FAILED");
                     Debug.LogWarning($"[NoAdsPurchaseButton] Purchase error: {errorMsg}");
                 }
             }
@@ -232,7 +254,7 @@ public class NoAdsPurchaseButton : MonoBehaviour
         SetStatus(string.Empty);
         if (RevenueCatManager.Instance == null)
         {
-            SetStatus("Restore unavailable right now.");
+            SetStatus("IAP_RESTORE_UNAVAILABLE");
             return;
         }
 
@@ -243,13 +265,13 @@ public class NoAdsPurchaseButton : MonoBehaviour
             {
                 SetLoading(false);
                 RefreshUI();
-                SetStatus("Remove Ads purchase restored.");
+                SetStatus("IAP_RESTORE_SUCCESS");
                 Debug.Log("[NoAdsPurchaseButton] Purchases restored.");
             },
             onError: errorMsg =>
             {
                 SetLoading(false);
-                SetStatus("No purchase found to restore.");
+                SetStatus("IAP_RESTORE_EMPTY");
                 Debug.LogWarning($"[NoAdsPurchaseButton] Restore error: {errorMsg}");
             }
         );
@@ -273,7 +295,8 @@ public class NoAdsPurchaseButton : MonoBehaviour
 
     private void SetStatus(string message)
     {
+        statusKey = message;
         if (statusText != null)
-            statusText.text = message;
+            statusText.text = string.IsNullOrEmpty(message) ? string.Empty : GameLocalization.Get(message);
     }
 }

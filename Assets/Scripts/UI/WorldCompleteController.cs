@@ -38,7 +38,7 @@ public class WorldCompleteController : MonoBehaviour
             return;
 
         var progress = WorldProgressManager.Instance;
-        SetText(worldNameText, completedWorld.worldName);
+        SetText(worldNameText, GameLocalization.GetWorldName(completedWorld.worldName));
         SetText(starsText, $"{progress.GetTotalStarsInWorld(completedWorld)} / {completedWorld.MaxStars}");
         SetText(gemsText, $"{progress.GetGemsCollectedInWorld(completedWorld)} / {completedWorld.totalGems}");
         SetText(trebolsText, $"{progress.GetTrebolsInWorld(completedWorld)} / {completedWorld.totalTrebols}");

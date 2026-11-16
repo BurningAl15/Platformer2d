@@ -1,6 +1,7 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.Serialization;
+using UnityEngine.Localization.Settings;
 using DG.Tweening;
 
 /// <summary>
@@ -46,6 +47,7 @@ public class UI_SelectController : MonoBehaviour
     [SerializeField] private Ease hideEase = Ease.InBack;
 
     private RectTransform panelRect;
+    private MapPoint currentLevelInfo;
 
     private void Awake()
     {
@@ -90,6 +92,22 @@ public class UI_SelectController : MonoBehaviour
         levelInfoContainer.SetActive(false);
     }
 
+    private void OnEnable()
+    {
+        LocalizationSettings.SelectedLocaleChanged += OnLocaleChanged;
+    }
+
+    private void OnDisable()
+    {
+        LocalizationSettings.SelectedLocaleChanged -= OnLocaleChanged;
+    }
+
+    private void OnLocaleChanged(UnityEngine.Localization.Locale locale)
+    {
+        if (currentLevelInfo != null)
+            RenderLevelData(currentLevelInfo);
+    }
+
     private void ClearLevelInfoPlaceholders()
     {
         if (levelNameText != null) levelNameText.text = string.Empty;
@@ -113,9 +131,10 @@ public class UI_SelectController : MonoBehaviour
     public void RenderLevelData(MapPoint levelInfo)
     {
         if (levelInfo == null) return;
+        currentLevelInfo = levelInfo;
 
         if (levelNameText != null)
-            levelNameText.text = levelInfo.levelName;
+            levelNameText.text = GameLocalization.GetLevelName(levelInfo.currentLevel, levelInfo.levelName);
 
         if (gemsFoundText != null)
             gemsFoundText.text = $"{levelInfo.gemsCollected} / {levelInfo.totalGems}";
@@ -125,13 +144,13 @@ public class UI_SelectController : MonoBehaviour
             gemsTargetText.gameObject.SetActive(false);
         }
         if (timeTargetText != null)
-            timeTargetText.text = $"{levelInfo.targetTime:F1}s";
+            timeTargetText.text = GameLocalization.Get("SELECT_TIME_SECONDS", levelInfo.targetTime.ToString("F1"));
 
         if (bestTimeText != null)
         {
             bestTimeText.text = levelInfo.bestTime >= 99999f
-                ? "--"
-                : $"{levelInfo.bestTime:F1}s";
+                ? GameLocalization.Get("SELECT_BEST_NONE")
+                : GameLocalization.Get("SELECT_TIME_SECONDS", levelInfo.bestTime.ToString("F1"));
         }
 
         if (cloverIndicator != null)

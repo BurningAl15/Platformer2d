@@ -1,0 +1,415 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: Game UI_en
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Tables.StringTable
+  m_LocaleId:
+    m_Code: en
+  m_SharedData: {fileID: 11400000, guid: 964eafbbf103340cc94b46fc25ecb891, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 783278080
+    m_Localized: Clover
+    m_Metadata:
+      m_Items: []
+  - m_Id: 800055296
+    m_Localized: 'SFX: ON'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249600
+    m_Localized: SETTINGS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249601
+    m_Localized: Time
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249602
+    m_Localized: Gems
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249603
+    m_Localized: CLOSE
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249604
+    m_Localized: < MENU
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249605
+    m_Localized: 'MUSIC: ON'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249606
+    m_Localized: Swipe and tap to select the level
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249607
+    m_Localized: SHOP
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249608
+    m_Localized: Quit
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249609
+    m_Localized: Play without interruptions!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249610
+    m_Localized: Restore Purchases
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249611
+    m_Localized: Close
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249612
+    m_Localized: Do you really want to delete your progress?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249613
+    m_Localized: Warning!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249614
+    m_Localized: STORE / REMOVE ADS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249615
+    m_Localized: Remove Ads Active
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249616
+    m_Localized: Level Number
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249617
+    m_Localized: 'IN LEVEL: 999'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249618
+    m_Localized: 'FOUND: 0'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249619
+    m_Localized: 'TARGET: 123s'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249620
+    m_Localized: 'Best: ----'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249621
+    m_Localized: Start
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249622
+    m_Localized: New Game
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249623
+    m_Localized: PAUSED
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249624
+    m_Localized: Use Gems (+1 Life)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249625
+    m_Localized: Stop
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249626
+    m_Localized: Secret Dice (4-6 Lives)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249627
+    m_Localized: 'Clovers: 0 / 10'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249628
+    m_Localized: Continue
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249629
+    m_Localized: Spend Clover (Roll Dice)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249630
+    m_Localized: 'Clovers: 0'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249631
+    m_Localized: 'Total Time: 00:00'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249632
+    m_Localized: Roll Dice
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249633
+    m_Localized: WORLD COMPLETED!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249634
+    m_Localized: Watch Video (+2 Lives)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249635
+    m_Localized: 'Stars: 0 / 30'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249636
+    m_Localized: 'Gems: 0'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249637
+    m_Localized: DICE OF LIVES
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249638
+    m_Localized: Normal Dice (1 - 3 Lives)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249639
+    m_Localized: Remove Ads
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249640
+    m_Localized: Upgrade with Clover
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249641
+    m_Localized: 10 Gems
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249642
+    m_Localized: GAME OVER
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249643
+    m_Localized: Continue to Map
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249644
+    m_Localized: 'Gems: 0 / 1100'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249645
+    m_Localized: Return to Map
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249646
+    m_Localized: World 1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249647
+    m_Localized: 'MUSIC: ON'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249648
+    m_Localized: 'MUSIC: OFF'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249649
+    m_Localized: 'SFX: ON'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249650
+    m_Localized: 'SFX: OFF'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249651
+    m_Localized: 'HAPTICS: ON'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249652
+    m_Localized: 'HAPTICS: OFF'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249653
+    m_Localized: 'SCREEN: ALWAYS AWAKE'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249654
+    m_Localized: 'SCREEN: NORMAL SLEEP'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249655
+    m_Localized: 'LANGUAGE: ENGLISH'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249656
+    m_Localized: 'LANGUAGE: SPANISH'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249657
+    m_Localized: RESET PROGRESS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249658
+    m_Localized: TAP TO CONFIRM RESET
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249659
+    m_Localized: PROGRESS RESET!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249660
+    m_Localized: 'LEVELS: {0}/10  |  GEMS: {1}  |  CLOVERS: {2}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249661
+    m_Localized: 'PAUSED
+
+      GEMS: {0}/{1}  |  CLOVER: {2}
+
+      FRAGMENTS: {3}/2  |  HEARTS: {4}  |  LIVES: {5}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249662
+    m_Localized: YES
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249663
+    m_Localized: NO
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249664
+    m_Localized: +{0} LIVES
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249665
+    m_Localized: +{0} LIVES  +1 HEART
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249666
+    m_Localized: "1\u20133 LIVES"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249667
+    m_Localized: "3\u20135 LIVES"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249668
+    m_Localized: "2\u20136 LIVES"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249669
+    m_Localized: "4\u20136 LIVES  + HEART"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249670
+    m_Localized: '{0}s'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249671
+    m_Localized: --
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249672
+    m_Localized: '1: The Beginning'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249673
+    m_Localized: '2: Entering in the Tomb'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249674
+    m_Localized: '3: Easy Learning'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249675
+    m_Localized: '4: Let''s start the test'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249676
+    m_Localized: '5: Killing In The Tomb'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249677
+    m_Localized: '6: Vertical Climbing'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249678
+    m_Localized: 7:Vertical Climbing 2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249679
+    m_Localized: '8: Boss Fight'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249680
+    m_Localized: World 1 - The Forest
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249681
+    m_Localized: '{0} Gems'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249682
+    m_Localized: 'Gems: {0}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249683
+    m_Localized: 'Clovers: {0}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249684
+    m_Localized: Ad unavailable. Please try again later.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249685
+    m_Localized: Price unavailable. Please try again later.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249686
+    m_Localized: Purchases unavailable right now.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249687
+    m_Localized: Purchase complete. Ads removed.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249688
+    m_Localized: Purchase could not be completed. Please try again.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249689
+    m_Localized: Restore unavailable right now.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249690
+    m_Localized: Remove Ads purchase restored.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249691
+    m_Localized: No purchase found to restore.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249692
+    m_Localized: Remove Ads - {0}
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249693
+    m_Localized: Yes
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249694
+    m_Localized: No
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 2
+    RefIds: []

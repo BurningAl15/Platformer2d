@@ -1,0 +1,416 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
+  m_Name: Game UI Shared Data
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Tables.SharedTableData
+  m_TableCollectionName: Game UI
+  m_TableCollectionNameGuidString: 964eafbbf103340cc94b46fc25ecb891
+  m_Entries:
+  - m_Id: 783278080
+    m_Key: UI_CLOVER
+    m_Metadata:
+      m_Items: []
+  - m_Id: 800055296
+    m_Key: UI_SFX_ON
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249600
+    m_Key: UI_SETTINGS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249601
+    m_Key: UI_TIME
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249602
+    m_Key: UI_GEMS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249603
+    m_Key: UI_CLOSE
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249604
+    m_Key: UI_MENU_BACK
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249605
+    m_Key: UI_MUSIC_ON
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249606
+    m_Key: UI_LEVEL_SELECT_HINT
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249607
+    m_Key: UI_SHOP
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249608
+    m_Key: UI_QUIT
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249609
+    m_Key: UI_STORE_TAGLINE
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249610
+    m_Key: UI_RESTORE_PURCHASES
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249611
+    m_Key: UI_CLOSE_TITLE
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249612
+    m_Key: UI_DELETE_PROGRESS_PROMPT
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249613
+    m_Key: UI_WARNING
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249614
+    m_Key: UI_STORE_REMOVE_ADS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249615
+    m_Key: UI_REMOVE_ADS_ACTIVE
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249616
+    m_Key: UI_LEVEL_NUMBER
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249617
+    m_Key: UI_IN_LEVEL
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249618
+    m_Key: UI_FOUND
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249619
+    m_Key: UI_TARGET
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249620
+    m_Key: UI_BEST
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249621
+    m_Key: UI_START
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249622
+    m_Key: UI_NEW_GAME
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249623
+    m_Key: UI_PAUSED
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249624
+    m_Key: UI_USE_GEMS_LIFE
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249625
+    m_Key: UI_STOP
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249626
+    m_Key: UI_SECRET_DICE
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249627
+    m_Key: UI_CLOVERS_PROGRESS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249628
+    m_Key: UI_CONTINUE
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249629
+    m_Key: UI_SPEND_CLOVER_DICE
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249630
+    m_Key: UI_CLOVERS_COUNT
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249631
+    m_Key: UI_TOTAL_TIME
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249632
+    m_Key: UI_ROLL_DICE
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249633
+    m_Key: UI_WORLD_COMPLETED
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249634
+    m_Key: UI_WATCH_VIDEO_LIVES
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249635
+    m_Key: UI_STARS_PROGRESS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249636
+    m_Key: UI_GEMS_COUNT
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249637
+    m_Key: UI_DICE_OF_LIVES
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249638
+    m_Key: UI_NORMAL_DICE
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249639
+    m_Key: UI_REMOVE_ADS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249640
+    m_Key: UI_UPGRADE_CLOVER
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249641
+    m_Key: UI_GEMS_10
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249642
+    m_Key: UI_GAME_OVER
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249643
+    m_Key: UI_CONTINUE_TO_MAP
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249644
+    m_Key: UI_GEMS_LEVEL
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249645
+    m_Key: UI_RETURN_TO_MAP
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249646
+    m_Key: UI_WORLD_1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249647
+    m_Key: SETTINGS_MUSIC_ON
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249648
+    m_Key: SETTINGS_MUSIC_OFF
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249649
+    m_Key: SETTINGS_SFX_ON
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249650
+    m_Key: SETTINGS_SFX_OFF
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249651
+    m_Key: SETTINGS_HAPTICS_ON
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249652
+    m_Key: SETTINGS_HAPTICS_OFF
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249653
+    m_Key: SETTINGS_AWAKE_ON
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249654
+    m_Key: SETTINGS_AWAKE_OFF
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249655
+    m_Key: SETTINGS_LANGUAGE_EN
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249656
+    m_Key: SETTINGS_LANGUAGE_ES
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249657
+    m_Key: SETTINGS_RESET
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249658
+    m_Key: SETTINGS_RESET_CONFIRM
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249659
+    m_Key: SETTINGS_RESET_DONE
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249660
+    m_Key: SETTINGS_PROGRESS_SUMMARY
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249661
+    m_Key: PAUSE_STATS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249662
+    m_Key: PAUSE_CLOVER_YES
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249663
+    m_Key: PAUSE_CLOVER_NO
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249664
+    m_Key: DICE_RESULT_LIVES
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249665
+    m_Key: DICE_RESULT_SECRET
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249666
+    m_Key: DICE_RANGE_NORMAL
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249667
+    m_Key: DICE_RANGE_3_5
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249668
+    m_Key: DICE_RANGE_2_6
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249669
+    m_Key: DICE_RANGE_SECRET
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249670
+    m_Key: SELECT_TIME_SECONDS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249671
+    m_Key: SELECT_BEST_NONE
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249672
+    m_Key: LEVEL_NAME_1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249673
+    m_Key: LEVEL_NAME_2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249674
+    m_Key: LEVEL_NAME_3
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249675
+    m_Key: LEVEL_NAME_4
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249676
+    m_Key: LEVEL_NAME_5
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249677
+    m_Key: LEVEL_NAME_6
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249678
+    m_Key: LEVEL_NAME_7
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249679
+    m_Key: LEVEL_NAME_8
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249680
+    m_Key: WORLD_NAME_1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249681
+    m_Key: GAMEOVER_GEM_COST
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249682
+    m_Key: GAMEOVER_GEMS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249683
+    m_Key: GAMEOVER_CLOVERS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249684
+    m_Key: AD_UNAVAILABLE
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249685
+    m_Key: IAP_PRICE_UNAVAILABLE
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249686
+    m_Key: IAP_PURCHASES_UNAVAILABLE
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249687
+    m_Key: IAP_PURCHASE_COMPLETE
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249688
+    m_Key: IAP_PURCHASE_FAILED
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249689
+    m_Key: IAP_RESTORE_UNAVAILABLE
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249690
+    m_Key: IAP_RESTORE_SUCCESS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249691
+    m_Key: IAP_RESTORE_EMPTY
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249692
+    m_Key: IAP_REMOVE_ADS_PRICE
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249693
+    m_Key: UI_CONFIRM_YES
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249694
+    m_Key: UI_CONFIRM_NO
+    m_Metadata:
+      m_Items: []
+  m_Metadata:
+    m_Items: []
+  m_KeyGenerator:
+    rid: 5211174209401389080
+  references:
+    version: 2
+    RefIds:
+    - rid: 5211174209401389080
+      type: {class: DistributedUIDGenerator, ns: UnityEngine.Localization.Tables, asm: Unity.Localization}
+      data:
+        m_CustomEpoch: 1794803460010

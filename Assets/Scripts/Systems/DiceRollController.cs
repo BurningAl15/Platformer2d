@@ -349,7 +349,7 @@ public class DiceRollController : MonoBehaviour
         {
             PlayerHealth._instance.AddBonusHeart();
             if (diceStatusText != null)
-                diceStatusText.text = $"+{finalResult} LIVES  +1 HEART";
+                diceStatusText.text = GameLocalization.Get("DICE_RESULT_SECRET", finalResult);
         }
 
         // Notificar cambio de vidas a LivesManager para que dispare OnLivesChanged
@@ -358,7 +358,7 @@ public class DiceRollController : MonoBehaviour
         UIController._instance?.AnimateLifeRewardFeedback(finalResult, GetDiceVisualTransform());
 
         if (diceStatusText != null && currentDiceType != DiceType.Secret)
-            diceStatusText.text = $"+{finalResult} LIVES";
+            diceStatusText.text = GameLocalization.Get("DICE_RESULT_LIVES", finalResult);
 
         if (stopButton != null) stopButton.interactable = false;
         if (closeButton != null) closeButton.interactable = true;
@@ -464,16 +464,16 @@ public class DiceRollController : MonoBehaviour
             switch (currentDiceType)
             {
                 case DiceType.Upgraded_3_5:
-                    diceStatusText.text = "3–5 LIVES";
+                    diceStatusText.text = GameLocalization.Get("DICE_RANGE_3_5");
                     break;
                 case DiceType.Upgraded_2_6:
-                    diceStatusText.text = "2–6 LIVES";
+                    diceStatusText.text = GameLocalization.Get("DICE_RANGE_2_6");
                     break;
                 case DiceType.Secret:
-                    diceStatusText.text = "4–6 LIVES  + HEART";
+                    diceStatusText.text = GameLocalization.Get("DICE_RANGE_SECRET");
                     break;
                 default:
-                    diceStatusText.text = "1–3 LIVES";
+                    diceStatusText.text = GameLocalization.Get("DICE_RANGE_NORMAL");
                     break;
             }
         }

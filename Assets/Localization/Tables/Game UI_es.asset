@@ -1,0 +1,411 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: Game UI_es
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Tables.StringTable
+  m_LocaleId:
+    m_Code: es
+  m_SharedData: {fileID: 11400000, guid: 964eafbbf103340cc94b46fc25ecb891, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 783278080
+    m_Localized: "Tr\xE9bol"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 800055296
+    m_Localized: "SFX: S\xCD"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249600
+    m_Localized: AJUSTES
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249601
+    m_Localized: Tiempo
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249602
+    m_Localized: Gemas
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249603
+    m_Localized: CERRAR
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249604
+    m_Localized: "< MEN\xDA"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249605
+    m_Localized: "M\xDASICA: S\xCD"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249606
+    m_Localized: Desliza y toca un nivel para seleccionarlo
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249607
+    m_Localized: TIENDA
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249608
+    m_Localized: Salir
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249609
+    m_Localized: "\xA1Juega sin interrupciones!"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249610
+    m_Localized: Restaurar compras
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249611
+    m_Localized: Cerrar
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249612
+    m_Localized: "\xBFDe verdad quieres borrar tu progreso?"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249613
+    m_Localized: "\xA1Advertencia!"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249614
+    m_Localized: TIENDA / QUITAR ANUNCIOS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249615
+    m_Localized: Anuncios eliminados
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249616
+    m_Localized: "N\xFAmero de nivel"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249617
+    m_Localized: 'EN EL NIVEL: 999'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249618
+    m_Localized: 'ENCONTRADAS: 0'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249619
+    m_Localized: 'OBJETIVO: 123 s'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249620
+    m_Localized: 'Mejor: ----'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249621
+    m_Localized: Empezar
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249622
+    m_Localized: Nueva partida
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249623
+    m_Localized: PAUSA
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249624
+    m_Localized: Usar gemas (+1 vida)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249625
+    m_Localized: Detener
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249626
+    m_Localized: Dado secreto (4-6 vidas)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249627
+    m_Localized: "Tr\xE9boles: 0 / 10"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249628
+    m_Localized: Continuar
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249629
+    m_Localized: "Usar tr\xE9bol (tirar dado)"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249630
+    m_Localized: "Tr\xE9boles: 0"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249631
+    m_Localized: 'Tiempo total: 00:00'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249632
+    m_Localized: Tirar dado
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249633
+    m_Localized: "\xA1MUNDO COMPLETADO!"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249634
+    m_Localized: Ver video (+2 vidas)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249635
+    m_Localized: 'Estrellas: 0 / 30'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249636
+    m_Localized: 'Gemas: 0'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249637
+    m_Localized: DADO DE VIDAS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249638
+    m_Localized: Dado normal (1-3 vidas)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249639
+    m_Localized: Quitar anuncios
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249640
+    m_Localized: "Mejorar con tr\xE9bol"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249641
+    m_Localized: 10 gemas
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249642
+    m_Localized: FIN DEL JUEGO
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249643
+    m_Localized: Continuar al mapa
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249644
+    m_Localized: 'Gemas: 0 / 1100'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249645
+    m_Localized: Volver al mapa
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249646
+    m_Localized: Mundo 1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249647
+    m_Localized: "M\xDASICA: S\xCD"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249648
+    m_Localized: "M\xDASICA: NO"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249649
+    m_Localized: "SFX: S\xCD"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249650
+    m_Localized: 'SFX: NO'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249651
+    m_Localized: "VIBRACI\xD3N: S\xCD"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249652
+    m_Localized: "VIBRACI\xD3N: NO"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249653
+    m_Localized: 'PANTALLA: SIEMPRE ACTIVA'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249654
+    m_Localized: 'PANTALLA: REPOSO NORMAL'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249655
+    m_Localized: "IDIOMA: INGL\xC9S"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249656
+    m_Localized: "IDIOMA: ESPA\xD1OL"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249657
+    m_Localized: REINICIAR PROGRESO
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249658
+    m_Localized: TOCA PARA CONFIRMAR EL REINICIO
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249659
+    m_Localized: "\xA1PROGRESO REINICIADO!"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249660
+    m_Localized: "NIVELES: {0}/10  |  GEMAS: {1}  |  TR\xC9BOLES: {2}"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249661
+    m_Localized: "PAUSA\nGEMAS: {0}/{1}  |  TR\xC9BOL: {2}\nFRAGMENTOS: {3}/2  |  CORAZONES: {4}  |  VIDAS: {5}"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249662
+    m_Localized: "S\xCD"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249663
+    m_Localized: NO
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249664
+    m_Localized: +{0} VIDAS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249665
+    m_Localized: "+{0} VIDAS  +1 CORAZ\xD3N"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249666
+    m_Localized: "1\u20133 VIDAS"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249667
+    m_Localized: "3\u20135 VIDAS"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249668
+    m_Localized: "2\u20136 VIDAS"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249669
+    m_Localized: "4\u20136 VIDAS  + CORAZ\xD3N"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249670
+    m_Localized: '{0} s'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249671
+    m_Localized: --
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249672
+    m_Localized: '1: El comienzo'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249673
+    m_Localized: '2: Entrada a la tumba'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249674
+    m_Localized: "3: Aprendizaje f\xE1cil"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249675
+    m_Localized: '4: Empecemos la prueba'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249676
+    m_Localized: '5: Combate en la tumba'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249677
+    m_Localized: '6: Escalada vertical'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249678
+    m_Localized: '7: Escalada vertical 2'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249679
+    m_Localized: '8: Combate contra el jefe'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249680
+    m_Localized: Mundo 1 - El bosque
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249681
+    m_Localized: '{0} gemas'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249682
+    m_Localized: 'Gemas: {0}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249683
+    m_Localized: "Tr\xE9boles: {0}"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249684
+    m_Localized: "Anuncio no disponible. Int\xE9ntalo de nuevo m\xE1s tarde."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249685
+    m_Localized: "Precio no disponible. Int\xE9ntalo de nuevo m\xE1s tarde."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249686
+    m_Localized: "Las compras no est\xE1n disponibles ahora."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249687
+    m_Localized: Compra completada. Anuncios eliminados.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249688
+    m_Localized: "No se pudo completar la compra. Int\xE9ntalo de nuevo."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249689
+    m_Localized: "La restauraci\xF3n no est\xE1 disponible ahora."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249690
+    m_Localized: Compra de quitar anuncios restaurada.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249691
+    m_Localized: "No se encontr\xF3 ninguna compra para restaurar."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249692
+    m_Localized: Quitar anuncios - {0}
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249693
+    m_Localized: "S\xED"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249694
+    m_Localized: No
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 2
+    RefIds: []

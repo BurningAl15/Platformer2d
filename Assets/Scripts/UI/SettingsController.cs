@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Events;
 using UnityEngine.UI;
+using UnityEngine.Localization.Components;
 
 /// <summary>
 /// Controlador del panel de ajustes (Settings) para Fox's Tale.
@@ -110,6 +111,10 @@ public class SettingsController : MonoBehaviour
         // frame and can leave the cloned control with the original event (or
         // cause the rest of panel initialization to abort).
         clonedButton.onClick = new Button.ButtonClickedEvent();
+
+        foreach (LocalizeStringEvent localizer in clone.GetComponentsInChildren<LocalizeStringEvent>(true))
+            Destroy(localizer);
+
         return clonedButton;
     }
 
@@ -479,10 +484,9 @@ public class SettingsController : MonoBehaviour
 
     public void ToggleLanguage()
     {
-        string current = PlayerPrefs.GetString("SelectedLanguage", "EN");
-        string next = current == "EN" ? "ES" : "EN";
-        PlayerPrefs.SetString("SelectedLanguage", next);
-        PlayerPrefs.Save();
+        string current = GameLocalization.SelectedLanguageCode;
+        string next = current == "en" ? "es" : "en";
+        GameLocalization.SetLanguage(next);
         RefreshUI();
     }
 
@@ -498,10 +502,9 @@ public class SettingsController : MonoBehaviour
         {
             awaitingResetConfirmation = true;
             resetConfirmTimer = 4.5f;
-            string lang = PlayerPrefs.GetString("SelectedLanguage", "EN");
             if (resetProgressText != null)
             {
-                resetProgressText.text = lang == "ES" ? "CONFIRMAR BORRADO" : "TAP TO CONFIRM RESET";
+                resetProgressText.text = GameLocalization.Get("SETTINGS_RESET_CONFIRM");
                 resetProgressText.color = new Color(1f, 0.9f, 0.2f);
             }
         }
@@ -526,10 +529,9 @@ public class SettingsController : MonoBehaviour
 
         RefreshUI();
 
-        string lang = PlayerPrefs.GetString("SelectedLanguage", "EN");
         if (resetProgressText != null)
         {
-            resetProgressText.text = lang == "ES" ? "PROGRESO REINICIADO!" : "PROGRESS RESET!";
+            resetProgressText.text = GameLocalization.Get("SETTINGS_RESET_DONE");
             resetProgressText.color = enabledColor;
         }
     }
@@ -550,9 +552,6 @@ public class SettingsController : MonoBehaviour
 
     public void RefreshUI()
     {
-        string lang = PlayerPrefs.GetString("SelectedLanguage", "EN");
-        bool isEs = string.Equals(lang, "ES", System.StringComparison.OrdinalIgnoreCase);
-
         bool musicOn = true;
         bool sfxOn = true;
 
@@ -569,13 +568,13 @@ public class SettingsController : MonoBehaviour
 
         if (musicStatusText != null)
         {
-            musicStatusText.text = musicOn ? (isEs ? "MUSICA: SI" : "MUSIC: ON") : (isEs ? "MUSICA: NO" : "MUSIC: OFF");
+            musicStatusText.text = GameLocalization.Get(musicOn ? "SETTINGS_MUSIC_ON" : "SETTINGS_MUSIC_OFF");
             musicStatusText.color = musicOn ? enabledColor : disabledColor;
         }
 
         if (sfxStatusText != null)
         {
-            sfxStatusText.text = sfxOn ? (isEs ? "EFECTOS: SI" : "SFX: ON") : (isEs ? "EFECTOS: NO" : "SFX: OFF");
+            sfxStatusText.text = GameLocalization.Get(sfxOn ? "SETTINGS_SFX_ON" : "SETTINGS_SFX_OFF");
             sfxStatusText.color = sfxOn ? enabledColor : disabledColor;
         }
 
@@ -583,20 +582,20 @@ public class SettingsController : MonoBehaviour
         Transform title = container != null ? (container.Find("SettingsTitle") ?? container.Find("Title")) : null;
         TextMeshProUGUI titleText = title != null ? title.GetComponent<TextMeshProUGUI>() : null;
         if (titleText != null)
-            titleText.text = isEs ? "AJUSTES" : "SETTINGS";
+            titleText.text = GameLocalization.Get("UI_SETTINGS");
 
         if (openSettingsButton != null)
         {
             TextMeshProUGUI openText = openSettingsButton.GetComponentInChildren<TextMeshProUGUI>();
             if (openText != null)
-                openText.text = isEs ? "AJUSTES" : "SETTINGS";
+                openText.text = GameLocalization.Get("UI_SETTINGS");
         }
 
         // Haptics / Vibración
         bool hapticsOn = PlayerPrefs.GetInt("HapticsEnabled", 1) == 1;
         if (hapticsStatusText != null)
         {
-            hapticsStatusText.text = hapticsOn ? (isEs ? "VIBRACION: SI" : "HAPTICS: ON") : (isEs ? "VIBRACION: NO" : "HAPTICS: OFF");
+            hapticsStatusText.text = GameLocalization.Get(hapticsOn ? "SETTINGS_HAPTICS_ON" : "SETTINGS_HAPTICS_OFF");
             hapticsStatusText.color = hapticsOn ? enabledColor : disabledColor;
         }
 
@@ -604,21 +603,23 @@ public class SettingsController : MonoBehaviour
         if (keepScreenAwakeStatusText != null)
         {
             keepScreenAwakeStatusText.text = keepScreenAwake
-                ? (isEs ? "PANTALLA: SIEMPRE ACTIVA" : "SCREEN: ALWAYS AWAKE")
-                : (isEs ? "PANTALLA: REPOSO NORMAL" : "SCREEN: NORMAL SLEEP");
+                ? GameLocalization.Get("SETTINGS_AWAKE_ON")
+                : GameLocalization.Get("SETTINGS_AWAKE_OFF");
             keepScreenAwakeStatusText.color = keepScreenAwake ? enabledColor : disabledColor;
         }
 
         // Idioma / Language
         if (languageStatusText != null)
         {
-            languageStatusText.text = isEs ? "IDIOMA: ESPANOL" : "LANGUAGE: ENGLISH";
+            languageStatusText.text = GameLocalization.Get(GameLocalization.SelectedLanguageCode == "es"
+                ? "SETTINGS_LANGUAGE_ES"
+                : "SETTINGS_LANGUAGE_EN");
         }
 
         // Reset progress label (si no está esperando confirmación)
         if (!awaitingResetConfirmation && resetProgressText != null)
         {
-            resetProgressText.text = isEs ? "REINICIAR PROGRESO" : "RESET PROGRESS";
+            resetProgressText.text = GameLocalization.Get("SETTINGS_RESET");
             resetProgressText.color = disabledColor;
         }
 
@@ -628,7 +629,7 @@ public class SettingsController : MonoBehaviour
             TextMeshProUGUI closeTxt = closeButton.GetComponentInChildren<TextMeshProUGUI>();
             if (closeTxt != null)
             {
-                closeTxt.text = isEs ? "CERRAR" : "CLOSE";
+                closeTxt.text = GameLocalization.Get("UI_CLOSE_TITLE");
             }
         }
 
@@ -650,10 +651,8 @@ public class SettingsController : MonoBehaviour
                 totalTrebols = SaveManager.Instance.LoadTotalTrebols();
             }
 
-            if (isEs)
-                progressSummaryText.text = $"NIVELES: {unlockedCount}/10  |  GEMAS: {totalGems}  |  TREBOLES: {totalTrebols}";
-            else
-                progressSummaryText.text = $"LEVELS: {unlockedCount}/10  |  GEMS: {totalGems}  |  CLOVERS: {totalTrebols}";
+            progressSummaryText.text = GameLocalization.Get(
+                "SETTINGS_PROGRESS_SUMMARY", unlockedCount, totalGems, totalTrebols);
         }
 
         // Versión del juego

@@ -41,6 +41,9 @@ public class PauseMenu : MonoBehaviour
                 ? title.GetComponent<TextMeshProUGUI>()
                 : pauseScreen.GetComponentInChildren<TextMeshProUGUI>(true);
         }
+        if (pauseStatsText != null && pauseStatsText.TryGetComponent(out UnityEngine.Localization.Components.LocalizeStringEvent titleBinding))
+            titleBinding.enabled = false;
+
     }
 
     private void OnEnable()
@@ -102,15 +105,20 @@ public class PauseMenu : MonoBehaviour
         int permanentHearts = save != null ? save.LoadPermanentHeartCount() : 0;
         int lives = save != null ? save.LoadLives() : 0;
         bool hasClover = save != null && save.HasTrebol(levelNumber);
-        bool spanish = PlayerPrefs.GetString("SelectedLanguage", "EN") == "ES";
 
         pauseStatsText.enableAutoSizing = true;
         pauseStatsText.fontSizeMin = 22f;
         pauseStatsText.fontSizeMax = 48f;
         pauseStatsText.textWrappingMode = TextWrappingModes.Normal;
-        pauseStatsText.text = spanish
-            ? $"PAUSA\nGEMAS: {currentGems}/{totalGems}  |  TRÉBOL: {(hasClover ? "SÍ" : "NO")}\nFRAGMENTOS: {fragmentCount % 2}/2  |  CORAZONES: {3 + permanentHearts}  |  VIDAS: {lives}"
-            : $"PAUSED\nGEMS: {currentGems}/{totalGems}  |  CLOVER: {(hasClover ? "YES" : "NO")}\nFRAGMENTS: {fragmentCount % 2}/2  |  HEARTS: {3 + permanentHearts}  |  LIVES: {lives}";
+        string cloverState = GameLocalization.Get(hasClover ? "PAUSE_CLOVER_YES" : "PAUSE_CLOVER_NO");
+        pauseStatsText.text = GameLocalization.Get(
+            "PAUSE_STATS",
+            currentGems,
+            totalGems,
+            cloverState,
+            fragmentCount % 2,
+            3 + permanentHearts,
+            lives);
     }
 
     /// <summary>

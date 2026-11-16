@@ -2,6 +2,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using DG.Tweening;
+using UnityEngine.Localization;
+using UnityEngine.Localization.Settings;
 
 /// <summary>
 /// Pantalla de Game Over. Se activa cuando el jugador pierde todas sus vidas.
@@ -109,13 +111,20 @@ public class GameOverController : MonoBehaviour
     private void OnEnable()
     {
         SubscribeToGameOver();
+        LocalizationSettings.SelectedLocaleChanged += OnLocalizationChanged;
     }
 
     private void OnDisable()
     {
+        LocalizationSettings.SelectedLocaleChanged -= OnLocalizationChanged;
         if (isSubscribedToGameOver && LivesManager.Instance != null)
             LivesManager.Instance.OnGameOver -= Show;
         isSubscribedToGameOver = false;
+    }
+
+    private void OnLocalizationChanged(Locale locale)
+    {
+        RefreshEconomyUI();
     }
 
     private void SubscribeToGameOver()
@@ -376,13 +385,13 @@ public class GameOverController : MonoBehaviour
         bool canGems = LivesManager.Instance?.CanAffordLife() ?? false;
 
         if (gemCostText != null)
-            gemCostText.text = $"{cost} Gems";
+            gemCostText.text = GameLocalization.Get("GAMEOVER_GEM_COST", cost);
 
         if (currentGemsText != null)
-            currentGemsText.text = $"Gems: {gems}";
+            currentGemsText.text = GameLocalization.Get("GAMEOVER_GEMS", gems);
 
         if (trebolAvailableText != null)
-            trebolAvailableText.text = $"Clovers: {trebols}";
+            trebolAvailableText.text = GameLocalization.Get("GAMEOVER_CLOVERS", trebols);
 
         // Deshabilitar botón de gemas si no alcanza
         if (spendGemsButton != null)
@@ -417,7 +426,7 @@ public class GameOverController : MonoBehaviour
 
     private void ShowAdUnavailableFeedback()
     {
-        const string message = "Ad unavailable. Please try again later.";
+        string message = GameLocalization.Get("AD_UNAVAILABLE");
         if (adFeedbackText != null)
             adFeedbackText.text = message;
         else
