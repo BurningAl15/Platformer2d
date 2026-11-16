@@ -143,6 +143,14 @@
       "status": "done",
       "createdAt": "2026-11-13T12:25:03-05:00",
       "updatedAt": "2026-11-13T14:00:02-05:00"
+    },
+    {
+      "id": "a16668c9-ae0e-499e-8c33-8f42edd46c6f",
+      "title": "Add distinct fall and double-jump animation states",
+      "description": "P2 player animation. Reuse the current Player Animator and existing player-jump sprite frames. Add a fall pose driven by downward Rigidbody2D velocity and a distinct short double-jump clip triggered by the existing OnDoubleJumpPerformed event. Preserve movement/grounded/hurt states and all serialized player components. Acceptance: airborne ascent uses Jump, apex/descent uses Fall, a second jump plays DoubleJump once, then resumes the appropriate airborne state; landing returns to Idle/Run. Recommended model: GPT-6.1 Sol Medium.\n\n2026-11-14 Codex — Added a Fall clip using the second existing `player-jump.png` pose and a short, non-looping DoubleJump clip using the existing two poses. Extended the same Player.controller with `verticalVelocity` and `DoubleJump`, Jump/Fall/grounded transitions, and a one-shot double-jump route from the existing `PlayerJump.OnDoubleJumpPerformed` event. No new art/component or controller was introduced. Backup: `/private/tmp/foxtale-fall-doublejump-before-20261114`. Static object-ID, transition-target, sprite-reference, and `git diff --check` inspections pass. Unity import/compile, Animator visualization, Play Mode, and device QA pending; status testing.",
+      "status": "testing",
+      "createdAt": "2026-11-14T01:31:00-05:00",
+      "updatedAt": "2026-11-14T13:11:00-05:00"
     }
   ]
 }
