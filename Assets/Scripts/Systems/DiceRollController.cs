@@ -252,19 +252,152 @@ public class DiceRollController : MonoBehaviour
 
         if (SaveManager.Instance.SpendTrebol())
         {
-            // El tipo de dado mejorado recibido es aleatorio (3-5 ó 2-6) según el GDD
             currentDiceType = UnityEngine.Random.value > 0.5f ? DiceType.Upgraded_3_5 : DiceType.Upgraded_2_6;
-
-            if (AudioMixerManager._instance != null)
-                AudioMixerManager._instance.CallSFX(SFXType.Player_Pickup_Health);
-
-            RefreshUI();
+            if (upgradeWithTrebolButton != null) upgradeWithTrebolButton.interactable = false;
+            StartCoroutine(PlayUpgradeSequence());
         }
         else
         {
             if (upgradeWithTrebolButton != null)
                 upgradeWithTrebolButton.transform.DOShakePosition(0.3f, 8f, 20).SetUpdate(true);
         }
+    }
+
+    /// <summary>
+    /// Full visual sequence for spending a Clover to upgrade the dice:
+    /// 1. Clover icon flies from the HUD counter to the dice face.
+    /// 2. Dice flashes white and punches scale on arrival.
+    /// 3. Panel title and status text update to show the new range.
+    /// 4. Brief screen shake (subtle) caps the effect.
+    /// </summary>
+    private IEnumerator PlayUpgradeSequence()
+    {
+        AudioMixerManager._instance?.CallSFX(SFXType.Player_Pickup_Health);
+
+        // ── 1. Fly a clover token from the counter to the dice ──────────────
+        Transform diceVisual = GetDiceVisualTransform();
+        RectTransform cloverSource = cloverIcon != null ? cloverIcon.rectTransform : null;
+
+        if (cloverSource != null && diceVisual != null && panelGroup != null)
+        {
+            Canvas canvas = panelGroup.GetComponentInParent<Canvas>();
+            RectTransform canvasRect = canvas != null ? canvas.transform as RectTransform : null;
+
+            if (canvasRect != null)
+            {
+                // Determine canvas-space positions
+                Camera uiCam = canvas.renderMode == RenderMode.ScreenSpaceOverlay
+                    ? null
+                    : (canvas.worldCamera != null ? canvas.worldCamera : Camera.main);
+
+                Vector2 startPos = GetCanvasLocalPos(cloverSource, canvasRect, uiCam);
+                Vector2 endPos   = GetCanvasLocalPos(diceVisual as RectTransform, canvasRect, uiCam);
+
+                // Build the token
+                GameObject token = new GameObject("CloverFlight",
+                    typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
+                token.transform.SetParent(canvasRect, false);
+                Image tokenImg = token.GetComponent<Image>();
+                tokenImg.sprite = cloverIcon.sprite;
+                tokenImg.color  = Color.white;
+                tokenImg.preserveAspect = true;
+                tokenImg.raycastTarget  = false;
+
+                RectTransform tokenRect = token.GetComponent<RectTransform>();
+                tokenRect.sizeDelta = new Vector2(48f, 48f);
+                tokenRect.anchoredPosition = startPos;
+
+                // Animate: arc toward the dice over 0.55 s with overshoot
+                bool arrived = false;
+                float elapsed = 0f;
+                const float duration = 0.55f;
+
+                while (elapsed < duration)
+                {
+                    elapsed += Time.unscaledDeltaTime;
+                    float t = Mathf.Clamp01(elapsed / duration);
+                    // Ease out cubic
+                    float eased = 1f - Mathf.Pow(1f - t, 3f);
+
+                    // Recalculate end each frame in case layout shifted
+                    Vector2 currentEnd = GetCanvasLocalPos(diceVisual as RectTransform, canvasRect, uiCam);
+
+                    // Arc: lift the token upward at mid-flight
+                    float arc = Mathf.Sin(t * Mathf.PI) * 60f;
+                    Vector2 pos = Vector2.LerpUnclamped(startPos, currentEnd, eased);
+                    pos.y += arc;
+                    tokenRect.anchoredPosition = pos;
+
+                    // Scale: starts at 1, shrinks to 0.5 on arrival
+                    float scale = Mathf.Lerp(1f, 0.5f, eased);
+                    tokenRect.localScale = Vector3.one * scale;
+
+                    if (!arrived && t >= 0.95f) arrived = true;
+                    yield return null;
+                }
+
+                UnityEngine.Object.Destroy(token);
+            }
+        }
+
+        // ── 2. Impact: dice flashes and punches scale ────────────────────────
+        if (diceVisual != null)
+        {
+            // White flash via DOColor if it's an Image, otherwise just punch
+            Image diceImg = diceVisual.GetComponent<Image>();
+            if (diceImg != null)
+            {
+                Color original = diceImg.color;
+                DOTween.Sequence()
+                    .Append(diceImg.DOColor(Color.white, 0.07f).SetUpdate(true))
+                    .Append(diceImg.DOColor(original, 0.18f).SetUpdate(true));
+            }
+
+            diceVisual.DOKill();
+            diceVisual.DOPunchScale(Vector3.one * 0.45f, 0.4f, 10, 0.6f).SetUpdate(true);
+        }
+
+        // Also punch the whole panel to feel the impact
+        if (panelRect != null)
+        {
+            panelRect.DOKill();
+            panelRect.DOPunchScale(Vector3.one * 0.04f, 0.3f, 6, 0.5f).SetUpdate(true);
+        }
+
+        // ── 3. Brief pause so the dice punch is visible ──────────────────────
+        yield return new WaitForSecondsRealtime(0.15f);
+
+        // ── 4. Update status text with a pop ────────────────────────────────
+        RefreshUI();
+        if (diceStatusText != null)
+        {
+            diceStatusText.transform.DOKill();
+            diceStatusText.transform.DOPunchScale(Vector3.one * 0.25f, 0.3f, 7, 0.6f).SetUpdate(true);
+        }
+
+        // ── 5. Update the clover counter with a shake to show it was spent ──
+        if (cloverIcon != null)
+        {
+            cloverIcon.transform.DOKill();
+            cloverIcon.transform.DOShakeScale(0.4f, 0.35f, 10, 90f).SetUpdate(true);
+        }
+        if (trebolAvailableText != null)
+        {
+            trebolAvailableText.transform.DOKill();
+            trebolAvailableText.transform.DOPunchScale(Vector3.one * 0.2f, 0.25f, 6, 0.5f).SetUpdate(true);
+        }
+
+        // ── 6. Screen shake for extra punch ─────────────────────────────────
+        ScreenShake.Instance?.StartShake(0.2f, 0.04f);
+    }
+
+    private static Vector2 GetCanvasLocalPos(RectTransform target, RectTransform canvasRect, Camera uiCam)
+    {
+        if (target == null || canvasRect == null) return Vector2.zero;
+        Vector2 screenPos = RectTransformUtility.WorldToScreenPoint(uiCam, target.position);
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(
+            canvasRect, screenPos, uiCam, out Vector2 local);
+        return local;
     }
 
     public void OnClosePressed()
