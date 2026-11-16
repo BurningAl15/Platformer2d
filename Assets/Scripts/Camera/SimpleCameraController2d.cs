@@ -1,4 +1,6 @@
+using System;
 using UnityEngine;
+using DG.Tweening;
 
 public class SimpleCameraController2d : MonoBehaviour
 {
@@ -8,6 +10,17 @@ public class SimpleCameraController2d : MonoBehaviour
 
     [Header("Parallax Layers")]
     [SerializeField] private Transform farBackground, middleBackground;
+    [SerializeField] private Transform cloudBackground;
+    [SerializeField] private Transform highCloudBackground;
+    [SerializeField] private Transform seaShimmerBackground;
+    [SerializeField, Range(0f, 1f)] private float cloudFollowFactor = 0.92f;
+    [SerializeField, Range(0f, 1f)] private float highCloudFollowFactor = 0.96f;
+    [SerializeField, Min(0f)] private float cloudDriftDistance = 0.35f;
+    [SerializeField, Min(0.1f)] private float cloudDriftDuration = 12f;
+    [SerializeField, Range(0f, 1f)] private float middleFollowFactor = 0.5f;
+    [SerializeField, Range(0f, 1f)] private float seaShimmerMinAlpha = 0.9f;
+    [SerializeField, Min(0.1f)] private float seaShimmerDuration = 5f;
+    [SerializeField, Min(1f)] private float seaShimmerFrameRate = 8f;
     private Vector2 lastPos;
 
     [Header("Camera Height Clamping")] 
@@ -27,7 +40,17 @@ public class SimpleCameraController2d : MonoBehaviour
 
     private static readonly Color SkyColor = new Color(0.2784f, 0.9529f, 1f, 1f); // #47F3FF
     private SpriteRenderer farBackgroundRenderer;
+    private SpriteRenderer cloudBackgroundRenderer;
+    private SpriteRenderer highCloudBackgroundRenderer;
+    private SpriteRenderer seaShimmerRenderer;
+    private Sprite[] seaShimmerFrames;
+    private Tween seaShimmerTween;
+    private Tween cloudDriftTween;
     private Vector2 lastScreenSize;
+    private float seaShimmerFrameTimer;
+    private int currentSeaShimmerFrame;
+    private float currentCloudDriftOffset;
+    private float lastCloudDriftOffset;
     
     private void Awake()
     {
@@ -50,56 +73,135 @@ public class SimpleCameraController2d : MonoBehaviour
         if (cam != null)
             cam.backgroundColor = SkyColor;
 
+        if (target != null)
+        {
+            Vector3 cameraPosition = transform.position;
+            cameraPosition.x = target.position.x;
+            cameraPosition.y = Mathf.Clamp(target.position.y, minHeight, maxHeight);
+            transform.position = cameraPosition;
+        }
+
         if (farBackground != null)
         {
             farBackgroundRenderer = farBackground.GetComponentInChildren<SpriteRenderer>();
-            // Centrar el fondo lejano horizontalmente con la cámara
+            // Center the far background horizontally on the camera.
             Vector3 farPos = farBackground.position;
             farPos.x = transform.position.x;
             farBackground.position = farPos;
+        }
+
+        if (cloudBackground != null)
+        {
+            cloudBackgroundRenderer = cloudBackground.GetComponentInChildren<SpriteRenderer>();
+            Vector3 cloudPos = cloudBackground.position;
+            cloudPos.x = transform.position.x;
+            if (farBackground != null)
+                cloudPos.y = farBackground.position.y;
+            cloudBackground.position = cloudPos;
+
+            if (cloudDriftDistance > 0f && cloudDriftDuration > 0f)
+            {
+                cloudDriftTween = DOTween.To(() => currentCloudDriftOffset, value => currentCloudDriftOffset = value,
+                        cloudDriftDistance, cloudDriftDuration)
+                    .SetEase(Ease.InOutSine)
+                    .SetLoops(-1, LoopType.Yoyo)
+                    .SetLink(gameObject, LinkBehaviour.KillOnDestroy);
+            }
+        }
+
+        if (highCloudBackground != null)
+        {
+            highCloudBackgroundRenderer = highCloudBackground.GetComponentInChildren<SpriteRenderer>();
+            Vector3 highCloudPos = highCloudBackground.position;
+            highCloudPos.x = cloudBackground != null ? cloudBackground.position.x : transform.position.x;
+            highCloudPos.y = cloudBackground != null ? cloudBackground.position.y : highCloudPos.y;
+            highCloudBackground.position = highCloudPos;
+        }
+
+        if (seaShimmerBackground != null)
+        {
+            seaShimmerRenderer = seaShimmerBackground.GetComponentInChildren<SpriteRenderer>();
+            seaShimmerFrames = Resources.LoadAll<Sprite>("SeaWaves");
+            Array.Sort(seaShimmerFrames, (left, right) => string.CompareOrdinal(left.name, right.name));
+
+            if (seaShimmerRenderer != null && seaShimmerFrames.Length > 0)
+                seaShimmerRenderer.sprite = seaShimmerFrames[0];
+
+            Vector3 shimmerPos = seaShimmerBackground.position;
+            shimmerPos.x = transform.position.x;
+            if (farBackground != null)
+                shimmerPos.y = farBackground.position.y;
+            seaShimmerBackground.position = shimmerPos;
+
+            if (seaShimmerRenderer != null)
+            {
+                seaShimmerTween = seaShimmerRenderer.DOFade(seaShimmerMinAlpha, seaShimmerDuration)
+                    .SetEase(Ease.InOutSine)
+                    .SetLoops(-1, LoopType.Yoyo)
+                    .SetLink(gameObject, LinkBehaviour.KillOnDestroy);
+            }
         }
 
         lastPos = transform.position;
         UpdateFarBackgroundCoverage();
     }
 
-    void Update()
+    private void OnDestroy()
     {
+        seaShimmerTween?.Kill();
+        cloudDriftTween?.Kill();
+    }
+
+    private void LateUpdate()
+    {
+        UpdateSeaShimmerAnimation();
+
         if (target == null)
+        {
+            ApplyCloudDrift();
             return;
+        }
 
         if (lastScreenSize.x != Screen.width || lastScreenSize.y != Screen.height)
             UpdateFarBackgroundCoverage();
 
         if (!stopFollow)
         {
-            //Horizontal Movement
+            // Horizontal movement.
             transform.position = new Vector3(target.position.x, target.position.y, transform.position.z);
 
-            //Clamping Vertical Camera
+            // Clamp vertical camera movement.
             float clampedY = Mathf.Clamp(transform.position.y, minHeight, maxHeight);
             transform.position = new Vector3(transform.position.x, clampedY, transform.position.z);
 
-            //Parallax - Horizontal (X) - Vertical (Y)
-            Vector2 amountToMove = new Vector2(transform.position.x - lastPos.x,transform.position.y - lastPos.y);
+            // Apply camera-relative parallax after the camera reaches its final position.
+            Vector2 amountToMove = new Vector2(transform.position.x - lastPos.x, transform.position.y - lastPos.y);
 
             if (farBackground != null)
                 farBackground.position += new Vector3(amountToMove.x, amountToMove.y, 0);
+            if (seaShimmerBackground != null)
+                seaShimmerBackground.position += new Vector3(amountToMove.x, amountToMove.y, 0);
+            if (cloudBackground != null)
+                cloudBackground.position += new Vector3(amountToMove.x, amountToMove.y, 0) * cloudFollowFactor;
+            if (highCloudBackground != null)
+                highCloudBackground.position += new Vector3(amountToMove.x, amountToMove.y, 0) * highCloudFollowFactor;
             if (middleBackground != null)
-                middleBackground.position += new Vector3(amountToMove.x, amountToMove.y, 0) * .5f;
+                middleBackground.position += new Vector3(amountToMove.x, amountToMove.y, 0) * middleFollowFactor;
         
             lastPos = transform.position;
         }
-        // else
-        // {
-        //     if (transform.position.y != target.position.y)
-        //     {
-        //         timer += Time.deltaTime;
-        //         float val = _animationCurve.Evaluate(timer);
-        //         float clampedY = Mathf.Lerp(transform.position.y, maxHeight,val);
-        //         transform.position = new Vector3(transform.position.x, clampedY, transform.position.z);
-        //     }
-        // }
+
+        ApplyCloudDrift();
+    }
+
+    private void ApplyCloudDrift()
+    {
+        if (cloudBackground == null)
+            return;
+
+        float driftDelta = currentCloudDriftOffset - lastCloudDriftOffset;
+        cloudBackground.position += Vector3.right * driftDelta;
+        lastCloudDriftOffset = currentCloudDriftOffset;
     }
 
     private void UpdateFarBackgroundCoverage()
@@ -108,10 +210,10 @@ public class SimpleCameraController2d : MonoBehaviour
         if (cam == null || !cam.orthographic || farBackgroundRenderer == null || farBackgroundRenderer.sprite == null)
             return;
 
-        // Asegurar que el fondo de la cámara sea idéntico al cielo (#47F3FF)
+        // Match the camera clear color to the sky (#47F3FF).
         cam.backgroundColor = SkyColor;
 
-        // Cobertura completa del viewport horizontal para aspect ratios modernos (ej. 20:9)
+        // Cover the horizontal viewport on modern aspect ratios (for example, 20:9).
         float requiredWidth = cam.orthographicSize * cam.aspect * 2f * Mathf.Max(backgroundWidthPadding, 1.5f);
         float spriteWidth = farBackgroundRenderer.sprite.bounds.size.x;
         if (spriteWidth <= 0f)
@@ -128,12 +230,49 @@ public class SimpleCameraController2d : MonoBehaviour
             farBackgroundRenderer.transform.localScale = scale;
         }
 
-        // Mantener el fondo lejano alineado al centro de la cámara
+        if (cloudBackgroundRenderer != null && farBackgroundRenderer != null)
+        {
+            Vector3 cloudScale = cloudBackground.localScale;
+            cloudScale.x = farBackgroundRenderer.transform.localScale.x;
+            cloudBackground.localScale = cloudScale;
+        }
+
+        if (highCloudBackgroundRenderer != null && farBackgroundRenderer != null)
+        {
+            Vector3 highCloudScale = highCloudBackground.localScale;
+            highCloudScale.x = farBackgroundRenderer.transform.localScale.x;
+            highCloudBackground.localScale = highCloudScale;
+        }
+
+        if (seaShimmerRenderer != null && farBackgroundRenderer != null)
+        {
+            Vector3 shimmerScale = seaShimmerBackground.localScale;
+            shimmerScale.x = farBackgroundRenderer.transform.localScale.x;
+            seaShimmerBackground.localScale = shimmerScale;
+        }
+
+        // Keep the far background aligned with the camera center.
         if (farBackground != null)
         {
             Vector3 farPos = farBackground.position;
             farPos.x = transform.position.x;
             farBackground.position = farPos;
+        }
+    }
+
+    private void UpdateSeaShimmerAnimation()
+    {
+        if (seaShimmerRenderer == null || seaShimmerFrames == null || seaShimmerFrames.Length < 2)
+            return;
+
+        seaShimmerFrameTimer += Time.deltaTime;
+        float frameDuration = 1f / Mathf.Max(1f, seaShimmerFrameRate);
+        while (seaShimmerFrameTimer >= frameDuration)
+        {
+            seaShimmerFrameTimer -= frameDuration;
+            currentSeaShimmerFrame = (currentSeaShimmerFrame + 1) % seaShimmerFrames.Length;
+
+            seaShimmerRenderer.sprite = seaShimmerFrames[currentSeaShimmerFrame];
         }
     }
 
