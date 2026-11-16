@@ -140,15 +140,20 @@
     {
       "id": "bd4253e4-e95b-4a89-b117-2e2f8ba8f123",
       "title": "Plan levels, boss fight, and secret collectible routes",
-      "description": "P2 content. Capture level expansion, boss-fight pacing/game feel, and hidden passages containing Clover and heart fragments as a level-design backlog. Use existing WorldData, map-node, and per-level save conventions; avoid adding a runtime level editor until the gameplay/content format is defined.\n\n2026-11-16 Codex — Linked the first level's manager instance to World 1. Unity opened all eight story scenes and verified their world and summary references, 171 gems, eight Clovers and six heart fragments. The GDD records optional route proposals for the level designer. Actual route authoring and playing through the ending remain pending.",
+      "description": "P2 content. Capture level expansion, boss-fight pacing/game feel, and hidden passages containing Clover and heart fragments as a level-design backlog. Use existing WorldData, map-node, and per-level save conventions; avoid adding a runtime level editor until the gameplay/content format is defined.\n\n2026-11-16 Codex — Linked the first level's manager instance to World 1. Unity opened all eight story scenes and verified their world and summary references, 171 gems, eight Clovers and six heart fragments. The GDD records optional route proposals for the level designer. Actual route authoring and playing through the ending remain pending.\n\n2026-11-16 Codex — The tank defeat now emits three timed bursts at its visible hull before revealing the exit. Fixed the hit flash timer and prevented repeated damage while hurt. Pending: visual and contact QA in the Level 8 fight.",
       "status": "testing",
       "createdAt": "2026-11-12T23:26:25-05:00",
-      "updatedAt": "2026-11-16T14:10:32-05:00",
+      "updatedAt": "2026-11-16T14:14:02-05:00",
       "events": [
         {
           "at": "2026-11-16T14:10:32-05:00",
           "actor": "Codex",
           "summary": "Linked the first level's manager instance to World 1. Unity opened all eight story scenes and verified their world and summary references, 171 gems, eight Clovers and six heart fragments. The GDD records optional route proposals for the level designer. Actual route authoring and playing through the ending remain pending."
+        },
+        {
+          "at": "2026-11-16T14:14:02-05:00",
+          "actor": "Codex",
+          "summary": "The tank defeat now emits three timed bursts at its visible hull before revealing the exit. Fixed the hit flash timer and prevented repeated damage while hurt. Pending: visual and contact QA in the Level 8 fight."
         }
       ]
     },

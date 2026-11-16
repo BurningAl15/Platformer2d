@@ -138,17 +138,30 @@ public class BossTankController : MonoBehaviour
 
     void End_State()
     {
-        //Activate win platform
-        winPlatform.transform.parent = null;
-        winPlatform.SetActive(true);
-        //Stop boss music (fade to main music again)
-        AudioMixerManager._instance.StopBossBackground();
-        gameObject.SetActive(false);
-        Instantiate(explosion, transform.position, transform.rotation);
-        UIController._instance.Run_AmazingJobAnimation();
         runOnce = true;
+        hitbox.SetActive(false);
+        foreach (var collider in boss.GetComponentsInChildren<Collider2D>())
+            collider.enabled = false;
+        StartCoroutine(PlayDefeat());
     }
-    
+
+    private IEnumerator PlayDefeat()
+    {
+        Bounds hull = _spriteRenderer.bounds;
+        Vector3 offset = Vector3.right * hull.extents.x * 0.5f;
+        Instantiate(explosion, hull.center - offset, Quaternion.identity);
+        yield return new WaitForSeconds(0.14f);
+        Instantiate(explosion, hull.center + offset, Quaternion.identity);
+        yield return new WaitForSeconds(0.14f);
+        Instantiate(explosion, hull.center, Quaternion.identity);
+
+        winPlatform.transform.SetParent(null, true);
+        winPlatform.SetActive(true);
+        AudioMixerManager._instance.StopBossBackground();
+        UIController._instance.Run_AmazingJobAnimation();
+        gameObject.SetActive(false);
+    }
+
     void MineTimer()
     {
         mineCounter -= Time.deltaTime;
@@ -161,6 +174,7 @@ public class BossTankController : MonoBehaviour
     
     public void TakeHit()
     {
+        if (isDefeated || currentStates == BossStates.HURT) return;
         currentStates = BossStates.HURT;
         hurtCounter = hurtTime;
         
@@ -214,11 +228,9 @@ public class BossTankController : MonoBehaviour
     IEnumerator BlinkEffect(float blinkTime)
     {
         Color tempColor = _spriteRenderer.color;
-        float blinkCounter = blinkTime;
-        // while (isInvincible)
-        while (blinkCounter>=0)
+        float endTime = Time.time + blinkTime;
+        while (Time.time < endTime)
         {
-            blinkCounter -= Time.deltaTime;
             _spriteRenderer.color = new Color(tempColor.r,
                 tempColor.g,
                 tempColor.b,
