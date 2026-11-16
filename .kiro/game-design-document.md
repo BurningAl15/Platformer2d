@@ -387,3 +387,17 @@ Los cambios de input/UI y de transporte de plataformas se han integrado varias v
 | Múltiples mundos | `WorldData.cs`, `WorldProgressManager.cs` | ✅ |
 | Builds automáticos | `BuildAutomation.cs` | ✅ |
 | Setup automático de escenas | `SceneElementSetup.cs` | ✅ |
+
+## World 1 authoring pass
+
+The story map contains eight playable stages after the tutorial. Level 8 is the tank encounter. Future levels can extend the world list and map together. Keep the tutorial outside the star requirements so a returning player can complete the campaign with an existing save.
+
+| Stage | Optional route to prototype | Return to the main route |
+|---|---|---|
+| 1, coast | A visible Clover behind foliage teaches players to look past the direct path. Place the heart fragment on a separate low ledge. | Rejoin before the checkpoint without a blind jump. |
+| 2, tomb entrance | A break in the wall pattern hints at a dry alcove. Frame the entrance with two gems. | Exit above the entrance, facing the goal. |
+| 3–4, practice and test | Introduce a side landing reached with a double jump, then repeat the same visual clue over a moving platform. | Give the player a safe place to wait for the platform to return. |
+| 5–6, tomb and climb | Let players see the collectible from below before they discover the lateral passage. Award the final pair of heart fragments across these stages. | Connect the passage to the next landing. |
+| 7–8, final climb and boss | Place a Clover on an optional route before the arena. Keep both final stages free of heart fragments. | Put a checkpoint before combat so retries start at the fight. |
+
+These routes are design proposals for the owner's level edits. Review them on a phone by checking whether the hint is visible before the jump, the return path works with touch controls, and collecting a secret twice leaves the permanent reward unchanged.

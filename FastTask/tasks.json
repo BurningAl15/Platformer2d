@@ -15,7 +15,7 @@
       "description": "P0 producción. AdsManager mantiene fail-closed y no hay caller válido que resuelva privacidad; no forzar SetPrivacyEligibilityResolved(true). Implementar/revisar CMP y reglas por región/audiencia; confirmar rewarded/interstitial, no-fill, doble toque y supresión por Remove Ads en Android/iOS. Cierre: evidencia de consentimiento aceptado/denegado y pruebas de anuncios en ambos dispositivos.\nFuente: docs/ANTIGRAVITY_PRODUCTION_HANDOFF_2026-10-28.md\n\n2026-11-03 Codex: portados a Gradle/manifest Android los requisitos AndroidX JavaScriptEngine/WebKit, queries de package visibility y flags de optimización AdMob. AdsManager ya cancela el timeout de gracia al recibir recompensa y usa WaitForSecondsRealtime; no se alteraron las reglas de elegibilidad/consentimiento ni IDs. Pendiente validar manifiesto combinado, build y anuncios reales/test en dispositivo.\n\n2026-11-12 — Ads intentionally remain fail-closed: removed the unconditional consent-eligibility=true bypass. This build therefore does not claim ad display. Real CMP/UMP collection/configuration and device verification are still required before LevelPlay can be enabled.\n\n2026-11-14 Owner reports ads still do not show. Investigation confirms `SetPrivacyEligibilityResolved` has no caller anywhere outside `AdsManager`, `MainMenu` contains the persistent manager, and the UMP package/message integration is absent. This fail-closed gate is why LevelPlay never initializes; do not bypass it with a hard-coded `true`. Need a real CMP/UMP configuration and consent result before ads can be enabled.\n\n2026-11-14 Codex: Confirmed the report is explained by the intentional fail-closed privacy guard: `AdsManager.SetPrivacyEligibilityResolved` has no caller in project code, `MainMenu` contains the persistent AdsManager, and no UMP dependency or message integration is installed/configured. LevelPlay therefore never initializes. No guard bypass or fabricated consent was added. Current ads task remains `doing`; needs an actual CMP/UMP app/privacy-message configuration and a real consent/elegibility callback, followed by Android/iOS testing. Official UMP flow updates consent information, presents any required form, then checks `CanRequestAds`: https://developers.google.com/admob/unity/privacy?hl=en.",
       "status": "doing",
       "createdAt": "2026-10-31T13:40:41+00:00",
-      "updatedAt": "2026-11-14T00:56:00-05:00"
+      "updatedAt": "2026-11-16T14:09:41-05:00"
     },
     {
       "id": "49b77c90-d7e5-466d-be9e-2b0b0aba03d7",
@@ -133,10 +133,17 @@
     {
       "id": "bd4253e4-e95b-4a89-b117-2e2f8ba8f123",
       "title": "Plan levels, boss fight, and secret collectible routes",
-      "description": "P2 content. Capture level expansion, boss-fight pacing/game feel, and hidden passages containing Clover and heart fragments as a level-design backlog. Use existing WorldData, map-node, and per-level save conventions; avoid adding a runtime level editor until the gameplay/content format is defined.",
-      "status": "doing",
+      "description": "P2 content. Capture level expansion, boss-fight pacing/game feel, and hidden passages containing Clover and heart fragments as a level-design backlog. Use existing WorldData, map-node, and per-level save conventions; avoid adding a runtime level editor until the gameplay/content format is defined.\n\n2026-11-16 Codex — Linked the first level's manager instance to World 1. Unity opened all eight story scenes and verified their world and summary references, 171 gems, eight Clovers and six heart fragments. The GDD records optional route proposals for the level designer. Actual route authoring and playing through the ending remain pending.",
+      "status": "testing",
       "createdAt": "2026-11-12T23:26:25-05:00",
-      "updatedAt": "2026-11-16T10:57:16-05:00"
+      "updatedAt": "2026-11-16T14:10:32-05:00",
+      "events": [
+        {
+          "at": "2026-11-16T14:10:32-05:00",
+          "actor": "Codex",
+          "summary": "Linked the first level's manager instance to World 1. Unity opened all eight story scenes and verified their world and summary references, 171 gems, eight Clovers and six heart fragments. The GDD records optional route proposals for the level designer. Actual route authoring and playing through the ending remain pending."
+        }
+      ]
     },
     {
       "id": "f1bc79bb-9567-4543-bbb3-36a15dfbd11c",
