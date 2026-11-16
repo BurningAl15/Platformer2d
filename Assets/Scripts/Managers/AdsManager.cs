@@ -9,13 +9,24 @@ using Unity.Services.LevelPlay;
 /// Aísla el SDK de ads del resto del juego — si cambias de SDK
 /// solo modificas este archivo.
 ///
-/// Wrapper para la API de ad units de LevelPlay 9.x. Los anuncios permanecen cerrados
-/// hasta resolver elegibilidad/consentimiento y entitlement Remove Ads.
+/// SDK: Unity LevelPlay 9.x con Unity Ads como red activa.
+///
+/// IMPORTANTE — ironSource Exchange (iSX) cierra el 31/12/2026:
+///   El SDK de LevelPlay y la plataforma de mediación siguen igual.
+///   Lo único que cambia es que la red "ironSource" deja de servir.
+///   Acción requerida en el dashboard de LevelPlay (no en código):
+///   activar "Unity Ads" como red para mantener demanda programática
+///   a través de Unity Exchange.
+///   Referencia: https://support.unity.com/hc/en-us/articles/ironSource-Exchange-sunset
 ///
 /// INTEGRACIÓN RevenueCat NoAds:
 ///   Si RevenueCatManager.Instance.IsNoAdsPurchased() == true,
 ///   ningún ad se muestra, incluido rewarded (según el GDD).
 ///   El método OnNoAdsStatusChanged() actualiza este estado en tiempo real.
+///
+/// Los anuncios permanecen cerrados hasta que ConsentManager resuelva
+/// elegibilidad/consentimiento y AdsManager.SetPrivacyEligibilityResolved()
+/// sea llamado con una decisión real del usuario.
 ///
 /// USO:
 ///   AdsManager.Instance.ShowRewarded(AdsManager.AdContext.GameOver, onSuccess, onFail);

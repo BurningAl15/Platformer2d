@@ -5,11 +5,30 @@
 > Este archivo es la fuente de verdad del proyecto.
 > Se actualiza al terminar cada fase. Si hay duda sobre qué falta, leer esto primero.
 >
-> **Última actualización:** 10/11/2026 — Build 14 de Android/iOS generado y subido a canales de prueba; faltan verificar procesamiento/disponibilidad y QA física de anuncios, orientación, GameSir y navegación UI.
+> **Última actualización:** 12/11/2026 — ConsentManager + AdsManager actualizados; controles táctiles resueltos; ironSource Exchange cierra 31/12/2026 (ver sección Ads).
 
 > [!CAUTION]
 > **REGLA ESTRICTA DE DISEÑO E IMPLEMENTACIÓN (NO NEGOCIABLE):**
 > **CERO ICONOS / EMOJIS EN TEXTOS DE UNITY / TEXTMESHPRO.**
+
+---
+
+## ⚠️ ACCIÓN URGENTE — ironSource Exchange cierra el 31/12/2026
+
+**Qué cambia:** La red de demanda programática "ironSource Exchange" (iSX) deja de servir ads el 31/12/2026.
+
+**Qué NO cambia:** LevelPlay (la plataforma de mediación), el SDK, el dashboard, los datos y las App Keys siguen igual.
+
+**Lo que hay que hacer — solo en el dashboard, sin cambios de código:**
+
+1. Ir a [dashboard.is.com](https://dashboard.is.com) → tu app Fox's Tale
+2. En la sección **Networks** de cada Ad Unit (Rewarded e Interstitial): activar **Unity Ads** como red
+3. Esto redirige la demanda programática de iSX a Unity Exchange automáticamente
+4. Hacer esto antes del **31 de diciembre de 2026**
+
+**Código:** `AdsManager.cs` ya está documentado con esta nota. No requiere cambios de código.
+
+---
 > Unity no es una web ni un navegador. Los atlas de fuentes (SDF / TTF) en Unity NO contienen glifos de emojis unicode (`🛒`, `💎`, `🍀`, `❤️`, `★`, `✓`, etc.). Meter emojis o símbolos unicode en `m_text` o en strings de C# provoca que TextMeshPro dibuje caracteres rotos / cajas cuadradas (`□`) en pantalla.
 > **Si se requiere un icono visual (gema, trébol, corazón, carrito):** DEBE implementarse SIEMPRE como un GameObject con componente `Image` o `SpriteRenderer` usando el asset Sprite correspondiente. NUNCA poner emojis o caracteres especiales dentro del string del texto. Los textos deben ser 100% texto alfanumérico limpio en inglés.
 
