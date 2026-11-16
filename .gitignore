@@ -437,3 +437,13 @@ sysinfo.txt
 # Crashlytics generated file
 crashlytics-build.properties
 
+# Codex session attachments (screenshots/images sent during AI sessions)
+/.codex-attachments/
+
+# Unity Addressables platform-specific build cache (auto-generated)
+/Assets/AddressableAssetsData/Android/
+/Assets/AddressableAssetsData/Android.meta
+/Assets/AddressableAssetsData/iOS/
+/Assets/AddressableAssetsData/iOS.meta
+/Assets/AddressableAssetsData/Windows/
+/Assets/AddressableAssetsData/Windows.meta
