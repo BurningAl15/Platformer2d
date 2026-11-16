@@ -355,12 +355,13 @@ public static class SceneElementSetup
             existing.worldName = "World 1 - The Forest";
             existing.worldNumber = 1;
             existing.levelSceneNames = new string[] {
-                "Level_0", "Level_1", "Level_2", "Level_3", "Level_4",
-                "Level_5", "Level_6", "Level_7", "Level_8", "Level_9", "Level_10"
+                "Level_1", "Level_2", "Level_3", "Level_4",
+                "Level_5", "Level_6", "Level_7", "Level_8"
             };
             existing.starsRequiredToUnlock = 0;
-            existing.totalGems = 1100;
-            existing.totalTrebols = 10;
+            existing.targetTimes = new float[] { 150, 130, 120, 120, 80, 150, 110, 120 };
+            existing.totalGems = 171;
+            existing.totalTrebols = 8;
             existing.totalDiceFragments = 3;
             existing.selectionSceneName = "LevelSelection";
             AssetDatabase.CreateAsset(existing, path);

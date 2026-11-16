@@ -218,7 +218,8 @@ public class LevelManager : MonoBehaviour
 
     private bool IsCurrentWorldComplete()
     {
-        return currentWorldData != null && worldCompleteController != null &&
+        return currentWorldData != null && currentWorldData.LevelCount > 0 && worldCompleteController != null &&
+               gameObject.scene.name == currentWorldData.GetLevelScene(currentWorldData.LevelCount - 1) &&
                WorldProgressManager.Instance != null &&
                WorldProgressManager.Instance.IsWorldComplete(currentWorldData);
     }
@@ -246,16 +247,14 @@ public class LevelManager : MonoBehaviour
         }
 
         // Calcular y guardar rating de estrellas
-        if (LevelRatingSystem._instance != null)
+        if (levelNumber > 0)
         {
             var req = new LevelRatingSystem.LevelRequirements
             {
-                targetTime = SaveManager.Instance != null
-                    ? SaveManager.Instance.LoadBestTime(levelNumber)
-                    : 99999f,
+                targetTime = currentWorldData != null ? currentWorldData.GetTargetTime(gameObject.scene.name) : 0f,
                 totalGems = totalGemsInLevel > 0 ? totalGemsInLevel : gemsCollected
             };
-            rating = LevelRatingSystem._instance.CalculateRating(timeInLevel, gemsCollected, req);
+            rating = LevelRatingSystem.CalculateRating(timeInLevel, gemsCollected, req);
             SaveManager.Instance?.SaveRatingIfBetter(levelNumber, (int)rating);
         }
 

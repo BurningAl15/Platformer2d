@@ -15,7 +15,6 @@ MonoBehaviour:
   worldName: World 1 - The Forest
   worldNumber: 1
   levelSceneNames:
-  - Level_0
   - Level_1
   - Level_2
   - Level_3
@@ -24,11 +23,18 @@ MonoBehaviour:
   - Level_6
   - Level_7
   - Level_8
-  - Level_9
-  - Level_10
+  targetTimes:
+  - 150
+  - 130
+  - 120
+  - 120
+  - 80
+  - 150
+  - 110
+  - 120
   starsRequiredToUnlock: 0
-  totalGems: 1100
-  totalTrebols: 10
+  totalGems: 171
+  totalTrebols: 8
   totalDiceFragments: 3
   selectionSceneName: LevelSelection
   worldThumbnail: {fileID: 0}

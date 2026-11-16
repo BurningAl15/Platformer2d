@@ -10270,7 +10270,7 @@ MonoBehaviour:
   respawnHoldTime: 0.5
   stopGame: 0
   totalGemsInLevel: 0
-  currentWorldData: {fileID: 0}
+  currentWorldData: {fileID: 11400000, guid: fb0e86021e06e4301a56208e676c3a2c, type: 2}
   worldCompleteController: {fileID: 4804873771879832398}
 --- !u!4 &3943454753997984376
 Transform:
@@ -154323,6 +154323,7 @@ SceneRoots:
   - {fileID: 474248274}
   - {fileID: 3943454755671258871}
   - {fileID: 2090214735}
+  - {fileID: 7713030000000000006}
 
 --- !u!1001 &7713030000000000006
 PrefabInstance:

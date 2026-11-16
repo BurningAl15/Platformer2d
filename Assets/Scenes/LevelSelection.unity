@@ -5024,7 +5024,7 @@ MonoBehaviour:
   - {fileID: 1164317286}
   - {fileID: 1523378652}
   - {fileID: 540363384}
-  worldData: {fileID: 0}
+  worldData: {fileID: 11400000, guid: fb0e86021e06e4301a56208e676c3a2c, type: 2}
   player: {fileID: 437483428}
 --- !u!1 &1319163426
 GameObject:

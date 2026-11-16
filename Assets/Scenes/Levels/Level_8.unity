@@ -3371,7 +3371,7 @@ MonoBehaviour:
   respawnHoldTime: 0.5
   stopGame: 0
   totalGemsInLevel: 0
-  currentWorldData: {fileID: 0}
+  currentWorldData: {fileID: 11400000, guid: fb0e86021e06e4301a56208e676c3a2c, type: 2}
   worldCompleteController: {fileID: 1547089569}
 --- !u!4 &3943454753997984376
 Transform:

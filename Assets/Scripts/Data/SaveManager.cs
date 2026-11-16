@@ -134,7 +134,11 @@ public class SaveManager : MonoBehaviour
     // ───────────────────────────────────────────────
 
     public int LoadRating(int levelNumber)
-        => PlayerPrefs.GetInt($"Level_{levelNumber}_Rating", 0);
+    {
+        int stars = PlayerPrefs.GetInt($"Level_{levelNumber}_Rating", 0);
+        // Older builds recorded completion times even when the rating component was absent.
+        return stars == 0 && levelNumber > 0 && LoadBestTime(levelNumber) < 99999f ? 1 : stars;
+    }
 
     /// <summary>Guarda el rating solo si es mejor que el anterior.</summary>
     public void SaveRatingIfBetter(int levelNumber, int stars)
