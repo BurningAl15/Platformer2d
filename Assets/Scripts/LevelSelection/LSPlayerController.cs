@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 /// <summary>
 /// Controlador del jugador en la pantalla de selección de niveles.
@@ -24,7 +25,7 @@ public class LSPlayerController : MonoBehaviour
     {
         if (InputManager.Instance != null)
         {
-            InputManager.Instance.OnJumpPressed += HandleLevelSelect;
+            InputManager.Instance.OnJumpPressed += HandleConfirmPressed;
             InputManager.Instance.OnPausePressed += OpenSettingsFromGamepad;
         }
     }
@@ -33,9 +34,24 @@ public class LSPlayerController : MonoBehaviour
     {
         if (InputManager.Instance != null)
         {
-            InputManager.Instance.OnJumpPressed -= HandleLevelSelect;
+            InputManager.Instance.OnJumpPressed -= HandleConfirmPressed;
             InputManager.Instance.OnPausePressed -= OpenSettingsFromGamepad;
         }
+    }
+
+    // The confirm button is bound to both Jump and UI Submit. While a button or
+    // panel has UI focus, the press belongs to the UI and must not enter a level.
+    private static bool IsUiFocused()
+    {
+        EventSystem eventSystem = EventSystem.current;
+        GameObject selected = eventSystem != null ? eventSystem.currentSelectedGameObject : null;
+        return selected != null && selected.activeInHierarchy;
+    }
+
+    private void HandleConfirmPressed()
+    {
+        if (IsUiFocused()) return;
+        HandleLevelSelect();
     }
 
     private void OpenSettingsFromGamepad()
@@ -106,6 +122,7 @@ public class LSPlayerController : MonoBehaviour
     {
         if (pathQueue.Count > 0) return;
         if (InputManager.Instance == null) return;
+        if (IsUiFocused()) return;
 
         Vector2 moveInput = InputManager.Instance.MoveInput;
 

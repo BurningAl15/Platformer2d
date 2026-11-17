@@ -154,3 +154,5 @@ Integración diferida hasta cerrar los P0 de monetización y QA. Ver FastTask `l
 | `FastTask/tasks.json` | Tareas activas con historial de cambios por fecha |
 | `docs/ANTIGRAVITY_PRODUCTION_HANDOFF_2026-10-28.md` | Handoff de producción de Antigravity |
 | `docs/MONETIZATION_RELEASE.md` | Estado de monetización y ficha de tiendas |
+
+2026-11-16 — 4c663af8-d5c5-4b07-b714-176f16beeb58 — Level selector double activation: the EventSystem preselected BackToMenuButton and the confirm button drives both Player/Jump and UI/Submit. The scene now starts with no UI selection and LSPlayerController ignores confirm/stick input while a UI element has focus. BackToMenuButton has no gamepad-only route until the owner picks one. Compiles with 0 errors; Play Mode and device QA pending.

@@ -63,6 +63,14 @@
       "status": "doing",
       "updatedAt": "2026-11-12T18:00:00-05:00",
       "description": "P2 diferido. Fox's Tale sigue en QA activo; retomar Firebase después de cerrar los P0 de monetización y QA. Prioridad acordada: después de Mix2Match/Mix2Word y Lazy Lovers.\n\n2026-11-04 Codex: guard de Gradle Firebase agregado como postprocessor preventivo. Paquetes Firebase (Analytics 14.1.0 + Crashlytics 14.1.0) aún no importados. EDM4U mantenido via UPM. Pendiente importar, configurar app Firebase y validar Android/iOS."
+    },
+    {
+      "id": "4c663af8-d5c5-4b07-b714-176f16beeb58",
+      "title": "Stop the confirm button from activating UI and entering a level together in the level selector",
+      "description": "P1 UI navigation. Owner report: pressing A right after the level selector loads can activate a menu button and enter the level at the same time.\n\n2026-11-16 Claude Code — Root cause: the LevelSelection EventSystem had BackToMenuButton as `m_FirstSelected`, and the confirm button is bound to both Player/Jump (LSPlayerController level entry) and UI/Submit (selected button click), so one press did both. Fix: the scene EventSystem now starts with no selection, and LSPlayerController ignores confirm and stick navigation while any UI element has focus (settings open or a button selected by click). Clicking the map background still clears the selection. Known consequence: with a gamepad only, Settings is still reachable with Pause, but BackToMenuButton has no gamepad route now that it is not preselected; owner to decide the route (for example B/Cancel). Verification: Assembly-CSharp compiled with the Unity 6000.6.0f1 bundled Roslyn, 0 errors. No Editor import, Play Mode, build or device QA. Status: testing; owner next action: in Play Mode with a gamepad press A on load (only the level should open), open Settings with Pause and confirm A/stick do not move Fox or enter a level, close it and confirm the map responds again.",
+      "status": "testing",
+      "createdAt": "2026-11-16T22:59:21-05:00",
+      "updatedAt": "2026-11-16T22:59:21-05:00"
     }
   ]
 }
