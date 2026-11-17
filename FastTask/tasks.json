@@ -294,6 +294,14 @@
       "status": "todo",
       "createdAt": "2026-11-17T00:32:50-05:00",
       "updatedAt": "2026-11-17T00:32:50-05:00"
+    },
+    {
+      "id": "ef3f5222-1da8-476d-9073-02c0432bcc6f",
+      "title": "Rebuild the menus with a themed 16-bit UI kit",
+      "description": "P1 UI. Owner direction: the menus look too basic; rebuild them with one 16-bit pixel-art UI kit, then redesign the menu order with it. Owner picked the blue 16-bit window as the starting theme and wants the theme to be customizable later (Wood, Parchment and Stone mockups were also liked).\n\n2026-11-17 Claude Code — Baked the kit sprites with `ArtSource/UIKit/bake_ui_kit.py` into `Assets/Sprites/UIKit/{Blue16,Wood,Parchment,Stone}`: Panel (32x32, border 8), Header, Slot, Button Normal/Focused/Pressed/Disabled (32x20, border 6) and Cursor, point-filtered at 16 px per unit with 9-slice borders in their import settings. No scene, prefab or script uses them yet. Verification: sprites reviewed as an image sheet only; not imported in the Editor. Next: agree the menu flow with the owner, then build the screens in the Unity Editor starting with the character selector (task 6001a117), followed by Settings, Pause, Store and Game Over. Icons (audio, haptics, language) and the theme-selection setting are not drawn or implemented yet.",
+      "status": "doing",
+      "createdAt": "2026-11-17T00:44:20-05:00",
+      "updatedAt": "2026-11-17T00:44:20-05:00"
     }
   ]
 }
