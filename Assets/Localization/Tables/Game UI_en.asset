@@ -410,6 +410,18 @@ MonoBehaviour:
     m_Localized: No
     m_Metadata:
       m_Items: []
+  - m_Id: 804249695
+    m_Localized: Resume
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249696
+    m_Localized: Level Select
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249697
+    m_Localized: Main Menu
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

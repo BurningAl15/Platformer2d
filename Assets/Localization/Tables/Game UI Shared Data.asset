@@ -403,6 +403,18 @@ MonoBehaviour:
     m_Key: UI_CONFIRM_NO
     m_Metadata:
       m_Items: []
+  - m_Id: 804249695
+    m_Key: UI_RESUME
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249696
+    m_Key: UI_LEVEL_SELECT
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249697
+    m_Key: UI_MAIN_MENU
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

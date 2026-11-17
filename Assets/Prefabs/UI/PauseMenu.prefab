@@ -392,6 +392,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 885330593811400421}
     m_Modifications:
+    - target: {fileID: 989747991768327362, guid: efd0f002e955e6b4d9d63618dda0f0c1, type: 3}
+      propertyPath: m_StringReference.m_TableEntryReference.m_Key
+      value: UI_LEVEL_SELECT
+      objectReference: {fileID: 0}
     - target: {fileID: 4199726455294008376, guid: efd0f002e955e6b4d9d63618dda0f0c1, type: 3}
       propertyPath: m_Name
       value: Level-Select-Button
@@ -605,6 +609,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 885330593811400421}
     m_Modifications:
+    - target: {fileID: 989747991768327362, guid: efd0f002e955e6b4d9d63618dda0f0c1, type: 3}
+      propertyPath: m_StringReference.m_TableEntryReference.m_Key
+      value: UI_RESUME
+      objectReference: {fileID: 0}
     - target: {fileID: 4199726455294008376, guid: efd0f002e955e6b4d9d63618dda0f0c1, type: 3}
       propertyPath: m_Name
       value: Resume-Button
@@ -814,6 +822,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 885330593811400421}
     m_Modifications:
+    - target: {fileID: 989747991768327362, guid: efd0f002e955e6b4d9d63618dda0f0c1, type: 3}
+      propertyPath: m_StringReference.m_TableEntryReference.m_Key
+      value: UI_MAIN_MENU
+      objectReference: {fileID: 0}
     - target: {fileID: 4199726455294008376, guid: efd0f002e955e6b4d9d63618dda0f0c1, type: 3}
       propertyPath: m_Name
       value: Main-Menu-Button

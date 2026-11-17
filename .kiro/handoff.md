@@ -1683,3 +1683,5 @@ Nota agregada en el docstring con la acción requerida en el dashboard.
 ---
 
 2026-11-16 — 4c663af8-d5c5-4b07-b714-176f16beeb58 — Level selector double activation: the EventSystem preselected BackToMenuButton and the confirm button drives both Player/Jump and UI/Submit. The scene now starts with no UI selection and LSPlayerController ignores confirm/stick input while a UI element has focus. BackToMenuButton has no gamepad-only route until the owner picks one. Compiles with 0 errors; Play Mode and device QA pending.
+
+2026-11-16 — 4bb73a3d-8b4f-4401-9020-d9adda79cf81 — Owner UI review. Pause menu fixed: added UI_RESUME/UI_LEVEL_SELECT/UI_MAIN_MENU keys and overrides on the three pause buttons (they all showed the shared UI_START text), and PauseMenu now suppresses the touch-controls canvas that was taking the clicks. Compiles; Play Mode check pending; rebuild Localization Addressables before the next device build. Still open in this task: menu/Settings/Store visual defects, Settings redesign, level-selector info panel and badges, parallax layer coverage.

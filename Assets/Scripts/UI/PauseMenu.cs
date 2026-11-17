@@ -79,6 +79,8 @@ public class PauseMenu : MonoBehaviour
             Time.timeScale = 0;
             TurnCanvasGroup(true);
             RefreshPauseStats();
+            // The touch controls canvas renders above this panel and would take its clicks.
+            PlatformDetector.Instance?.SetGameplayControlsSuppressed(true);
             InputManager.Instance.EnableUIOnlyInput();
             UISelectionUtility.SelectDefault(firstSelectedButton, pauseScreen != null ? pauseScreen.transform : transform);
 
@@ -156,6 +158,7 @@ public class PauseMenu : MonoBehaviour
             {
                 TurnCanvasGroup(false);
                 Time.timeScale = 1;
+                PlatformDetector.Instance?.SetGameplayControlsSuppressed(false);
                 InputManager.Instance?.EnablePlayerInput();
 
                 if (EventSystem.current != null)
@@ -173,6 +176,7 @@ public class PauseMenu : MonoBehaviour
         pauseScreen.transform.DOKill();
         SetPausePanelY(CalculateHiddenPosition());
         TurnCanvasGroup(false);
+        PlatformDetector.Instance?.SetGameplayControlsSuppressed(false);
         InputManager.Instance?.EnablePlayerInput();
     }
 
