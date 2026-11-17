@@ -83,7 +83,7 @@ public class StompBox : MonoBehaviour
         float dropSelect = Random.Range(0, 100);
 
         if (dropSelect <= chanceToDrop)
-            Instantiate(collectible, _lastPos, Quaternion.identity);
+            SpawnFactory.Spawn(collectible, _lastPos, Quaternion.identity);
     }
 
     public void TurnLayer_Active()

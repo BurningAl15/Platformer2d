@@ -12,6 +12,12 @@ public class DamagePlayer : MonoBehaviour
         enemyParent = GetComponentInParent<EnemyParent>();
     }
 
+    private void OnDisable()
+    {
+        // Coroutines stop with the object, so pending entries would never clear.
+        pendingDamage.Clear();
+    }
+
     private void OnTriggerEnter2D(Collider2D other)
     {
         // The stomp sensor has its own enemy-contact handler and must not deal damage.

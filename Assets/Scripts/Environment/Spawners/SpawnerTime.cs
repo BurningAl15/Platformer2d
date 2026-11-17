@@ -19,7 +19,7 @@ public class SpawnerTime : SpawnerParent
 
     public override void Spawn()
     {
-        GameObject _enemy = Instantiate(enemy, transform.position, Quaternion.identity);
+        GameObject _enemy = SpawnFactory.Spawn(enemy, transform.position, Quaternion.identity);
         _enemy.GetComponent<RunningEnemy>().SetDirection(direction);
     }
 

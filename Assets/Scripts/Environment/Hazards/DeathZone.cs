@@ -28,7 +28,7 @@ public class DeathZone : MonoBehaviour
     }
 
     if(other.CompareTag("EnemyContainer"))
-      Destroy(other.gameObject);
+      SpawnFactory.Release(other.gameObject);
     if(other.CompareTag("FallingLog"))
       other.GetComponent<FallingLog>().ResetLog();
   }

@@ -7,10 +7,15 @@ public class TurnOff_OnTime : MonoBehaviour
 {
     public bool finish;
     [SerializeField] private bool mustDestroy;
+    private void OnEnable()
+    {
+        finish = false;
+    }
+
     public void TurnOnTimer()
     {
-        if(mustDestroy)
-            Destroy(this.gameObject);
+        if (mustDestroy || SpawnFactory.IsManaged(gameObject))
+            SpawnFactory.Release(gameObject);
         else
             gameObject.SetActive(false);
 

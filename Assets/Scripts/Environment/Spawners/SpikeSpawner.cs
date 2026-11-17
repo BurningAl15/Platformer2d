@@ -14,7 +14,7 @@ public class SpikeSpawner : SpawnerParent
     
     public override void Spawn()
     {
-        Instantiate(enemy, transform.position, Quaternion.identity);
+        SpawnFactory.Spawn(enemy, transform.position, Quaternion.identity);
     }
 
     public override void ResetSpawner()

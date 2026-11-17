@@ -99,7 +99,7 @@ public class BossTankController : MonoBehaviour
         if (shootCounter <= 0)
         {
             shootCounter = timeBetweenShots;
-            var newBullet = Instantiate(bullet, firePoint.position, firePoint.rotation);
+            var newBullet = SpawnFactory.Spawn(bullet, firePoint.position, firePoint.rotation);
             newBullet.transform.eulerAngles = new Vector3(0, moveRight ? 180 : 0, 0);
         }
     }
@@ -149,11 +149,11 @@ public class BossTankController : MonoBehaviour
     {
         Bounds hull = _spriteRenderer.bounds;
         Vector3 offset = Vector3.right * hull.extents.x * 0.5f;
-        Instantiate(explosion, hull.center - offset, Quaternion.identity);
+        SpawnFactory.Spawn(explosion, hull.center - offset, Quaternion.identity);
         yield return new WaitForSeconds(0.14f);
-        Instantiate(explosion, hull.center + offset, Quaternion.identity);
+        SpawnFactory.Spawn(explosion, hull.center + offset, Quaternion.identity);
         yield return new WaitForSeconds(0.14f);
-        Instantiate(explosion, hull.center, Quaternion.identity);
+        SpawnFactory.Spawn(explosion, hull.center, Quaternion.identity);
 
         winPlatform.transform.SetParent(null, true);
         winPlatform.SetActive(true);
@@ -168,7 +168,7 @@ public class BossTankController : MonoBehaviour
         if (mineCounter <= 0)
         {
             mineCounter = timeBetweenMines;
-            Instantiate(mine, minePoint.position, minePoint.rotation);
+            SpawnFactory.Spawn(mine, minePoint.position, minePoint.rotation);
         }
     }
     

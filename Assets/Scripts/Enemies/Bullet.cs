@@ -7,9 +7,10 @@ public class Bullet : MonoBehaviour
     [SerializeField] private int direction;
 
     [SerializeField] private GameObject smoke;
-    void Start()
+    void OnEnable()
     {
-        AudioMixerManager._instance.CallSFX(SFXType.Boss_Shoot);
+        // OnEnable can run before the audio manager on scene load.
+        AudioMixerManager._instance?.CallSFX(SFXType.Boss_Shoot);
     }
 
     void Update()
@@ -24,10 +25,10 @@ public class Bullet : MonoBehaviour
         {
             PlayerHealth._instance.DealDamage();
             PlayerController2d._instance.KnockBack();
-            Destroy(this.gameObject);
+            SpawnFactory.Release(gameObject);
             ScreenShake._instance.StartShake(.3f,.5f);
         }
-        Instantiate(smoke, transform.position, transform.rotation);
+        SpawnFactory.Spawn(smoke, transform.position, transform.rotation);
         AudioMixerManager._instance.CallSFX(SFXType.Boss_Impact);
     }
 }

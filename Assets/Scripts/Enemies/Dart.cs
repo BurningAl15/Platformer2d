@@ -9,10 +9,11 @@ public class Dart : MonoBehaviour
     [SerializeField] private GameObject smoke;
 
     [SerializeField] private Rigidbody2D rgb;
-    void Start()
+    void OnEnable()
     {
         rgb = GetComponent<Rigidbody2D>();
-        AudioMixerManager._instance.CallSFX(SFXType.Boss_Shoot);
+        // OnEnable can run before the audio manager on scene load.
+        AudioMixerManager._instance?.CallSFX(SFXType.Boss_Shoot);
         rgb.linearVelocity = Vector2.zero;
     }
 
@@ -27,12 +28,12 @@ public class Dart : MonoBehaviour
         {
             PlayerHealth._instance.DealDamage();
             PlayerController2d._instance.KnockBack();
-            Destroy(this.gameObject);
+            SpawnFactory.Release(gameObject);
             ScreenShake._instance.StartShake(.3f,.5f);
         }
         if(other.CompareTag("Ground") || other.CompareTag("Platform"))
-            Destroy(this.gameObject);
-        Instantiate(smoke, transform.position, transform.rotation);
+            SpawnFactory.Release(gameObject);
+        SpawnFactory.Spawn(smoke, transform.position, transform.rotation);
         AudioMixerManager._instance.CallSFX(SFXType.Boss_Impact);
     }
 }

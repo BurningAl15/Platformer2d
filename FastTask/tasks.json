@@ -240,6 +240,14 @@
       "status": "done",
       "createdAt": "2026-11-14T12:38:25-05:00",
       "updatedAt": "2026-11-14T13:15:00-05:00"
+    },
+    {
+      "id": "8fd43d2f-7927-4047-8a35-424323ebafea",
+      "title": "Route enemy, hazard and projectile creation through a spawn factory",
+      "description": "P1 architecture. Owner request: review enemy/hazard code and route their creation through one factory. Keep every serialized prefab and spawn-point reference where it is; do not change scene-placed enemies.\n\n2026-11-16 Claude Code — Added `Assets/Scripts/Environment/Spawners/SpawnFactory.cs` (static, prefab-keyed, no scene or asset wiring) with `Spawn`, `Release`, `IsManaged` and the `ISpawnable.OnSpawned` reset hook. Spawners (SpawnerTime, SpikeSpawner, SpawnByGroup, SpawnerSwitch), the stomp drop, and the boss bullets/mines/explosions now create through it with their existing serialized prefabs and positions. Released instances are reused: spawned rats (stomp, KillEnemyContainer, DeathZone), falling spikes hitting logs, bullets, darts, mines and TurnOff_OnTime effects such as smoke. Objects the factory did not create keep the old Destroy/SetActive behavior. EnemyParent restores colliders, sprite, squash pose and death effect on reuse; RunningEnemy and FallingSpike clear velocity; Bullet/Dart initialize in OnEnable; TurnOff_OnTime clears `finish` on enable; DamagePlayer clears pending damage when disabled; the pool is cleared on scene unload. Verification: Assembly-CSharp compiled with the Unity 6000.6.0f1 bundled Roslyn, 0 errors. No Editor import, Play Mode, build or device QA. Status: testing; owner next action: Play Mode on a rat-cave level (stomp several rats, let others reach the kill container and the death zone, confirm later rats still move, damage and die), a falling-spike zone, dart traps, and the Level 8 boss (bullets, mines, smoke, defeat explosions).",
+      "status": "testing",
+      "createdAt": "2026-11-16T22:02:37-05:00",
+      "updatedAt": "2026-11-16T22:02:37-05:00"
     }
   ]
 }

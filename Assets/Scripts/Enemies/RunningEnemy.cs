@@ -21,6 +21,13 @@ public class RunningEnemy : EnemyParent
         FlipSpriteRenderer();
     }
 
+    public override void OnSpawned()
+    {
+        base.OnSpawned();
+        if (rgb != null)
+            rgb.linearVelocity = Vector2.zero;
+    }
+
     public void SetDirection(int _direction)
     {
         direction = _direction;

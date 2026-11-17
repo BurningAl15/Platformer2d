@@ -35,8 +35,8 @@ public class BossTankMine : MonoBehaviour
 
     public void DestroyMine()
     {
-        Instantiate(explosion, transform.position, transform.rotation);
-        Destroy(gameObject);
+        SpawnFactory.Spawn(explosion, transform.position, transform.rotation);
+        SpawnFactory.Release(gameObject);
         AudioMixerManager._instance.CallSFX(SFXType.Enemy_Death);
     }
 }
