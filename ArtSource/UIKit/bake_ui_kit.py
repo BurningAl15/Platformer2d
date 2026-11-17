@@ -14,7 +14,7 @@ CLEAR = (0, 0, 0, 0)
 THEMES = {
     'Blue16': dict(outline='#0a0e30', border='#f4f6ff', border_dark='#a8b0d8', fill_top='#3b5fd0', fill_bottom='#141c58',
                    btn='#1e2c78', btn_lite='#4a60c0', btn_shade='#101848',
-                   focus='#f4f6ff', focus_lite='#ffffff', focus_shade='#a8b0d8',
+                   focus='#3f7cf0', focus_lite='#a8c8ff', focus_shade='#2450b0',
                    head='#1e2c78', head_lite='#4a60c0', head_shade='#0a0e30', slot='#16205c', cursor='#f2c230', corner=None),
     'Wood': dict(outline='#2b1a1e', border='#8a5a2e', border_dark='#5a3520', fill_top='#b07840', fill_bottom='#9a6634',
                  btn='#3f8f4f', btn_lite='#6fc070', btn_shade='#28603a',

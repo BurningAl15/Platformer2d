@@ -474,6 +474,42 @@ MonoBehaviour:
     m_Localized: Crimson
     m_Metadata:
       m_Items: []
+  - m_Id: 804249711
+    m_Localized: Character
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249712
+    m_Localized: Style
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249713
+    m_Localized: Color
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249714
+    m_Localized: 'Locked: finish {0} levels with all gems'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249715
+    m_Localized: 'Locked: find {0} clovers'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249716
+    m_Localized: 'Perfect levels: {0}   Clovers: {1}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249717
+    m_Localized: Sound
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249718
+    m_Localized: Game
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249719
+    m_Localized: Save data
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

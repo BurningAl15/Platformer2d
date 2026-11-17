@@ -470,6 +470,42 @@ MonoBehaviour:
     m_Localized: Carmesi
     m_Metadata:
       m_Items: []
+  - m_Id: 804249711
+    m_Localized: Personaje
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249712
+    m_Localized: Estilo
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249713
+    m_Localized: Color
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249714
+    m_Localized: 'Bloqueado: termina {0} niveles con todas las gemas'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249715
+    m_Localized: 'Bloqueado: encuentra {0} treboles'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249716
+    m_Localized: 'Niveles perfectos: {0}   Treboles: {1}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249717
+    m_Localized: Sonido
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249718
+    m_Localized: Juego
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249719
+    m_Localized: Datos guardados
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

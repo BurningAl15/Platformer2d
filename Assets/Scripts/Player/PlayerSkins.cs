@@ -17,9 +17,9 @@ public static class PlayerSkins
     /// <summary>Level clovers that each additional color costs.</summary>
     public const int CloversPerColor = 2;
 
-    private static readonly Dictionary<Sprite, Sprite> resolved = new Dictionary<Sprite, Sprite>();
+    private static readonly Dictionary<string, Dictionary<Sprite, Sprite>> resolved =
+        new Dictionary<string, Dictionary<Sprite, Sprite>>();
     private static readonly Dictionary<string, Sprite[]> sheets = new Dictionary<string, Sprite[]>();
-    private static string resolvedFolder;
 
     public static int StyleIndex
     {
@@ -88,28 +88,43 @@ public static class PlayerSkins
         SaveManager.Instance.SaveSkinColor(next);
     }
 
+    /// <summary>Saves the selection when both options are unlocked.</summary>
+    public static bool TrySelect(int style, int color)
+    {
+        if (SaveManager.Instance == null || style < 0 || style >= Styles.Length || color < 0 || color >= Colors.Length ||
+            !IsStyleUnlocked(style) || !IsColorUnlocked(color))
+            return false;
+
+        SaveManager.Instance.SaveSkinStyle(style);
+        SaveManager.Instance.SaveSkinColor(color);
+        return true;
+    }
+
     /// <summary>
     /// Returns the sprite of the selected skin that matches an original player
     /// sprite. Sprites that have no skinned counterpart are returned unchanged.
     /// </summary>
     public static Sprite Resolve(Sprite original)
     {
+        return ResolveFor(original, StyleIndex, ColorIndex);
+    }
+
+    /// <summary>Same as <see cref="Resolve"/> for any style and color, locked or not.</summary>
+    public static Sprite ResolveFor(Sprite original, int style, int color)
+    {
         if (original == null)
             return null;
-
-        int style = StyleIndex;
-        int color = ColorIndex;
-        if (style == 0 && color == 0)
+        if (style <= 0 && color <= 0)
             return original;
 
         string folder = $"PlayerSkins/{Styles[style]}_{Colors[color]}";
-        if (folder != resolvedFolder)
+        if (!resolved.TryGetValue(folder, out Dictionary<Sprite, Sprite> map))
         {
-            resolved.Clear();
-            resolvedFolder = folder;
+            map = new Dictionary<Sprite, Sprite>();
+            resolved[folder] = map;
         }
 
-        if (resolved.TryGetValue(original, out Sprite skinned))
+        if (map.TryGetValue(original, out Sprite skinned))
             return skinned;
 
         skinned = original;
@@ -132,7 +147,7 @@ public static class PlayerSkins
             }
         }
 
-        resolved[original] = skinned;
+        map[original] = skinned;
         return skinned;
     }
 }

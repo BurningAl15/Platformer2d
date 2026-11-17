@@ -13,6 +13,9 @@ public class EnemyParent : MonoBehaviour, ISpawnable
 
     public bool IsDying => isDeath;
 
+    /// <summary>Raised once when the enemy is actually defeated.</summary>
+    public event Action Died;
+
     [SerializeField] protected Collider2D _collider2D;
     [SerializeField] protected SpriteRenderer _spriteRenderer;
 
@@ -67,6 +70,7 @@ public class EnemyParent : MonoBehaviour, ISpawnable
     IEnumerator EnemyDie(bool destroy)
     {
         isDeath = true;
+        Died?.Invoke();
         Transform visual = _spriteRenderer.transform;
         Vector3 effectPosition = visual.position;
 

@@ -467,6 +467,42 @@ MonoBehaviour:
     m_Key: SKIN_COLOR_CRIMSON
     m_Metadata:
       m_Items: []
+  - m_Id: 804249711
+    m_Key: UI_CHARACTER
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249712
+    m_Key: SKIN_ROW_STYLE
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249713
+    m_Key: SKIN_ROW_COLOR
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249714
+    m_Key: SKIN_LOCKED_STYLE
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249715
+    m_Key: SKIN_LOCKED_COLOR
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249716
+    m_Key: SKIN_PROGRESS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249717
+    m_Key: SETTINGS_GROUP_SOUND
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249718
+    m_Key: SETTINGS_GROUP_GAME
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249719
+    m_Key: SETTINGS_GROUP_DATA
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

@@ -20,10 +20,9 @@ public class DamagePlayer : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        // The stomp sensor has its own enemy-contact handler and must not deal damage.
-        if (other.CompareTag("StompBox"))
-            return;
-
+        // The player's body and the Enemy layer ignore each other, so the StompBox
+        // is the sensor that reports enemy contact. Enemy damage is deferred
+        // below so a valid stomp from the same contact can win first.
         PlayerHealth player = other.GetComponentInParent<PlayerHealth>();
         if (player == null)
             return;
