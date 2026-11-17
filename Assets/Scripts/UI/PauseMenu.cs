@@ -2,6 +2,7 @@
 using UnityEngine.EventSystems;
 using DG.Tweening;
 using TMPro;
+using UnityEngine.UI;
 
 /// <summary>
 /// Gestiona la pausa del juego.
@@ -22,7 +23,19 @@ public class PauseMenu : MonoBehaviour
     [Tooltip("Posición Y visible del panel")]
     [SerializeField] private float endPoint;
     [SerializeField] private GameObject firstSelectedButton;
-    [SerializeField] private TextMeshProUGUI pauseStatsText;
+    [Header("Stats (icon + amount)")]
+    [SerializeField] private TextMeshProUGUI titleText;
+    [SerializeField] private TextMeshProUGUI gemsText;
+    [SerializeField] private Image cloverIcon;
+    [SerializeField] private TextMeshProUGUI heartsText;
+    [SerializeField] private TextMeshProUGUI fragmentsText;
+    [SerializeField] private TextMeshProUGUI livesText;
+    [SerializeField] private Color missingTint = new Color(0.35f, 0.38f, 0.55f, 1f);
+
+    [Header("Portrait")]
+    [SerializeField] private Image portrait;
+    [Tooltip("Original idle frame; the portrait shows the selected skin's copy.")]
+    [SerializeField] private Sprite portraitSource;
     private RectTransform pauseRect;
 
     private void Awake()
@@ -34,16 +47,6 @@ public class PauseMenu : MonoBehaviour
         }
         _instance = this;
         pauseRect = pauseScreen != null ? pauseScreen.GetComponent<RectTransform>() : null;
-        if (pauseStatsText == null && pauseScreen != null)
-        {
-            Transform title = pauseScreen.transform.Find("Text (TMP)");
-            pauseStatsText = title != null
-                ? title.GetComponent<TextMeshProUGUI>()
-                : pauseScreen.GetComponentInChildren<TextMeshProUGUI>(true);
-        }
-        if (pauseStatsText != null && pauseStatsText.TryGetComponent(out UnityEngine.Localization.Components.LocalizeStringEvent titleBinding))
-            titleBinding.enabled = false;
-
     }
 
     private void OnEnable()
@@ -81,7 +84,7 @@ public class PauseMenu : MonoBehaviour
             RefreshPauseStats();
             // The touch controls canvas renders above this panel and would take its clicks.
             PlatformDetector.Instance?.SetGameplayControlsSuppressed(true);
-            InputManager.Instance.EnableUIOnlyInput();
+            InputManager.Instance?.EnableUIOnlyInput();
             UISelectionUtility.SelectDefault(firstSelectedButton, pauseScreen != null ? pauseScreen.transform : transform);
 
             pauseScreen.transform.DOKill();
@@ -97,30 +100,22 @@ public class PauseMenu : MonoBehaviour
 
     private void RefreshPauseStats()
     {
-        if (pauseStatsText == null) return;
-
         SaveManager save = SaveManager.Instance;
         int levelNumber = SceneUtils.Get_CurrentLevelName();
         int currentGems = LevelManager._instance != null ? LevelManager._instance.GetGemsCollected() : 0;
         int totalGems = LevelManager._instance != null ? LevelManager._instance.GetTotalGemsInLevel() : 0;
-        int fragmentCount = save != null ? save.LoadHeartFragmentCount() : 0;
+        int fragments = save != null ? save.LoadHeartFragmentCount() % 2 : 0;
         int permanentHearts = save != null ? save.LoadPermanentHeartCount() : 0;
         int lives = save != null ? save.LoadLives() : 0;
         bool hasClover = save != null && save.HasTrebol(levelNumber);
 
-        pauseStatsText.enableAutoSizing = true;
-        pauseStatsText.fontSizeMin = 22f;
-        pauseStatsText.fontSizeMax = 48f;
-        pauseStatsText.textWrappingMode = TextWrappingModes.Normal;
-        string cloverState = GameLocalization.Get(hasClover ? "PAUSE_CLOVER_YES" : "PAUSE_CLOVER_NO");
-        pauseStatsText.text = GameLocalization.Get(
-            "PAUSE_STATS",
-            currentGems,
-            totalGems,
-            cloverState,
-            fragmentCount % 2,
-            3 + permanentHearts,
-            lives);
+        if (titleText != null) titleText.text = GameLocalization.Get("UI_PAUSED");
+        if (gemsText != null) gemsText.text = $"{currentGems}/{totalGems}";
+        if (heartsText != null) heartsText.text = $"x{3 + permanentHearts}";
+        if (fragmentsText != null) fragmentsText.text = $"{fragments}/2";
+        if (livesText != null) livesText.text = $"x{lives}";
+        if (cloverIcon != null) cloverIcon.color = hasClover ? Color.white : missingTint;
+        if (portrait != null && portraitSource != null) portrait.sprite = PlayerSkins.Resolve(portraitSource);
     }
 
     /// <summary>

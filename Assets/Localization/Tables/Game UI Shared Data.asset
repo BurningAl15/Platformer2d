@@ -503,6 +503,10 @@ MonoBehaviour:
     m_Key: SETTINGS_GROUP_DATA
     m_Metadata:
       m_Items: []
+  - m_Id: 804249720
+    m_Key: SETTINGS_LEVELS
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

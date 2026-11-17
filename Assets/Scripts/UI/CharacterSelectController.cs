@@ -28,7 +28,12 @@ public class CharacterSelectController : MonoBehaviour
     [SerializeField] private TextMeshProUGUI titleText;
     [SerializeField] private TextMeshProUGUI styleText;
     [SerializeField] private TextMeshProUGUI colorText;
-    [SerializeField] private TextMeshProUGUI hintText;
+    [Tooltip("Perfect-gem levels (style unlocks), shown as gem icon + amount.")]
+    [SerializeField] private TextMeshProUGUI perfectLevelsText;
+    [Tooltip("Level clovers (color unlocks), shown as clover icon + amount.")]
+    [SerializeField] private TextMeshProUGUI cloversText;
+    [SerializeField] private Color amountColor = new Color(0.91f, 0.93f, 1f);
+    [SerializeField] private Color requirementColor = new Color(1f, 0.82f, 0.3f);
     [SerializeField] private TextMeshProUGUI styleCaptionText;
     [SerializeField] private TextMeshProUGUI colorCaptionText;
     [SerializeField] private TextMeshProUGUI openButtonText;
@@ -174,23 +179,23 @@ public class CharacterSelectController : MonoBehaviour
         SetText(styleText, GameLocalization.Get("SKIN_STYLE_" + PlayerSkins.Styles[browsedStyle].ToUpperInvariant()));
         SetText(colorText, GameLocalization.Get("SKIN_COLOR_" + PlayerSkins.Colors[browsedColor].ToUpperInvariant()));
 
-        if (hintText != null)
-        {
-            if (!styleUnlocked)
-                hintText.text = GameLocalization.Get("SKIN_LOCKED_STYLE", PlayerSkins.StyleRequirement(browsedStyle));
-            else if (!colorUnlocked)
-                hintText.text = GameLocalization.Get("SKIN_LOCKED_COLOR", PlayerSkins.ColorRequirement(browsedColor));
-            else
-                hintText.text = GameLocalization.Get(
-                    "SKIN_PROGRESS",
-                    SaveManager.Instance != null ? SaveManager.Instance.CountPerfectGemLevels() : 0,
-                    SaveManager.Instance != null ? SaveManager.Instance.CountLevelClovers() : 0);
-        }
+        // Progress as icon + amount; a locked option shows the amount it needs.
+        int perfect = SaveManager.Instance != null ? SaveManager.Instance.CountPerfectGemLevels() : 0;
+        int clovers = SaveManager.Instance != null ? SaveManager.Instance.CountLevelClovers() : 0;
+        SetAmount(perfectLevelsText, perfect, styleUnlocked ? -1 : PlayerSkins.StyleRequirement(browsedStyle));
+        SetAmount(cloversText, clovers, colorUnlocked ? -1 : PlayerSkins.ColorRequirement(browsedColor));
 
         if (preview != null)
             preview.color = styleUnlocked && colorUnlocked ? Color.white : lockedTint;
 
         ShowFrame();
+    }
+
+    private void SetAmount(TextMeshProUGUI target, int amount, int requirement)
+    {
+        if (target == null) return;
+        target.text = requirement < 0 ? $"x{amount}" : $"{amount}/{requirement}";
+        target.color = requirement < 0 ? amountColor : requirementColor;
     }
 
     private static void SetText(TextMeshProUGUI target, string value)

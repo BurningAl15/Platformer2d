@@ -506,6 +506,10 @@ MonoBehaviour:
     m_Localized: Datos guardados
     m_Metadata:
       m_Items: []
+  - m_Id: 804249720
+    m_Localized: 'Niveles {0}/{1}'
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

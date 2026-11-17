@@ -42,8 +42,11 @@ public class SettingsController : MonoBehaviour
     [SerializeField] private TextMeshProUGUI gameCaptionText;
     [SerializeField] private TextMeshProUGUI dataCaptionText;
 
-    [Header("Progreso del Jugador")]
-    [SerializeField] private TextMeshProUGUI progressSummaryText;
+    [Header("Progress (icon + amount)")]
+    [SerializeField] private WorldData world;
+    [SerializeField] private TextMeshProUGUI levelsText;
+    [SerializeField] private TextMeshProUGUI gemsCountText;
+    [SerializeField] private TextMeshProUGUI cloversCountText;
 
     [Header("Versión")]
     [SerializeField] private TextMeshProUGUI versionText;
@@ -379,27 +382,21 @@ public class SettingsController : MonoBehaviour
             }
         }
 
-        // Resumen de progreso
-        if (progressSummaryText != null)
+        // Progress: levels as a fraction, gems and clovers as icon + amount
+        int levelCount = world != null ? world.LevelCount : 8;
+        int unlockedCount = 0;
+        if (SaveManager.Instance != null)
         {
-            int unlockedCount = 0;
-            int totalGems = 0;
-            int totalTrebols = 0;
-
-            if (SaveManager.Instance != null)
-            {
-                for (int i = 1; i <= 10; i++)
-                {
-                    if (SaveManager.Instance.IsLevelUnlocked(i))
-                        unlockedCount++;
-                }
-                totalGems = SaveManager.Instance.LoadGlobalGems();
-                totalTrebols = SaveManager.Instance.LoadTotalTrebols();
-            }
-
-            progressSummaryText.text = GameLocalization.Get(
-                "SETTINGS_PROGRESS_SUMMARY", unlockedCount, totalGems, totalTrebols);
+            for (int i = 1; i <= levelCount; i++)
+                if (SaveManager.Instance.IsLevelUnlocked(i))
+                    unlockedCount++;
         }
+        if (levelsText != null)
+            levelsText.text = GameLocalization.Get("SETTINGS_LEVELS", unlockedCount, levelCount);
+        if (gemsCountText != null)
+            gemsCountText.text = $"x{(SaveManager.Instance != null ? SaveManager.Instance.LoadGlobalGems() : 0)}";
+        if (cloversCountText != null)
+            cloversCountText.text = $"x{(SaveManager.Instance != null ? SaveManager.Instance.LoadTotalTrebols() : 0)}";
 
         // Versión del juego
         if (versionText != null)
