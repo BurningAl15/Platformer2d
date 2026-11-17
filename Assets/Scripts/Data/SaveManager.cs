@@ -318,6 +318,56 @@ public class SaveManager : MonoBehaviour
 
     private const string KEY_TOTAL_TREBOLS = "TotalTrebols";
 
+    // ───────────────────────────────────────────────
+    //  Player skins and their unlock progress
+    // ───────────────────────────────────────────────
+
+    private const string KEY_SKIN_STYLE = "PlayerSkin_Style";
+    private const string KEY_SKIN_COLOR = "PlayerSkin_Color";
+
+    public bool HasGemsPerfect(int levelNumber)
+        => PlayerPrefs.GetInt($"GemsPerfect_Level_{levelNumber}", 0) == 1;
+
+    /// <summary>Records that a level was finished with every gem collected.</summary>
+    public void SetGemsPerfect(int levelNumber)
+    {
+        if (HasGemsPerfect(levelNumber)) return;
+        PlayerPrefs.SetInt($"GemsPerfect_Level_{levelNumber}", 1);
+        PlayerPrefs.Save();
+    }
+
+    public int CountPerfectGemLevels(int totalLevels = 10)
+    {
+        int count = 0;
+        for (int i = 1; i <= totalLevels; i++)
+            if (HasGemsPerfect(i)) count++;
+        return count;
+    }
+
+    /// <summary>Levels whose clover was found. Spending clovers does not lower it.</summary>
+    public int CountLevelClovers(int totalLevels = 10)
+    {
+        int count = 0;
+        for (int i = 1; i <= totalLevels; i++)
+            if (HasTrebol(i)) count++;
+        return count;
+    }
+
+    public int LoadSkinStyle() => PlayerPrefs.GetInt(KEY_SKIN_STYLE, 0);
+    public int LoadSkinColor() => PlayerPrefs.GetInt(KEY_SKIN_COLOR, 0);
+
+    public void SaveSkinStyle(int index)
+    {
+        PlayerPrefs.SetInt(KEY_SKIN_STYLE, index);
+        PlayerPrefs.Save();
+    }
+
+    public void SaveSkinColor(int index)
+    {
+        PlayerPrefs.SetInt(KEY_SKIN_COLOR, index);
+        PlayerPrefs.Save();
+    }
+
     public bool HasTrebol(int levelNumber)
         => PlayerPrefs.GetInt($"Trebol_Level_{levelNumber}", 0) == 1;
 

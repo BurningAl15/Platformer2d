@@ -248,6 +248,8 @@ public class LevelManager : MonoBehaviour
             bool earnedTimeBadge = parTime > 0f && timeInLevel <= parTime &&
                                    SaveManager.Instance.LoadBestTime(levelNumber) > parTime;
             MapPointsHolder.QueueBadgeArrival(levelNumber, earnedGemBadge, earnedTimeBadge);
+            if (totalGemsInLevel > 0 && gemsCollected >= totalGemsInLevel)
+                SaveManager.Instance.SetGemsPerfect(levelNumber);
 
             SaveManager.Instance.SaveGemsIfBetter(levelNumber, gemsCollected);
             SaveManager.Instance.SaveTimeIfBetter(levelNumber, timeInLevel);

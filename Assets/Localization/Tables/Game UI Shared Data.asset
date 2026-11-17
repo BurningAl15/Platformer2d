@@ -423,6 +423,50 @@ MonoBehaviour:
     m_Key: SELECT_TARGET
     m_Metadata:
       m_Items: []
+  - m_Id: 804249700
+    m_Key: SETTINGS_SKIN_STYLE
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249701
+    m_Key: SETTINGS_SKIN_STYLE_NEXT
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249702
+    m_Key: SETTINGS_SKIN_COLOR
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249703
+    m_Key: SETTINGS_SKIN_COLOR_NEXT
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249704
+    m_Key: SKIN_STYLE_CLASSIC
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249705
+    m_Key: SKIN_STYLE_AVIATOR
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249706
+    m_Key: SKIN_COLOR_ORIGINAL
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249707
+    m_Key: SKIN_COLOR_AMBER
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249708
+    m_Key: SKIN_COLOR_ARCTIC
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249709
+    m_Key: SKIN_COLOR_SMOKE
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249710
+    m_Key: SKIN_COLOR_CRIMSON
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

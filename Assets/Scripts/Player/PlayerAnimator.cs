@@ -14,6 +14,7 @@ public class PlayerAnimator : MonoBehaviour
     private PlayerGroundCheck groundCheck;
     private PlayerJump jump;
     private Rigidbody2D body;
+    private SpriteRenderer spriteRenderer;
     
     private void Awake()
     {
@@ -22,6 +23,7 @@ public class PlayerAnimator : MonoBehaviour
         groundCheck = GetComponent<PlayerGroundCheck>();
         jump = GetComponent<PlayerJump>();
         body = GetComponent<Rigidbody2D>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
     private void OnEnable()
@@ -41,6 +43,15 @@ public class PlayerAnimator : MonoBehaviour
         UpdateAnimations();
     }
     
+    private void LateUpdate()
+    {
+        // The Animator writes the original frame; show the selected skin's copy of it.
+        if (spriteRenderer == null) return;
+        Sprite skinned = PlayerSkins.Resolve(spriteRenderer.sprite);
+        if (skinned != spriteRenderer.sprite)
+            spriteRenderer.sprite = skinned;
+    }
+
     private void UpdateAnimations()
     {
         if (movement != null)

@@ -426,6 +426,50 @@ MonoBehaviour:
     m_Localized: 'Meta: {0}'
     m_Metadata:
       m_Items: []
+  - m_Id: 804249700
+    m_Localized: 'Estilo: {0}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249701
+    m_Localized: 'Estilo: {0} (sig.: {1} niveles perfectos)'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249702
+    m_Localized: 'Color: {0}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249703
+    m_Localized: 'Color: {0} (sig.: {1} treboles)'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249704
+    m_Localized: Clasico
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249705
+    m_Localized: Aviador
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249706
+    m_Localized: Rojo
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249707
+    m_Localized: Ambar
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249708
+    m_Localized: Artico
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249709
+    m_Localized: Humo
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249710
+    m_Localized: Carmesi
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

@@ -37,6 +37,12 @@ public class SettingsController : MonoBehaviour
     [SerializeField] private Button languageToggleButton;
     [SerializeField] private TextMeshProUGUI languageStatusText;
 
+    // Temporary entry point for the character selector until it has its own screen.
+    private Button skinStyleButton;
+    private TextMeshProUGUI skinStyleText;
+    private Button skinColorButton;
+    private TextMeshProUGUI skinColorText;
+
     [Header("Progreso del Jugador")]
     [SerializeField] private TextMeshProUGUI progressSummaryText;
 
@@ -73,6 +79,8 @@ public class SettingsController : MonoBehaviour
         BindButtonListener(hapticsToggleButton, ToggleHaptics);
         BindButtonListener(keepScreenAwakeToggleButton, ToggleKeepScreenAwake);
         BindButtonListener(languageToggleButton, ToggleLanguage);
+        BindButtonListener(skinStyleButton, CycleSkinStyle);
+        BindButtonListener(skinColorButton, CycleSkinColor);
         BindButtonListener(resetProgressButton, OnResetProgressPressed);
         BindButtonListener(confirmResetButton, ConfirmResetProgress);
         BindButtonListener(cancelResetButton, CancelResetProgress);
@@ -116,6 +124,19 @@ public class SettingsController : MonoBehaviour
             Destroy(localizer);
 
         return clonedButton;
+    }
+
+    private Button EnsureSkinButton(Transform container, string objectName, float y, out TextMeshProUGUI label)
+    {
+        Transform existing = container.Find(objectName);
+        Button button = existing != null
+            ? existing.GetComponent<Button>()
+            : CloneButtonWithoutSerializedActions(musicToggleButton, container, objectName);
+        RectTransform rect = button.GetComponent<RectTransform>();
+        rect.anchoredPosition = new Vector2(0f, y);
+        rect.sizeDelta = new Vector2(420f, 52f);
+        label = button.GetComponentInChildren<TextMeshProUGUI>();
+        return button;
     }
 
     private void Update()
@@ -195,15 +216,15 @@ public class SettingsController : MonoBehaviour
         if (musicToggleButton != null)
         {
             RectTransform mrt = musicToggleButton.GetComponent<RectTransform>();
-            mrt.anchoredPosition = new Vector2(0f, 110f);
-            mrt.sizeDelta = new Vector2(420f, 60f);
+            mrt.anchoredPosition = new Vector2(0f, 118f);
+            mrt.sizeDelta = new Vector2(420f, 52f);
         }
 
         if (sfxToggleButton != null)
         {
             RectTransform srt = sfxToggleButton.GetComponent<RectTransform>();
-            srt.anchoredPosition = new Vector2(0f, 40f);
-            srt.sizeDelta = new Vector2(420f, 60f);
+            srt.anchoredPosition = new Vector2(0f, 62f);
+            srt.sizeDelta = new Vector2(420f, 52f);
         }
 
         // 2. Haptics Button
@@ -216,8 +237,8 @@ public class SettingsController : MonoBehaviour
             GameObject hObj = clonedButton.gameObject;
             hObj.name = "HapticsToggleButton";
             RectTransform hrt = hObj.GetComponent<RectTransform>();
-            hrt.anchoredPosition = new Vector2(0f, -30f);
-            hrt.sizeDelta = new Vector2(420f, 60f);
+            hrt.anchoredPosition = new Vector2(0f, 6f);
+            hrt.sizeDelta = new Vector2(420f, 52f);
 
             hapticsToggleButton = clonedButton;
             hapticsStatusText = hObj.GetComponentInChildren<TextMeshProUGUI>();
@@ -233,8 +254,8 @@ public class SettingsController : MonoBehaviour
             GameObject awakeObject = clonedButton.gameObject;
             awakeObject.name = "KeepScreenAwakeToggleButton";
             RectTransform awakeRect = awakeObject.GetComponent<RectTransform>();
-            awakeRect.anchoredPosition = new Vector2(0f, -100f);
-            awakeRect.sizeDelta = new Vector2(420f, 60f);
+            awakeRect.anchoredPosition = new Vector2(0f, -50f);
+            awakeRect.sizeDelta = new Vector2(420f, 52f);
 
             keepScreenAwakeToggleButton = clonedButton;
             keepScreenAwakeStatusText = awakeObject.GetComponentInChildren<TextMeshProUGUI>();
@@ -250,11 +271,18 @@ public class SettingsController : MonoBehaviour
             GameObject lObj = clonedButton.gameObject;
             lObj.name = "LanguageToggleButton";
             RectTransform lrt = lObj.GetComponent<RectTransform>();
-            lrt.anchoredPosition = new Vector2(0f, -170f);
-            lrt.sizeDelta = new Vector2(420f, 60f);
+            lrt.anchoredPosition = new Vector2(0f, -106f);
+            lrt.sizeDelta = new Vector2(420f, 52f);
 
             languageToggleButton = clonedButton;
             languageStatusText = lObj.GetComponentInChildren<TextMeshProUGUI>();
+        }
+
+        // Character style and color (temporary home for the selector)
+        if (musicToggleButton != null)
+        {
+            skinStyleButton = EnsureSkinButton(container, "SkinStyleButton", -162f, out skinStyleText);
+            skinColorButton = EnsureSkinButton(container, "SkinColorButton", -218f, out skinColorText);
         }
 
         // 5. Reset Progress Button
@@ -267,8 +295,8 @@ public class SettingsController : MonoBehaviour
             GameObject rObj = clonedButton.gameObject;
             rObj.name = "ResetProgressButton";
             RectTransform rrt = rObj.GetComponent<RectTransform>();
-            rrt.anchoredPosition = new Vector2(0f, -240f);
-            rrt.sizeDelta = new Vector2(420f, 55f);
+            rrt.anchoredPosition = new Vector2(0f, -274f);
+            rrt.sizeDelta = new Vector2(420f, 50f);
 
             resetProgressButton = clonedButton;
             resetProgressText = rObj.GetComponentInChildren<TextMeshProUGUI>();
@@ -278,8 +306,8 @@ public class SettingsController : MonoBehaviour
         if (closeButton != null)
         {
             RectTransform clrt = closeButton.GetComponent<RectTransform>();
-            clrt.anchoredPosition = new Vector2(0f, -310f);
-            clrt.sizeDelta = new Vector2(260f, 55f);
+            clrt.anchoredPosition = new Vector2(0f, -328f);
+            clrt.sizeDelta = new Vector2(260f, 50f);
         }
 
         // 5. Etiqueta de versión abajo
@@ -298,7 +326,7 @@ public class SettingsController : MonoBehaviour
                 vrt.anchorMin = new Vector2(0.5f, 0.5f);
                 vrt.anchorMax = new Vector2(0.5f, 0.5f);
                 vrt.pivot = new Vector2(0.5f, 0.5f);
-                vrt.anchoredPosition = new Vector2(0f, -352f);
+                vrt.anchoredPosition = new Vector2(0f, -360f);
                 vrt.sizeDelta = new Vector2(300f, 24f);
 
                 versionText = vObj.AddComponent<TextMeshProUGUI>();
@@ -366,6 +394,8 @@ public class SettingsController : MonoBehaviour
             hapticsToggleButton,
             keepScreenAwakeToggleButton,
             languageToggleButton,
+            skinStyleButton,
+            skinColorButton,
             resetProgressButton,
             closeButton
         };
@@ -487,6 +517,18 @@ public class SettingsController : MonoBehaviour
         string current = GameLocalization.SelectedLanguageCode;
         string next = current == "en" ? "es" : "en";
         GameLocalization.SetLanguage(next);
+        RefreshUI();
+    }
+
+    public void CycleSkinStyle()
+    {
+        PlayerSkins.SelectNextStyle();
+        RefreshUI();
+    }
+
+    public void CycleSkinColor()
+    {
+        PlayerSkins.SelectNextColor();
         RefreshUI();
     }
 
@@ -614,6 +656,26 @@ public class SettingsController : MonoBehaviour
             languageStatusText.text = GameLocalization.Get(GameLocalization.SelectedLanguageCode == "es"
                 ? "SETTINGS_LANGUAGE_ES"
                 : "SETTINGS_LANGUAGE_EN");
+        }
+
+        // Character style and color, with the requirement of the next locked option
+        if (skinStyleText != null)
+        {
+            string styleName = GameLocalization.Get("SKIN_STYLE_" + PlayerSkins.Styles[PlayerSkins.StyleIndex].ToUpperInvariant());
+            int lockedStyle = PlayerSkins.NextLockedStyle();
+            skinStyleText.text = lockedStyle < 0
+                ? GameLocalization.Get("SETTINGS_SKIN_STYLE", styleName)
+                : GameLocalization.Get("SETTINGS_SKIN_STYLE_NEXT", styleName, PlayerSkins.StyleRequirement(lockedStyle));
+            skinStyleText.color = enabledColor;
+        }
+        if (skinColorText != null)
+        {
+            string colorName = GameLocalization.Get("SKIN_COLOR_" + PlayerSkins.Colors[PlayerSkins.ColorIndex].ToUpperInvariant());
+            int lockedColor = PlayerSkins.NextLockedColor();
+            skinColorText.text = lockedColor < 0
+                ? GameLocalization.Get("SETTINGS_SKIN_COLOR", colorName)
+                : GameLocalization.Get("SETTINGS_SKIN_COLOR_NEXT", colorName, PlayerSkins.ColorRequirement(lockedColor));
+            skinColorText.color = enabledColor;
         }
 
         // Reset progress label (si no está esperando confirmación)

@@ -131,6 +131,10 @@ public class MapPointsHolder : MonoBehaviour
                 ? SaveManager.Instance.LoadGems(levelNumber)
                 : PlayerPrefs.GetInt(StringUtils.Get_GemsInLevel(levelNumber), 0);
             _mapPoints[i].CheckGems();
+            // Saves made before perfect runs were recorded still count toward skin unlocks.
+            if (SaveManager.Instance != null && _mapPoints[i].totalGems > 0 &&
+                _mapPoints[i].gemsCollected >= _mapPoints[i].totalGems)
+                SaveManager.Instance.SetGemsPerfect(levelNumber);
 
             // Mejor tiempo
             _mapPoints[i].bestTime = SaveManager.Instance != null

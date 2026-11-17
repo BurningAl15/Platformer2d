@@ -430,6 +430,50 @@ MonoBehaviour:
     m_Localized: 'Target: {0}'
     m_Metadata:
       m_Items: []
+  - m_Id: 804249700
+    m_Localized: 'Style: {0}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249701
+    m_Localized: 'Style: {0} (next: {1} perfect levels)'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249702
+    m_Localized: 'Color: {0}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249703
+    m_Localized: 'Color: {0} (next: {1} clovers)'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249704
+    m_Localized: Classic
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249705
+    m_Localized: Aviator
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249706
+    m_Localized: Red
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249707
+    m_Localized: Amber
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249708
+    m_Localized: Arctic
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249709
+    m_Localized: Smoke
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249710
+    m_Localized: Crimson
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []
