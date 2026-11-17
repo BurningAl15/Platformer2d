@@ -1095,6 +1095,36 @@
       "storeProcessing": "not_checked",
       "testerAvailability": "not_checked",
       "deviceQA": "pending_owner"
+    },
+    {
+      "id": "d90b61b2-cac9-4c92-8e6b-a260dde2f9ea",
+      "platform": "android",
+      "number": "31",
+      "androidVersionCode": "31",
+      "uploadRequested": true,
+      "status": "uploaded_internal_testing_unverified",
+      "finishedAt": "2026-11-17",
+      "source": ".kiro/handoff.md",
+      "storeStatus": "scripts/release-test.sh both --android-code 31 --ios-build 25 --upload-test from 4f16442. FoxsTale_31.aab built (Result: Success, Localization tables in Addressables); Fastlane reported a successful upload to the Play internal track. Processing and tester availability not checked.",
+      "storeUpload": "accepted",
+      "storeProcessing": "not_checked",
+      "testerAvailability": "not_checked",
+      "deviceQA": "pending_owner"
+    },
+    {
+      "id": "01d462fa-4e8d-4c53-9219-c488818ee8bd",
+      "platform": "ios",
+      "number": "25",
+      "iosBuild": "25",
+      "uploadRequested": true,
+      "status": "uploaded_processing_unverified",
+      "finishedAt": "2026-11-17",
+      "source": ".kiro/handoff.md",
+      "storeStatus": "Same run from 4f16442. Xcode project exported (Result: Success); Fastlane signed the IPA and reported a successful upload to App Store Connect; processing wait skipped. Processing and TestFlight availability not checked.",
+      "storeUpload": "accepted",
+      "storeProcessing": "not_checked",
+      "testerAvailability": "not_checked",
+      "deviceQA": "pending_owner"
     }
   ]
 }

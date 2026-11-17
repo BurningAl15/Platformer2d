@@ -29,9 +29,9 @@
         },
         "availability": {
           "status": "uploaded_internal_testing_unverified",
-          "checkedAt": "2026-11-17T16:37:23-05:00",
-          "evidenceBuildId": "0682fd1c-48ad-4cb1-be3b-d5affd2165cf",
-          "nextAction": "Confirm versionCode 30 is available on the Play internal track, install it on the phone, and run the owner's QA pass (menus, enemies, tutorial, pause).",
+          "checkedAt": "2026-11-17T18:47:20-05:00",
+          "evidenceBuildId": "d90b61b2-cac9-4c92-8e6b-a260dde2f9ea",
+          "nextAction": "Confirm versionCode 31 on the Play internal track and run the owner's QA pass (Spanish text, selector touch, pause, Character in Settings).",
           "source": ".kiro/handoff.md"
         }
       },
@@ -51,9 +51,9 @@
         },
         "availability": {
           "status": "uploaded_processing_unverified",
-          "checkedAt": "2026-11-17T16:37:23-05:00",
-          "evidenceBuildId": "81224978-fa8e-4697-877b-2b04f64dd35f",
-          "nextAction": "Check App Store Connect processing and TestFlight availability for build 24, then run the owner's QA pass.",
+          "checkedAt": "2026-11-17T18:47:20-05:00",
+          "evidenceBuildId": "01d462fa-4e8d-4c53-9219-c488818ee8bd",
+          "nextAction": "Check App Store Connect processing and TestFlight availability for build 25, then run the owner's QA pass.",
           "source": ".kiro/handoff.md"
         }
       }
