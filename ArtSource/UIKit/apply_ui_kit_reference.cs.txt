@@ -1,0 +1,214 @@
+using System.Linq;
+using TMPro;
+using UnityEditor;
+using UnityEditor.SceneManagement;
+using UnityEngine;
+using UnityEngine.UI;
+
+// Shared look for every panel: Blue16 kit, one text palette, header plates,
+// label margins, icon + amount counters. HUD panels sit on a 1280x720 canvas,
+// so they are authored in 1920x1080 units and scaled by 2/3 to match the menus.
+const float HudScale = 2f / 3f;
+string kit = "Assets/Sprites/UIKit/Blue16/";
+Sprite Kit(string n) => AssetDatabase.LoadAssetAtPath<Sprite>(kit + n + ".png");
+Sprite SubSprite(string path, string name) => AssetDatabase.LoadAllAssetsAtPath(path).OfType<Sprite>().First(s => name == null || s.name == name);
+Sprite gem = SubSprite("Assets/2D Platformer Assets/Graphics/Collectibles/gem.png", "gem_0");
+Sprite clover = SubSprite("Assets/Sprites/Collectibles/Clover_Collectible.png", null);
+Sprite star = SubSprite("Assets/2D Platformer Assets/Graphics/UI/star.png", null);
+Sprite clock = SubSprite("Assets/2D Platformer Assets/Graphics/Overworld/Overworld_tiles_Padded.png", "Overworld_tiles_Padded_57");
+Color TextColor = new Color(0.91f, 0.93f, 1f);
+Color Accent = new Color(1f, 0.91f, 0.66f);
+string report = "";
+
+void Center(RectTransform rt, Vector2 pos, Vector2 size) { rt.anchorMin = rt.anchorMax = rt.pivot = new Vector2(0.5f, 0.5f); rt.anchoredPosition = pos; rt.sizeDelta = size; }
+RectTransform Node(string name, Transform parent, Vector2 pos, Vector2 size)
+{
+    Transform old = parent.Find(name); if (old != null) Object.DestroyImmediate(old.gameObject);
+    var go = new GameObject(name, typeof(RectTransform)); go.layer = 5;
+    var rt = (RectTransform)go.transform; rt.SetParent(parent, false); Center(rt, pos, size); return rt;
+}
+Image Sliced(GameObject go, string sprite)
+{
+    var img = go.GetComponent<Image>() ?? go.AddComponent<Image>();
+    img.sprite = Kit(sprite); img.type = Image.Type.Sliced; img.pixelsPerUnitMultiplier = 1.25f; img.color = Color.white; return img;
+}
+Image Icon(string name, Transform parent, Vector2 pos, float size, Sprite s)
+{
+    var img = Node(name, parent, pos, new Vector2(size, size)).gameObject.AddComponent<Image>();
+    img.sprite = s; img.preserveAspect = true; img.raycastTarget = false; return img;
+}
+void Text(TextMeshProUGUI t, Color c, float max, TextAlignmentOptions align, bool wrap = false)
+{
+    if (t == null) return;
+    t.color = c; t.enableAutoSizing = true; t.fontSizeMin = 18f; t.fontSizeMax = max; t.fontSize = max;
+    t.alignment = align; t.textWrappingMode = wrap ? TextWrappingModes.Normal : TextWrappingModes.NoWrap; t.overflowMode = TextOverflowModes.Ellipsis;
+}
+void Place(Transform t, Vector2 pos, Vector2 size) { if (t != null) Center((RectTransform)t, pos, size); }
+void Button(Transform b, Vector2? pos, Vector2 size, float rightMargin = 28f)
+{
+    if (b == null) return;
+    var rt = (RectTransform)b; if (pos.HasValue) Center(rt, pos.Value, size); else rt.sizeDelta = size;
+    var img = Sliced(b.gameObject, "Button_Normal");
+    var btn = b.GetComponent<UnityEngine.UI.Button>(); btn.targetGraphic = img; btn.transition = Selectable.Transition.SpriteSwap;
+    btn.spriteState = new SpriteState { highlightedSprite = Kit("Button_Focused"), selectedSprite = Kit("Button_Focused"), pressedSprite = Kit("Button_Pressed"), disabledSprite = Kit("Button_Disabled") };
+    var anim = b.GetComponent<Animator>(); if (anim != null) Object.DestroyImmediate(anim);
+    // The direct label keeps a margin on every side so it never touches the frame.
+    foreach (Transform child in b)
+    {
+        var tmp = child.GetComponent<TextMeshProUGUI>(); if (tmp == null || child.name == "ActiveIndicator") continue;
+        var lt = (RectTransform)child; lt.anchorMin = Vector2.zero; lt.anchorMax = Vector2.one; lt.pivot = new Vector2(0.5f, 0.5f);
+        lt.offsetMin = new Vector2(28f, 18f); lt.offsetMax = new Vector2(-rightMargin, -12f);
+        Text(tmp, TextColor, 44f, TextAlignmentOptions.Center);
+    }
+}
+RectTransform Panel(Transform container, Vector2 size, float scale)
+{
+    var rt = (RectTransform)container; rt.anchorMin = rt.anchorMax = rt.pivot = new Vector2(0.5f, 0.5f); rt.sizeDelta = size; rt.localScale = Vector3.one * scale;
+    Sliced(container.gameObject, "Panel"); return rt;
+}
+void Header(RectTransform panel, Transform title, float width = 620f)
+{
+    var h = Node("Header", panel, new Vector2(0f, panel.sizeDelta.y / 2f - 2f), new Vector2(width, 96f)); Sliced(h.gameObject, "Header");
+    h.SetAsFirstSibling();
+    if (title == null) return;
+    title.SetParent(h, false); Center((RectTransform)title, new Vector2(0f, 6f), new Vector2(width - 50f, 66f));
+    Text(title.GetComponent<TextMeshProUGUI>(), Accent, 56f, TextAlignmentOptions.Center);
+}
+RectTransform Box(string name, Transform parent, Vector2 pos, Vector2 size) { var b = Node(name, parent, pos, size); Sliced(b.gameObject, "Slot"); return b; }
+void Counter(Transform parent, string iconName, Sprite s, Transform amount, Vector2 pos, float width = 180f)
+{
+    Icon(iconName, parent, pos, 64f, s);
+    if (amount == null) return;
+    amount.SetParent(parent, false); Place(amount, pos + new Vector2(48f + width / 2f, 0f), new Vector2(width, 64f));
+    Text(amount.GetComponent<TextMeshProUGUI>(), TextColor, 44f, TextAlignmentOptions.Left);
+}
+void Dim(Transform root) { var img = root.GetComponent<Image>(); if (img != null) { img.sprite = null; img.type = Image.Type.Simple; img.color = new Color(0.03f, 0.04f, 0.12f, 0.7f); } }
+
+// ───────────────────────── HUD prefab ─────────────────────────
+const string hudPath = "Assets/Prefabs/ReUsable/UI-Canvas.prefab";
+var hud = PrefabUtility.LoadPrefabContents(hudPath);
+Transform H(string p) => hud.transform.Find(p);
+
+{ // Game Over
+    Transform root = H("GameOverPanel"); Dim(root);
+    var c = Panel(root.Find("Container"), new Vector2(1100f, 900f), HudScale);
+    Header(c, c.Find("Title"));
+    var res = Box("Resources", c, new Vector2(0f, 300f), new Vector2(980f, 110f));
+    Counter(res, "GemIcon", gem, c.Find("CurrentGemsText"), new Vector2(-300f, 0f));
+    Counter(res, "CloverIcon", clover, c.Find("TrebolAvailableText"), new Vector2(100f, 0f));
+    var group = Node("Actions", c, new Vector2(0f, -70f), new Vector2(780f, 560f));
+    var layout = group.gameObject.AddComponent<VerticalLayoutGroup>();
+    layout.spacing = 16f; layout.childAlignment = TextAnchor.UpperCenter; layout.childControlWidth = layout.childControlHeight = false; layout.childForceExpandWidth = layout.childForceExpandHeight = false;
+    foreach (string n in new[] { "WatchAdButton", "UseTrebolButton", "UseSecretDiceButton", "SpendGemsButton", "ReturnToMapButton" })
+    {
+        Transform b = c.Find(n); b.SetParent(group, false);
+        Button(b, null, new Vector2(760f, 96f), n == "SpendGemsButton" ? 200f : 28f);
+    }
+    Transform spend = group.Find("SpendGemsButton");
+    Icon("GemCostIcon", spend, new Vector2(250f, 3f), 56f, gem);
+    Transform cost = c.Find("GemsCostText"); cost.SetParent(spend, false); Place(cost, new Vector2(326f, 3f), new Vector2(96f, 56f));
+    Text(cost.GetComponent<TextMeshProUGUI>(), TextColor, 40f, TextAlignmentOptions.Left);
+    Place(c.Find("AdFeedbackText"), new Vector2(0f, -400f), new Vector2(980f, 50f));
+    Text(c.Find("AdFeedbackText").GetComponent<TextMeshProUGUI>(), Accent, 32f, TextAlignmentOptions.Center);
+    report += "GameOver; ";
+}
+{ // Dice of lives
+    Transform root = H("DiceRollPanel"); Dim(root);
+    var c = Panel(root.Find("Container"), new Vector2(1100f, 900f), HudScale);
+    Header(c, c.Find("DiceTitle"));
+    Place(c.Find("DiceStatus"), new Vector2(0f, 320f), new Vector2(980f, 64f));
+    Text(c.Find("DiceStatus").GetComponent<TextMeshProUGUI>(), TextColor, 40f, TextAlignmentOptions.Center);
+    Transform box = c.Find("DiceBox"); Place(box, new Vector2(0f, 120f), new Vector2(240f, 240f)); Sliced(box.gameObject, "Slot");
+    Place(box.Find("DiceFaceImage"), Vector2.zero, new Vector2(180f, 180f));
+    Place(box.Find("DiceNumber"), Vector2.zero, new Vector2(220f, 220f)); Text(box.Find("DiceNumber").GetComponent<TextMeshProUGUI>(), Accent, 120f, TextAlignmentOptions.Center);
+    Transform cIcon = c.Find("DiceCloverIcon"); Place(cIcon, new Vector2(-50f, -50f), new Vector2(64f, 64f));
+    Transform cText = c.Find("TrebolAvailableText"); Place(cText, new Vector2(50f, -50f), new Vector2(120f, 64f));
+    Text(cText.GetComponent<TextMeshProUGUI>(), TextColor, 44f, TextAlignmentOptions.Left);
+    Button(c.Find("RollButton"), new Vector2(-215f, -190f), new Vector2(400f, 96f));
+    Button(c.Find("StopButton"), new Vector2(215f, -190f), new Vector2(400f, 96f));
+    Button(c.Find("UpgradeButton"), new Vector2(-215f, -310f), new Vector2(400f, 96f));
+    Button(c.Find("CloseButton"), new Vector2(215f, -310f), new Vector2(400f, 96f));
+    report += "Dice; ";
+}
+void StylePanelStore(Transform root, float scale)
+{
+    Dim(root);
+    var c = Panel(root.Find("Container"), new Vector2(1100f, 820f), scale);
+    Header(c, c.Find("StoreTitle"));
+    Place(c.Find("StoreDesc"), new Vector2(0f, 250f), new Vector2(960f, 120f));
+    Text(c.Find("StoreDesc").GetComponent<TextMeshProUGUI>(), TextColor, 40f, TextAlignmentOptions.Center, true);
+    Button(c.Find("PurchaseButton"), new Vector2(0f, 90f), new Vector2(760f, 96f));
+    Transform indicator = c.Find("ActiveIndicator") ?? c.Find("PurchaseButton/ActiveIndicator");
+    if (indicator != null) { indicator.SetParent(c, false); Place(indicator, new Vector2(0f, 90f), new Vector2(760f, 80f)); Text(indicator.GetComponent<TextMeshProUGUI>(), Accent, 44f, TextAlignmentOptions.Center); }
+    Button(c.Find("RestoreButton"), new Vector2(0f, -30f), new Vector2(760f, 96f));
+    Place(c.Find("StatusText"), new Vector2(0f, -130f), new Vector2(960f, 56f));
+    Text(c.Find("StatusText").GetComponent<TextMeshProUGUI>(), Accent, 30f, TextAlignmentOptions.Center, true);
+    Button(c.Find("CloseButton"), new Vector2(0f, -300f), new Vector2(420f, 96f));
+}
+StylePanelStore(H("StorePanel"), HudScale); report += "HUD Store; ";
+{ // World complete
+    Transform root = H("WorldCompletePanel"); Dim(root);
+    var c = Panel(root.Find("Container"), new Vector2(1100f, 860f), HudScale);
+    Header(c, c.Find("Title"));
+    Place(c.Find("WorldNameText"), new Vector2(0f, 300f), new Vector2(960f, 64f));
+    Text(c.Find("WorldNameText").GetComponent<TextMeshProUGUI>(), TextColor, 44f, TextAlignmentOptions.Center);
+    var stats = Box("Summary", c, new Vector2(0f, 60f), new Vector2(960f, 320f));
+    Counter(stats, "StarIcon", star, c.Find("StarsText"), new Vector2(-380f, 70f), 260f);
+    Counter(stats, "GemIcon", gem, c.Find("GemsText"), new Vector2(80f, 70f), 260f);
+    Counter(stats, "CloverIcon", clover, c.Find("TrebolsText"), new Vector2(-380f, -70f), 260f);
+    Counter(stats, "ClockIcon", clock, c.Find("TimeText"), new Vector2(80f, -70f), 260f);
+    Button(c.Find("ContinueButton"), new Vector2(0f, -300f), new Vector2(560f, 96f));
+    report += "WorldComplete; ";
+}
+{ // Legacy HUD settings panel: no button opens it in gameplay, keep it hidden but on the kit.
+    var settings = hud.GetComponentInChildren<SettingsController>(true);
+    var so = new SerializedObject(settings);
+    report += "HUD Settings open button=" + (so.FindProperty("openSettingsButton").objectReferenceValue != null) + "; ";
+}
+// Pause matches the same scale
+PrefabUtility.SaveAsPrefabAsset(hud, hudPath); PrefabUtility.UnloadPrefabContents(hud);
+var pause = PrefabUtility.LoadPrefabContents("Assets/Prefabs/UI/PauseMenu.prefab");
+pause.transform.Find("PauseMenuContainer").localScale = Vector3.one * HudScale;
+PrefabUtility.SaveAsPrefabAsset(pause, "Assets/Prefabs/UI/PauseMenu.prefab"); PrefabUtility.UnloadPrefabContents(pause);
+
+// ───────────────────────── Main menu ─────────────────────────
+var scene = EditorSceneManager.OpenScene("Assets/Scenes/MainMenu.unity");
+Transform canvas = GameObject.Find("Canvas").transform;
+foreach (Transform b in canvas.Find("ButtonMenu")) Button(b, null, new Vector2(440f, 96f));
+Button(canvas.Find("Store-Button"), null, new Vector2(300f, 96f));
+Button(canvas.Find("Character-Button"), null, new Vector2(300f, 96f));
+var storeRt = (RectTransform)canvas.Find("Store-Button"); var charRt = (RectTransform)canvas.Find("Character-Button");
+charRt.anchoredPosition = storeRt.anchoredPosition - new Vector2(0f, 112f);
+StylePanelStore(canvas.Find("StorePanel"), 1f);
+{ // New game confirmation
+    Transform warn = canvas.Find("Panel/Image");
+    var c = Panel(warn, new Vector2(1000f, 640f), 1f);
+    Header(c, warn.Find("Text (TMP)"));
+    Transform msg = warn.Find("Text (TMP) (1)"); Place(msg, new Vector2(0f, 90f), new Vector2(880f, 200f));
+    Text(msg.GetComponent<TextMeshProUGUI>(), TextColor, 44f, TextAlignmentOptions.Center, true);
+    Button(warn.Find("Yes-Button"), new Vector2(-220f, -180f), new Vector2(400f, 96f));
+    Button(warn.Find("No-Button"), new Vector2(220f, -180f), new Vector2(400f, 96f));
+}
+var badge = canvas.Find("BuildVersionBadge"); if (badge != null) Sliced(badge.gameObject, "Slot");
+var badgeLabel = canvas.Find("BuildVersionLabel"); if (badgeLabel != null) Text(badgeLabel.GetComponent<TextMeshProUGUI>(), TextColor, 26f, TextAlignmentOptions.Center);
+EditorSceneManager.MarkSceneDirty(scene); EditorSceneManager.SaveScene(scene); report += "MainMenu; ";
+
+// ───────────────────────── Level selector ─────────────────────────
+scene = EditorSceneManager.OpenScene("Assets/Scenes/LevelSelection.unity");
+Transform ui = GameObject.Find("UI-Canvas").transform;
+Transform info = ui.Find("LevelInfo"); Sliced(info.gameObject, "Panel");
+Text(info.Find("Text (TMP)").GetComponent<TextMeshProUGUI>(), Accent, 56f, TextAlignmentOptions.Center);
+foreach (var t in info.GetComponentsInChildren<TextMeshProUGUI>(true))
+{
+    if (t.name.StartsWith("BoxName")) { Object.DestroyImmediate(t.gameObject); continue; }   // the icons already say what each value is
+    if (t.transform.parent != info) Text(t, TextColor, 44f, TextAlignmentOptions.Left);
+}
+Button(ui.Find("BackToMenuButton"), null, new Vector2(240f, 84f));
+Button(ui.Find("SettingsButton"), null, new Vector2(240f, 84f));
+Transform hint = ui.Find("LevelNavigationHintPanel"); Sliced(hint.gameObject, "Header");
+Text(hint.GetComponentInChildren<TextMeshProUGUI>(true), Accent, 36f, TextAlignmentOptions.Center);
+Transform lsBadge = ui.Find("BuildVersionBadge"); Sliced(lsBadge.gameObject, "Slot");
+Text(lsBadge.GetComponentInChildren<TextMeshProUGUI>(true), TextColor, 26f, TextAlignmentOptions.Center);
+EditorSceneManager.MarkSceneDirty(scene); EditorSceneManager.SaveScene(scene); report += "LevelSelection; ";
+EditorSceneManager.OpenScene("Assets/Scenes/MainMenu.unity");
+return report;

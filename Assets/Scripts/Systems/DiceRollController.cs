@@ -83,13 +83,9 @@ public class DiceRollController : MonoBehaviour
 
     private void ConfigureAllTextsAutoResize()
     {
-        ConfigureAutoResize(diceNumberText, 24f, 80f);
-        ConfigureAutoResize(diceStatusText, 14f, 26f);
-        ConfigureAutoResize(trebolAvailableText, 14f, 24f);
-        ConfigureButtonAutoResize(rollButton, 14f, 28f);
-        ConfigureButtonAutoResize(stopButton, 14f, 28f);
-        ConfigureButtonAutoResize(upgradeWithTrebolButton, 14f, 28f);
-        ConfigureButtonAutoResize(closeButton, 14f, 28f);
+        ConfigureAutoResize(diceNumberText, 32f, 120f);
+        ConfigureAutoResize(diceStatusText, 18f, 40f);
+        ConfigureAutoResize(trebolAvailableText, 18f, 44f);
         ConfigureDisabledStateVisual(rollButton);
         ConfigureDisabledStateVisual(stopButton);
         ConfigureDisabledStateVisual(upgradeWithTrebolButton);
@@ -115,13 +111,6 @@ public class DiceRollController : MonoBehaviour
         tmp.fontSizeMax = maxSize;
         tmp.textWrappingMode = TextWrappingModes.NoWrap;
         tmp.overflowMode = TextOverflowModes.Ellipsis;
-    }
-
-    private static void ConfigureButtonAutoResize(Button btn, float minSize, float maxSize)
-    {
-        if (btn == null) return;
-        var tmp = btn.GetComponentInChildren<TextMeshProUGUI>();
-        ConfigureAutoResize(tmp, minSize, maxSize);
     }
 
     private void Start()

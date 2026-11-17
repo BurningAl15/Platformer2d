@@ -63,15 +63,10 @@ public class GameOverController : MonoBehaviour
 
     private void ConfigureAllTextsAutoResize()
     {
-        ConfigureAutoResize(gemCostText, 14f, 24f);
-        ConfigureAutoResize(currentGemsText, 14f, 26f);
-        ConfigureAutoResize(trebolAvailableText, 14f, 26f);
-        ConfigureAutoResize(adFeedbackText, 12f, 22f);
-        ConfigureButtonAutoResize(watchAdButton, 14f, 28f);
-        ConfigureButtonAutoResize(spendGemsButton, 14f, 28f);
-        ConfigureButtonAutoResize(useTrebolButton, 14f, 28f);
-        ConfigureButtonAutoResize(useSecretDiceButton, 14f, 28f);
-        ConfigureButtonAutoResize(returnToMapButton, 14f, 28f);
+        ConfigureAutoResize(gemCostText, 18f, 40f);
+        ConfigureAutoResize(currentGemsText, 18f, 44f);
+        ConfigureAutoResize(trebolAvailableText, 18f, 44f);
+        ConfigureAutoResize(adFeedbackText, 18f, 32f);
     }
 
     private static void ConfigureAutoResize(TextMeshProUGUI tmp, float minSize, float maxSize)
@@ -82,13 +77,6 @@ public class GameOverController : MonoBehaviour
         tmp.fontSizeMax = maxSize;
         tmp.textWrappingMode = TextWrappingModes.NoWrap;
         tmp.overflowMode = TextOverflowModes.Ellipsis;
-    }
-
-    private static void ConfigureButtonAutoResize(Button btn, float minSize, float maxSize)
-    {
-        if (btn == null) return;
-        var tmp = btn.GetComponentInChildren<TextMeshProUGUI>();
-        ConfigureAutoResize(tmp, minSize, maxSize);
     }
 
     private void Start()
@@ -385,13 +373,13 @@ public class GameOverController : MonoBehaviour
         bool canGems = LivesManager.Instance?.CanAffordLife() ?? false;
 
         if (gemCostText != null)
-            gemCostText.text = GameLocalization.Get("GAMEOVER_GEM_COST", cost);
+            gemCostText.text = $"x{cost}";
 
         if (currentGemsText != null)
-            currentGemsText.text = GameLocalization.Get("GAMEOVER_GEMS", gems);
+            currentGemsText.text = $"x{gems}";
 
         if (trebolAvailableText != null)
-            trebolAvailableText.text = GameLocalization.Get("GAMEOVER_CLOVERS", trebols);
+            trebolAvailableText.text = $"x{trebols}";
 
         // Deshabilitar botón de gemas si no alcanza
         if (spendGemsButton != null)
