@@ -388,7 +388,7 @@ public class DiceRollController : MonoBehaviour
         }
 
         // ── 6. Screen shake for extra punch ─────────────────────────────────
-        ScreenShake.Instance?.StartShake(0.2f, 0.04f);
+        ScreenShake._instance?.StartShake(0.2f, 0.04f);
     }
 
     private static Vector2 GetCanvasLocalPos(RectTransform target, RectTransform canvasRect, Camera uiCam)

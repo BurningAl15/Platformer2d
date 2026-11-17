@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 using UnityEngine;
 
 public class Switch : MonoBehaviour
@@ -39,12 +40,14 @@ public class Switch : MonoBehaviour
                     _objectToSwitch.SetActive(false);
                     _spriteRenderer.sprite = switchDown_Sprite;
                     hasSwitched = true;
+                    PlaySwitchFeedback();
                 }
                 else
                 {
                     _objectToSwitch.SetActive(true);
                     _spriteRenderer.sprite = switchUp_Sprite;
                     hasSwitched = false;
+                    PlaySwitchFeedback();
                 }
             }
             else
@@ -58,8 +61,17 @@ public class Switch : MonoBehaviour
                     
                     _spriteRenderer.sprite = switchDown_Sprite;
                     hasSwitched = true;
+                    PlaySwitchFeedback();
                 }
             }
         }
+    }
+
+    private void PlaySwitchFeedback()
+    {
+        if (_spriteRenderer == null) return;
+        Transform visual = _spriteRenderer.transform;
+        visual.DOKill(true);
+        visual.DOPunchScale(new Vector3(0.2f, -0.2f, 0f), 0.25f, 6, 0.6f).SetLink(visual.gameObject);
     }
 }

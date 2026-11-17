@@ -69,8 +69,6 @@ public class StompBox : MonoBehaviour
             return;
 
         Vector2 lastPos = other.transform.position;
-        if (other.transform != enemy.transform)
-            other.gameObject.SetActive(false);
         enemy.Death();
         
         PlayerController2d._instance.Bounce();

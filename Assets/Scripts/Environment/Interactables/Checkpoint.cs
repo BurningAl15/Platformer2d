@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using DG.Tweening;
+using UnityEngine;
 using UnityEngine.Serialization;
 
 public class Checkpoint : MonoBehaviour
@@ -28,6 +29,8 @@ public class Checkpoint : MonoBehaviour
             CheckpointManager._instance.UpdateCurrentPosition(this.transform);
             _spriteRenderer.sprite = checkpointSprite_On;
             _particle.Play();
+            transform.DOKill(true);
+            transform.DOPunchScale(Vector3.one * 0.25f, 0.35f, 6, 0.6f).SetLink(gameObject);
             isSelected = true;
             
             if (AnalyticsManager.Instance != null)

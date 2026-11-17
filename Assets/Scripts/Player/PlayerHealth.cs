@@ -84,6 +84,7 @@ public class PlayerHealth : MonoBehaviour
         currentHealth = Mathf.Max(0, currentHealth - 1);
         AppBootstrap.TriggerHapticFeedback();
         UIController._instance?.RefreshHealthDisplay();
+        UIController._instance?.AnimateDamagedHeart();
 
         if (currentHealth == 0)
         {

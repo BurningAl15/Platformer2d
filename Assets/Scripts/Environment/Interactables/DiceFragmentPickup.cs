@@ -1,4 +1,5 @@
 using System.Collections;
+using DG.Tweening;
 using UnityEngine;
 
 /// <summary>
@@ -79,7 +80,18 @@ public class DiceFragmentPickup : MonoBehaviour
     private IEnumerator CollectEffect()
     {
         if (col != null) col.enabled = false;
-        if (spriteRenderer != null) spriteRenderer.enabled = false;
+        if (spriteRenderer != null)
+        {
+            const float collectDuration = 0.35f;
+            Tween collect = DOTween.Sequence()
+                .Join(transform.DOPunchScale(Vector3.one * 0.35f, collectDuration, 8, 0.7f))
+                .Join(transform.DOMoveY(transform.position.y + 0.3f, collectDuration).SetEase(Ease.OutQuad))
+                .Join(transform.DORotate(transform.eulerAngles + Vector3.forward * 360f, collectDuration, RotateMode.FastBeyond360))
+                .Join(spriteRenderer.DOFade(0f, collectDuration).SetEase(Ease.InQuad))
+                .SetLink(gameObject);
+            yield return collect.WaitForCompletion();
+            spriteRenderer.enabled = false;
+        }
 
         if (effect != null)
         {

@@ -230,6 +230,21 @@ public class UIController : MonoBehaviour
         }
     }
 
+    /// <summary>Shakes the heart slot that just lost health.</summary>
+    public void AnimateDamagedHeart()
+    {
+        if (hearts == null || hearts.Count == 0 || PlayerHealth._instance == null) return;
+
+        int heartIndex = PlayerHealth._instance.CurrentHealth / 2;
+        Image image = heartIndex < hearts.Count ? hearts[heartIndex]?.heartImage : bonusHeartIcon;
+        if (image == null || !image.gameObject.activeInHierarchy) return;
+
+        Transform target = image.transform;
+        target.DOKill(true);
+        target.DOPunchScale(Vector3.one * -0.3f, 0.35f, 8, 0.6f).SetLink(target.gameObject);
+        target.DOPunchRotation(new Vector3(0f, 0f, 18f), 0.35f, 10, 0.7f).SetLink(target.gameObject);
+    }
+
     public void AnimatePermanentHeartGain()
     {
         if (hearts == null || hearts.Count == 0 || PlayerHealth._instance == null) return;
@@ -587,6 +602,13 @@ public class UIController : MonoBehaviour
             if (starImages[i] == null) continue;
             starImages[i].sprite = states[i] ? starFull : starEmpty;
             starImages[i].gameObject.SetActive(true);
+
+            Transform star = starImages[i].transform;
+            star.DOKill(true);
+            Vector3 starScale = star.localScale;
+            star.localScale = Vector3.zero;
+            star.DOScale(starScale, 0.3f).SetEase(Ease.OutBack)
+                .SetDelay(i * 0.15f).SetUpdate(true).SetLink(star.gameObject);
         }
     }
 

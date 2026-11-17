@@ -1,3 +1,4 @@
+using DG.Tweening;
 using TMPro;
 using UnityEngine;
 
@@ -48,6 +49,7 @@ public class WorldCompleteController : MonoBehaviour
         if (panel != null)
         {
             SetPanelVisible(true);
+            PlayShowAnimation();
             UISelectionUtility.SelectDefault(null, panel.transform);
         }
     }
@@ -62,6 +64,33 @@ public class WorldCompleteController : MonoBehaviour
             SceneUtils.LoadScene(nextWorldData.selectionSceneName);
         else
             SceneUtils.ToSelectionScene();
+    }
+
+    private void PlayShowAnimation()
+    {
+        Transform panelTransform = panel.transform;
+        panelTransform.DOKill(true);
+        Vector3 baseScale = panelTransform.localScale;
+        panelTransform.localScale = baseScale * 0.85f;
+        panelTransform.DOScale(baseScale, 0.35f).SetEase(Ease.OutBack).SetUpdate(true).SetLink(panel);
+
+        if (panelGroup != null)
+        {
+            panelGroup.DOKill();
+            panelGroup.alpha = 0f;
+            panelGroup.DOFade(1f, 0.25f).SetUpdate(true).SetLink(panel);
+        }
+
+        // Reveal each summary line in order once the panel has settled.
+        TextMeshProUGUI[] summary = { starsText, gemsText, trebolsText, timeText };
+        for (int i = 0; i < summary.Length; i++)
+        {
+            if (summary[i] == null) continue;
+            Transform line = summary[i].transform;
+            line.DOKill(true);
+            line.DOPunchScale(Vector3.one * 0.2f, 0.3f, 6, 0.6f)
+                .SetDelay(0.35f + i * 0.12f).SetUpdate(true).SetLink(line.gameObject);
+        }
     }
 
     private static void SetText(TextMeshProUGUI target, string value)
