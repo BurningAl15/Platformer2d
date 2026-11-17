@@ -1065,6 +1065,36 @@
       "storeProcessing": "not_checked",
       "testerAvailability": "not_checked",
       "deviceQA": "unrecorded"
+    },
+    {
+      "id": "0682fd1c-48ad-4cb1-be3b-d5affd2165cf",
+      "platform": "android",
+      "number": "30",
+      "androidVersionCode": "30",
+      "uploadRequested": true,
+      "status": "uploaded_internal_testing_unverified",
+      "finishedAt": "2026-11-17",
+      "source": ".kiro/handoff.md",
+      "storeStatus": "Claude Code ran scripts/release-test.sh both --android-code 30 --ios-build 24 --upload-test from source 1ffd0d5. Unity built Builds/CI/Android/FoxsTale_30.aab (67 MB) with Localization string tables in the Addressables content; Fastlane reported 'Successfully finished the upload to Google Play' (internal track). Play Console processing and tester availability not checked.",
+      "storeUpload": "accepted",
+      "storeProcessing": "not_checked",
+      "testerAvailability": "not_checked",
+      "deviceQA": "pending_owner"
+    },
+    {
+      "id": "81224978-fa8e-4697-877b-2b04f64dd35f",
+      "platform": "ios",
+      "number": "24",
+      "iosBuild": "24",
+      "uploadRequested": true,
+      "status": "uploaded_processing_unverified",
+      "finishedAt": "2026-11-17",
+      "source": ".kiro/handoff.md",
+      "storeStatus": "Same run from source 1ffd0d5. Unity exported Builds/CI/iOS/XcodeProject_24 (Build Finished, Result: Success); Fastlane exported and signed the IPA and reported 'Successfully uploaded the new binary to App Store Connect'; build processing wait was skipped. Processing and TestFlight availability not checked.",
+      "storeUpload": "accepted",
+      "storeProcessing": "not_checked",
+      "testerAvailability": "not_checked",
+      "deviceQA": "pending_owner"
     }
   ]
 }

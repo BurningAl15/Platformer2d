@@ -11,7 +11,7 @@
   ],
   "releaseReadiness": {
     "schemaVersion": 1,
-    "updatedAt": "2026-11-12",
+    "updatedAt": "2026-11-17",
     "platforms": {
       "android": {
         "store": "google_play",
@@ -28,10 +28,10 @@
           "evidenceBuildId": "488949e5-a096-4a21-99f3-1048821f8c80"
         },
         "availability": {
-          "status": "available_internal_track_console_verified",
-          "checkedAt": "2026-11-12T22:26:29-05:00",
-          "evidenceBuildId": "a48b4a40-0672-40eb-8f2a-84777c09cdf7",
-          "nextAction": "Install versionCode 26 on the physical Android phone and verify touch controls with no controller, with GameSir connected, and after disconnecting it.",
+          "status": "uploaded_internal_testing_unverified",
+          "checkedAt": "2026-11-17T16:37:23-05:00",
+          "evidenceBuildId": "0682fd1c-48ad-4cb1-be3b-d5affd2165cf",
+          "nextAction": "Confirm versionCode 30 is available on the Play internal track, install it on the phone, and run the owner's QA pass (menus, enemies, tutorial, pause).",
           "source": ".kiro/handoff.md"
         }
       },
@@ -51,9 +51,9 @@
         },
         "availability": {
           "status": "uploaded_processing_unverified",
-          "checkedAt": "2026-11-12T22:26:29-05:00",
-          "evidenceBuildId": "81b998ac-923e-411f-a601-177f8cbf9c30",
-          "nextAction": "Check App Store Connect processing and TestFlight tester availability for build 23.",
+          "checkedAt": "2026-11-17T16:37:23-05:00",
+          "evidenceBuildId": "81224978-fa8e-4697-877b-2b04f64dd35f",
+          "nextAction": "Check App Store Connect processing and TestFlight availability for build 24, then run the owner's QA pass.",
           "source": ".kiro/handoff.md"
         }
       }
