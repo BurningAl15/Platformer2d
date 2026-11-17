@@ -310,6 +310,30 @@
       "createdAt": "2026-11-17T10:29:52-05:00",
       "updatedAt": "2026-11-17T10:29:52-05:00",
       "description": "P0 gameplay regression reported by the owner: the player passes through rats without damage, and the Level_0 moving platform activates without killing the frog.\n\n2026-11-17 Claude Code — Causes: the Player and Enemy layers ignore each other in Physics2D, so the StompBox is the only sensor that touches enemy triggers; commit 855747c made DamagePlayer ignore StompBox contacts, which removed enemy contact damage. TutorialEnemy fired on any StompBox overlap, so a side touch finished the tutorial. Fix: DamagePlayer accepts the StompBox again and keeps the deferred enemy damage that a valid stomp can cancel; EnemyParent raises a Died event, and TutorialEnemy reports only that real defeat. Verified in Unity Play Mode through the Editor: Level_2 rat side contact 6 -> 5 health; rat stomp kills it with health unchanged; Level_0 frog side touch does not finish the tutorial, a stomp does. A frog side-contact damage check was inconclusive (the patrolling frog moved). No build or device QA."
+    },
+    {
+      "id": "d0cd4842-46c3-45a5-b785-8bcbd2e18e79",
+      "title": "Fix owner QA findings from Android 30 (selector touch, pause counters, Spanish font, character entry)",
+      "status": "testing",
+      "createdAt": "2026-11-17T17:06:35-05:00",
+      "updatedAt": "2026-11-17T17:06:35-05:00",
+      "description": "P1 QA from the owner's device test of Android 30.\n\n2026-11-17 Claude Code — (1) Level selector: a press that started on UI kept panning the map and could move Fox; the map camera and LSPlayerController now raycast the UI at the press position (IsPointerOverGameObject is unreliable for touch with the Input System UI module) and ignore the whole press when it began on UI. (2) Pause: lives counter overflowed its box; counters re-laid out (gems and lives on top, hearts, fragments and clover below). (3) Spanish text: Pixelnauts.ttf had no accented letters, so TMP fell back to another font. ArtSource/Fonts/add_spanish_glyphs.py adds ÁÉÍÓÚ áéíóú Ññ Üü ¿ in the font's 64-unit pixel style plus en/em dash aliases, keeping existing glyph indices; the original is kept as ArtSource/Fonts/Pixelnauts.original.ttf; the dynamic TMP atlas was rebuilt (121 characters). Spanish entries that had their accents removed earlier were restored. (4) Character selector moved into Settings (button in the Game group) in MainMenu and LevelSelection via the new CharacterPanel prefab; it returns to Settings when closed; the separate main-menu button was removed. Verified with Play Mode captures in Spanish (Settings, Character, Pause, Dice). Device QA pending in the next build."
+    },
+    {
+      "id": "6754cab7-4fe3-4b45-b46c-e5897458a94d",
+      "title": "Rework the boss fight pacing, warnings and visible progression",
+      "status": "todo",
+      "createdAt": "2026-11-17T17:06:35-05:00",
+      "updatedAt": "2026-11-17T17:06:35-05:00",
+      "description": "P1 content. Owner feedback on Android 30: the boss fight is too direct, with no warnings, no feedback and no visible progression. Needs a design pass (telegraphs before attacks, hit feedback, a health/phase indicator, phase changes) before implementation. Related level-design issues in some levels were also reported; the owner will list them."
+    },
+    {
+      "id": "50fec965-4278-401d-be07-c8f2b616d6eb",
+      "title": "Present World 1 goals and the map as a cave setting",
+      "status": "todo",
+      "createdAt": "2026-11-17T17:06:35-05:00",
+      "updatedAt": "2026-11-17T17:06:35-05:00",
+      "description": "P2 art direction. Owner feedback: much of World 1 happens inside a cave, so the current presentation of level goals and the world map does not fit. Needs owner direction on the goal object and the map look before art and scene work."
     }
   ]
 }

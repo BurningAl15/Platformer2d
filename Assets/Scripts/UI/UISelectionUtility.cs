@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -14,6 +15,25 @@ public static class UISelectionUtility
         eventSystem.SetSelectedGameObject(null);
         if (candidate != null)
             eventSystem.SetSelectedGameObject(candidate);
+    }
+
+    private static readonly List<RaycastResult> raycastResults = new List<RaycastResult>();
+
+    /// <summary>
+    /// True when a raycast-target UI element sits under the screen point. This
+    /// raycasts directly because IsPointerOverGameObject is unreliable for touch
+    /// with the Input System UI module, especially on the frame of the press.
+    /// </summary>
+    public static bool IsScreenPointOverUI(Vector2 screenPosition)
+    {
+        EventSystem eventSystem = EventSystem.current;
+        if (eventSystem == null) return false;
+        var pointer = new PointerEventData(eventSystem) { position = screenPosition };
+        raycastResults.Clear();
+        eventSystem.RaycastAll(pointer, raycastResults);
+        bool hit = raycastResults.Count > 0;
+        raycastResults.Clear();
+        return hit;
     }
 
     private static GameObject FindFirstSelectable(Transform scope)

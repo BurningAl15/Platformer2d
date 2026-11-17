@@ -36,6 +36,11 @@ public class SettingsController : MonoBehaviour
     [SerializeField] private Button languageToggleButton;
     [SerializeField] private TextMeshProUGUI languageStatusText;
 
+    [Header("Character")]
+    [SerializeField] private Button characterButton;
+    [SerializeField] private TextMeshProUGUI characterButtonText;
+    [SerializeField] private CharacterSelectController characterPanel;
+
     [Header("Section captions")]
     [SerializeField] private TextMeshProUGUI titleText;
     [SerializeField] private TextMeshProUGUI soundCaptionText;
@@ -76,6 +81,7 @@ public class SettingsController : MonoBehaviour
         BindButtonListener(hapticsToggleButton, ToggleHaptics);
         BindButtonListener(keepScreenAwakeToggleButton, ToggleKeepScreenAwake);
         BindButtonListener(languageToggleButton, ToggleLanguage);
+        BindButtonListener(characterButton, OpenCharacter);
         BindButtonListener(resetProgressButton, OnResetProgressPressed);
         BindButtonListener(confirmResetButton, ConfirmResetProgress);
         BindButtonListener(cancelResetButton, CancelResetProgress);
@@ -235,6 +241,14 @@ public class SettingsController : MonoBehaviour
         RefreshUI();
     }
 
+    /// <summary>Opens the character selector on top of the current scene.</summary>
+    public void OpenCharacter()
+    {
+        if (characterPanel == null) return;
+        CloseSettings();
+        characterPanel.Open();
+    }
+
     public void ToggleLanguage()
     {
         string current = GameLocalization.SelectedLanguageCode;
@@ -329,6 +343,8 @@ public class SettingsController : MonoBehaviour
 
         if (titleText != null)
             titleText.text = GameLocalization.Get("UI_SETTINGS");
+        if (characterButtonText != null)
+            characterButtonText.text = GameLocalization.Get("UI_CHARACTER");
         if (soundCaptionText != null)
             soundCaptionText.text = GameLocalization.Get("SETTINGS_GROUP_SOUND");
         if (gameCaptionText != null)

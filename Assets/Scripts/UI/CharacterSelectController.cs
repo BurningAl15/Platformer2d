@@ -14,7 +14,10 @@ public class CharacterSelectController : MonoBehaviour
     [Header("Panel")]
     [SerializeField] private CanvasGroup panelGroup;
     [SerializeField] private RectTransform window;
+    [Tooltip("Optional dedicated entry; Settings can also open the panel.")]
     [SerializeField] private Button openButton;
+    [Tooltip("Settings panel to return to when the selector closes.")]
+    [SerializeField] private SettingsController returnToSettings;
     [SerializeField] private Button closeButton;
 
     [Header("Preview")]
@@ -105,7 +108,10 @@ public class CharacterSelectController : MonoBehaviour
     {
         isOpen = false;
         SetVisible(false);
-        UISelectionUtility.SelectDefault(openButton != null ? openButton.gameObject : null);
+        if (returnToSettings != null)
+            returnToSettings.OpenSettings();
+        else
+            UISelectionUtility.SelectDefault(openButton != null ? openButton.gameObject : null);
     }
 
     private void SetVisible(bool visible)

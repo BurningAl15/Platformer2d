@@ -14,6 +14,8 @@ public class LSCameraController : MonoBehaviour
     [SerializeField] private float dragThreshold = 12f;
 
     private bool isDragging;
+    // A press that began on UI belongs to the UI until it is released.
+    private bool pressStartedOnUI;
     private bool followTarget = true;
     private Vector2 previousPointerPosition;
     private float orthographicUnitsPerPixel;
@@ -64,11 +66,11 @@ public class LSCameraController : MonoBehaviour
             var touch = touchScreen.primaryTouch;
             if (touch.press.wasPressedThisFrame)
             {
-                if (IsPointerOverUI(touch.touchId.ReadValue())) return;
                 previousPointerPosition = touch.position.ReadValue();
                 isDragging = false;
+                pressStartedOnUI = UISelectionUtility.IsScreenPointOverUI(previousPointerPosition);
             }
-            else if (touch.press.isPressed)
+            else if (touch.press.isPressed && !pressStartedOnUI)
             {
                 Vector2 pointer = touch.position.ReadValue();
                 Vector2 delta = pointer - previousPointerPosition;
@@ -96,11 +98,11 @@ public class LSCameraController : MonoBehaviour
 
         if (mouse.leftButton.wasPressedThisFrame)
         {
-            if (IsPointerOverUI()) return;
             previousPointerPosition = mouse.position.ReadValue();
             isDragging = false;
+            pressStartedOnUI = UISelectionUtility.IsScreenPointOverUI(previousPointerPosition);
         }
-        else if (mouse.leftButton.isPressed)
+        else if (mouse.leftButton.isPressed && !pressStartedOnUI)
         {
             Vector2 pointer = mouse.position.ReadValue();
             Vector2 delta = pointer - previousPointerPosition;
@@ -132,15 +134,6 @@ public class LSCameraController : MonoBehaviour
         float xPos = Mathf.Clamp(desiredPosition.x, minPos.x, maxPos.x);
         float yPos = Mathf.Clamp(desiredPosition.y, minPos.y, maxPos.y);
         transform.position = new Vector3(xPos, yPos, transform.position.z);
-    }
-
-    private static bool IsPointerOverUI(int pointerId = -1)
-    {
-        EventSystem eventSystem = EventSystem.current;
-        if (eventSystem == null) return false;
-        return pointerId >= 0
-            ? eventSystem.IsPointerOverGameObject(pointerId)
-            : eventSystem.IsPointerOverGameObject();
     }
 
     private void FindTarget()

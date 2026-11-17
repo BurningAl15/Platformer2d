@@ -273,9 +273,7 @@ public class LSPlayerController : MonoBehaviour
             var touch = ts.primaryTouch;
             if (touch.press.wasPressedThisFrame)
             {
-                int touchId = touch.touchId.ReadValue();
-                if (UnityEngine.EventSystems.EventSystem.current != null &&
-                    UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject(touchId))
+                if (UISelectionUtility.IsScreenPointOverUI(touch.position.ReadValue()))
                 {
                     isTouching = false;
                     return;
@@ -308,8 +306,7 @@ public class LSPlayerController : MonoBehaviour
         var mouse = UnityEngine.InputSystem.Mouse.current;
         if (mouse != null && mouse.leftButton.wasPressedThisFrame)
         {
-            if (UnityEngine.EventSystems.EventSystem.current != null &&
-                UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject())
+            if (UISelectionUtility.IsScreenPointOverUI(mouse.position.ReadValue()))
             {
                 isMousePointerDown = false;
                 return;
