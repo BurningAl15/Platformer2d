@@ -144,13 +144,15 @@ public class UI_SelectController : MonoBehaviour
             gemsTargetText.gameObject.SetActive(false);
         }
         if (timeTargetText != null)
-            timeTargetText.text = GameLocalization.Get("SELECT_TIME_SECONDS", levelInfo.targetTime.ToString("F1"));
+            timeTargetText.text = GameLocalization.Get("SELECT_TARGET",
+                GameLocalization.Get("SELECT_TIME_SECONDS", levelInfo.targetTime.ToString("F1")));
 
         if (bestTimeText != null)
         {
-            bestTimeText.text = levelInfo.bestTime >= 99999f
+            string best = levelInfo.bestTime >= 99999f
                 ? GameLocalization.Get("SELECT_BEST_NONE")
                 : GameLocalization.Get("SELECT_TIME_SECONDS", levelInfo.bestTime.ToString("F1"));
+            bestTimeText.text = GameLocalization.Get("SELECT_BEST", best);
         }
 
         if (cloverIndicator != null)

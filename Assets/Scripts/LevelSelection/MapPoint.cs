@@ -71,10 +71,29 @@ public class MapPoint : MonoBehaviour
 
     public bool AnimateCloverArrival(Vector2 sourceViewportPosition)
     {
-        if (!hasTrebol || trebolBadge == null || Camera.main == null)
+        return hasTrebol && AnimateBadgeArrival(trebolBadge, sourceViewportPosition, 0f);
+    }
+
+    /// <summary>Plays the arrival effect on the gem badge when it was just earned.</summary>
+    public bool AnimateGemArrival(Vector2 sourceViewportPosition, float delay)
+    {
+        return AnimateBadgeArrival(gemsBadge, sourceViewportPosition, delay);
+    }
+
+    /// <summary>Plays the arrival effect on the time badge when it was just earned.</summary>
+    public bool AnimateTimeArrival(Vector2 sourceViewportPosition, float delay)
+    {
+        return AnimateBadgeArrival(timeBadge, sourceViewportPosition, delay);
+    }
+
+    // A copy of the badge sprite flies from a screen point to the badge, which
+    // stays dimmed until the copy arrives and then reveals with a pulse.
+    private bool AnimateBadgeArrival(GameObject badge, Vector2 sourceViewportPosition, float delay)
+    {
+        if (badge == null || !badge.activeInHierarchy || Camera.main == null)
             return false;
 
-        SpriteRenderer badgeRenderer = trebolBadge.GetComponent<SpriteRenderer>();
+        SpriteRenderer badgeRenderer = badge.GetComponent<SpriteRenderer>();
         if (badgeRenderer == null || badgeRenderer.sprite == null)
             return false;
 
@@ -85,14 +104,16 @@ public class MapPoint : MonoBehaviour
             new Vector3(sourceViewportPosition.x, sourceViewportPosition.y, cameraDepth));
         sourcePosition.z = targetPosition.z;
 
-        GameObject travelObject = new GameObject("CloverArrivalFeedback");
+        GameObject travelObject = new GameObject("BadgeArrivalFeedback");
         travelObject.transform.position = sourcePosition;
         SpriteRenderer travelRenderer = travelObject.AddComponent<SpriteRenderer>();
         travelRenderer.sprite = badgeRenderer.sprite;
         travelRenderer.sortingLayerID = badgeRenderer.sortingLayerID;
         travelRenderer.sortingOrder = badgeRenderer.sortingOrder + 1;
+        travelRenderer.enabled = false;
 
         Vector3 targetScale = badgeRenderer.transform.lossyScale;
+        Color revealedColor = badgeRenderer.color;
         badgeRenderer.color = new Color(0.35f, 0.35f, 0.35f, 0.7f);
 
         DOTween.Sequence()
@@ -104,10 +125,16 @@ public class MapPoint : MonoBehaviour
                 if (badgeRenderer == null)
                     return;
 
-                badgeRenderer.DOColor(Color.white, 0.18f).SetEase(Ease.OutQuad)
-                    .SetLink(trebolBadge, LinkBehaviour.KillOnDestroy);
+                badgeRenderer.DOColor(revealedColor, 0.18f).SetEase(Ease.OutQuad)
+                    .SetLink(badge, LinkBehaviour.KillOnDestroy);
                 badgeRenderer.transform.DOPunchScale(Vector3.one * 0.22f, 0.32f, 8, 0.65f)
-                    .SetLink(trebolBadge, LinkBehaviour.KillOnDestroy);
+                    .SetLink(badge, LinkBehaviour.KillOnDestroy);
+            })
+            .SetDelay(delay)
+            .OnStart(() =>
+            {
+                if (travelRenderer != null)
+                    travelRenderer.enabled = true;
             })
             .OnComplete(() =>
             {

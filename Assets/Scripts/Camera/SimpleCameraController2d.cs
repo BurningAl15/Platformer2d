@@ -75,10 +75,20 @@ public class SimpleCameraController2d : MonoBehaviour
 
         if (target != null)
         {
-            Vector3 cameraPosition = transform.position;
+            Vector3 authoredPosition = transform.position;
+            Vector3 cameraPosition = authoredPosition;
             cameraPosition.x = target.position.x;
             cameraPosition.y = Mathf.Clamp(target.position.y, minHeight, maxHeight);
             transform.position = cameraPosition;
+
+            // The layers are authored relative to the camera's scene position.
+            // Carry them along with the snap so a high or low start keeps the
+            // backdrop behind the view instead of exposing the clear color.
+            Vector3 snapDelta = cameraPosition - authoredPosition;
+            if (farBackground != null)
+                farBackground.position += Vector3.up * snapDelta.y;
+            if (middleBackground != null)
+                middleBackground.position += new Vector3(snapDelta.x, snapDelta.y, 0f) * middleFollowFactor;
         }
 
         if (farBackground != null)
@@ -202,6 +212,29 @@ public class SimpleCameraController2d : MonoBehaviour
         float driftDelta = currentCloudDriftOffset - lastCloudDriftOffset;
         cloudBackground.position += Vector3.right * driftDelta;
         lastCloudDriftOffset = currentCloudDriftOffset;
+
+        KeepLayerBehindView(cloudBackground, cloudBackgroundRenderer);
+        KeepLayerBehindView(highCloudBackground, highCloudBackgroundRenderer);
+    }
+
+    // Parallax lag accumulates over long or tall levels. Stop a layer at the
+    // point where its edge would enter the view, so it never leaves a gap.
+    private void KeepLayerBehindView(Transform layer, SpriteRenderer layerRenderer)
+    {
+        if (layer == null || layerRenderer == null || cam == null || !cam.orthographic)
+            return;
+
+        Bounds bounds = layerRenderer.bounds;
+        float halfViewHeight = cam.orthographicSize;
+        float halfViewWidth = halfViewHeight * cam.aspect;
+        float maxOffsetX = Mathf.Max(0f, bounds.extents.x - halfViewWidth);
+        float maxOffsetY = Mathf.Max(0f, bounds.extents.y - halfViewHeight);
+
+        Vector2 offset = bounds.center - transform.position;
+        Vector2 clamped = new Vector2(
+            Mathf.Clamp(offset.x, -maxOffsetX, maxOffsetX),
+            Mathf.Clamp(offset.y, -maxOffsetY, maxOffsetY));
+        layer.position += (Vector3)(clamped - offset);
     }
 
     private void UpdateFarBackgroundCoverage()

@@ -415,6 +415,14 @@ MonoBehaviour:
     m_Key: UI_MAIN_MENU
     m_Metadata:
       m_Items: []
+  - m_Id: 804249698
+    m_Key: SELECT_BEST
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249699
+    m_Key: SELECT_TARGET
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

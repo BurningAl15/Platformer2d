@@ -19,6 +19,9 @@ public class MapPointsHolder : MonoBehaviour
     private static int pendingCloverLevel = -1;
     private static Vector2 pendingCloverViewportPosition;
     private static bool hasPendingCloverArrival;
+    private static int pendingBadgeLevel = -1;
+    private static bool pendingGemBadge;
+    private static bool pendingTimeBadge;
 
     [Header("Modo legacy (1 mundo)")]
     [SerializeField] private List<MapPoint> _mapPoints = new List<MapPoint>();
@@ -47,6 +50,20 @@ public class MapPointsHolder : MonoBehaviour
         SceneManager.sceneLoaded += ClearCloverArrivalOnOtherScene;
     }
 
+    /// <summary>Queues the map arrival effect for badges earned by finishing a level.</summary>
+    public static void QueueBadgeArrival(int levelNumber, bool gemBadge, bool timeBadge)
+    {
+        if (!gemBadge && !timeBadge)
+            return;
+
+        pendingBadgeLevel = levelNumber;
+        pendingGemBadge = gemBadge;
+        pendingTimeBadge = timeBadge;
+
+        SceneManager.sceneLoaded -= ClearCloverArrivalOnOtherScene;
+        SceneManager.sceneLoaded += ClearCloverArrivalOnOtherScene;
+    }
+
     private static void ClearCloverArrivalOnOtherScene(Scene scene, LoadSceneMode mode)
     {
         if (scene.name == "LevelSelection")
@@ -59,21 +76,33 @@ public class MapPointsHolder : MonoBehaviour
     {
         pendingCloverLevel = -1;
         hasPendingCloverArrival = false;
+        pendingBadgeLevel = -1;
+        pendingGemBadge = false;
+        pendingTimeBadge = false;
         SceneManager.sceneLoaded -= ClearCloverArrivalOnOtherScene;
     }
 
     private void PlayPendingCloverArrival()
     {
-        if (!hasPendingCloverArrival)
-            return;
-
+        // Level-completion badges enter from the screen center, one after another.
+        Vector2 screenCenter = new Vector2(0.5f, 0.5f);
         for (int i = 0; i < _mapPoints.Count; i++)
         {
-            if (_mapPoints[i] == null || GetLevelNumber(i) != pendingCloverLevel)
+            if (_mapPoints[i] == null)
                 continue;
 
-            _mapPoints[i].AnimateCloverArrival(pendingCloverViewportPosition);
-            break;
+            int levelNumber = GetLevelNumber(i);
+            if (hasPendingCloverArrival && levelNumber == pendingCloverLevel)
+                _mapPoints[i].AnimateCloverArrival(pendingCloverViewportPosition);
+
+            if (levelNumber != pendingBadgeLevel)
+                continue;
+
+            float delay = 0.25f;
+            if (pendingGemBadge && _mapPoints[i].AnimateGemArrival(screenCenter, delay))
+                delay += 0.3f;
+            if (pendingTimeBadge)
+                _mapPoints[i].AnimateTimeArrival(screenCenter, delay);
         }
 
         ClearPendingCloverArrival();

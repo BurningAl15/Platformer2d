@@ -241,6 +241,14 @@ public class LevelManager : MonoBehaviour
         // Guardar gemas y tiempo solo en niveles reales (no el nivel 0 que es el tutorial)
         if (levelNumber > 0 && SaveManager.Instance != null)
         {
+            // Compare against the previous record so the map only celebrates new badges.
+            float parTime = currentWorldData != null ? currentWorldData.GetTargetTime(gameObject.scene.name) : 0f;
+            bool earnedGemBadge = totalGemsInLevel > 0 && gemsCollected >= totalGemsInLevel &&
+                                  SaveManager.Instance.LoadGems(levelNumber) < totalGemsInLevel;
+            bool earnedTimeBadge = parTime > 0f && timeInLevel <= parTime &&
+                                   SaveManager.Instance.LoadBestTime(levelNumber) > parTime;
+            MapPointsHolder.QueueBadgeArrival(levelNumber, earnedGemBadge, earnedTimeBadge);
+
             SaveManager.Instance.SaveGemsIfBetter(levelNumber, gemsCollected);
             SaveManager.Instance.SaveTimeIfBetter(levelNumber, timeInLevel);
             SaveManager.Instance.AddGlobalGems(gemsCollected);

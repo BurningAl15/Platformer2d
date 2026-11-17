@@ -422,6 +422,14 @@ MonoBehaviour:
     m_Localized: Main Menu
     m_Metadata:
       m_Items: []
+  - m_Id: 804249698
+    m_Localized: 'Best: {0}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249699
+    m_Localized: 'Target: {0}'
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

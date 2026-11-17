@@ -418,6 +418,14 @@ MonoBehaviour:
     m_Localized: Menu principal
     m_Metadata:
       m_Items: []
+  - m_Id: 804249698
+    m_Localized: 'Mejor: {0}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249699
+    m_Localized: 'Meta: {0}'
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []
