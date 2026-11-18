@@ -29,6 +29,9 @@ public class LevelManager : MonoBehaviour
     private int gemsCollected = 0;
     public float timeInLevel { get; private set; }
 
+    /// <summary>Time that earns the level's time star, or 0 when the level has none.</summary>
+    public float TargetTime => currentWorldData != null ? currentWorldData.GetTargetTime(gameObject.scene.name) : 0f;
+
     private Coroutine currentCoroutine = null;
 
     // ───────────────────────────────────────────────

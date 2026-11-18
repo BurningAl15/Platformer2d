@@ -350,6 +350,14 @@
       "createdAt": "2026-11-17T23:15:30-05:00",
       "updatedAt": "2026-11-17T23:15:30-05:00",
       "description": "P1 feel, from the owner's Android 32 review.\n\n2026-11-17 Claude Code — (1) After a level, the map locks movement and level entry while the clover/gem/time badge arrivals play (MapPointsHolder computes their length; LSPlayerController.LockInput), and the level info panel stays hidden until they finish. (2) The info panel enters from below while fading from transparent to solid (CanvasGroup + DOTween). (3) The panel now has a highlighted Play button that confirms the selected level and pulses when the panel appears (new UI_PLAY key); tapping the node again still works. (4) Panel data re-laid out as aligned columns: gem icon + count, clock + best/target, clover. (5) Gameplay camera: dead zone (0.8 x 1.2 units) and SmoothDamp follow (0.18 s); parallax uses the follow position; ScreenShake runs after the camera so shakes no longer drift it; a weaker shake no longer cuts a stronger one. (6) Screen shake added on player damage (0.25 s) and a light one on stomps. Verified in Play Mode: lock hides the panel and blocks navigation, panel returns after; camera stays still for a 0.5-unit move, follows with a 0.8 gap after a 3-unit move, and returns exactly after a shake. Device QA pending."
+    },
+    {
+      "id": "8a95c9cf-ef2a-4fa8-8a70-afcdb5fdffce",
+      "title": "Show the level timer in the gameplay HUD",
+      "status": "testing",
+      "createdAt": "2026-11-17T23:49:49-05:00",
+      "updatedAt": "2026-11-17T23:49:49-05:00",
+      "description": "P2 HUD, owner request after Android 32: the level measures time for stars and records but never showed it.\n\n2026-11-17 Claude Code — Added TimerContainer (clock icon + m:ss, same text style as the gem counter) at the top center of UI-Canvas. UIController updates it from LevelManager.timeInLevel, so it stops with pause and level end; when the time star's target (new LevelManager.TargetTime from WorldData) passes, the time turns amber with a pulse. Verified in Play Mode on Level_3 (0:04 at start; 2:07 in amber after jumping past the 120 s target). Levels 9 and 10 use LevelPrefab and do not show it. Device QA pending."
     }
   ]
 }

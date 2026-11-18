@@ -97,6 +97,13 @@ public class UIController : MonoBehaviour
     [Tooltip("(Opcional) Texto o imagen que muestra las vidas restantes en el HUD")]
     [SerializeField] private TextMeshProUGUI livesText;
 
+    [Header("Level timer")]
+    [SerializeField] private TextMeshProUGUI timerText;
+    [Tooltip("Timer color once the time star's target has passed.")]
+    [SerializeField] private Color timerOverTargetColor = new Color(1f, 0.82f, 0.3f);
+    private int shownTimerSeconds = -1;
+    private bool timerOverTarget;
+
     // ─────────────────────────────
     //  Fin de nivel
     // ─────────────────────────────
@@ -273,6 +280,35 @@ public class UIController : MonoBehaviour
     // ─────────────────────────────────────────────────────────────────────────
 
     /// <summary>Actualiza el contador de gemas del nivel actual (formato X o X / Total).</summary>
+    private void Update()
+    {
+        UpdateLevelTimer();
+    }
+
+    // Shows the level's running time as m:ss and flags the moment the time star is lost.
+    private void UpdateLevelTimer()
+    {
+        LevelManager level = LevelManager._instance;
+        if (timerText == null || level == null) return;
+
+        float time = level.timeInLevel;
+        int seconds = Mathf.FloorToInt(time);
+        if (seconds != shownTimerSeconds)
+        {
+            shownTimerSeconds = seconds;
+            timerText.text = $"{seconds / 60}:{seconds % 60:00}";
+        }
+
+        float target = level.TargetTime;
+        if (!timerOverTarget && target > 0f && time > target)
+        {
+            timerOverTarget = true;
+            timerText.color = timerOverTargetColor;
+            timerText.transform.DOKill(true);
+            timerText.transform.DOPunchScale(Vector3.one * 0.3f, 0.4f, 8, 0.6f).SetLink(timerText.gameObject);
+        }
+    }
+
     public void UpdateGems_UI(int currentGems, int totalGems = 0)
     {
         if (gemsLevelText != null)

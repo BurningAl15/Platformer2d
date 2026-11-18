@@ -1713,3 +1713,5 @@ Nota agregada en el docstring con la acción requerida en el dashboard.
 2026-11-17 — 61e9c68e-a442-416d-8835-1db22793355b — Selector waits for reward animations (input lock, hidden info panel), info panel slides up with a fade and has a Play button; gameplay camera has a dead zone and smoothing; screen shake on damage and stomps. Verified in Play Mode.
 
 2026-11-17 — Builds Android 33 / iOS 27 — from b7f501d; catalogs verified per platform (Android, iOS). Uploads accepted by Fastlane. Processing, tester availability and device QA NOT verified. Android 31/32 and iOS 24-26 are known-bad for localization.
+
+2026-11-17 — 8a95c9cf-ef2a-4fa8-8a70-afcdb5fdffce — Gameplay HUD now shows the level timer (top center) and turns it amber when the time star's target passes. Verified in Play Mode.
