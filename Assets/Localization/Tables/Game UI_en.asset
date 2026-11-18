@@ -514,6 +514,10 @@ MonoBehaviour:
     m_Localized: 'Levels {0}/{1}'
     m_Metadata:
       m_Items: []
+  - m_Id: 804249721
+    m_Localized: Play
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

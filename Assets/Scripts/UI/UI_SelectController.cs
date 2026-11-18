@@ -46,6 +46,12 @@ public class UI_SelectController : MonoBehaviour
     [SerializeField] private Ease showEase = Ease.OutBack;
     [SerializeField] private Ease hideEase = Ease.InBack;
 
+    [Header("Play")]
+    [SerializeField] private UnityEngine.UI.Button playButton;
+    [SerializeField] private TextMeshProUGUI playButtonText;
+    [SerializeField] private LSPlayerController player;
+    [SerializeField] private CanvasGroup panelGroup;
+
     private RectTransform panelRect;
     private MapPoint currentLevelInfo;
 
@@ -90,6 +96,9 @@ public class UI_SelectController : MonoBehaviour
             cloverText.gameObject.SetActive(false);
 
         levelInfoContainer.SetActive(false);
+
+        if (playButton != null && player != null)
+            playButton.onClick.AddListener(player.HandleLevelSelect);
     }
 
     private void OnEnable()
@@ -181,11 +190,30 @@ public class UI_SelectController : MonoBehaviour
 
         if (show)
         {
+            // Rises from below while fading from transparent to solid.
+            bool wasHidden = !levelInfoContainer.activeSelf;
             levelInfoContainer.SetActive(true);
             panelRect.DOKill();
+            if (wasHidden)
+                panelRect.anchoredPosition = new Vector2(panelRect.anchoredPosition.x, hiddenY);
             panelRect.DOAnchorPosY(visibleY, animDuration)
                      .SetEase(showEase)
                      .SetUpdate(true);
+            if (panelGroup != null)
+            {
+                panelGroup.DOKill();
+                if (wasHidden) panelGroup.alpha = 0f;
+                panelGroup.DOFade(1f, animDuration).SetUpdate(true);
+            }
+            if (playButtonText != null)
+                playButtonText.text = GameLocalization.Get("UI_PLAY");
+            if (playButton != null)
+            {
+                // Draws the eye to the button that confirms the selected level.
+                playButton.transform.DOKill(true);
+                playButton.transform.DOPunchScale(Vector3.one * 0.12f, 0.35f, 6, 0.6f)
+                    .SetDelay(animDuration).SetUpdate(true).SetLink(playButton.gameObject);
+            }
         }
         else
         {
@@ -194,6 +222,11 @@ public class UI_SelectController : MonoBehaviour
                      .SetEase(hideEase)
                      .SetUpdate(true)
                      .OnComplete(() => levelInfoContainer.SetActive(false));
+            if (panelGroup != null)
+            {
+                panelGroup.DOKill();
+                panelGroup.DOFade(0f, animDuration).SetUpdate(true);
+            }
         }
     }
 }

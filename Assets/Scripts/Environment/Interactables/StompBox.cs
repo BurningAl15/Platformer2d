@@ -72,6 +72,7 @@ public class StompBox : MonoBehaviour
         enemy.Death();
         
         PlayerController2d._instance.Bounce();
+        ScreenShake._instance?.StartShake(0.12f, 0.08f);
         AppBootstrap.TriggerHapticFeedback();
         AudioMixerManager._instance.CallSFX(SFXType.Enemy_Death);
 

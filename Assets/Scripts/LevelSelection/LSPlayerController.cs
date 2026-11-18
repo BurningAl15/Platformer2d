@@ -18,6 +18,19 @@ public class LSPlayerController : MonoBehaviour
 
     private bool hasProcessedInput = false;
     private bool currentPointInfoRefreshed;
+    private float inputLockedUntil;
+
+    /// <summary>True while level rewards are still animating on the map.</summary>
+    public bool IsInputLocked => Time.unscaledTime < inputLockedUntil;
+
+    /// <summary>Blocks movement and level entry, and keeps the info panel hidden, for the given time.</summary>
+    public void LockInput(float seconds)
+    {
+        if (seconds <= 0f) return;
+        inputLockedUntil = Mathf.Max(inputLockedUntil, Time.unscaledTime + seconds);
+        currentPointInfoRefreshed = false;
+        UI_SelectController._instance?.Turn_On_Off(false);
+    }
     private float cooldownTimer = 0f;
     private Vector2 previousMoveInput;
 
@@ -50,6 +63,7 @@ public class LSPlayerController : MonoBehaviour
 
     private void HandleConfirmPressed()
     {
+        if (IsInputLocked) return;
         if (IsUiFocused()) return;
         HandleLevelSelect();
     }
@@ -70,7 +84,8 @@ public class LSPlayerController : MonoBehaviour
         currentPoint = newPoint;
         transform.position = currentPoint.transform.position;
         currentPoint.Select();
-        RefreshSelectedLevelInfo();
+        if (!IsInputLocked)
+            RefreshSelectedLevelInfo();
     }
 
     private readonly Queue<MapPoint> pathQueue = new Queue<MapPoint>();
@@ -104,18 +119,20 @@ public class LSPlayerController : MonoBehaviour
             }
             else
             {
-                HandleNavigation();
+                if (!IsInputLocked)
+                    HandleNavigation();
 
                 // Mostrar panel de info solo cuando estamos exactamente sobre el nodo
                 if (currentDistance <= 0.01f)
                 {
-                    if (!currentPointInfoRefreshed)
+                    if (!currentPointInfoRefreshed && !IsInputLocked)
                         RefreshSelectedLevelInfo();
                 }
             }
         }
 
-        UpdateTouchMapInteraction(currentDistance);
+        if (!IsInputLocked)
+            UpdateTouchMapInteraction(currentDistance);
     }
 
     private void HandleNavigation()
@@ -168,6 +185,7 @@ public class LSPlayerController : MonoBehaviour
     /// </summary>
     public bool NavigateToPoint(MapPoint target)
     {
+        if (IsInputLocked) return false;
         if (target == null || currentPoint == null) return false;
 
         if (target == currentPoint)
@@ -354,6 +372,7 @@ public class LSPlayerController : MonoBehaviour
 
     public void HandleLevelSelect()
     {
+        if (IsInputLocked) return;
         if (currentPoint == null) return;
 
         float dist = Vector3.Distance(transform.position, currentPoint.transform.position);

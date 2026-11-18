@@ -23,6 +23,13 @@ public class SimpleCameraController2d : MonoBehaviour
     [SerializeField, Min(1f)] private float seaShimmerFrameRate = 8f;
     private Vector2 lastPos;
 
+    [Header("Follow")]
+    [Tooltip("The target moves freely inside this box (world units, half extents) before the camera follows.")]
+    [SerializeField] private Vector2 followDeadZone = new Vector2(0.8f, 1.2f);
+    [SerializeField, Min(0f)] private float followSmoothTime = 0.18f;
+    private Vector3 followPosition;
+    private Vector3 followVelocity;
+
     [Header("Camera Height Clamping")] 
     [SerializeField] private float minHeight;
     [SerializeField] private float maxHeight;
@@ -73,6 +80,7 @@ public class SimpleCameraController2d : MonoBehaviour
         if (cam != null)
             cam.backgroundColor = SkyColor;
 
+        followPosition = transform.position;
         if (target != null)
         {
             Vector3 authoredPosition = transform.position;
@@ -84,6 +92,7 @@ public class SimpleCameraController2d : MonoBehaviour
             // The layers are authored relative to the camera's scene position.
             // Carry them along with the snap so a high or low start keeps the
             // backdrop behind the view instead of exposing the clear color.
+            followPosition = cameraPosition;
             Vector3 snapDelta = cameraPosition - authoredPosition;
             if (farBackground != null)
                 farBackground.position += Vector3.up * snapDelta.y;
@@ -177,15 +186,22 @@ public class SimpleCameraController2d : MonoBehaviour
 
         if (!stopFollow)
         {
-            // Horizontal movement.
-            transform.position = new Vector3(target.position.x, target.position.y, transform.position.z);
+            // Follow only once the target leaves the dead zone, then ease toward it.
+            Vector3 goal = followPosition;
+            float dx = target.position.x - followPosition.x;
+            float dy = target.position.y - followPosition.y;
+            if (dx > followDeadZone.x) goal.x = target.position.x - followDeadZone.x;
+            else if (dx < -followDeadZone.x) goal.x = target.position.x + followDeadZone.x;
+            if (dy > followDeadZone.y) goal.y = target.position.y - followDeadZone.y;
+            else if (dy < -followDeadZone.y) goal.y = target.position.y + followDeadZone.y;
+            goal.y = Mathf.Clamp(goal.y, minHeight, maxHeight);
+            followPosition = followSmoothTime > 0f
+                ? Vector3.SmoothDamp(followPosition, goal, ref followVelocity, followSmoothTime)
+                : goal;
+            followPosition.z = transform.position.z;
 
-            // Clamp vertical camera movement.
-            float clampedY = Mathf.Clamp(transform.position.y, minHeight, maxHeight);
-            transform.position = new Vector3(transform.position.x, clampedY, transform.position.z);
-
-            // Apply camera-relative parallax after the camera reaches its final position.
-            Vector2 amountToMove = new Vector2(transform.position.x - lastPos.x, transform.position.y - lastPos.y);
+            // Parallax follows the follow position, never a shake offset.
+            Vector2 amountToMove = new Vector2(followPosition.x - lastPos.x, followPosition.y - lastPos.y);
 
             if (farBackground != null)
                 farBackground.position += new Vector3(amountToMove.x, amountToMove.y, 0);
@@ -197,9 +213,11 @@ public class SimpleCameraController2d : MonoBehaviour
                 highCloudBackground.position += new Vector3(amountToMove.x, amountToMove.y, 0) * highCloudFollowFactor;
             if (middleBackground != null)
                 middleBackground.position += new Vector3(amountToMove.x, amountToMove.y, 0) * middleFollowFactor;
-        
-            lastPos = transform.position;
+            lastPos = followPosition;
         }
+
+        // ScreenShake runs after this and offsets the final position for one frame.
+        transform.position = followPosition;
 
         ApplyCloudDrift();
     }
@@ -230,7 +248,7 @@ public class SimpleCameraController2d : MonoBehaviour
         float maxOffsetX = Mathf.Max(0f, bounds.extents.x - halfViewWidth);
         float maxOffsetY = Mathf.Max(0f, bounds.extents.y - halfViewHeight);
 
-        Vector2 offset = bounds.center - transform.position;
+        Vector2 offset = bounds.center - followPosition;
         Vector2 clamped = new Vector2(
             Mathf.Clamp(offset.x, -maxOffsetX, maxOffsetX),
             Mathf.Clamp(offset.y, -maxOffsetY, maxOffsetY));

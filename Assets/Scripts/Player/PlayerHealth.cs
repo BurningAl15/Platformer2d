@@ -85,6 +85,7 @@ public class PlayerHealth : MonoBehaviour
         AppBootstrap.TriggerHapticFeedback();
         UIController._instance?.RefreshHealthDisplay();
         UIController._instance?.AnimateDamagedHeart();
+        ScreenShake._instance?.StartShake(0.25f, 0.18f);
 
         if (currentHealth == 0)
         {

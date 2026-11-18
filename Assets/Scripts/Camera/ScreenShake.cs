@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
+// Runs after SimpleCameraController2d so the shake offsets the settled camera position.
+[DefaultExecutionOrder(100)]
 public class ScreenShake : MonoBehaviour
 {
     public static ScreenShake _instance;
@@ -48,6 +50,8 @@ public class ScreenShake : MonoBehaviour
 
     public void StartShake(float length, float power)
     {
+        // A weaker request never cuts a stronger shake that is still playing.
+        if (shakeTimeRamaining > 0f && power < shakePower) return;
         shakeTimeRamaining = length;
         shakePower = power;
 

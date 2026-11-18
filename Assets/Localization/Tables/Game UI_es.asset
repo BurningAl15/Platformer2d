@@ -510,6 +510,10 @@ MonoBehaviour:
     m_Localized: 'Niveles {0}/{1}'
     m_Metadata:
       m_Items: []
+  - m_Id: 804249721
+    m_Localized: Jugar
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

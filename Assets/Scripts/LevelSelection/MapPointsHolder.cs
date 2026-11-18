@@ -36,6 +36,9 @@ public class MapPointsHolder : MonoBehaviour
     private void Start()
     {
         ConfigureMapPoints();
+        // Rewards from the level just finished play first; the player waits for them.
+        if (player != null)
+            player.LockInput(PendingArrivalDuration());
         PositionPlayer();
         PlayPendingCloverArrival();
     }
@@ -80,6 +83,22 @@ public class MapPointsHolder : MonoBehaviour
         pendingGemBadge = false;
         pendingTimeBadge = false;
         SceneManager.sceneLoaded -= ClearCloverArrivalOnOtherScene;
+    }
+
+    private const float ArrivalDuration = 0.8f;   // flight 0.48 s + reveal pulse 0.32 s
+
+    /// <summary>Seconds until the queued badge and clover arrivals finish, plus a short beat.</summary>
+    private float PendingArrivalDuration()
+    {
+        float end = 0f;
+        if (hasPendingCloverArrival) end = ArrivalDuration;
+        if (pendingBadgeLevel >= 0)
+        {
+            float delay = 0.25f;
+            if (pendingGemBadge) { end = Mathf.Max(end, delay + ArrivalDuration); delay += 0.3f; }
+            if (pendingTimeBadge) end = Mathf.Max(end, delay + ArrivalDuration);
+        }
+        return end > 0f ? end + 0.2f : 0f;
     }
 
     private void PlayPendingCloverArrival()
