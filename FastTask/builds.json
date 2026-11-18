@@ -1215,6 +1215,36 @@
       "storeProcessing": "not_checked",
       "testerAvailability": "not_checked",
       "deviceQA": "pending_owner"
+    },
+    {
+      "id": "920a735b-873f-4c3e-a582-7eaa00d4e978",
+      "platform": "android",
+      "number": "35",
+      "androidVersionCode": "35",
+      "uploadRequested": true,
+      "status": "uploaded_internal_testing_unverified",
+      "finishedAt": "2026-11-18",
+      "source": ".kiro/handoff.md",
+      "storeStatus": "release-test.sh both --android-code 35 --ios-build 29 --upload-test from c1e4435 (dice rework, tutorial input prompts, fading touch controls, floating stick + jump zone). Addressables catalog verified as RuntimePath}/Android. Fastlane accepted the upload to the Play internal track. Processing, tester availability and device QA not checked.",
+      "storeUpload": "accepted",
+      "storeProcessing": "not_checked",
+      "testerAvailability": "not_checked",
+      "deviceQA": "pending_owner"
+    },
+    {
+      "id": "54233e51-6d44-4db2-be73-8fc19e3c851a",
+      "platform": "ios",
+      "number": "29",
+      "iosBuild": "29",
+      "uploadRequested": true,
+      "status": "uploaded_processing_unverified",
+      "finishedAt": "2026-11-18",
+      "source": ".kiro/handoff.md",
+      "storeStatus": "release-test.sh both --android-code 35 --ios-build 29 --upload-test from c1e4435 (dice rework, tutorial input prompts, fading touch controls, floating stick + jump zone). Addressables catalog verified as RuntimePath}/iOS. Fastlane accepted the upload to App Store Connect (processing wait skipped). Processing, tester availability and device QA not checked.",
+      "storeUpload": "accepted",
+      "storeProcessing": "not_checked",
+      "testerAvailability": "not_checked",
+      "deviceQA": "pending_owner"
     }
   ]
 }
