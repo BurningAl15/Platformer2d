@@ -578,6 +578,26 @@ MonoBehaviour:
     m_Localized: Sin vidas esta vez
     m_Metadata:
       m_Items: []
+  - m_Id: 804249738
+    m_Localized: 'Cuenta la leyenda que en lo alto del Templo del Valle brillaba el Corazón de Ámbar, una gema que daba vida a todas las islas.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249739
+    m_Localized: 'Un día, el Corazón de Ámbar desapareció. Solo quedaron pistas, escondidas en lugares misteriosos.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249740
+    m_Localized: 'Un joven zorro aventurero encontró la primera de ellas... y decidió seguirlas todas.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249741
+    m_Localized: 'Selvas, cuevas y ruinas lo esperan. ¡La búsqueda del Corazón de Ámbar comienza!'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249742
+    m_Localized: 'Saltar'
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

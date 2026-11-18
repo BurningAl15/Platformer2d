@@ -575,6 +575,26 @@ MonoBehaviour:
     m_Key: DICE_RESULT_ZERO
     m_Metadata:
       m_Items: []
+  - m_Id: 804249738
+    m_Key: STORY_1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249739
+    m_Key: STORY_2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249740
+    m_Key: STORY_3
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249741
+    m_Key: STORY_4
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249742
+    m_Key: STORY_SKIP
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

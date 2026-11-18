@@ -582,6 +582,26 @@ MonoBehaviour:
     m_Localized: No lives this time
     m_Metadata:
       m_Items: []
+  - m_Id: 804249738
+    m_Localized: 'Legend tells of the Amber Heart, a gem that shone atop the Valley Temple and kept every island alive.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249739
+    m_Localized: 'One day the Amber Heart vanished. Only clues remained, hidden in mysterious places.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249740
+    m_Localized: 'A young adventurer fox found the first of them... and set out to follow them all.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249741
+    m_Localized: 'Jungles, caves and ruins await. The search for the Amber Heart begins!'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249742
+    m_Localized: 'Skip'
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

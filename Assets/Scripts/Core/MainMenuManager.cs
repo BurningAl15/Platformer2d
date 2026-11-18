@@ -6,7 +6,7 @@ using UnityEngine.UI;
 /// <summary>
 /// Gestiona la pantalla del menú principal.
 /// - Muestra/oculta el botón "Continue" según si hay partida guardada.
-/// - "Nueva partida": borra progreso (vía SaveManager) y carga el nivel tutorial.
+/// - "Nueva partida": borra progreso (vía SaveManager), muestra la historia y luego el tutorial.
 /// - "Continuar": va a la pantalla de selección de niveles.
 /// </summary>
 public class MainMenuManager : MonoBehaviour
@@ -31,6 +31,8 @@ public class MainMenuManager : MonoBehaviour
 
     [Header("Versión")]
     [SerializeField] private TMPro.TextMeshProUGUI versionText;
+
+    private const string StorySceneName = "Story";
 
     private bool hasPlayedBefore = false;
 
@@ -171,7 +173,8 @@ public class MainMenuManager : MonoBehaviour
             PlayerPrefs.Save();
         }
 
-        SceneUtils.LoadGameplayScene(0);
+        // The intro story plays first and then loads the tutorial (Level_0).
+        SceneUtils.LoadScene(StorySceneName);
     }
 
     private bool HasContinueProgress()
