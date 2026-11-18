@@ -1275,6 +1275,36 @@
       "storeProcessing": "not_checked",
       "testerAvailability": "not_checked",
       "deviceQA": "pending_owner"
+    },
+    {
+      "id": "d56c0a43-0cea-47e1-bb74-855422fd92e7",
+      "platform": "android",
+      "number": "37",
+      "androidVersionCode": "37",
+      "uploadRequested": true,
+      "status": "uploaded_internal_testing_unverified",
+      "finishedAt": "2026-11-18",
+      "source": ".kiro/handoff.md",
+      "storeStatus": "release-test.sh both --android-code 37 --ios-build 31 --upload-test from e244e06 (reset progress keeps the tutorial and restarts on the map; includes the menu tap fix). Addressables catalog verified as RuntimePath}/Android. Fastlane accepted the upload to the Play internal track. Processing, tester availability and device QA not checked.",
+      "storeUpload": "accepted",
+      "storeProcessing": "not_checked",
+      "testerAvailability": "not_checked",
+      "deviceQA": "pending_owner"
+    },
+    {
+      "id": "ce36b555-f178-46bc-b885-c7f8a642d2b0",
+      "platform": "ios",
+      "number": "31",
+      "iosBuild": "31",
+      "uploadRequested": true,
+      "status": "uploaded_processing_unverified",
+      "finishedAt": "2026-11-18",
+      "source": ".kiro/handoff.md",
+      "storeStatus": "release-test.sh both --android-code 37 --ios-build 31 --upload-test from e244e06 (reset progress keeps the tutorial and restarts on the map; includes the menu tap fix). Addressables catalog verified as RuntimePath}/iOS. Fastlane accepted the upload to App Store Connect (processing wait skipped). Processing, tester availability and device QA not checked.",
+      "storeUpload": "accepted",
+      "storeProcessing": "not_checked",
+      "testerAvailability": "not_checked",
+      "deviceQA": "pending_owner"
     }
   ]
 }
