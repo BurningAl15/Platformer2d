@@ -262,11 +262,9 @@ public class GameOverController : MonoBehaviour
 
         if (SaveManager.Instance.SpendTrebol())
         {
-            // Ocultar el Game Over y pasar al DiceRollController con dado mejorado
-            // El tipo es aleatorio entre Upgraded_3_5 y Upgraded_2_6 (GDD)
-            DiceType upgradedType = UnityEngine.Random.value > 0.5f
-                ? DiceType.Upgraded_3_5
-                : DiceType.Upgraded_2_6;
+            // The spent clover opens the blue die; a second clover can upgrade it to gold.
+            // A free wood roll is not offered here: it would turn every Game Over into free lives.
+            DiceType upgradedType = DiceType.Clover1;
 
             HideInstant();
             Time.timeScale = 1f;
@@ -280,9 +278,8 @@ public class GameOverController : MonoBehaviour
             else
             {
                 // Fallback si no hay DiceRollController: dar vidas directamente
-                int livesWon = UnityEngine.Random.value > 0.5f
-                    ? UnityEngine.Random.Range(3, 6)
-                    : UnityEngine.Random.Range(2, 7);
+                int[] blueFaces = { 1, 2, 2, 3, 3, 4 };
+                int livesWon = blueFaces[UnityEngine.Random.Range(0, blueFaces.Length)];
                 SaveManager.Instance.AddLives(livesWon);
                 ContinueGame();
             }

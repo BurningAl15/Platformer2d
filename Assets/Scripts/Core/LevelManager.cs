@@ -29,6 +29,12 @@ public class LevelManager : MonoBehaviour
     private int gemsCollected = 0;
     public float timeInLevel { get; private set; }
 
+    // A clover picked up in this run is always new: collected clovers are hidden on later runs.
+    private bool cloverFoundThisRun;
+    private bool earnedRewardRoll;
+
+    public void NotifyCloverFound() => cloverFoundThisRun = true;
+
     /// <summary>Time that earns the level's time star, or 0 when the level has none.</summary>
     public float TargetTime => currentWorldData != null ? currentWorldData.GetTargetTime(gameObject.scene.name) : 0f;
 
@@ -190,8 +196,7 @@ public class LevelManager : MonoBehaviour
         LevelRating rating = SaveProgress();
 
         // Si recolectó todas las gemas → mostrar pantalla del dado antes de ir al mapa
-        bool allGemsCollected = totalGemsInLevel > 0 && gemsCollected >= totalGemsInLevel;
-        if (allGemsCollected && DiceRollController.Instance != null)
+        if (earnedRewardRoll && DiceRollController.Instance != null)
         {
             if (IsCurrentWorldComplete())
             {
@@ -250,6 +255,10 @@ public class LevelManager : MonoBehaviour
                                   SaveManager.Instance.LoadGems(levelNumber) < totalGemsInLevel;
             bool earnedTimeBadge = parTime > 0f && timeInLevel <= parTime &&
                                    SaveManager.Instance.LoadBestTime(levelNumber) > parTime;
+            // The dice rewards progress, not repetition: the first clear and each badge earned
+            // for the first time give one roll per run, however many arrive together.
+            bool firstClear = !SaveManager.Instance.HasFinishedLevel(levelNumber);
+            earnedRewardRoll = firstClear || earnedGemBadge || earnedTimeBadge || cloverFoundThisRun;
             MapPointsHolder.QueueBadgeArrival(levelNumber, earnedGemBadge, earnedTimeBadge);
             if (totalGemsInLevel > 0 && gemsCollected >= totalGemsInLevel)
                 SaveManager.Instance.SetGemsPerfect(levelNumber);

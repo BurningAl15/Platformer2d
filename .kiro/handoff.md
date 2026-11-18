@@ -1721,3 +1721,5 @@ Nota agregada en el docstring con la acción requerida en el dashboard.
 2026-11-18 — ef3f5222-1da8-476d-9073-02c0432bcc6f — Touch controls redrawn in the Blue16 kit (stick, jump, pause, level-select play, with pressed states) via ArtSource/UIKit/bake_touch_controls.py and applied in MainMenu's InputManager canvas.
 
 2026-11-18 — Builds Android 34 / iOS 28 — from fb8fc71; catalogs verified per platform. Uploads accepted by Fastlane. Processing, tester availability and device QA NOT verified.
+
+2026-11-18 — fd2fb287-5116-4298-a166-42af1aeab52d — Dice rework: wood d4 0-3, blue d6 (1,2,2,3,3,4) with one clover, gold d4 3-6 with two, secret 4-6; level-end roll only when the run earns something new; Game Over still requires a clover (blue die). Faces baked by ArtSource/UIKit/bake_dice.py. Verified in Play Mode.

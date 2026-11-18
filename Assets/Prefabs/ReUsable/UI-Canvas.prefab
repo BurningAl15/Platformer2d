@@ -5065,7 +5065,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 180, y: 180}
+  m_SizeDelta: {x: 200, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4790174411825727510
 CanvasRenderer:
@@ -8175,6 +8175,25 @@ MonoBehaviour:
   - {fileID: 21300000, guid: da000000000000000000000000000004, type: 3}
   - {fileID: 21300000, guid: da000000000000000000000000000005, type: 3}
   - {fileID: 21300000, guid: da000000000000000000000000000006, type: 3}
+  woodFaces:
+  - {fileID: 21300000, guid: 29974ae10e064967b22b71201d7ed74b, type: 3}
+  - {fileID: 21300000, guid: a9fc5554abee4b56b2e54e145fd3015b, type: 3}
+  - {fileID: 21300000, guid: 55cfcea16bdd4ffc95f62bfe5d85952d, type: 3}
+  - {fileID: 21300000, guid: 0d4265468b554ce0bbb8696f123f7e79, type: 3}
+  blueFaces:
+  - {fileID: 21300000, guid: 83563097585047ea8672488eb5286ff3, type: 3}
+  - {fileID: 21300000, guid: 43e63c85697f44bf8f0732f6e6b49dff, type: 3}
+  - {fileID: 21300000, guid: ef5e5fbf671d424d9818fe4d108fc708, type: 3}
+  - {fileID: 21300000, guid: c29d5b3b90b54154bbe01bf924b37106, type: 3}
+  goldFaces:
+  - {fileID: 21300000, guid: 3f352734658f440aba6a3519f6524254, type: 3}
+  - {fileID: 21300000, guid: fca6fcf75d9b4692b89ce510ac86c81e, type: 3}
+  - {fileID: 21300000, guid: abf6ecdbddd54e588472c92e192924de, type: 3}
+  - {fileID: 21300000, guid: b414c141be25418a8047a5504cde6fd5, type: 3}
+  secretFaces:
+  - {fileID: 21300000, guid: cff560b765fd4b9ea80fe0c2471d4723, type: 3}
+  - {fileID: 21300000, guid: c2e1107659c54a65bee69008d630c1b1, type: 3}
+  - {fileID: 21300000, guid: 2978c32767bd4ffba062ebacaf43112f, type: 3}
   cloverIcon: {fileID: 8123456789012345673}
   rollDuration: 2
   cycleInterval: 0.08

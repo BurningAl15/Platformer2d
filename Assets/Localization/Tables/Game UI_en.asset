@@ -566,6 +566,22 @@ MonoBehaviour:
     m_Localized: Treasure Master
     m_Metadata:
       m_Items: []
+  - m_Id: 804249734
+    m_Localized: 0–3 LIVES
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249735
+    m_Localized: 1–4 LIVES
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249736
+    m_Localized: 3–6 LIVES
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249737
+    m_Localized: No lives this time
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

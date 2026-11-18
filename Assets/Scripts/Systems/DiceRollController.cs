@@ -7,10 +7,10 @@ using DG.Tweening;
 
 public enum DiceType
 {
-    Normal,         // 1 a 3 vidas
-    Upgraded_3_5,   // 3 a 5 vidas
-    Upgraded_2_6,   // 2 a 6 vidas
-    Secret          // 4 a 6 vidas (desbloqueado con fragmentos)
+    Normal,   // Wood d4: 0-3 lives (no clover)
+    Clover1,  // Blue d6: faces 1,2,2,3,3,4 (one clover)
+    Clover2,  // Gold d4: 3-6 lives (two clovers)
+    Secret    // Secret d6: 4-6 lives (dice fragments)
 }
 
 /// <summary>
@@ -37,8 +37,19 @@ public class DiceRollController : MonoBehaviour
     [Header("Visual del Dado (Caras)")]
     [Tooltip("Componente Image opcional para mostrar la cara gráfica del dado")]
     [SerializeField] private Image diceFaceImage;
-    [Tooltip("Sprites para las 6 caras del dado (índice 0 = cara 1, ..., índice 5 = cara 6)")]
+    [Tooltip("Legacy faces, used only when a die has no art of its own.")]
     [SerializeField] private Sprite[] diceFaceSprites;
+    [Tooltip("Wood d4 faces for values 0-3.")]
+    [SerializeField] private Sprite[] woodFaces;
+    [Tooltip("Blue d6 art for values 1-4.")]
+    [SerializeField] private Sprite[] blueFaces;
+    [Tooltip("Gold d4 faces for values 3-6.")]
+    [SerializeField] private Sprite[] goldFaces;
+    [Tooltip("Secret d6 art for values 4-6.")]
+    [SerializeField] private Sprite[] secretFaces;
+
+    /// <summary>Clovers a single roll can take: none, one (blue) or two (gold).</summary>
+    public const int MaxCloversPerRoll = 2;
     [SerializeField] private Image cloverIcon;
 
     [Header("Configuración de Animación")]
@@ -86,21 +97,6 @@ public class DiceRollController : MonoBehaviour
         ConfigureAutoResize(diceNumberText, 32f, 120f);
         ConfigureAutoResize(diceStatusText, 18f, 40f);
         ConfigureAutoResize(trebolAvailableText, 18f, 44f);
-        ConfigureDisabledStateVisual(rollButton);
-        ConfigureDisabledStateVisual(stopButton);
-        ConfigureDisabledStateVisual(upgradeWithTrebolButton);
-        ConfigureDisabledStateVisual(closeButton);
-    }
-
-    private static void ConfigureDisabledStateVisual(Button button)
-    {
-        if (button == null) return;
-
-        ColorBlock colors = button.colors;
-        colors.disabledColor = new Color(0.55f, 0.55f, 0.55f, 0.45f);
-        colors.colorMultiplier = 1f;
-        button.colors = colors;
-        button.transition = Selectable.Transition.ColorTint;
     }
 
     private static void ConfigureAutoResize(TextMeshProUGUI tmp, float minSize, float maxSize)
@@ -160,6 +156,7 @@ public class DiceRollController : MonoBehaviour
         onGameOverComplete = onComplete;
 
         RefreshUI();
+        UpdateDiceVisual(PreviewValue(currentDiceType));
 
         PlatformDetector.Instance?.SetGameplayControlsSuppressed(true);
 
@@ -180,8 +177,7 @@ public class DiceRollController : MonoBehaviour
         if (rollButton != null) rollButton.interactable = true;
         if (stopButton != null) stopButton.interactable = false;
         if (upgradeWithTrebolButton != null)
-            upgradeWithTrebolButton.interactable = SaveManager.Instance != null &&
-                SaveManager.Instance.LoadTotalTrebols() > 0 && startingType == DiceType.Normal;
+            upgradeWithTrebolButton.interactable = CanUpgrade();
         UISelectionUtility.SelectDefault(rollButton != null ? rollButton.gameObject : null, panelGroup != null ? panelGroup.transform : transform);
     }
 
@@ -239,9 +235,10 @@ public class DiceRollController : MonoBehaviour
         if (isRolling || hasRolledThisPresentation) return;
         if (SaveManager.Instance == null) return;
 
-        if (SaveManager.Instance.SpendTrebol())
+        if (CanUpgrade() && SaveManager.Instance.SpendTrebol())
         {
-            currentDiceType = UnityEngine.Random.value > 0.5f ? DiceType.Upgraded_3_5 : DiceType.Upgraded_2_6;
+            // Each clover moves the die up one tier: wood d4 -> blue d6 -> gold d4.
+            currentDiceType = currentDiceType == DiceType.Normal ? DiceType.Clover1 : DiceType.Clover2;
             if (upgradeWithTrebolButton != null) upgradeWithTrebolButton.interactable = false;
             StartCoroutine(PlayUpgradeSequence());
         }
@@ -356,7 +353,8 @@ public class DiceRollController : MonoBehaviour
         // ── 3. Brief pause so the dice punch is visible ──────────────────────
         yield return new WaitForSecondsRealtime(0.15f);
 
-        // ── 4. Update status text with a pop ────────────────────────────────
+        // ── 4. Show the new die and its range with a pop ─────────────────────
+        UpdateDiceVisual(PreviewValue(currentDiceType));
         RefreshUI();
         if (diceStatusText != null)
         {
@@ -411,13 +409,56 @@ public class DiceRollController : MonoBehaviour
         Hide(continueAfterHide);
     }
 
+    /// <summary>Faces a die can land on; repeated values weight the roll.</summary>
+    private static int[] FacesFor(DiceType type)
+    {
+        switch (type)
+        {
+            case DiceType.Clover1: return new[] { 1, 2, 2, 3, 3, 4 };
+            case DiceType.Clover2: return new[] { 3, 4, 5, 6 };
+            case DiceType.Secret: return new[] { 4, 5, 6 };
+            default: return new[] { 0, 1, 2, 3 };
+        }
+    }
+
+    private static int PreviewValue(DiceType type)
+    {
+        int[] faces = FacesFor(type);
+        return faces[faces.Length - 1];
+    }
+
+    private Sprite FaceSprite(DiceType type, int value)
+    {
+        Sprite[] art; int first;
+        switch (type)
+        {
+            case DiceType.Clover1: art = blueFaces; first = 1; break;
+            case DiceType.Clover2: art = goldFaces; first = 3; break;
+            case DiceType.Secret: art = secretFaces; first = 4; break;
+            default: art = woodFaces; first = 0; break;
+        }
+        int index = value - first;
+        if (art != null && index >= 0 && index < art.Length && art[index] != null)
+            return art[index];
+        // Legacy six-face art only covers 1-6.
+        return diceFaceSprites != null && value >= 1 && value <= diceFaceSprites.Length ? diceFaceSprites[value - 1] : null;
+    }
+
+    private bool CanUpgrade()
+    {
+        return !hasRolledThisPresentation && !isRolling && SaveManager.Instance != null &&
+               SaveManager.Instance.LoadTotalTrebols() > 0 &&
+               (currentDiceType == DiceType.Normal || currentDiceType == DiceType.Clover1);
+    }
+
     private void UpdateDiceVisual(int value)
     {
-        bool hasSprite = diceFaceSprites != null && value >= 1 && value <= diceFaceSprites.Length && diceFaceSprites[value - 1] != null && diceFaceImage != null;
-        if (hasSprite)
+        Sprite sprite = diceFaceImage != null ? FaceSprite(currentDiceType, value) : null;
+        if (sprite != null)
         {
             diceFaceImage.gameObject.SetActive(true);
-            diceFaceImage.sprite = diceFaceSprites[value - 1];
+            diceFaceImage.sprite = sprite;
+            diceFaceImage.preserveAspect = true;
             if (diceNumberText != null) diceNumberText.gameObject.SetActive(false);
         }
         else
@@ -461,7 +502,7 @@ public class DiceRollController : MonoBehaviour
         PlayDiceResultFeedback();
 
         // Otorgar vidas ganadas
-        if (SaveManager.Instance != null)
+        if (SaveManager.Instance != null && finalResult > 0)
         {
             SaveManager.Instance.AddLives(finalResult);
         }
@@ -477,10 +518,13 @@ public class DiceRollController : MonoBehaviour
         // Notificar cambio de vidas a LivesManager para que dispare OnLivesChanged
         if (LivesManager.Instance != null)
             LivesManager.Instance.NotifyLivesChanged();
-        UIController._instance?.AnimateLifeRewardFeedback(finalResult, GetDiceVisualTransform());
+        if (finalResult > 0)
+            UIController._instance?.AnimateLifeRewardFeedback(finalResult, GetDiceVisualTransform());
 
         if (diceStatusText != null && currentDiceType != DiceType.Secret)
-            diceStatusText.text = GameLocalization.Get("DICE_RESULT_LIVES", finalResult);
+            diceStatusText.text = finalResult > 0
+                ? GameLocalization.Get("DICE_RESULT_LIVES", finalResult)
+                : GameLocalization.Get("DICE_RESULT_ZERO");
 
         if (stopButton != null) stopButton.interactable = false;
         if (closeButton != null) closeButton.interactable = true;
@@ -493,18 +537,8 @@ public class DiceRollController : MonoBehaviour
 
     private int GetRandomValueForType(DiceType type)
     {
-        switch (type)
-        {
-            case DiceType.Upgraded_3_5:
-                return UnityEngine.Random.Range(3, 6); // 3, 4, 5
-            case DiceType.Upgraded_2_6:
-                return UnityEngine.Random.Range(2, 7); // 2, 3, 4, 5, 6
-            case DiceType.Secret:
-                return UnityEngine.Random.Range(4, 7); // 4, 5, 6
-            case DiceType.Normal:
-            default:
-                return UnityEngine.Random.Range(1, 4); // 1, 2, 3
-        }
+        int[] faces = FacesFor(type);
+        return faces[UnityEngine.Random.Range(0, faces.Length)];
     }
 
     private Transform GetDiceVisualTransform()
@@ -579,23 +613,23 @@ public class DiceRollController : MonoBehaviour
             cloverIcon.color = trebols > 0 ? Color.white : new Color(0.45f, 0.45f, 0.45f, 0.6f);
 
         if (upgradeWithTrebolButton != null)
-            upgradeWithTrebolButton.interactable = trebols > 0 && currentDiceType == DiceType.Normal;
+            upgradeWithTrebolButton.interactable = CanUpgrade();
 
         if (diceStatusText != null)
         {
             switch (currentDiceType)
             {
-                case DiceType.Upgraded_3_5:
-                    diceStatusText.text = GameLocalization.Get("DICE_RANGE_3_5");
+                case DiceType.Clover1:
+                    diceStatusText.text = GameLocalization.Get("DICE_RANGE_BLUE");
                     break;
-                case DiceType.Upgraded_2_6:
-                    diceStatusText.text = GameLocalization.Get("DICE_RANGE_2_6");
+                case DiceType.Clover2:
+                    diceStatusText.text = GameLocalization.Get("DICE_RANGE_GOLD");
                     break;
                 case DiceType.Secret:
                     diceStatusText.text = GameLocalization.Get("DICE_RANGE_SECRET");
                     break;
                 default:
-                    diceStatusText.text = GameLocalization.Get("DICE_RANGE_NORMAL");
+                    diceStatusText.text = GameLocalization.Get("DICE_RANGE_WOOD");
                     break;
             }
         }

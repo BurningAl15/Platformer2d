@@ -559,6 +559,22 @@ MonoBehaviour:
     m_Key: ACH_ALL_PERFECT
     m_Metadata:
       m_Items: []
+  - m_Id: 804249734
+    m_Key: DICE_RANGE_WOOD
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249735
+    m_Key: DICE_RANGE_BLUE
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249736
+    m_Key: DICE_RANGE_GOLD
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249737
+    m_Key: DICE_RESULT_ZERO
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

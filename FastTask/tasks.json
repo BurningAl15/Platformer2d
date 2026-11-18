@@ -358,6 +358,14 @@
       "createdAt": "2026-11-17T23:49:49-05:00",
       "updatedAt": "2026-11-17T23:49:49-05:00",
       "description": "P2 HUD, owner request after Android 32: the level measures time for stars and records but never showed it.\n\n2026-11-17 Claude Code — Added TimerContainer (clock icon + m:ss, same text style as the gem counter) at the top center of UI-Canvas. UIController updates it from LevelManager.timeInLevel, so it stops with pause and level end; when the time star's target (new LevelManager.TargetTime from WorldData) passes, the time turns amber with a pulse. Verified in Play Mode on Level_3 (0:04 at start; 2:07 in amber after jumping past the 120 s target). Levels 9 and 10 use LevelPrefab and do not show it. Device QA pending."
+    },
+    {
+      "id": "fd2fb287-5116-4298-a166-42af1aeab52d",
+      "title": "Rework the dice of lives: visible die tiers, clover upgrades and anti-farming rolls",
+      "status": "testing",
+      "createdAt": "2026-11-18T08:10:24-05:00",
+      "updatedAt": "2026-11-18T08:10:24-05:00",
+      "description": "P1 economy, owner request: lives were too easy to earn and every die looked the same.\n\n2026-11-18 Claude Code — Owner decisions: wood d4 0-3 (no clover), blue d6 with faces 1,2,2,3,3,4 (one clover), gold d4 3-6 (two clovers), secret d6 4-6 unchanged; up to two clovers per roll, each spent clover upgrades the die one tier with the existing fly/flash animation; level-end roll only when the run achieves something new (first clear, or a gem/time/clover badge earned for the first time; several in one run give one roll); Game Over uses the same clover tiers. Implementation: DiceType Normal/Clover1/Clover2/Secret; FacesFor() drives both rolls and art; ArtSource/UIKit/bake_dice.py draws 15 faces in Assets/Sprites/Dice (d4 triangles, d6 squares; wood, blue, gold, purple); a 0 result grants nothing and says so; LevelManager decides earnedRewardRoll before saving records and TrebolPickup marks a clover found this run; removed the runtime override that turned the dice buttons into color tint, so they keep the kit sprites. Deviation to confirm with the owner: the Game Over clover button still requires one clover and opens the blue die (a second clover makes it gold); a free wood roll there would hand out lives on every Game Over. Verified in Play Mode: wood -> blue -> gold upgrade with the button disabled after two clovers; 6000-roll samples average 1.50 / 2.48 / 4.52 / 5.00; six simulated runs of Level 2 granted rolls only on the first clear, first all-gems run and first time-target run. Editor PlayerPrefs for Level 2 were changed by that test. Device QA pending."
     }
   ]
 }

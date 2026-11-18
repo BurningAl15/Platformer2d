@@ -562,6 +562,22 @@ MonoBehaviour:
     m_Localized: Maestro del tesoro
     m_Metadata:
       m_Items: []
+  - m_Id: 804249734
+    m_Localized: 0–3 VIDAS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249735
+    m_Localized: 1–4 VIDAS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249736
+    m_Localized: 3–6 VIDAS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249737
+    m_Localized: Sin vidas esta vez
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []
