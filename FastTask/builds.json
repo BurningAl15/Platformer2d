@@ -1245,6 +1245,36 @@
       "storeProcessing": "not_checked",
       "testerAvailability": "not_checked",
       "deviceQA": "pending_owner"
+    },
+    {
+      "id": "0e4059bb-949b-47a5-9f9d-dfb932e3f241",
+      "platform": "android",
+      "number": "36",
+      "androidVersionCode": "36",
+      "uploadRequested": true,
+      "status": "uploaded_internal_testing_unverified",
+      "finishedAt": "2026-11-18",
+      "source": ".kiro/handoff.md",
+      "storeStatus": "release-test.sh both --android-code 36 --ios-build 30 --upload-test from b3b7eba (fix: touch zones no longer swallow main-menu taps; replaces 35/29, which blocked the main menu). Addressables catalog verified as RuntimePath}/Android. Fastlane accepted the upload to the Play internal track. Processing, tester availability and device QA not checked.",
+      "storeUpload": "accepted",
+      "storeProcessing": "not_checked",
+      "testerAvailability": "not_checked",
+      "deviceQA": "pending_owner"
+    },
+    {
+      "id": "3f52b96b-a315-4708-8120-8622b5c5d26a",
+      "platform": "ios",
+      "number": "30",
+      "iosBuild": "30",
+      "uploadRequested": true,
+      "status": "uploaded_processing_unverified",
+      "finishedAt": "2026-11-18",
+      "source": ".kiro/handoff.md",
+      "storeStatus": "release-test.sh both --android-code 36 --ios-build 30 --upload-test from b3b7eba (fix: touch zones no longer swallow main-menu taps; replaces 35/29, which blocked the main menu). Addressables catalog verified as RuntimePath}/iOS. Fastlane accepted the upload to App Store Connect (processing wait skipped). Processing, tester availability and device QA not checked.",
+      "storeUpload": "accepted",
+      "storeProcessing": "not_checked",
+      "testerAvailability": "not_checked",
+      "deviceQA": "pending_owner"
     }
   ]
 }
