@@ -29,9 +29,9 @@
         },
         "availability": {
           "status": "uploaded_internal_testing_unverified",
-          "checkedAt": "2026-11-17T22:24:59-05:00",
-          "evidenceBuildId": "25084a3f-b928-4d53-a638-2fcf12c5df93",
-          "nextAction": "Confirm versionCode 32 on the Play internal track and check that menus show translated text (no localization keys) in English and Spanish.",
+          "checkedAt": "2026-11-17T23:35:06-05:00",
+          "evidenceBuildId": "4df1ff1d-f50c-4138-bbd9-3998f300c9f4",
+          "nextAction": "Install versionCode 33 and confirm translated menus in English and Spanish; 31 and 32 are known-bad for localization.",
           "source": ".kiro/handoff.md"
         }
       },
@@ -51,9 +51,9 @@
         },
         "availability": {
           "status": "uploaded_processing_unverified",
-          "checkedAt": "2026-11-17T22:24:59-05:00",
-          "evidenceBuildId": "d24b9009-d5be-46e8-9862-85f4f2e3ec69",
-          "nextAction": "Check App Store Connect processing and TestFlight availability for build 26, then check translated text on device.",
+          "checkedAt": "2026-11-17T23:35:06-05:00",
+          "evidenceBuildId": "04211eef-27d0-4bf8-a0e5-feed95e874c6",
+          "nextAction": "Check processing and TestFlight availability for build 27; 24-26 are known-bad for localization.",
           "source": ".kiro/handoff.md"
         }
       }
