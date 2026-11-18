@@ -72,6 +72,9 @@ public class SettingsController : MonoBehaviour
         BindSettingsListeners();
     }
 
+    private void OnEnable() => GameLocalization.Changed += RefreshUI;
+    private void OnDisable() => GameLocalization.Changed -= RefreshUI;
+
     private void BindSettingsListeners()
     {
         BindButtonListener(openSettingsButton, OpenSettings);

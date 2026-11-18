@@ -8,6 +8,29 @@ public static class GameLocalization
 {
     public const string TableName = "Game UI";
 
+    /// <summary>
+    /// Raised when a locale becomes active, including the first one after
+    /// startup. Labels written from code refresh on it.
+    /// </summary>
+    public static event Action Changed;
+
+    /// <summary>True once the tables can answer lookups.</summary>
+    public static bool IsReady =>
+        LocalizationSettings.InitializationOperation.IsValid() &&
+        LocalizationSettings.InitializationOperation.IsDone &&
+        LocalizationSettings.SelectedLocale != null;
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
+    private static void StartInitialization()
+    {
+        LocalizationSettings.SelectedLocaleChanged -= OnSelectedLocaleChanged;
+        LocalizationSettings.SelectedLocaleChanged += OnSelectedLocaleChanged;
+        // Starting the operation is asynchronous; completion selects a locale and raises Changed.
+        LocalizationSettings.InitializationOperation.Completed += _ => Changed?.Invoke();
+    }
+
+    private static void OnSelectedLocaleChanged(Locale locale) => Changed?.Invoke();
+
     public static string NormalizeLanguageCode(string languageCode)
     {
         return string.Equals(languageCode, "es", StringComparison.OrdinalIgnoreCase)
@@ -53,9 +76,10 @@ public static class GameLocalization
         if (string.IsNullOrEmpty(key))
             return string.Empty;
 
-        if (LocalizationSettings.InitializationOperation.IsValid() &&
-            !LocalizationSettings.InitializationOperation.IsDone)
-            LocalizationSettings.InitializationOperation.WaitForCompletion();
+        // Never block on initialization: a synchronous wait during scene load
+        // can finish without any locale on device builds. Callers refresh on Changed.
+        if (!IsReady)
+            return string.Empty;
 
         string value = LocalizationSettings.StringDatabase.GetLocalizedString(
             TableName,

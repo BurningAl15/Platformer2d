@@ -334,6 +334,14 @@
       "createdAt": "2026-11-17T17:06:35-05:00",
       "updatedAt": "2026-11-17T17:06:35-05:00",
       "description": "P2 art direction. Owner feedback: much of World 1 happens inside a cave, so the current presentation of level goals and the world map does not fit. Needs owner direction on the goal object and the map look before art and scene work."
+    },
+    {
+      "id": "17188877-ab37-4edb-a88c-57a4471bf496",
+      "title": "Fix localization keys shown instead of text in Android 31",
+      "status": "testing",
+      "createdAt": "2026-11-17T22:06:19-05:00",
+      "updatedAt": "2026-11-17T22:06:19-05:00",
+      "description": "P0 regression reported on Android 31: labels written from code showed their keys (UI_SETTINGS, LEVEL_NAME_1, DICE_RANGE_3_5, SELECT_BEST) and scene labels showed their English placeholders, meaning no locale was active. Android 30 showed Spanish correctly.\n\n2026-11-17 Claude Code — Investigation: the string tables and Addressables groups are valid, both AABs contain the localization bundles, catalog and settings.json, and the Addressables link.xml was identical. In the Editor with built content the locales resolve but none becomes active (SelectedLocale null). A macOS standalone build of the same source stopped after loading the first scene with no game logs and the main thread waiting on a semaphore. Probable cause: GameLocalization.Get forced LocalizationSettings.InitializationOperation.WaitForCompletion() from Awake/OnEnable/Start during scene load (Character panel, Settings, selector), which can deadlock or finish without a locale on player builds; Android 30 likely worked by timing. Fix: Get no longer blocks and returns an empty string until a locale is active; GameLocalization.Changed fires on initialization and locale changes, and Settings refreshes on it (Character, selector and store already refresh on locale change; other panels set text when opened). Verification: the rebuilt macOS player runs past the main menu into gameplay with no localization errors in its log; on-screen text was not captured (no screen-recording permission). Device QA in the next build is the deciding check."
     }
   ]
 }
