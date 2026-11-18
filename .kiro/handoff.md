@@ -1717,3 +1717,5 @@ Nota agregada en el docstring con la acción requerida en el dashboard.
 2026-11-17 — 8a95c9cf-ef2a-4fa8-8a70-afcdb5fdffce — Gameplay HUD now shows the level timer (top center) and turns it amber when the time star's target passes. Verified in Play Mode.
 
 2026-11-18 — 75ab0b88-55f9-4bfc-a518-e6a394964916 — Achievements + notices: NotificationCenter toast (Resources/UI), 9 game-side achievements, style/color unlock notices, IAchievementReporter for future platform services. Verified in Play Mode. Pending: platform reporters, achievements screen.
+
+2026-11-18 — ef3f5222-1da8-476d-9073-02c0432bcc6f — Touch controls redrawn in the Blue16 kit (stick, jump, pause, level-select play, with pressed states) via ArtSource/UIKit/bake_touch_controls.py and applied in MainMenu's InputManager canvas.
