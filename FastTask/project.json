@@ -29,9 +29,9 @@
         },
         "availability": {
           "status": "uploaded_internal_testing_unverified",
-          "checkedAt": "2026-11-17T18:47:20-05:00",
-          "evidenceBuildId": "d90b61b2-cac9-4c92-8e6b-a260dde2f9ea",
-          "nextAction": "Confirm versionCode 31 on the Play internal track and run the owner's QA pass (Spanish text, selector touch, pause, Character in Settings).",
+          "checkedAt": "2026-11-17T22:24:59-05:00",
+          "evidenceBuildId": "25084a3f-b928-4d53-a638-2fcf12c5df93",
+          "nextAction": "Confirm versionCode 32 on the Play internal track and check that menus show translated text (no localization keys) in English and Spanish.",
           "source": ".kiro/handoff.md"
         }
       },
@@ -51,9 +51,9 @@
         },
         "availability": {
           "status": "uploaded_processing_unverified",
-          "checkedAt": "2026-11-17T18:47:20-05:00",
-          "evidenceBuildId": "01d462fa-4e8d-4c53-9219-c488818ee8bd",
-          "nextAction": "Check App Store Connect processing and TestFlight availability for build 25, then run the owner's QA pass.",
+          "checkedAt": "2026-11-17T22:24:59-05:00",
+          "evidenceBuildId": "d24b9009-d5be-46e8-9862-85f4f2e3ec69",
+          "nextAction": "Check App Store Connect processing and TestFlight availability for build 26, then check translated text on device.",
           "source": ".kiro/handoff.md"
         }
       }

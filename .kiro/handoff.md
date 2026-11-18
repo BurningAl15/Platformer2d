@@ -1705,3 +1705,5 @@ Nota agregada en el docstring con la acción requerida en el dashboard.
 2026-11-17 — Builds Android 31 / iOS 25 — release-test.sh both --upload-test from 4f16442 (Spanish glyphs, selector touch, pause counters, Character in Settings). Both builds succeeded and Fastlane accepted both uploads. Store processing, tester availability and device QA NOT verified.
 
 2026-11-17 — 17188877-ab37-4edb-a88c-57a4471bf496 — Android 31 showed localization keys: no locale became active. GameLocalization.Get used to WaitForCompletion on the localization init during scene load; it now never blocks, returns empty until ready, and GameLocalization.Changed lets labels refresh (Settings subscribed). A macOS player that hung after the first scene now runs into gameplay with no localization errors. Device QA pending in Android 32 / iOS 26.
+
+2026-11-17 — Builds Android 32 / iOS 26 — from fd99284 (non-blocking localization). Android 32 uploaded to the Play internal track; iOS 26 export completed, then signing/upload resumed with --skip-build after a container restart and Fastlane accepted the upload. Store processing, tester availability and device QA NOT verified.

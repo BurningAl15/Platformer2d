@@ -1125,6 +1125,36 @@
       "storeProcessing": "not_checked",
       "testerAvailability": "not_checked",
       "deviceQA": "pending_owner"
+    },
+    {
+      "id": "25084a3f-b928-4d53-a638-2fcf12c5df93",
+      "platform": "android",
+      "number": "32",
+      "androidVersionCode": "32",
+      "uploadRequested": true,
+      "status": "uploaded_internal_testing_unverified",
+      "finishedAt": "2026-11-17",
+      "source": ".kiro/handoff.md",
+      "storeStatus": "release-test.sh both --android-code 32 --ios-build 26 --upload-test from fd99284 (non-blocking localization fix). FoxsTale_32.aab built; Fastlane reported a successful upload to the Play internal track before the session container restarted. Processing and tester availability not checked.",
+      "storeUpload": "accepted",
+      "storeProcessing": "not_checked",
+      "testerAvailability": "not_checked",
+      "deviceQA": "pending_owner"
+    },
+    {
+      "id": "d24b9009-d5be-46e8-9862-85f4f2e3ec69",
+      "platform": "ios",
+      "number": "26",
+      "iosBuild": "26",
+      "uploadRequested": true,
+      "status": "uploaded_processing_unverified",
+      "finishedAt": "2026-11-17",
+      "source": ".kiro/handoff.md",
+      "storeStatus": "Xcode project XcodeProject_26 exported from fd99284 in the same run; the container restarted during Xcode archive, so signing and upload were resumed with release-test.sh ios --ios-build 26 --upload-test --skip-build. Fastlane signed the IPA and reported a successful upload to App Store Connect; processing wait skipped.",
+      "storeUpload": "accepted",
+      "storeProcessing": "not_checked",
+      "testerAvailability": "not_checked",
+      "deviceQA": "pending_owner"
     }
   ]
 }
