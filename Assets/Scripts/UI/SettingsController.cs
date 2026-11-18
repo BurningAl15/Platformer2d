@@ -302,6 +302,17 @@ public class SettingsController : MonoBehaviour
         {
             resetProgressText.text = GameLocalization.Get("SETTINGS_RESET_DONE");
         }
+
+        // Every screen still shows the old progress, so restart from the title
+        // screen: Continue disappears and New Game starts from the tutorial.
+        CloseSettings();
+        if (PauseMenu._instance != null && PauseMenu._instance.isPaused)
+            PauseMenu._instance.MainMenu();
+        else
+        {
+            Time.timeScale = 1f;
+            SceneUtils.ToMainScene();
+        }
     }
 
     public void CancelResetProgress()

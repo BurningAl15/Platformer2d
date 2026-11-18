@@ -1733,3 +1733,5 @@ Nota agregada en el docstring con la acción requerida en el dashboard.
 2026-11-18 — 13003c16-8a87-456d-949c-4725dd35b7a0 — BUG in Android 35 / iOS 29: zones' overlay canvas swallowed main-menu taps. Fixed: zones take no raycasts, read touches directly and yield to any interactive UI. Verified in Play Mode; needs a new build (36/30).
 
 2026-11-18 — Builds Android 36 / iOS 30 — from b3b7eba (menu tap fix); catalogs verified per platform. Uploads accepted by Fastlane. Processing, tester availability and device QA NOT verified. Do not test 35/29 (main menu blocked).
+
+2026-11-18 — f18167df-ee6e-4bee-8e1f-4322660a2026 — Reset progress now closes Settings and returns to the title screen (Continue hidden, New Game starts at the tutorial). Verified in Play Mode; device QA pending.
