@@ -116,8 +116,17 @@ fi
 build_root="$project_root/Builds/CI"
 mkdir -p "$build_root/logs"
 run_unity() {
-  local method="$1" log_file="$2"
-  "$unity_bin" -batchmode -quit -nographics -projectPath "$project_root" -executeMethod "$method" -logFile "$log_file" || die "Unity build failed; inspect the local build log"
+  local method="$1" log_file="$2" target="$3"
+  # Open the Editor on the target platform: Addressables bakes the active build
+  # target into its catalog paths.
+  "$unity_bin" -batchmode -quit -nographics -projectPath "$project_root" -buildTarget "$target" -executeMethod "$method" -logFile "$log_file" || die "Unity build failed; inspect the local build log"
+}
+
+# Fails when the Addressables catalog points at another platform's bundle folder.
+verify_catalog_platform() {
+  local catalog="$1" platform="$2"
+  [[ -f "$catalog" ]] || die "Addressables catalog missing from the $platform build"
+  strings "$catalog" | grep -q "RuntimePath}/${platform}" || die "Addressables catalog does not point at the $platform bundles; localization would fail"
 }
 
 if [[ "$mode" == android || "$mode" == both ]]; then
@@ -125,8 +134,12 @@ if [[ "$mode" == android || "$mode" == both ]]; then
   [[ ! -e "$android_aab" ]] || die "Android build output already exists; choose a fresh versionCode"
   mkdir -p "$(dirname "$android_aab")"
   export FOXSTALE_ANDROID_VERSION_CODE="$android_code" FOXSTALE_ANDROID_OUTPUT_PATH="$android_aab"
-  run_unity BuildAutomation.BuildAndroidAAB "$build_root/logs/android_${android_code}.log"
+  run_unity BuildAutomation.BuildAndroidAAB "$build_root/logs/android_${android_code}.log" Android
   [[ -s "$android_aab" ]] || die "Unity did not create a nonempty Android AAB"
+  aab_check_dir="$(mktemp -d)"
+  unzip -q -o "$android_aab" 'base/assets/aa/catalog.bin' -d "$aab_check_dir" || die "Android AAB has no Addressables catalog"
+  verify_catalog_platform "$aab_check_dir/base/assets/aa/catalog.bin" Android
+  rm -rf "$aab_check_dir"
 fi
 
 if [[ "$mode" == ios || "$mode" == both ]]; then
@@ -136,9 +149,10 @@ if [[ "$mode" == ios || "$mode" == both ]]; then
   else
     [[ ! -e "$ios_project" ]] || die "iOS export already exists; choose a fresh build number"
     export FOXSTALE_IOS_BUILD_NUMBER="$ios_build" FOXSTALE_IOS_OUTPUT_PATH="$ios_project"
-    run_unity BuildAutomation.BuildiOS "$build_root/logs/ios_${ios_build}.log"
+    run_unity BuildAutomation.BuildiOS "$build_root/logs/ios_${ios_build}.log" iOS
   fi
   [[ -d "$ios_project/Unity-iPhone.xcodeproj" ]] || die "Unity did not create an Xcode project"
+  verify_catalog_platform "$ios_project/Data/Raw/aa/catalog.bin" iOS
 fi
 
 if ((upload)); then

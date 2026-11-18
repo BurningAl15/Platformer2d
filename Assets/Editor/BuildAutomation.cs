@@ -139,6 +139,7 @@ public static class BuildAutomation
                 options = BuildOptions.None
             };
 
+            EnsureActiveBuildTarget(BuildTargetGroup.Android, BuildTarget.Android);
             BuildReport report = BuildPipeline.BuildPlayer(buildPlayerOptions);
             ProcessBuildResult(report, outputPath);
         }
@@ -178,6 +179,7 @@ public static class BuildAutomation
                 options = BuildOptions.None
             };
 
+            EnsureActiveBuildTarget(BuildTargetGroup.iOS, BuildTarget.iOS);
             BuildReport report = BuildPipeline.BuildPlayer(buildPlayerOptions);
             ProcessBuildResult(report, outputDir);
             if (report.summary.result == BuildResult.Succeeded)
@@ -322,6 +324,22 @@ public static class BuildAutomation
         }
 
         return scenes.ToArray();
+    }
+
+    /// <summary>
+    /// Addressables resolves [BuildTarget] in its load paths from the Editor's
+    /// active build target, not from BuildPlayerOptions. Building with another
+    /// target active bakes the wrong platform folder into the catalog and the
+    /// player then loads no locales or tables.
+    /// </summary>
+    private static void EnsureActiveBuildTarget(BuildTargetGroup group, BuildTarget target)
+    {
+        if (EditorUserBuildSettings.activeBuildTarget == target)
+            return;
+
+        Debug.Log($"[BuildAutomation] Switching active build target to {target} before building.");
+        if (!EditorUserBuildSettings.SwitchActiveBuildTarget(group, target))
+            throw new Exception($"Could not switch the active build target to {target}.");
     }
 
     private static void ProcessBuildResult(BuildReport report, string outputPath)

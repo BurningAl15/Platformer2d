@@ -76,8 +76,11 @@ public static class GameLocalization
         if (string.IsNullOrEmpty(key))
             return string.Empty;
 
-        // Never block on initialization: a synchronous wait during scene load
-        // can finish without any locale on device builds. Callers refresh on Changed.
+        if (LocalizationSettings.InitializationOperation.IsValid() &&
+            !LocalizationSettings.InitializationOperation.IsDone)
+            LocalizationSettings.InitializationOperation.WaitForCompletion();
+
+        // Without an active locale there is nothing to look up; Changed refreshes the label later.
         if (!IsReady)
             return string.Empty;
 
