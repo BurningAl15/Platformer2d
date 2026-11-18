@@ -1719,3 +1719,5 @@ Nota agregada en el docstring con la acción requerida en el dashboard.
 2026-11-18 — 75ab0b88-55f9-4bfc-a518-e6a394964916 — Achievements + notices: NotificationCenter toast (Resources/UI), 9 game-side achievements, style/color unlock notices, IAchievementReporter for future platform services. Verified in Play Mode. Pending: platform reporters, achievements screen.
 
 2026-11-18 — ef3f5222-1da8-476d-9073-02c0432bcc6f — Touch controls redrawn in the Blue16 kit (stick, jump, pause, level-select play, with pressed states) via ArtSource/UIKit/bake_touch_controls.py and applied in MainMenu's InputManager canvas.
+
+2026-11-18 — Builds Android 34 / iOS 28 — from fb8fc71; catalogs verified per platform. Uploads accepted by Fastlane. Processing, tester availability and device QA NOT verified.

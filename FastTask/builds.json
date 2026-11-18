@@ -1185,6 +1185,36 @@
       "storeProcessing": "not_checked",
       "testerAvailability": "not_checked",
       "deviceQA": "pending_owner"
+    },
+    {
+      "id": "8bc130e9-22bb-4dcd-b0de-5f4ce53c512c",
+      "platform": "android",
+      "number": "34",
+      "androidVersionCode": "34",
+      "uploadRequested": true,
+      "status": "uploaded_internal_testing_unverified",
+      "finishedAt": "2026-11-18",
+      "source": ".kiro/handoff.md",
+      "storeStatus": "release-test.sh both --android-code 34 --ios-build 28 --upload-test from fb8fc71 (level timer, achievement and unlock notices, kit touch controls). Addressables catalog verified as RuntimePath}/Android. Fastlane accepted the upload to the Play internal track. Processing, tester availability and device QA not checked.",
+      "storeUpload": "accepted",
+      "storeProcessing": "not_checked",
+      "testerAvailability": "not_checked",
+      "deviceQA": "pending_owner"
+    },
+    {
+      "id": "1312cf2d-960a-450c-a9af-2f93d74e3300",
+      "platform": "ios",
+      "number": "28",
+      "iosBuild": "28",
+      "uploadRequested": true,
+      "status": "uploaded_processing_unverified",
+      "finishedAt": "2026-11-18",
+      "source": ".kiro/handoff.md",
+      "storeStatus": "release-test.sh both --android-code 34 --ios-build 28 --upload-test from fb8fc71 (level timer, achievement and unlock notices, kit touch controls). Addressables catalog verified as RuntimePath}/iOS. Fastlane accepted the upload to the App Store Connect (processing wait skipped). Processing, tester availability and device QA not checked.",
+      "storeUpload": "accepted",
+      "storeProcessing": "not_checked",
+      "testerAvailability": "not_checked",
+      "deviceQA": "pending_owner"
     }
   ]
 }
