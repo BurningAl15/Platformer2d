@@ -1725,3 +1725,5 @@ Nota agregada en el docstring con la acción requerida en el dashboard.
 2026-11-18 — fd2fb287-5116-4298-a166-42af1aeab52d — Dice rework: wood d4 0-3, blue d6 (1,2,2,3,3,4) with one clover, gold d4 3-6 with two, secret 4-6; level-end roll only when the run earns something new; Game Over still requires a clover (blue die). Faces baked by ArtSource/UIKit/bake_dice.py. Verified in Play Mode.
 
 2026-11-18 — 13003c16-8a87-456d-949c-4725dd35b7a0 — Tutorial prompts now follow the input device (touch / gamepad A / keyboard) via InputPromptSprite; touch controls fade to 18% idle, 60% while touching (TouchControlsFader). Verified in Play Mode; device QA pending. Owner chose next: floating stick + jump zone.
+
+2026-11-18 — 13003c16-8a87-456d-949c-4725dd35b7a0 — Floating stick (StickZone) + JumpZone via FloatingStickZone; zones lowest raycast priority and disabled during pause / level end / timeScale 0. Selector keeps its A button. Verified in Play Mode; device QA pending.

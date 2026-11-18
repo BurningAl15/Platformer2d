@@ -369,11 +369,11 @@
     },
     {
       "id": "13003c16-8a87-456d-949c-4725dd35b7a0",
-      "title": "Tutorial prompts per input device and fading touch controls",
+      "title": "Tutorial prompts per input device, floating stick and jump zone",
       "status": "testing",
       "createdAt": "2026-11-18T10:30:00-05:00",
-      "updatedAt": "2026-11-18T10:30:00-05:00",
-      "description": "P1 tutorial/mobile UX, owner request: tutorial boards showed keyboard keys on every platform, and the on-screen controls covered the view.\n\n2026-11-18 Claude Code — InputPromptSprite swaps the animated SpaceBar frames in the Level_0 tutorial boards for a touch jump button (mobile) or a gamepad A button (controller connected); keyboard stays unchanged. TouchControlsFader keeps the stick and jump button at 18% alpha while idle and 60% while a finger is down (Pause stays visible). Prompt sprites baked by ArtSource/UIKit/bake_input_prompts.py. Verified in Play Mode. Next (owner choice): floating stick that spawns under the thumb plus an invisible jump zone. Device QA pending."
+      "updatedAt": "2026-11-18T11:40:00-05:00",
+      "description": "P1 tutorial/mobile UX, owner request: tutorial boards showed keyboard keys on every platform, and the on-screen controls covered the view.\n\n2026-11-18 Claude Code — InputPromptSprite swaps the animated SpaceBar frames in the Level_0 tutorial boards for a touch jump button (mobile) or a gamepad A button (controller connected); keyboard stays unchanged. TouchControlsFader keeps the stick and jump button at 18% alpha while idle and 60% while a finger is down (Pause stays visible). Prompt sprites baked by ArtSource/UIKit/bake_input_prompts.py. Verified in Play Mode.\n\n2026-11-18 Claude Code — Owner chose floating stick + zones. FloatingStickZone: invisible StickZone (left half, bottom 75%) moves the stick base under the finger and forwards the drag to the existing OnScreenStick (now RelativePositionWithStaticOrigin), returning home on release; JumpZone (right half, bottom 75%) carries an OnScreenButton <Gamepad>/buttonSouth. Level selector only gets the StickZone (its A button stays a button so taps cannot enter levels by accident). Zones sit on their own canvas at sortingOrder -100 so every menu wins the raycast, and they stop catching touches while PauseMenu.isPaused, LevelManager.stopGame or Time.timeScale == 0 (Game Over, ads). Play Mode: left drag moved the base under the finger and the fox right (vel 10), base returned home; JumpZone fired InputManager.OnJumpPressed; zones off under pause, level end and timeScale 0, back on after. Device QA pending."
     }
   ]
 }
