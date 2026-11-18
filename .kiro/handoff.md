@@ -1741,3 +1741,5 @@ Nota agregada en el docstring con la acción requerida en el dashboard.
 2026-11-18 — Builds Android 37 / iOS 31 — from e244e06; catalogs verified per platform. Uploads accepted by Fastlane. Processing, tester availability and device QA NOT verified.
 
 2026-11-18 — 40ac6576-104e-496d-a774-c71682273f34 — Intro story: Story scene (after MainMenu) with the golden-hour temple illustration in 5 parallax layers, typewriter narration (STORY_1..4 en/es), Skip; New Game -> Story -> Level_0. Art is provisional per owner. Verified in Play Mode; device QA pending.
+
+2026-11-18 — Builds Android 38 / iOS 32 — from add401a (intro story); catalogs verified per platform. Uploads accepted by Fastlane. Processing, tester availability and device QA NOT verified.

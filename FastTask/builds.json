@@ -1305,6 +1305,36 @@
       "storeProcessing": "not_checked",
       "testerAvailability": "not_checked",
       "deviceQA": "pending_owner"
+    },
+    {
+      "id": "3c7b25ad-34c4-4fd9-991b-641a7881dfd1",
+      "platform": "android",
+      "number": "38",
+      "androidVersionCode": "38",
+      "uploadRequested": true,
+      "status": "uploaded_internal_testing_unverified",
+      "finishedAt": "2026-11-18",
+      "source": ".kiro/handoff.md",
+      "storeStatus": "release-test.sh both --android-code 38 --ios-build 32 --upload-test from add401a (intro story scene before the tutorial). Addressables catalog verified as RuntimePath}/Android. Fastlane accepted the upload to the Play internal track. Processing, tester availability and device QA not checked.",
+      "storeUpload": "accepted",
+      "storeProcessing": "not_checked",
+      "testerAvailability": "not_checked",
+      "deviceQA": "pending_owner"
+    },
+    {
+      "id": "c4f5d3eb-c8dd-4e24-b169-b31d0c9638d9",
+      "platform": "ios",
+      "number": "32",
+      "iosBuild": "32",
+      "uploadRequested": true,
+      "status": "uploaded_processing_unverified",
+      "finishedAt": "2026-11-18",
+      "source": ".kiro/handoff.md",
+      "storeStatus": "release-test.sh both --android-code 38 --ios-build 32 --upload-test from add401a (intro story scene before the tutorial). Addressables catalog verified as RuntimePath}/iOS. Fastlane accepted the upload to App Store Connect (processing wait skipped). Processing, tester availability and device QA not checked.",
+      "storeUpload": "accepted",
+      "storeProcessing": "not_checked",
+      "testerAvailability": "not_checked",
+      "deviceQA": "pending_owner"
     }
   ]
 }
