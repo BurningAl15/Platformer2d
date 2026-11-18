@@ -36,6 +36,8 @@ public class MapPointsHolder : MonoBehaviour
     private void Start()
     {
         ConfigureMapPoints();
+        // Backfilled progress may complete achievements or unlock skins.
+        Achievements.Evaluate();
         // Rewards from the level just finished play first; the player waits for them.
         if (player != null)
             player.LockInput(PendingArrivalDuration());

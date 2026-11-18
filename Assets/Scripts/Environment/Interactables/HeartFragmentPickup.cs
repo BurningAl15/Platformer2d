@@ -54,6 +54,8 @@ public sealed class HeartFragmentPickup : MonoBehaviour
         if (AudioMixerManager._instance != null)
             AudioMixerManager._instance.CallSFX(SFXType.Player_Pickup_Health);
 
+        if (grantedPermanentHeart)
+            Achievements.Evaluate();
         StartCoroutine(CollectEffect(player, grantedPermanentHeart));
     }
 

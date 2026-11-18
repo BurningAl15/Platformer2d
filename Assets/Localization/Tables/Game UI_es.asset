@@ -514,6 +514,54 @@ MonoBehaviour:
     m_Localized: Jugar
     m_Metadata:
       m_Items: []
+  - m_Id: 804249722
+    m_Localized: '¡Logro desbloqueado!'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249723
+    m_Localized: Nuevo estilo desbloqueado
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249724
+    m_Localized: Nuevo color desbloqueado
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249725
+    m_Localized: Listo para la aventura
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249726
+    m_Localized: Primeros pasos
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249727
+    m_Localized: Hallazgo afortunado
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249728
+    m_Localized: Cazador de gemas
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249729
+    m_Localized: Actuación estelar
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249730
+    m_Localized: Corazón más grande
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249731
+    m_Localized: Explorador de la isla
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249732
+    m_Localized: Coleccionista de tréboles
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249733
+    m_Localized: Maestro del tesoro
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

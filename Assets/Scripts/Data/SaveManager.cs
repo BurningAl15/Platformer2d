@@ -353,6 +353,20 @@ public class SaveManager : MonoBehaviour
         return count;
     }
 
+    public bool IsTutorialCompleted() => PlayerPrefs.GetInt(KEY_TUTORIAL_COMPLETED, 0) == 1;
+
+    /// <summary>True once the level has been finished at least once.</summary>
+    public bool HasFinishedLevel(int levelNumber) => LoadBestTime(levelNumber) < 99999f;
+
+    /// <summary>Generic persistent on/off flag (achievements, notices already shown).</summary>
+    public bool GetFlag(string key) => PlayerPrefs.GetInt(key, 0) == 1;
+
+    public void SetFlag(string key)
+    {
+        PlayerPrefs.SetInt(key, 1);
+        PlayerPrefs.Save();
+    }
+
     public int LoadSkinStyle() => PlayerPrefs.GetInt(KEY_SKIN_STYLE, 0);
     public int LoadSkinColor() => PlayerPrefs.GetInt(KEY_SKIN_COLOR, 0);
 

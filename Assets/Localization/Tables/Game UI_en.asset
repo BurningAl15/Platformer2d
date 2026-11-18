@@ -518,6 +518,54 @@ MonoBehaviour:
     m_Localized: Play
     m_Metadata:
       m_Items: []
+  - m_Id: 804249722
+    m_Localized: 'Achievement unlocked!'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249723
+    m_Localized: New style unlocked
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249724
+    m_Localized: New color unlocked
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249725
+    m_Localized: Ready for Adventure
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249726
+    m_Localized: First Steps
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249727
+    m_Localized: Lucky Find
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249728
+    m_Localized: Gem Hunter
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249729
+    m_Localized: Star Performer
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249730
+    m_Localized: Bigger Heart
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249731
+    m_Localized: Island Explorer
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249732
+    m_Localized: Clover Collector
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249733
+    m_Localized: Treasure Master
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

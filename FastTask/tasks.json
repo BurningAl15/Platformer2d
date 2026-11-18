@@ -290,10 +290,10 @@
     {
       "id": "75ab0b88-55f9-4bfc-a518-e6a394964916",
       "title": "Design modular achievements for Android, iOS and future platforms",
-      "description": "P2 backlog. Owner idea: achievements with a modular design so the same definitions work on Android (Google Play Games), iOS (Game Center) and later platforms such as Steam. Not started. Suggested shape: achievement definitions and progress evaluated in game code, with a thin per-platform reporter behind one interface; reuse the progress already tracked by SaveManager (perfect-gem levels, clovers, stars, heart fragments).",
-      "status": "todo",
+      "description": "P2 backlog. Owner idea: achievements with a modular design so the same definitions work on Android (Google Play Games), iOS (Game Center) and later platforms such as Steam. Not started. Suggested shape: achievement definitions and progress evaluated in game code, with a thin per-platform reporter behind one interface; reuse the progress already tracked by SaveManager (perfect-gem levels, clovers, stars, heart fragments).\n\n2026-11-18 Claude Code — Owner asked for unlock and achievement notices as core feedback. Implemented: NotificationCenter (Resources/UI/NotificationCenter prefab, Blue16 kit toast that slides down from the top, icon + title + name, queued, unscaled time, haptic + jingle, persists across scenes); Achievements (static catalog of 9 achievements evaluated against saved progress: tutorial, first level, first clover, first perfect-gem level, three stars, first permanent heart, World 1 finished, all clovers, all perfect levels), unlock notices for new player styles and colors with a preview of the unlocked skin, IAchievementReporter hook for Google Play Games / Game Center / Steam (no platform reporter yet), state stored through SaveManager flags. The first evaluation on an existing save records earlier progress silently. Evaluated at level end, clover pickup, permanent heart and map load. 15 new Game UI keys (EN/ES). Verified in Play Mode from MainMenu: a seeded save showed 'Achievement unlocked! / Listo para la aventura' then 'New color unlocked / Ámbar' in sequence. Pending: platform reporters, an achievements list screen, device QA.",
+      "status": "testing",
       "createdAt": "2026-11-17T00:32:50-05:00",
-      "updatedAt": "2026-11-17T00:32:50-05:00"
+      "updatedAt": "2026-11-18T00:06:49-05:00"
     },
     {
       "id": "ef3f5222-1da8-476d-9073-02c0432bcc6f",

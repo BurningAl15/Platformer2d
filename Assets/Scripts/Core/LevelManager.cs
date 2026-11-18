@@ -272,6 +272,7 @@ public class LevelManager : MonoBehaviour
         }
 
         UIController._instance?.ShowLevelRating(rating);
+        Achievements.Evaluate();
 
         // Analíticas
         if (levelNumber > 0 && AnalyticsManager.Instance != null)

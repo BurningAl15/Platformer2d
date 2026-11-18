@@ -60,6 +60,7 @@ public class TrebolPickup : MonoBehaviour
         if (SaveManager.Instance != null)
         {
             SaveManager.Instance.SetTrebolCollected(levelNumber);
+            Achievements.Evaluate();
         }
         AppBootstrap.TriggerHapticFeedback();
 

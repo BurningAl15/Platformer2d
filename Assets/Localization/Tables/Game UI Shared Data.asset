@@ -511,6 +511,54 @@ MonoBehaviour:
     m_Key: UI_PLAY
     m_Metadata:
       m_Items: []
+  - m_Id: 804249722
+    m_Key: NOTIFY_ACHIEVEMENT
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249723
+    m_Key: NOTIFY_NEW_STYLE
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249724
+    m_Key: NOTIFY_NEW_COLOR
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249725
+    m_Key: ACH_TUTORIAL
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249726
+    m_Key: ACH_FIRST_LEVEL
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249727
+    m_Key: ACH_FIRST_CLOVER
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249728
+    m_Key: ACH_FIRST_PERFECT
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249729
+    m_Key: ACH_THREE_STARS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249730
+    m_Key: ACH_FIRST_HEART
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249731
+    m_Key: ACH_WORLD_1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249732
+    m_Key: ACH_ALL_CLOVERS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249733
+    m_Key: ACH_ALL_PERFECT
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:
