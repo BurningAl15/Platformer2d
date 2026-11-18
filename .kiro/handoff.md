@@ -1729,3 +1729,5 @@ Nota agregada en el docstring con la acción requerida en el dashboard.
 2026-11-18 — 13003c16-8a87-456d-949c-4725dd35b7a0 — Floating stick (StickZone) + JumpZone via FloatingStickZone; zones lowest raycast priority and disabled during pause / level end / timeScale 0. Selector keeps its A button. Verified in Play Mode; device QA pending.
 
 2026-11-18 — Builds Android 35 / iOS 29 — from c1e4435; catalogs verified per platform. Uploads accepted by Fastlane (Play internal, App Store Connect). Processing, tester availability and device QA NOT verified.
+
+2026-11-18 — 13003c16-8a87-456d-949c-4725dd35b7a0 — BUG in Android 35 / iOS 29: zones' overlay canvas swallowed main-menu taps. Fixed: zones take no raycasts, read touches directly and yield to any interactive UI. Verified in Play Mode; needs a new build (36/30).
