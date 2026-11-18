@@ -377,11 +377,11 @@
     },
     {
       "id": "f18167df-ee6e-4bee-8e1f-4322660a2026",
-      "title": "Reset progress returns to the title screen",
+      "title": "Reset progress restarts from level 1 (tutorial kept)",
       "status": "testing",
       "createdAt": "2026-11-18T14:30:00-05:00",
-      "updatedAt": "2026-11-18T14:30:00-05:00",
-      "description": "P1 UX bug, owner report: resetting progress cleared the save but every screen kept showing the old progress and nothing navigated.\n\n2026-11-18 Claude Code — SettingsController.ConfirmResetProgress now closes Settings and returns to MainMenu through the normal scene transition (via PauseMenu.MainMenu when paused, so pause state and time scale are cleared). The title screen rebuilds from the empty save: Continue is hidden and New Game starts from the tutorial. Play Mode: seeded progress, reset from LevelSelection -> MainMenu, HasSaveData false, Continue hidden, timeScale 1. Device QA pending."
+      "updatedAt": "2026-11-18T15:05:00-05:00",
+      "description": "P1 UX bug, owner report: resetting progress cleared the save but every screen kept showing the old progress and nothing navigated.\n\n2026-11-18 Claude Code — SettingsController.ConfirmResetProgress now closes Settings and returns to MainMenu through the normal scene transition (via PauseMenu.MainMenu when paused, so pause state and time scale are cleared). The title screen rebuilds from the empty save: Continue is hidden and New Game starts from the tutorial. Play Mode: seeded progress, reset from LevelSelection -> MainMenu, HasSaveData false, Continue hidden, timeScale 1. Device QA pending.\n\n2026-11-18 Claude Code — Owner decision: reset means replaying everything from zero except the tutorial. SaveManager.ResetProgress(keepTutorial) keeps a finished tutorial (also detected from an unlocked level 1 in older saves); Settings reset uses it and goes straight to the map (PauseMenu.LevelSelection when paused). HasSaveData now counts a finished tutorial, so Continue leads to the map after a reset. Main menu New Game still resets everything including the tutorial. Play Mode: seeded levels 1-3, gems and 2 clovers, reset from paused Level_2 -> LevelSelection, tutorial kept, level 2 locked, clovers 0, lives 3, not paused, timeScale 1; level 1 panel shows 0/17 and no best time; main menu then shows Continue. Game Over clover confirmed by owner as intended (spends unused clovers from the total, no change). Device QA pending."
     }
   ]
 }

@@ -47,7 +47,8 @@ public class SaveManager : MonoBehaviour
 
     public bool HasSaveData()
     {
-        if (HasIncompleteTutorial())
+        // A finished tutorial survives a progress reset, so Continue leads to the map.
+        if (HasIncompleteTutorial() || IsTutorialCompleted())
             return true;
 
         // ResetProgress creates these keys with value 0. A key's existence does
@@ -279,8 +280,11 @@ public class SaveManager : MonoBehaviour
     /// <summary>
     /// Borra todo el progreso. Preserva audio config. Reinicia vidas y gemas globales.
     /// </summary>
-    public void ResetProgress(int totalLevels = 10)
+    /// <param name="keepTutorial">Keep a finished tutorial so the restart begins on the map.</param>
+    public void ResetProgress(int totalLevels = 10, bool keepTutorial = false)
     {
+        // Older saves mark the tutorial only by unlocking level 1.
+        bool tutorialDone = keepTutorial && (IsTutorialCompleted() || PlayerPrefs.GetInt(StringUtils.Get_Level(1), 0) == 1);
         bool music = LoadMusicEnabled();
         bool sfx   = LoadSFXEnabled();
 
@@ -294,6 +298,12 @@ public class SaveManager : MonoBehaviour
 
         // Restaurar NoAds después del borrado
         PlayerPrefs.SetInt(KEY_NO_ADS, noAdsPurchased);
+
+        if (tutorialDone)
+        {
+            PlayerPrefs.SetInt(KEY_TUTORIAL_STARTED, 1);
+            PlayerPrefs.SetInt(KEY_TUTORIAL_COMPLETED, 1);
+        }
 
         // Vidas iniciales
         SaveLives(DEFAULT_LIVES);

@@ -288,7 +288,7 @@ public class SettingsController : MonoBehaviour
     {
         if (SaveManager.Instance != null)
         {
-            SaveManager.Instance.ResetProgress();
+            SaveManager.Instance.ResetProgress(keepTutorial: true);
         }
 
         if (confirmResetDialog != null)
@@ -303,15 +303,19 @@ public class SettingsController : MonoBehaviour
             resetProgressText.text = GameLocalization.Get("SETTINGS_RESET_DONE");
         }
 
-        // Every screen still shows the old progress, so restart from the title
-        // screen: Continue disappears and New Game starts from the tutorial.
+        // Every screen still shows the old progress, so restart cleanly: with the
+        // tutorial kept, go straight to the map at level 1; otherwise to the title.
         CloseSettings();
-        if (PauseMenu._instance != null && PauseMenu._instance.isPaused)
-            PauseMenu._instance.MainMenu();
+        bool toMap = SaveManager.Instance != null && SaveManager.Instance.IsTutorialCompleted();
+        PauseMenu pause = PauseMenu._instance;
+        if (pause != null && pause.isPaused)
+        {
+            if (toMap) pause.LevelSelection(); else pause.MainMenu();
+        }
         else
         {
             Time.timeScale = 1f;
-            SceneUtils.ToMainScene();
+            if (toMap) SceneUtils.ToSelectionScene(); else SceneUtils.ToMainScene();
         }
     }
 

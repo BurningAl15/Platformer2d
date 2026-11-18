@@ -1735,3 +1735,5 @@ Nota agregada en el docstring con la acción requerida en el dashboard.
 2026-11-18 — Builds Android 36 / iOS 30 — from b3b7eba (menu tap fix); catalogs verified per platform. Uploads accepted by Fastlane. Processing, tester availability and device QA NOT verified. Do not test 35/29 (main menu blocked).
 
 2026-11-18 — f18167df-ee6e-4bee-8e1f-4322660a2026 — Reset progress now closes Settings and returns to the title screen (Continue hidden, New Game starts at the tutorial). Verified in Play Mode; device QA pending.
+
+2026-11-18 — f18167df-ee6e-4bee-8e1f-4322660a2026 — Reset progress keeps a finished tutorial and opens the map at level 1 with everything else cleared. Owner confirmed Game Over keeps the clover requirement (uses unused clovers). Verified in Play Mode; device QA pending.
