@@ -1335,6 +1335,36 @@
       "storeProcessing": "not_checked",
       "testerAvailability": "not_checked",
       "deviceQA": "pending_owner"
+    },
+    {
+      "id": "a02403f7-7754-47e0-b389-4a02bc475090",
+      "platform": "android",
+      "number": "39",
+      "androidVersionCode": "39",
+      "uploadRequested": true,
+      "status": "uploaded_internal_testing_unverified",
+      "finishedAt": "2026-11-18",
+      "source": ".kiro/handoff.md",
+      "storeStatus": "release-test.sh both --android-code 39 --ios-build 33 --upload-test from 286be1d (Story scene now in the player build; vertical platform riding fix). Build reports list Assets/Scenes/Story.unity for both platforms. Addressables catalog verified as RuntimePath}/Android. Fastlane accepted the upload to the Play internal track. Processing, tester availability and device QA not checked.",
+      "storeUpload": "accepted",
+      "storeProcessing": "not_checked",
+      "testerAvailability": "not_checked",
+      "deviceQA": "pending_owner"
+    },
+    {
+      "id": "d07676bb-f161-43f6-a77d-553be0c88b59",
+      "platform": "ios",
+      "number": "33",
+      "iosBuild": "33",
+      "uploadRequested": true,
+      "status": "uploaded_processing_unverified",
+      "finishedAt": "2026-11-18",
+      "source": ".kiro/handoff.md",
+      "storeStatus": "release-test.sh both --android-code 39 --ios-build 33 --upload-test from 286be1d (Story scene now in the player build; vertical platform riding fix). Build reports list Assets/Scenes/Story.unity for both platforms. Addressables catalog verified as RuntimePath}/iOS. Fastlane accepted the upload to App Store Connect (processing wait skipped). Processing, tester availability and device QA not checked.",
+      "storeUpload": "accepted",
+      "storeProcessing": "not_checked",
+      "testerAvailability": "not_checked",
+      "deviceQA": "pending_owner"
     }
   ]
 }
