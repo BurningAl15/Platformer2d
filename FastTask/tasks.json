@@ -406,6 +406,14 @@
       "createdAt": "2026-11-19T00:40:00-05:00",
       "updatedAt": "2026-11-19T00:40:00-05:00",
       "description": "P2 UX, owner report: achievements unlock and notify but are not visible anywhere.\n\n2026-11-19 Claude Code — New AchievementsPanel prefab (Assets/Prefabs/UI/AchievementsPanel.prefab, Blue16 kit): 3x3 cards with icon, name, how to earn it (ACH_*_DESC en/es) and progress for the all-clovers / all-gems goals; locked cards dimmed; unlocked count in the corner; Close returns to Settings. Settings (MainMenu and LevelSelection, the two copies that host Character): Vibration moved into the sound row (caption now Sound & vibration / Sonido y vibración) to free a slot, new 'Achievements n/9' button beside Character; explicit gamepad navigation rewired. Achievements.Definition gained optional Progress/Goal and UnlockedCount(). Play Mode (es): Settings shows the new layout and 'Logros 2/9'; the list shows unlocked/locked cards and 3/8 clover progress; closing reopens Settings. The in-level Settings copy (UI-Canvas) has no Character button and was not changed. Device QA pending."
+    },
+    {
+      "id": "ffb1df9b-9965-40b3-9492-0bbb028f1582",
+      "title": "World 1 level design audit",
+      "status": "done",
+      "createdAt": "2026-11-19T01:30:00-05:00",
+      "updatedAt": "2026-11-19T01:30:00-05:00",
+      "description": "Owner request: inventory of game systems and a level design review to plan a complete game.\n\n2026-11-19 Claude Code — Read-only audit of Level_0..Level_10 from the Editor (component counts and positions): docs/AI/LEVEL_AUDIT_WORLD1.md. Key findings: clover and heart fragment sit beside the goal in every level; no enemies in levels 3-7; RunningEnemy, Dart, FallingSpike, HoldingDamageBall and HangingHazzard unused; falling logs lead four levels; level 2 introduces four mechanics at once; levels 5 and 7 have one checkpoint; Level_9 empty, Level_10 unfinished. Completion evidence: the audit document. Follow-ups (quick wins, world structure, new player ability) await owner decisions."
     }
   ]
 }

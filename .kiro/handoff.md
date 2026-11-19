@@ -1751,3 +1751,5 @@ Nota agregada en el docstring con la acción requerida en el dashboard.
 2026-11-18 — Builds Android 39 / iOS 33 — from 286be1d; Story.unity confirmed in both build reports; catalogs verified. Uploads accepted by Fastlane. Processing, tester availability and device QA NOT verified.
 
 2026-11-19 — de4ac6a6-0465-489e-bf1c-e8c0c541e668 — Achievements list: AchievementsPanel prefab opened from Settings ('Logros n/9' beside Character) in MainMenu and LevelSelection; vibration moved into the sound row. Verified in Play Mode; device QA pending.
+
+2026-11-19 — ffb1df9b-9965-40b3-9492-0bbb028f1582 — World 1 level audit written to docs/AI/LEVEL_AUDIT_WORLD1.md (read-only). Next: owner decides on quick wins (hide clovers/heart fragments, checkpoints in L5/L7, reuse unused enemies) and the world/ability plan.
