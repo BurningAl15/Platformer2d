@@ -92,6 +92,7 @@ public class CharacterSelectController : MonoBehaviour
         browsedColor = PlayerSkins.ColorIndex;
         isOpen = true;
         SetVisible(true);
+        MenuBackStack.Push(this, Close);
         Refresh();
 
         if (window != null)
@@ -106,6 +107,7 @@ public class CharacterSelectController : MonoBehaviour
 
     public void Close()
     {
+        MenuBackStack.Remove(this);
         isOpen = false;
         SetVisible(false);
         if (returnToSettings != null)

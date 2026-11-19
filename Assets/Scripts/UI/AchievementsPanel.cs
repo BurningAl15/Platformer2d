@@ -74,6 +74,7 @@ public class AchievementsPanel : MonoBehaviour
     {
         Achievements.Evaluate();
         SetVisible(true);
+        MenuBackStack.Push(this, Close);
         Refresh();
         if (window != null)
         {
@@ -86,6 +87,7 @@ public class AchievementsPanel : MonoBehaviour
 
     public void Close()
     {
+        MenuBackStack.Remove(this);
         SetVisible(false);
         if (returnToSettings != null) returnToSettings.OpenSettings();
     }

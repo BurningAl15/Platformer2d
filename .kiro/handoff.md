@@ -1781,3 +1781,16 @@ Nota agregada en el docstring con la acción requerida en el dashboard.
 2026-11-19 — 40790ff4-cb2e-4466-b1e0-aa06dd334058 — Amber shards: AmberShard prefab + save + HUD counter + selector count. Owner places shards in levels. Pending: Amber Heart overall panel, shard achievements.
 
 2026-11-19 — 0ae11426-fb5a-4f64-a63b-143391244644 — PlatformFeatures: store/ads mobile-only, settings adapt per platform (fullscreen on PC/web), Quit hidden on iOS/console/web. Verified with the Desktop editor override. Gold map sheet now recolours only the level signs (sea untouched).
+
+
+## 2026-11-19 — Preparación de lanzamiento (después de Lazy Lovers)
+
+- **Google Play ficha:** comprobada directamente el 19-nov. App ID 4976400942511877165, bundle com.fatcatgamestudio.foxstale, idioma predeterminado inglés (EE. UU.). Textos existentes; 1 icono, 1 gráfico destacado y 4 capturas de teléfono. No se detectaron cambios sin guardar. Los archivos locales tienen dimensiones válidas: icono 512×512, gráfico 1024×500, capturas 2560×1440. El contenido de las capturas es anterior a los cambios recientes de menú/gameplay; validar/renovar antes de publicar.
+- **Estado Google Play:** producción inactiva; el panel marca 2/5 tareas de lanzamiento completadas y 1/4 para registro previo. Internal 1.0.1/code 40 y closed alpha 1.0.1 existen; distribución interna no equivale a QA ni producción.
+- **App Store Connect (verificación directa registrada 19-nov):** versión 1.0 en Prepare for Submission; build 34 Missing Compliance, sin build asociado. Metadata de promo, descripción, keywords, support URL y copyright vacía; Header 0/1. Sign-in required está activado sin credenciales de revisión. App Privacy, capturas y estado actual del IAP 6827746088 siguen por confirmar. No se envió a revisión.
+- **Código de ads/privacy:** el código actual mantiene LevelPlay bloqueado hasta elegibilidad real. ConsentManager solo integra Google UMP bajo FOX_GOOGLE_UMP y Google UMP no aparece configurado en Packages/manifest.json; en la rama compilada normal la elegibilidad queda en false. No puentear ni forzar true: resolver la integración y el consentimiento antes de declarar los ads listos. Esto puede bloquear monetización con anuncios, aunque IAP Remove Ads también requiere revisión de metadata/compra.
+- **Candidato:** desde Build 40 Android / Build 34 iOS hay cambios de código y escenas sin incluir en esos uploads. Revisar diff actual, producir candidato nuevo, cargar solo a testing y probar en dispositivo. No usar producción.
+- **Orden:** Lazy Lovers primero. Fox empieza tras liberar Lazy: completar privacidad/compliance, resolver acceso de review, completar IAP, reconciliar screenshots, build/test/QA y luego preparar el paquete de revisión.
+- **FastTask cloud sync:** no disponible en esta sesión.
+
+2026-11-19 — 0537b3fa-50b8-4d73-a1dc-9a541da590f9 — Keyboard/gamepad menu controls: B/Esc back stack, Start toggles Settings, Y/C Character and X/Tab Achievements on the map, device-aware button prompts. Verified with simulated keyboard; gamepad and device QA pending.

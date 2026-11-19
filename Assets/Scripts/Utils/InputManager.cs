@@ -78,6 +78,8 @@ public class InputManager : MonoBehaviour
         inputActions.Player.Jump.canceled  += _ => OnJumpReleased?.Invoke();
         inputActions.UI.Pause.performed    += _ => OnPausePressed?.Invoke();
         inputActions.UI.Submit.performed   += _ => OnSubmitPressed?.Invoke();
+        // Gamepad B / Esc closes the menu on top.
+        inputActions.UI.Cancel.performed   += _ => MenuBackStack.CloseTop();
     }
 
     private void OnEnable()

@@ -74,6 +74,10 @@ public class PauseMenu : MonoBehaviour
 
     public void Pause()
     {
+        // Esc is both Pause and Cancel: if Cancel already closed a menu this frame, do nothing.
+        if (MenuBackStack.ClosedThisFrame) return;
+        // With a menu open over the pause (e.g. Settings), Start/Esc leaves it to Cancel.
+        if (isPaused && MenuBackStack.HasOpen && !MenuBackStack.IsTop(this)) return;
         isPaused = !isPaused;
 
         if (isPaused)
@@ -85,6 +89,7 @@ public class PauseMenu : MonoBehaviour
             if (FadeEffect._instance != null)
                 FadeEffect._instance.ReleaseInputIfVisible();
             RefreshPauseStats();
+            MenuBackStack.Push(this, PauseAuxiliar);
             // The touch controls canvas renders above this panel and would take its clicks.
             PlatformDetector.Instance?.SetGameplayControlsSuppressed(true);
             InputManager.Instance?.EnableUIOnlyInput();
@@ -148,6 +153,7 @@ public class PauseMenu : MonoBehaviour
 
     private void ResumeGame()
     {
+        MenuBackStack.Remove(this);
         pauseScreen.transform.DOKill();
         SetPausePanelY(CalculateHiddenPosition(), true)
             .SetEase(Ease.InBack)
@@ -169,6 +175,7 @@ public class PauseMenu : MonoBehaviour
     /// </summary>
     private void ForceResume()
     {
+        MenuBackStack.Remove(this);
         isPaused = false;
         Time.timeScale = 1;
         pauseScreen.transform.DOKill();

@@ -41,8 +41,22 @@ public class MainMenuManager : MonoBehaviour
         // DOTween inicializado en AppBootstrap
     }
 
+    private void OnDestroy()
+    {
+        if (InputManager.Instance != null) InputManager.Instance.OnPausePressed -= OpenSettingsFromStart;
+    }
+
+    /// <summary>Start / Esc on the title screen opens Settings (or closes it).</summary>
+    private void OpenSettingsFromStart()
+    {
+        SettingsController settings = FindFirstObjectByType<SettingsController>();
+        if (settings != null && settings.gameObject.scene == gameObject.scene) settings.ToggleFromStart();
+    }
+
     private void Start()
     {
+        // InputManager lives in this scene too, so subscribe once every Awake has run.
+        if (InputManager.Instance != null) InputManager.Instance.OnPausePressed += OpenSettingsFromStart;
         hasPlayedBefore = HasContinueProgress();
 
         continueButton.SetActive(hasPlayedBefore);
@@ -125,6 +139,7 @@ public class MainMenuManager : MonoBehaviour
             panelBG.alpha = 1;
             panelBG.interactable = true;
             panelBG.blocksRaycasts = true;
+            MenuBackStack.Push(this, DeactivatePanel);
             panelOptions.transform
                 .DOLocalMoveY(endPoint, 0.5f)
                 .SetEase(initCurve)
@@ -141,6 +156,7 @@ public class MainMenuManager : MonoBehaviour
     /// </summary>
     public void DeactivatePanel()
     {
+        MenuBackStack.Remove(this);
         panelOptions.transform
             .DOLocalMoveY(initPoint, 0.5f)
             .SetEase(initCurve)

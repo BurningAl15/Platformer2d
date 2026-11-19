@@ -120,6 +120,7 @@ public class NoAdsPurchaseButton : MonoBehaviour
             storePanelGroup.alpha = 1f;
             storePanelGroup.interactable = true;
             storePanelGroup.blocksRaycasts = true;
+            MenuBackStack.Push(this, ClosePanel);
         }
         SetStatus(string.Empty);
         RefreshUI();
@@ -128,6 +129,7 @@ public class NoAdsPurchaseButton : MonoBehaviour
 
     public void ClosePanel()
     {
+        MenuBackStack.Remove(this);
         if (storePanelGroup != null)
         {
             storePanelGroup.alpha = 0f;

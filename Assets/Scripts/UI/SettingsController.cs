@@ -180,9 +180,20 @@ public class SettingsController : MonoBehaviour
     //  Apertura y Cierre
     // ─────────────────────────────────────────────────────────────────────────
 
+    public bool IsOpen => isPanelExplicitlyOpen;
+
+    /// <summary>Start / Esc outside a level: open Settings, or close it when it is the menu on top.</summary>
+    public void ToggleFromStart()
+    {
+        if (MenuBackStack.ClosedThisFrame) return;
+        if (isPanelExplicitlyOpen) { if (MenuBackStack.IsTop(this)) CloseSettings(); return; }
+        if (!MenuBackStack.HasOpen) OpenSettings();
+    }
+
     public void OpenSettings()
     {
         isPanelExplicitlyOpen = true;
+        MenuBackStack.Push(this, CloseSettings);
 
         if (settingsPanel != null)
         {
@@ -212,6 +223,7 @@ public class SettingsController : MonoBehaviour
     public void CloseSettings()
     {
         isPanelExplicitlyOpen = false;
+        MenuBackStack.Remove(this);
 
         if (settingsCanvasGroup != null)
         {
@@ -325,6 +337,7 @@ public class SettingsController : MonoBehaviour
         if (confirmResetDialog != null)
         {
             confirmResetDialog.SetActive(true);
+            MenuBackStack.Push(confirmResetDialog, CancelResetProgress);
             return;
         }
 
@@ -346,6 +359,7 @@ public class SettingsController : MonoBehaviour
 
     public void ConfirmResetProgress()
     {
+        if (confirmResetDialog != null) MenuBackStack.Remove(confirmResetDialog);
         if (SaveManager.Instance != null)
         {
             SaveManager.Instance.ResetProgress(keepTutorial: true);
@@ -381,6 +395,7 @@ public class SettingsController : MonoBehaviour
 
     public void CancelResetProgress()
     {
+        if (confirmResetDialog != null) MenuBackStack.Remove(confirmResetDialog);
         if (confirmResetDialog != null)
         {
             confirmResetDialog.SetActive(false);

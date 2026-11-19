@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 
 /// <summary>
 /// Controlador del jugador en la pantalla de selección de niveles.
@@ -68,11 +69,28 @@ public class LSPlayerController : MonoBehaviour
         HandleLevelSelect();
     }
 
+    /// <summary>Map shortcuts: gamepad Y / key C opens Character, gamepad X / Tab opens Achievements.</summary>
+    private void HandleMenuShortcuts()
+    {
+        if (MenuBackStack.HasOpen || IsInputLocked) return;
+        Gamepad pad = Gamepad.current;
+        Keyboard keys = Keyboard.current;
+        bool character = (pad != null && MobileGameplayControls.IsPhysicalGameController(pad) && pad.buttonNorth.wasPressedThisFrame)
+                         || (keys != null && keys.cKey.wasPressedThisFrame);
+        bool achievements = (pad != null && MobileGameplayControls.IsPhysicalGameController(pad) && pad.buttonWest.wasPressedThisFrame)
+                            || (keys != null && keys.tabKey.wasPressedThisFrame);
+        if (!character && !achievements) return;
+        SettingsController settings = Object.FindFirstObjectByType<SettingsController>();
+        if (settings == null) return;
+        if (character) settings.OpenCharacter();
+        else settings.OpenAchievements();
+    }
+
     private void OpenSettingsFromGamepad()
     {
         SettingsController settings = Object.FindFirstObjectByType<SettingsController>();
         if (settings != null)
-            settings.OpenSettings();
+            settings.ToggleFromStart();
     }
 
     public void SetCurrentPoint(MapPoint newPoint)
@@ -93,6 +111,7 @@ public class LSPlayerController : MonoBehaviour
 
     private void Update()
     {
+        HandleMenuShortcuts();
         if (currentPoint == null) return;
 
         transform.position = Vector3.MoveTowards(
