@@ -1768,3 +1768,12 @@ Nota agregada en el docstring con la acción requerida en el dashboard.
 - La tarea `49b77c90-d7e5-466d-be9e-2b0b0aba03d7` sigue abierta; ficha Play pendiente (store listing, audiencia, ads, Data Safety/IARC y cambios sin enviar). Orden de trabajo acordado por el propietario: primero Lazy Lovers; Fox’s Tale después. No hubo publicación en producción. FastTask cloud sync no disponible.
 
 2026-11-19 — 08c7a144-dc4f-49ec-9568-0ea5be9c3724 — Pause menu taps blocked by a frozen FadeEffect overlay; fades now unscaled and stop blocking when nearly transparent. Verified in Play Mode; device QA pending.
+
+
+## 2026-11-19 — Verificación directa App Store Connect (sesión autenticada)
+
+- Fox’s Tale iOS 1.0 está en **Prepare for Submission**. La ficha observada tiene promo, descripción, keywords, support URL y copyright vacíos; Product Page Header **0/1**. No se mostró build asociado. `Sign-in required` está marcado, pero los campos de usuario y contraseña vacíos: confirmar si existe una cuenta de acceso para revisión o desmarcarlo si el juego no la requiere.
+- TestFlight lista Build 34 (1.0.1), cargado 19 nov 09:01 Lima, estado **Missing Compliance**. No se completó compliance ni se envió a revisión. App Privacy, capturas e IAP no se verificaron.
+- Fox queda después de Lazy Lovers según orden del propietario. Próximo: cerrar Lazy primero; luego Export Compliance, completar ficha/privacy/IAP, resolver login, asociar build y hacer QA antes de revisión. FastTask cloud sync no disponible.
+
+2026-11-19 — f7f0ef6f-2ddb-4423-83f4-8127d95e0321 — Flawless levels (no life lost): gold map sign + 3 achievements; achievements panel 4x3. Verified in Play Mode; device QA pending.

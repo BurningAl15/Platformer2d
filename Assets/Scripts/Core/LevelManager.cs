@@ -31,6 +31,10 @@ public class LevelManager : MonoBehaviour
 
     // A clover picked up in this run is always new: collected clovers are hidden on later runs.
     private bool cloverFoundThisRun;
+    private int livesLostThisRun;
+
+    /// <summary>True while no life has been lost in this run of the level.</summary>
+    public bool IsFlawlessRun => livesLostThisRun == 0;
     private bool earnedRewardRoll;
 
     public void NotifyCloverFound() => cloverFoundThisRun = true;
@@ -146,6 +150,7 @@ public class LevelManager : MonoBehaviour
         bool isTutorial = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "Level_0";
         bool canContinue = !consumeLife || isTutorial || LivesManager.Instance == null ||
                            LivesManager.Instance.ConsumeLifeAndCheck();
+        if (consumeLife) livesLostThisRun++;
 
         if (canContinue)
             currentCoroutine = StartCoroutine(RespawnRoutine(restoreHealth));
@@ -262,6 +267,11 @@ public class LevelManager : MonoBehaviour
             MapPointsHolder.QueueBadgeArrival(levelNumber, earnedGemBadge, earnedTimeBadge);
             if (totalGemsInLevel > 0 && gemsCollected >= totalGemsInLevel)
                 SaveManager.Instance.SetGemsPerfect(levelNumber);
+            // A clear without losing a life marks the level on the map.
+            bool firstFlawless = IsFlawlessRun && !SaveManager.Instance.IsLevelFlawless(levelNumber);
+            if (IsFlawlessRun)
+                SaveManager.Instance.SetLevelFlawless(levelNumber);
+            earnedRewardRoll |= firstFlawless;
 
             SaveManager.Instance.SaveGemsIfBetter(levelNumber, gemsCollected);
             SaveManager.Instance.SaveTimeIfBetter(levelNumber, timeInLevel);

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Tilemaps;
 
 /// <summary>
 /// Lee el progreso guardado (vía SaveManager) y configura el estado
@@ -32,6 +33,12 @@ public class MapPointsHolder : MonoBehaviour
 
     [Header("Jugador")]
     [SerializeField] private LSPlayerController player;
+
+    [Header("Flawless levels")]
+    [Tooltip("Tilemap holding the numbered level signs; a level cleared without losing a life shows its gold sign.")]
+    [SerializeField] private Tilemap levelSignTilemap;
+    private const string GoldSignSheet = "MapGold/Overworld_tiles_Padded_Gold";
+    private static Dictionary<string, Sprite> goldSigns;
 
     private void Start()
     {
@@ -174,7 +181,36 @@ public class MapPointsHolder : MonoBehaviour
             _mapPoints[i].hasHeartFragment = SaveManager.Instance != null
                 ? SaveManager.Instance.HasHeartFragment(levelNumber)
                 : PlayerPrefs.GetInt($"HeartFragment_Level_{levelNumber}", 0) == 1;
+
+            if (SaveManager.Instance != null && SaveManager.Instance.IsLevelFlawless(levelNumber))
+                ShowGoldSign(_mapPoints[i]);
         }
+    }
+
+    /// <summary>Swaps the level's sign tile for its gold copy (same sprite name in the gold sheet).</summary>
+    private void ShowGoldSign(MapPoint point)
+    {
+        if (levelSignTilemap == null)
+        {
+            GameObject signs = GameObject.Find("Over");
+            if (signs != null) levelSignTilemap = signs.GetComponent<Tilemap>();
+            if (levelSignTilemap == null) return;
+        }
+        if (goldSigns == null)
+        {
+            goldSigns = new Dictionary<string, Sprite>();
+            foreach (Sprite sprite in Resources.LoadAll<Sprite>(GoldSignSheet))
+                goldSigns[sprite.name] = sprite;
+        }
+
+        Vector3Int cell = levelSignTilemap.WorldToCell(point.transform.position);
+        Sprite current = levelSignTilemap.GetSprite(cell);
+        if (current == null || !goldSigns.TryGetValue(current.name, out Sprite gold)) return;
+
+        Tile goldTile = ScriptableObject.CreateInstance<Tile>();
+        goldTile.sprite = gold;
+        goldTile.flags = TileFlags.LockColor;
+        levelSignTilemap.SetTile(cell, goldTile);
     }
 
     private void PositionPlayer()

@@ -105,10 +105,13 @@ public class AchievementsPanel : MonoBehaviour
         SetText(countText, $"{Achievements.UnlockedCount()}/{Achievements.All.Length}");
 
         SaveManager save = SaveManager.Instance;
-        for (int i = 0; i < cards.Length && i < Achievements.All.Length; i++)
+        for (int i = 0; i < cards.Length; i++)
         {
-            Achievements.Definition definition = Achievements.All[i];
             Card card = cards[i];
+            bool used = i < Achievements.All.Length;
+            if (card.background != null) card.background.gameObject.SetActive(used);
+            if (!used) continue;
+            Achievements.Definition definition = Achievements.All[i];
             bool unlocked = Achievements.IsUnlocked(definition.Id);
 
             if (card.icon != null)

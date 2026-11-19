@@ -369,6 +369,19 @@ public class SaveManager : MonoBehaviour
     public bool HasFinishedLevel(int levelNumber) => LoadBestTime(levelNumber) < 99999f;
 
     /// <summary>Generic persistent on/off flag (achievements, notices already shown).</summary>
+    /// <summary>A level finished at least once without losing a life.</summary>
+    public bool IsLevelFlawless(int levelNumber) => GetFlag("Flawless_Level_" + levelNumber);
+
+    public void SetLevelFlawless(int levelNumber) => SetFlag("Flawless_Level_" + levelNumber);
+
+    public int CountFlawlessLevels(int totalLevels = 10)
+    {
+        int count = 0;
+        for (int i = 1; i <= totalLevels; i++)
+            if (IsLevelFlawless(i)) count++;
+        return count;
+    }
+
     public bool GetFlag(string key) => PlayerPrefs.GetInt(key, 0) == 1;
 
     public void SetFlag(string key)

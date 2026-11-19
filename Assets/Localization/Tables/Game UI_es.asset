@@ -638,6 +638,30 @@ MonoBehaviour:
     m_Localized: 'Recoge todas las gemas de todo el Mundo 1.'
     m_Metadata:
       m_Items: []
+  - m_Id: 804249753
+    m_Localized: 'Intocable'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249754
+    m_Localized: 'Termina un nivel sin perder una vida.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249755
+    m_Localized: 'Zorro escurridizo'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249756
+    m_Localized: 'Termina 4 niveles sin perder una vida.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249757
+    m_Localized: 'Sin un rasguño'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249758
+    m_Localized: 'Termina todos los niveles del Mundo 1 sin perder una vida.'
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

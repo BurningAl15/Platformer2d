@@ -642,6 +642,30 @@ MonoBehaviour:
     m_Localized: 'Collect every gem in all of World 1.'
     m_Metadata:
       m_Items: []
+  - m_Id: 804249753
+    m_Localized: 'Untouchable'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249754
+    m_Localized: 'Finish a level without losing a life.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249755
+    m_Localized: 'Slippery Fox'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249756
+    m_Localized: 'Finish 4 levels without losing a life.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249757
+    m_Localized: 'Not a Scratch'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249758
+    m_Localized: 'Finish every World 1 level without losing a life.'
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

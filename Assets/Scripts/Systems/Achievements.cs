@@ -50,6 +50,11 @@ public static class Achievements
             s => s.CountLevelClovers(WorldLevelCount), WorldLevelCount),
         new Definition("all_perfect", "ACH_ALL_PERFECT", NotificationCenter.IconKind.Gem, s => s.CountPerfectGemLevels(WorldLevelCount) >= WorldLevelCount,
             s => s.CountPerfectGemLevels(WorldLevelCount), WorldLevelCount),
+        new Definition("flawless_first", "ACH_FLAWLESS_FIRST", NotificationCenter.IconKind.Heart, s => s.CountFlawlessLevels(WorldLevelCount) >= 1),
+        new Definition("flawless_half", "ACH_FLAWLESS_HALF", NotificationCenter.IconKind.Heart, s => s.CountFlawlessLevels(WorldLevelCount) >= 4,
+            s => s.CountFlawlessLevels(WorldLevelCount), 4),
+        new Definition("flawless_all", "ACH_FLAWLESS_ALL", NotificationCenter.IconKind.Heart, s => s.CountFlawlessLevels(WorldLevelCount) >= WorldLevelCount,
+            s => s.CountFlawlessLevels(WorldLevelCount), WorldLevelCount),
     };
 
     private const string SeededFlag = "Achievements_Seeded";
