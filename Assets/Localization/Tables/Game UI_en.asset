@@ -499,7 +499,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 804249717
-    m_Localized: Sound
+    m_Localized: 'Sound & vibration'
     m_Metadata:
       m_Items: []
   - m_Id: 804249718
@@ -600,6 +600,46 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 804249742
     m_Localized: 'Skip'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249743
+    m_Localized: 'Achievements'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249744
+    m_Localized: 'Complete the tutorial.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249745
+    m_Localized: 'Finish level 1.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249746
+    m_Localized: 'Find the hidden clover in a level.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249747
+    m_Localized: 'Collect every gem in a level.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249748
+    m_Localized: 'Earn 3 stars in a level.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249749
+    m_Localized: 'Gain your first extra heart.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249750
+    m_Localized: 'Finish the last level of World 1.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249751
+    m_Localized: 'Find every clover in World 1.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249752
+    m_Localized: 'Collect every gem in all of World 1.'
     m_Metadata:
       m_Items: []
   references:

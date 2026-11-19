@@ -21,10 +21,16 @@ public static class Achievements
         public readonly string NameKey;
         public readonly NotificationCenter.IconKind Icon;
         public readonly Func<SaveManager, bool> IsMet;
+        /// <summary>Optional count toward <see cref="Goal"/>, shown as progress in the list.</summary>
+        public readonly Func<SaveManager, int> Progress;
+        public readonly int Goal;
 
-        public Definition(string id, string nameKey, NotificationCenter.IconKind icon, Func<SaveManager, bool> isMet)
+        public string DescriptionKey => NameKey + "_DESC";
+
+        public Definition(string id, string nameKey, NotificationCenter.IconKind icon, Func<SaveManager, bool> isMet,
+            Func<SaveManager, int> progress = null, int goal = 0)
         {
-            Id = id; NameKey = nameKey; Icon = icon; IsMet = isMet;
+            Id = id; NameKey = nameKey; Icon = icon; IsMet = isMet; Progress = progress; Goal = goal;
         }
     }
 
@@ -40,8 +46,10 @@ public static class Achievements
         new Definition("three_stars", "ACH_THREE_STARS", NotificationCenter.IconKind.Star, s => AnyLevel(s, n => s.LoadRating(n) >= 3)),
         new Definition("first_heart", "ACH_FIRST_HEART", NotificationCenter.IconKind.Heart, s => s.LoadPermanentHeartCount() >= 1),
         new Definition("world_1", "ACH_WORLD_1", NotificationCenter.IconKind.Star, s => s.HasFinishedLevel(WorldLevelCount)),
-        new Definition("all_clovers", "ACH_ALL_CLOVERS", NotificationCenter.IconKind.Clover, s => s.CountLevelClovers(WorldLevelCount) >= WorldLevelCount),
-        new Definition("all_perfect", "ACH_ALL_PERFECT", NotificationCenter.IconKind.Gem, s => s.CountPerfectGemLevels(WorldLevelCount) >= WorldLevelCount),
+        new Definition("all_clovers", "ACH_ALL_CLOVERS", NotificationCenter.IconKind.Clover, s => s.CountLevelClovers(WorldLevelCount) >= WorldLevelCount,
+            s => s.CountLevelClovers(WorldLevelCount), WorldLevelCount),
+        new Definition("all_perfect", "ACH_ALL_PERFECT", NotificationCenter.IconKind.Gem, s => s.CountPerfectGemLevels(WorldLevelCount) >= WorldLevelCount,
+            s => s.CountPerfectGemLevels(WorldLevelCount), WorldLevelCount),
     };
 
     private const string SeededFlag = "Achievements_Seeded";
@@ -54,6 +62,14 @@ public static class Achievements
 
     public static bool IsUnlocked(string id) =>
         SaveManager.Instance != null && SaveManager.Instance.GetFlag("Achievement_" + id);
+
+    public static int UnlockedCount()
+    {
+        int count = 0;
+        foreach (Definition definition in All)
+            if (IsUnlocked(definition.Id)) count++;
+        return count;
+    }
 
     /// <summary>
     /// Unlocks every achievement whose condition is met and announces new

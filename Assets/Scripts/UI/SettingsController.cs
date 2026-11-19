@@ -40,6 +40,9 @@ public class SettingsController : MonoBehaviour
     [SerializeField] private Button characterButton;
     [SerializeField] private TextMeshProUGUI characterButtonText;
     [SerializeField] private CharacterSelectController characterPanel;
+    [SerializeField] private Button achievementsButton;
+    [SerializeField] private TextMeshProUGUI achievementsButtonText;
+    [SerializeField] private AchievementsPanel achievementsPanel;
 
     [Header("Section captions")]
     [SerializeField] private TextMeshProUGUI titleText;
@@ -85,6 +88,7 @@ public class SettingsController : MonoBehaviour
         BindButtonListener(keepScreenAwakeToggleButton, ToggleKeepScreenAwake);
         BindButtonListener(languageToggleButton, ToggleLanguage);
         BindButtonListener(characterButton, OpenCharacter);
+        BindButtonListener(achievementsButton, OpenAchievements);
         BindButtonListener(resetProgressButton, OnResetProgressPressed);
         BindButtonListener(confirmResetButton, ConfirmResetProgress);
         BindButtonListener(cancelResetButton, CancelResetProgress);
@@ -252,6 +256,14 @@ public class SettingsController : MonoBehaviour
         characterPanel.Open();
     }
 
+    /// <summary>Opens the achievements list on top of the current scene.</summary>
+    public void OpenAchievements()
+    {
+        if (achievementsPanel == null) return;
+        CloseSettings();
+        achievementsPanel.Open();
+    }
+
     public void ToggleLanguage()
     {
         string current = GameLocalization.SelectedLanguageCode;
@@ -363,6 +375,8 @@ public class SettingsController : MonoBehaviour
             titleText.text = GameLocalization.Get("UI_SETTINGS");
         if (characterButtonText != null)
             characterButtonText.text = GameLocalization.Get("UI_CHARACTER");
+        if (achievementsButtonText != null)
+            achievementsButtonText.text = $"{GameLocalization.Get("UI_ACHIEVEMENTS")} {Achievements.UnlockedCount()}/{Achievements.All.Length}";
         if (soundCaptionText != null)
             soundCaptionText.text = GameLocalization.Get("SETTINGS_GROUP_SOUND");
         if (gameCaptionText != null)

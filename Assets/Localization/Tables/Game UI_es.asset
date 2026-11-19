@@ -495,7 +495,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 804249717
-    m_Localized: Sonido
+    m_Localized: 'Sonido y vibración'
     m_Metadata:
       m_Items: []
   - m_Id: 804249718
@@ -596,6 +596,46 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 804249742
     m_Localized: 'Saltar'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249743
+    m_Localized: 'Logros'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249744
+    m_Localized: 'Completa el tutorial.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249745
+    m_Localized: 'Termina el nivel 1.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249746
+    m_Localized: 'Encuentra el trébol escondido de un nivel.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249747
+    m_Localized: 'Recoge todas las gemas de un nivel.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249748
+    m_Localized: 'Consigue 3 estrellas en un nivel.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249749
+    m_Localized: 'Consigue tu primer corazón extra.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249750
+    m_Localized: 'Termina el último nivel del Mundo 1.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249751
+    m_Localized: 'Encuentra todos los tréboles del Mundo 1.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249752
+    m_Localized: 'Recoge todas las gemas de todo el Mundo 1.'
     m_Metadata:
       m_Items: []
   references:

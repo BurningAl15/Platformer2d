@@ -595,6 +595,46 @@ MonoBehaviour:
     m_Key: STORY_SKIP
     m_Metadata:
       m_Items: []
+  - m_Id: 804249743
+    m_Key: UI_ACHIEVEMENTS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249744
+    m_Key: ACH_TUTORIAL_DESC
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249745
+    m_Key: ACH_FIRST_LEVEL_DESC
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249746
+    m_Key: ACH_FIRST_CLOVER_DESC
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249747
+    m_Key: ACH_FIRST_PERFECT_DESC
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249748
+    m_Key: ACH_THREE_STARS_DESC
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249749
+    m_Key: ACH_FIRST_HEART_DESC
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249750
+    m_Key: ACH_WORLD_1_DESC
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249751
+    m_Key: ACH_ALL_CLOVERS_DESC
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249752
+    m_Key: ACH_ALL_PERFECT_DESC
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

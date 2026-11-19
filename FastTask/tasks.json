@@ -398,6 +398,14 @@
       "createdAt": "2026-11-18T19:40:00-05:00",
       "updatedAt": "2026-11-18T19:40:00-05:00",
       "description": "P1 feel bug, owner report: riding a platform that goes up and suddenly comes down triggers the fall animation.\n\n2026-11-18 Claude Code — Cause: PlatformRider only added the platform's downward carry, so the upward speed gained while rising stayed on the player; at the reversal the fox flew off for a moment and the Animator saw it airborne. Fix: while attached, the rider's vertical velocity matches the platform exactly (jumps already detach in PlayerJump.PerformJump); a touching player moving up faster than the platform by jumpReleaseSpeed does not re-attach, so jumps are never flattened; PlayerAnimator treats a rider as grounded and reports vertical speed relative to the platform. Play Mode on Level_1 MovingPlatform (3) (speed 5, no wait, range 4.0-9.9): before the fix 44 airborne frames and detached; after, 451 physics steps with 0 airborne / 0 animator-airborne / 0 jump-fall clip frames, still riding. Jump inside the physics step leaves at vy 19 and separates from the platform (1.76 -> 3.33) without re-attaching. Device QA pending."
+    },
+    {
+      "id": "de4ac6a6-0465-489e-bf1c-e8c0c541e668",
+      "title": "Achievements list screen",
+      "status": "testing",
+      "createdAt": "2026-11-19T00:40:00-05:00",
+      "updatedAt": "2026-11-19T00:40:00-05:00",
+      "description": "P2 UX, owner report: achievements unlock and notify but are not visible anywhere.\n\n2026-11-19 Claude Code — New AchievementsPanel prefab (Assets/Prefabs/UI/AchievementsPanel.prefab, Blue16 kit): 3x3 cards with icon, name, how to earn it (ACH_*_DESC en/es) and progress for the all-clovers / all-gems goals; locked cards dimmed; unlocked count in the corner; Close returns to Settings. Settings (MainMenu and LevelSelection, the two copies that host Character): Vibration moved into the sound row (caption now Sound & vibration / Sonido y vibración) to free a slot, new 'Achievements n/9' button beside Character; explicit gamepad navigation rewired. Achievements.Definition gained optional Progress/Goal and UnlockedCount(). Play Mode (es): Settings shows the new layout and 'Logros 2/9'; the list shows unlocked/locked cards and 3/8 clover progress; closing reopens Settings. The in-level Settings copy (UI-Canvas) has no Character button and was not changed. Device QA pending."
     }
   ]
 }

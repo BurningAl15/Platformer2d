@@ -1749,3 +1749,5 @@ Nota agregada en el docstring con la acción requerida en el dashboard.
 2026-11-18 — 40ac6576-104e-496d-a774-c71682273f34 — BUG Android 38 / iOS 32: Story.unity missing from BuildAutomation.RequiredScenes, so New Game stayed on the menu (after resetting progress). Fixed + menu fallback to Level_0. Do not test New Game on 38/32.
 
 2026-11-18 — Builds Android 39 / iOS 33 — from 286be1d; Story.unity confirmed in both build reports; catalogs verified. Uploads accepted by Fastlane. Processing, tester availability and device QA NOT verified.
+
+2026-11-19 — de4ac6a6-0465-489e-bf1c-e8c0c541e668 — Achievements list: AchievementsPanel prefab opened from Settings ('Logros n/9' beside Character) in MainMenu and LevelSelection; vibration moved into the sound row. Verified in Play Mode; device QA pending.
