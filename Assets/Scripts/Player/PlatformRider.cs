@@ -8,6 +8,8 @@ public class PlatformRider : MonoBehaviour
     [SerializeField] private bool inheritVelocityOnJump = true;
     [SerializeField] private float attachThreshold = 0.5f;
     [SerializeField] private float maxAttachDistance = 2f;
+    [Tooltip("Upward speed relative to the platform above which a touching player is leaving it (a jump) and must not re-attach.")]
+    [SerializeField] private float jumpReleaseSpeed = 1.5f;
     
     [Header("Debug")]
     [SerializeField] private bool showDebugGizmos = true;
@@ -20,6 +22,9 @@ public class PlatformRider : MonoBehaviour
     private bool wasGroundedLastFrame;
     
     public bool IsOnPlatform => currentPlatform != null && isAttached;
+
+    /// <summary>Vertical speed of the platform being ridden, or zero.</summary>
+    public float PlatformVerticalSpeed => IsOnPlatform ? currentPlatform.GetVelocity().y : 0f;
     
     private void Awake()
     {
@@ -85,6 +90,10 @@ public class PlatformRider : MonoBehaviour
         
         MovingPlatform platform = collision.gameObject.GetComponentInParent<MovingPlatform>();
         if (platform == null) return;
+
+        // Right after a jump the feet can still touch the platform for a step;
+        // re-attaching then would flatten the jump to the platform's speed.
+        if (rb.linearVelocity.y - platform.GetVelocity().y > jumpReleaseSpeed) return;
         
         Attach(platform);
     }
@@ -182,10 +191,16 @@ public class PlatformRider : MonoBehaviour
         // Compose platform carry with the player's velocity. MovePosition on a
         // dynamic player body replaces its motion for this physics step, which
         // prevented PlayerMovement input from moving the player while riding.
-        // The contact solver remains responsible for upward platform motion;
-        // explicit downward carry keeps a descending platform from moving away.
-        Vector2 carryVelocity = new Vector2(platformStepVelocity.x, Mathf.Min(0f, platformStepVelocity.y));
-        rb.linearVelocity += carryVelocity;
+        Vector2 velocity = rb.linearVelocity;
+        velocity.x += platformStepVelocity.x;
+
+        // Vertically, the rider moves exactly with the platform. Adding only the
+        // downward carry left the momentum gained while rising, so when the
+        // platform reversed the player flew off it for a moment and the fall
+        // animation played. Jumps detach first (PlayerJump.PerformJump), so they
+        // are never flattened here.
+        velocity.y = platformStepVelocity.y;
+        rb.linearVelocity = velocity;
 
         platformVelocity = currentPlatform.GetVelocity();
     }

@@ -390,6 +390,14 @@
       "createdAt": "2026-11-18T18:20:00-05:00",
       "updatedAt": "2026-11-18T18:20:00-05:00",
       "description": "P2 narrative, owner request: a SNES-style narrator view at the start of the game with a parallax illustration and a narration box advanced by a button.\n\n2026-11-18 Claude Code — Owner decisions: the relic is the Amber Heart (Corazón de Ámbar); the story plays on New Game before the tutorial; composition after the owner's reference: the fox seen from behind on a mossy rock looking over a jungle valley at an overgrown stepped temple, golden-hour sky and sea behind. A first attempt with four procedurally drawn panels was rejected by the owner as poor art and removed. Current illustration: 256x144 golden-hour piece baked by ArtSource/Story/intro_valley.py into five parallax layers (Assets/Sprites/Story/IntroValley: Sky, Far, Temple, Mid, Near; 16 PPU, point). Owner: 'works for now, we'll correct it later'. New scene Assets/Scenes/Story.unity (build index after MainMenu) with StoryController: camera covers the screen at any aspect with overscan, layers sway at different drift, Blue16 narration panel top-left with typewriter text (STORY_1..4, en/es), Cursor hint, Skip button (STORY_SKIP); tap/click, Space/Enter or gamepad South finishes the page or advances; Skip or the last page fades out and loads Level_0. MainMenuManager.StartNewGame now loads Story. Play Mode: New Game -> Story -> pages advance -> Level_0 with the tutorial still pending; Spanish text renders with accents. Next: owner art corrections; device QA pending."
+    },
+    {
+      "id": "9ebaad7d-ad02-46b6-9fb3-a9b096cc9b4b",
+      "title": "Fall animation plays when a vertical platform reverses",
+      "status": "testing",
+      "createdAt": "2026-11-18T19:40:00-05:00",
+      "updatedAt": "2026-11-18T19:40:00-05:00",
+      "description": "P1 feel bug, owner report: riding a platform that goes up and suddenly comes down triggers the fall animation.\n\n2026-11-18 Claude Code — Cause: PlatformRider only added the platform's downward carry, so the upward speed gained while rising stayed on the player; at the reversal the fox flew off for a moment and the Animator saw it airborne. Fix: while attached, the rider's vertical velocity matches the platform exactly (jumps already detach in PlayerJump.PerformJump); a touching player moving up faster than the platform by jumpReleaseSpeed does not re-attach, so jumps are never flattened; PlayerAnimator treats a rider as grounded and reports vertical speed relative to the platform. Play Mode on Level_1 MovingPlatform (3) (speed 5, no wait, range 4.0-9.9): before the fix 44 airborne frames and detached; after, 451 physics steps with 0 airborne / 0 animator-airborne / 0 jump-fall clip frames, still riding. Jump inside the physics step leaves at vy 19 and separates from the platform (1.76 -> 3.33) without re-attaching. Device QA pending."
     }
   ]
 }

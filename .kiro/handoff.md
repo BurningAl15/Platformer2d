@@ -1743,3 +1743,5 @@ Nota agregada en el docstring con la acción requerida en el dashboard.
 2026-11-18 — 40ac6576-104e-496d-a774-c71682273f34 — Intro story: Story scene (after MainMenu) with the golden-hour temple illustration in 5 parallax layers, typewriter narration (STORY_1..4 en/es), Skip; New Game -> Story -> Level_0. Art is provisional per owner. Verified in Play Mode; device QA pending.
 
 2026-11-18 — Builds Android 38 / iOS 32 — from add401a (intro story); catalogs verified per platform. Uploads accepted by Fastlane. Processing, tester availability and device QA NOT verified.
+
+2026-11-18 — 9ebaad7d-ad02-46b6-9fb3-a9b096cc9b4b — Vertical platform reversal no longer plays the fall animation: rider vertical speed matches the platform while attached, no re-attach mid-jump, animator grounded while riding. Verified in Play Mode (Level_1); device QA pending.

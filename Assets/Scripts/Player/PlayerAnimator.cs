@@ -15,6 +15,7 @@ public class PlayerAnimator : MonoBehaviour
     private PlayerJump jump;
     private Rigidbody2D body;
     private SpriteRenderer spriteRenderer;
+    private PlatformRider rider;
     
     private void Awake()
     {
@@ -24,6 +25,7 @@ public class PlayerAnimator : MonoBehaviour
         jump = GetComponent<PlayerJump>();
         body = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+        rider = GetComponent<PlatformRider>();
     }
 
     private void OnEnable()
@@ -59,13 +61,16 @@ public class PlayerAnimator : MonoBehaviour
             animator.SetFloat(MoveSpeedHash, movement.GetDisplaySpeed());
         }
         
+        // A rider stays grounded for animation even if a fast platform reversal
+        // opens a one-frame gap, and its vertical speed is measured against the platform.
+        bool riding = rider != null && rider.IsOnPlatform;
         if (groundCheck != null)
         {
-            animator.SetBool(IsGroundedHash, groundCheck.IsGrounded);
+            animator.SetBool(IsGroundedHash, groundCheck.IsGrounded || riding);
         }
 
         if (body != null)
-            animator.SetFloat(VerticalVelocityHash, body.linearVelocity.y);
+            animator.SetFloat(VerticalVelocityHash, body.linearVelocity.y - (riding ? rider.PlatformVerticalSpeed : 0f));
     }
 
     private void PlayDoubleJumpAnimation()
