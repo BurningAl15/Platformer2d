@@ -446,6 +446,14 @@
       "createdAt": "2026-11-19T11:40:00-05:00",
       "updatedAt": "2026-11-19T11:40:00-05:00",
       "description": "Owner idea: mark levels cleared without losing a life on the level selector, plus an achievement or group.\n\n2026-11-19 Claude Code — LevelManager counts lives lost per run (TryRespawn with consumeLife; falls do not cost a life); clearing with none sets SaveManager Flawless_Level_n (a first flawless clear also earns the end-of-level dice roll). The level sign is a tile in the map's 'Over' tilemap, so a gold copy of the overworld sheet (Assets/Resources/MapGold, baked by ArtSource/Map/bake_gold_signs.py, same slicing and sprite names) replaces the sign tile of flawless levels in MapPointsHolder. Achievements: Untouchable (1 flawless level), Slippery Fox (4, progress), Not a Scratch (all 8, progress); the panel is now a 4x3 grid of 12 cards with one-line auto-sized names. Play Mode (es): level 1 sign shows gold, panel shows 3/12 with 2/4 and 2/8 progress. Device QA pending."
+    },
+    {
+      "id": "40790ff4-cb2e-4466-b1e0-aa06dd334058",
+      "title": "Amber Heart shards: exploration collectible and interfaces",
+      "status": "testing",
+      "createdAt": "2026-11-19T13:10:00-05:00",
+      "updatedAt": "2026-11-19T13:10:00-05:00",
+      "description": "Owner request: items for the Amber Heart that invite exploration; owner builds the levels.\n\n2026-11-19 Claude Code — New collectible Assets/Prefabs/AmberShard.prefab (AmberShard.cs): place any number per level; each placed shard gets a stable id (regenerated if duplicated in the editor), is saved per level, shows translucent when found in an earlier run, and does not affect gems/stars/perfect records. Art recoloured from the pack gem and heart (ArtSource/Map/bake_amber.py -> Sprites/Collectibles/AmberShard.png, Sprites/UI/AmberHeart.png). SaveManager: HasAmberShard/CollectAmberShard/CountAmberShards/SaveAmberTotal/LoadAmberTotal and world totals. HUD (UI-Canvas prefab): AmberContainer 'found / placed' left of the gems, hidden in levels without shards. Level selector info panel: amber icon + count under the clover, hidden until the level has been played with shards. Play Mode (es): no shards -> counter hidden; two placed shards -> '0 / 2', touching one -> '1 / 2' and saved; selector shows '1 / 2'. Not yet: the Amber Heart overall panel (AmberHeart sprite ready) and shard achievements. Device QA pending."
     }
   ],
   "updatedAt": "2026-11-19T19:20:00Z"

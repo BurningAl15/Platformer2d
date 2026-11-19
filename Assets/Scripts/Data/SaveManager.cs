@@ -369,6 +369,46 @@ public class SaveManager : MonoBehaviour
     public bool HasFinishedLevel(int levelNumber) => LoadBestTime(levelNumber) < 99999f;
 
     /// <summary>Generic persistent on/off flag (achievements, notices already shown).</summary>
+    // ── Amber shards (Amber Heart exploration) ──
+
+    public bool HasAmberShard(int levelNumber, string shardId) => GetFlag($"Amber_{levelNumber}_{shardId}");
+
+    /// <summary>Records a shard; returns false if it was already found.</summary>
+    public bool CollectAmberShard(int levelNumber, string shardId)
+    {
+        if (HasAmberShard(levelNumber, shardId)) return false;
+        PlayerPrefs.SetInt($"Amber_{levelNumber}_{shardId}", 1);
+        PlayerPrefs.SetInt($"AmberCount_{levelNumber}", CountAmberShards(levelNumber) + 1);
+        PlayerPrefs.Save();
+        return true;
+    }
+
+    public int CountAmberShards(int levelNumber) => PlayerPrefs.GetInt($"AmberCount_{levelNumber}", 0);
+
+    /// <summary>Shards placed in a level, recorded when the level is played.</summary>
+    public void SaveAmberTotal(int levelNumber, int total)
+    {
+        if (PlayerPrefs.GetInt($"AmberTotal_{levelNumber}", -1) == total) return;
+        PlayerPrefs.SetInt($"AmberTotal_{levelNumber}", total);
+        PlayerPrefs.Save();
+    }
+
+    public int LoadAmberTotal(int levelNumber) => PlayerPrefs.GetInt($"AmberTotal_{levelNumber}", 0);
+
+    public int CountAllAmberShards(int totalLevels = 10)
+    {
+        int count = 0;
+        for (int i = 1; i <= totalLevels; i++) count += CountAmberShards(i);
+        return count;
+    }
+
+    public int LoadAllAmberTotals(int totalLevels = 10)
+    {
+        int count = 0;
+        for (int i = 1; i <= totalLevels; i++) count += LoadAmberTotal(i);
+        return count;
+    }
+
     /// <summary>A level finished at least once without losing a life.</summary>
     public bool IsLevelFlawless(int levelNumber) => GetFlag("Flawless_Level_" + levelNumber);
 

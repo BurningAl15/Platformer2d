@@ -99,6 +99,11 @@ public class UIController : MonoBehaviour
 
     [Header("Level timer")]
     [SerializeField] private TextMeshProUGUI timerText;
+
+    [Header("Amber shards")]
+    [Tooltip("Shown only in levels that contain amber shards.")]
+    [SerializeField] private GameObject amberContainer;
+    [SerializeField] private TextMeshProUGUI amberText;
     [Tooltip("Timer color once the time star's target has passed.")]
     [SerializeField] private Color timerOverTargetColor = new Color(1f, 0.82f, 0.3f);
     private int shownTimerSeconds = -1;
@@ -153,6 +158,7 @@ public class UIController : MonoBehaviour
     private void Start()
     {
         FadeEffect._instance.Initialize();
+        RefreshAmber();   // hides the counter in levels without shards
 
         if (endLevel_animator != null) endLevel_animator.gameObject.SetActive(false);
         if (amazingJob_animator != null) amazingJob_animator.gameObject.SetActive(false);
@@ -307,6 +313,22 @@ public class UIController : MonoBehaviour
             timerText.transform.DOKill(true);
             timerText.transform.DOPunchScale(Vector3.one * 0.3f, 0.4f, 8, 0.6f).SetLink(timerText.gameObject);
         }
+    }
+
+    private void OnEnable() => AmberShard.Changed += RefreshAmber;
+
+    private void OnDisable() => AmberShard.Changed -= RefreshAmber;
+
+    /// <summary>Found amber shards in this level (across runs) out of the shards placed.</summary>
+    private void RefreshAmber()
+    {
+        int total = AmberShard.CountInScene;
+        if (amberContainer != null) amberContainer.SetActive(total > 0);
+        if (amberText == null || total == 0) return;
+        int found = SaveManager.Instance != null ? SaveManager.Instance.CountAmberShards(SceneUtils.Get_CurrentLevelName()) : 0;
+        amberText.text = $"{Mathf.Min(found, total)} / {total}";
+        amberText.transform.DOKill(true);
+        amberText.transform.DOPunchScale(Vector3.one * 0.2f, 0.25f, 6, 0.6f).SetLink(amberText.gameObject);
     }
 
     public void UpdateGems_UI(int currentGems, int totalGems = 0)

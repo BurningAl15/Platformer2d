@@ -1777,3 +1777,5 @@ Nota agregada en el docstring con la acción requerida en el dashboard.
 - Fox queda después de Lazy Lovers según orden del propietario. Próximo: cerrar Lazy primero; luego Export Compliance, completar ficha/privacy/IAP, resolver login, asociar build y hacer QA antes de revisión. FastTask cloud sync no disponible.
 
 2026-11-19 — f7f0ef6f-2ddb-4423-83f4-8127d95e0321 — Flawless levels (no life lost): gold map sign + 3 achievements; achievements panel 4x3. Verified in Play Mode; device QA pending.
+
+2026-11-19 — 40790ff4-cb2e-4466-b1e0-aa06dd334058 — Amber shards: AmberShard prefab + save + HUD counter + selector count. Owner places shards in levels. Pending: Amber Heart overall panel, shard achievements.

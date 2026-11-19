@@ -35,6 +35,9 @@ public class UI_SelectController : MonoBehaviour
     [Tooltip("Indicador visual en el panel UI de si el trébol del nivel fue recolectado")]
     [SerializeField] private GameObject cloverIndicator;
     [SerializeField] private TextMeshProUGUI cloverText;
+    [Tooltip("Amber shards found / placed; hidden until the level has been played and has shards.")]
+    [SerializeField] private GameObject amberIndicator;
+    [SerializeField] private TextMeshProUGUI amberText;
 
     [Header("Animación del panel")]
     [Tooltip("Posición Y oculta (fuera de pantalla, abajo)")]
@@ -175,6 +178,12 @@ public class UI_SelectController : MonoBehaviour
         }
         if (cloverText != null)
             cloverText.gameObject.SetActive(false);
+
+        int amberTotal = SaveManager.Instance != null ? SaveManager.Instance.LoadAmberTotal(levelInfo.currentLevel) : 0;
+        if (amberIndicator != null) amberIndicator.SetActive(amberTotal > 0);
+        if (amberText != null) amberText.gameObject.SetActive(amberTotal > 0);
+        if (amberText != null && amberTotal > 0)
+            amberText.text = $"{SaveManager.Instance.CountAmberShards(levelInfo.currentLevel)} / {amberTotal}";
     }
 
     /// <summary>
