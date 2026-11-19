@@ -659,6 +659,18 @@ MonoBehaviour:
     m_Key: ACH_FLAWLESS_ALL_DESC
     m_Metadata:
       m_Items: []
+  - m_Id: 804249759
+    m_Key: SETTINGS_DISPLAY_FULLSCREEN
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249760
+    m_Key: SETTINGS_DISPLAY_WINDOWED
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249761
+    m_Key: SETTINGS_GROUP_SOUND_ONLY
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

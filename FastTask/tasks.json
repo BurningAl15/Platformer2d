@@ -454,6 +454,14 @@
       "createdAt": "2026-11-19T13:10:00-05:00",
       "updatedAt": "2026-11-19T13:10:00-05:00",
       "description": "Owner request: items for the Amber Heart that invite exploration; owner builds the levels.\n\n2026-11-19 Claude Code — New collectible Assets/Prefabs/AmberShard.prefab (AmberShard.cs): place any number per level; each placed shard gets a stable id (regenerated if duplicated in the editor), is saved per level, shows translucent when found in an earlier run, and does not affect gems/stars/perfect records. Art recoloured from the pack gem and heart (ArtSource/Map/bake_amber.py -> Sprites/Collectibles/AmberShard.png, Sprites/UI/AmberHeart.png). SaveManager: HasAmberShard/CollectAmberShard/CountAmberShards/SaveAmberTotal/LoadAmberTotal and world totals. HUD (UI-Canvas prefab): AmberContainer 'found / placed' left of the gems, hidden in levels without shards. Level selector info panel: amber icon + count under the clover, hidden until the level has been played with shards. Play Mode (es): no shards -> counter hidden; two placed shards -> '0 / 2', touching one -> '1 / 2' and saved; selector shows '1 / 2'. Not yet: the Amber Heart overall panel (AmberHeart sprite ready) and shard achievements. Device QA pending."
+    },
+    {
+      "id": "0ae11426-fb5a-4f64-a63b-143391244644",
+      "title": "Platform-aware menus for PC, console and web",
+      "status": "testing",
+      "createdAt": "2026-11-19T14:40:00-05:00",
+      "updatedAt": "2026-11-19T14:40:00-05:00",
+      "description": "Owner: the game also targets consoles and PC (maybe web); settings must adapt and the store/ads must turn off per platform.\n\n2026-11-19 Claude Code — New PlatformFeatures (Core): profile from the build target (Mobile / Desktop / Console / Web; Editor follows the active target, with an Editor-only override for previews) and capabilities: HasStore (mobile only), HasVibration and HasKeepScreenAwake (mobile), HasDisplayModeOption (PC and web), HasQuitButton (Android and PC; not iOS, consoles or web). Applied: NoAdsPurchaseButton hides the store entry where there are no ads (ads were already limited to native Android/iOS by AdsManager.SupportsAds); Settings off mobile hides vibration, turns the screen button into Display: fullscreen/window (PlatformFeatures.SetFullscreen, applied at boot on PC), re-centres the rows, switches those buttons to automatic gamepad navigation, and captions the first group 'Sound'; MainMenu hides Quit where not allowed. Play Mode with the Desktop override (es): no Shop, Quit present, Settings shows Music/SFX + Display + Language + Character + Achievements. Mobile layout unchanged. Not done: PC/console/web build targets in BuildAutomation and release-test.sh, console-specific requirements (platform SDKs, certification), web build size/ads review."
     }
   ],
   "updatedAt": "2026-11-19T19:20:00Z"

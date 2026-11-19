@@ -73,6 +73,47 @@ public class SettingsController : MonoBehaviour
     private void Awake()
     {
         BindSettingsListeners();
+        ApplyPlatformLayout();
+    }
+
+    /// <summary>
+    /// Hides options the platform does not have and re-centres the remaining
+    /// buttons. Off mobile the screen button switches fullscreen / window.
+    /// </summary>
+    private void ApplyPlatformLayout()
+    {
+        if (PlatformFeatures.IsMobile) return;   // the serialized layout is the mobile one
+
+        bool screenOption = PlatformFeatures.HasDisplayModeOption;
+        if (hapticsToggleButton != null) hapticsToggleButton.gameObject.SetActive(false);
+        if (keepScreenAwakeToggleButton != null) keepScreenAwakeToggleButton.gameObject.SetActive(screenOption);
+
+        LayoutRow(-26f, 520f, musicToggleButton, sfxToggleButton);
+        if (screenOption) LayoutRow(24f, 520f, keepScreenAwakeToggleButton, languageToggleButton);
+        else LayoutRow(24f, 520f, languageToggleButton);
+
+        // Explicit links pointed at hidden buttons; let Unity derive them from the new layout.
+        foreach (Button button in new[] { musicToggleButton, sfxToggleButton, keepScreenAwakeToggleButton,
+                     languageToggleButton, characterButton, achievementsButton, resetProgressButton, closeButton })
+        {
+            if (button == null) continue;
+            Navigation navigation = button.navigation;
+            navigation.mode = Navigation.Mode.Automatic;
+            button.navigation = navigation;
+        }
+    }
+
+    private static void LayoutRow(float y, float width, params Button[] buttons)
+    {
+        const float gap = 24f;
+        float total = buttons.Length * width + (buttons.Length - 1) * gap;
+        for (int i = 0; i < buttons.Length; i++)
+        {
+            if (buttons[i] == null) continue;
+            var rect = (RectTransform)buttons[i].transform;
+            rect.sizeDelta = new Vector2(width, rect.sizeDelta.y);
+            rect.anchoredPosition = new Vector2(-total / 2f + width / 2f + i * (width + gap), y);
+        }
     }
 
     private void OnEnable() => GameLocalization.Changed += RefreshUI;
@@ -241,6 +282,13 @@ public class SettingsController : MonoBehaviour
 
     public void ToggleKeepScreenAwake()
     {
+        if (PlatformFeatures.HasDisplayModeOption)
+        {
+            PlatformFeatures.SetFullscreen(!PlatformFeatures.IsFullscreenPreferred);
+            RefreshUI();
+            return;
+        }
+
         bool current = PlayerPrefs.GetInt("KeepScreenAwake", 0) == 1;
         PlayerPrefs.SetInt("KeepScreenAwake", current ? 0 : 1);
         PlayerPrefs.Save();
@@ -378,7 +426,7 @@ public class SettingsController : MonoBehaviour
         if (achievementsButtonText != null)
             achievementsButtonText.text = $"{GameLocalization.Get("UI_ACHIEVEMENTS")} {Achievements.UnlockedCount()}/{Achievements.All.Length}";
         if (soundCaptionText != null)
-            soundCaptionText.text = GameLocalization.Get("SETTINGS_GROUP_SOUND");
+            soundCaptionText.text = GameLocalization.Get(PlatformFeatures.HasVibration ? "SETTINGS_GROUP_SOUND" : "SETTINGS_GROUP_SOUND_ONLY");
         if (gameCaptionText != null)
             gameCaptionText.text = GameLocalization.Get("SETTINGS_GROUP_GAME");
         if (dataCaptionText != null)
@@ -399,7 +447,12 @@ public class SettingsController : MonoBehaviour
         }
 
         bool keepScreenAwake = PlayerPrefs.GetInt("KeepScreenAwake", 0) == 1;
-        if (keepScreenAwakeStatusText != null)
+        if (keepScreenAwakeStatusText != null && PlatformFeatures.HasDisplayModeOption)
+        {
+            keepScreenAwakeStatusText.text = GameLocalization.Get(PlatformFeatures.IsFullscreenPreferred
+                ? "SETTINGS_DISPLAY_FULLSCREEN" : "SETTINGS_DISPLAY_WINDOWED");
+        }
+        else if (keepScreenAwakeStatusText != null)
         {
             keepScreenAwakeStatusText.text = keepScreenAwake
                 ? GameLocalization.Get("SETTINGS_AWAKE_ON")

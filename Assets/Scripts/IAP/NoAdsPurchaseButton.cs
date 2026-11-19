@@ -76,6 +76,15 @@ public class NoAdsPurchaseButton : MonoBehaviour
 
     private void Start()
     {
+        if (!PlatformFeatures.HasStore)
+        {
+            // No ads on this platform, so there is nothing to remove: hide the store.
+            if (openStoreButton != null) openStoreButton.gameObject.SetActive(false);
+            ClosePanel();
+            enabled = false;
+            return;
+        }
+
         ConfigureAllTextsAutoResize();
         RefreshUI();
         RefreshPriceWhenReady();

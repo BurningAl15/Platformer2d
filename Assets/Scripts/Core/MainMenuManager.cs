@@ -54,6 +54,20 @@ public class MainMenuManager : MonoBehaviour
         panelBG.blocksRaycasts = false;
 
         EnsureVersionLabel();
+
+        if (!PlatformFeatures.HasQuitButton)
+        {
+            Transform quit = transform.root.Find("Canvas/Quit-Button");
+            if (quit == null) quit = FindQuitButton();
+            if (quit != null) quit.gameObject.SetActive(false);
+        }
+    }
+
+    private Transform FindQuitButton()
+    {
+        foreach (Button button in FindObjectsByType<Button>(FindObjectsInactive.Include))
+            if (button.name == "Quit-Button" && button.gameObject.scene == gameObject.scene) return button.transform;
+        return null;
     }
 
     private void EnsureVersionLabel()

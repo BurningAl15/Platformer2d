@@ -666,6 +666,18 @@ MonoBehaviour:
     m_Localized: 'Finish every World 1 level without losing a life.'
     m_Metadata:
       m_Items: []
+  - m_Id: 804249759
+    m_Localized: 'DISPLAY: FULLSCREEN'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249760
+    m_Localized: 'DISPLAY: WINDOW'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249761
+    m_Localized: Sound
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

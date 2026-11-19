@@ -662,6 +662,18 @@ MonoBehaviour:
     m_Localized: 'Termina todos los niveles del Mundo 1 sin perder una vida.'
     m_Metadata:
       m_Items: []
+  - m_Id: 804249759
+    m_Localized: 'PANTALLA: COMPLETA'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249760
+    m_Localized: 'PANTALLA: VENTANA'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249761
+    m_Localized: Sonido
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

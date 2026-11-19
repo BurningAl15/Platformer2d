@@ -48,6 +48,8 @@ public class AppBootstrap : MonoBehaviour
         ConfigureFramerate();
         ConfigureLandscapeOrientation();
         ApplyScreenAwakePreference();
+        if (PlatformFeatures.Current == PlatformFeatures.Profile.Desktop)
+            PlatformFeatures.ApplyDisplayPreference();
     }
 
     private void OnApplicationPause(bool paused)
