@@ -1794,3 +1794,5 @@ Nota agregada en el docstring con la acción requerida en el dashboard.
 - **FastTask cloud sync:** no disponible en esta sesión.
 
 2026-11-19 — 0537b3fa-50b8-4d73-a1dc-9a541da590f9 — Keyboard/gamepad menu controls: B/Esc back stack, Start toggles Settings, Y/C Character and X/Tab Achievements on the map, device-aware button prompts. Verified with simulated keyboard; gamepad and device QA pending.
+
+2026-11-19 — 4af9fb98-1dd0-4c2f-af4c-547b62323d8c — Settings tabs + new options in progress (logic and window rebuild committed; label-size polish and tab navigation test pending). Editor stopped answering commands, likely a modal dialog.

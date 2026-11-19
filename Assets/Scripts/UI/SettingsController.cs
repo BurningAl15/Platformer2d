@@ -66,6 +66,32 @@ public class SettingsController : MonoBehaviour
     [SerializeField] private Button confirmResetButton;
     [SerializeField] private Button cancelResetButton;
 
+    [Header("Tabs (Audio, Video, Game, Data)")]
+    [SerializeField] private Button[] tabButtons;
+    [SerializeField] private TextMeshProUGUI[] tabLabels;
+    [SerializeField] private GameObject[] tabPages;
+    [SerializeField] private Sprite tabNormalSprite;
+    [SerializeField] private Sprite tabSelectedSprite;
+
+    [Header("Options")]
+    [SerializeField] private Slider musicSlider;
+    [SerializeField] private TextMeshProUGUI musicLabel;
+    [SerializeField] private TextMeshProUGUI musicValueText;
+    [SerializeField] private Slider sfxSlider;
+    [SerializeField] private TextMeshProUGUI sfxLabel;
+    [SerializeField] private TextMeshProUGUI sfxValueText;
+    [SerializeField] private Button shakeToggleButton;
+    [SerializeField] private TextMeshProUGUI shakeStatusText;
+    [SerializeField] private Button rumbleToggleButton;
+    [SerializeField] private TextMeshProUGUI rumbleStatusText;
+    [SerializeField] private Button resolutionButton;
+    [SerializeField] private TextMeshProUGUI resolutionText;
+    [SerializeField] private Button vsyncToggleButton;
+    [SerializeField] private TextMeshProUGUI vsyncStatusText;
+
+    private static readonly string[] TabKeys = { "SETTINGS_TAB_AUDIO", "SETTINGS_TAB_VIDEO", "SETTINGS_TAB_GAME", "SETTINGS_TAB_DATA" };
+    private int currentTab;
+
     private bool isPanelExplicitlyOpen = false;
     private bool awaitingResetConfirmation = false;
     private float resetConfirmTimer = 0f;
@@ -77,43 +103,63 @@ public class SettingsController : MonoBehaviour
     }
 
     /// <summary>
-    /// Hides options the platform does not have and re-centres the remaining
-    /// buttons. Off mobile the screen button switches fullscreen / window.
+    /// Shows only the options this platform has. Pages stack their rows with a
+    /// layout group, so hidden rows leave no gap, and every selectable uses
+    /// automatic navigation so the gamepad follows what is visible.
     /// </summary>
     private void ApplyPlatformLayout()
     {
-        if (PlatformFeatures.IsMobile) return;   // the serialized layout is the mobile one
+        bool mobile = PlatformFeatures.IsMobile;
+        bool desktop = PlatformFeatures.Current == PlatformFeatures.Profile.Desktop;
+        SetRowActive(musicToggleButton, false);              // replaced by the volume sliders
+        SetRowActive(sfxToggleButton, false);
+        SetRowActive(hapticsToggleButton, PlatformFeatures.HasVibration);
+        SetRowActive(rumbleToggleButton, !mobile || MobileGameplayControls.HasPhysicalGameController());
+        SetRowActive(keepScreenAwakeToggleButton, PlatformFeatures.HasKeepScreenAwake || PlatformFeatures.HasDisplayModeOption);
+        SetRowActive(resolutionButton, desktop);
+        SetRowActive(vsyncToggleButton, desktop);
 
-        bool screenOption = PlatformFeatures.HasDisplayModeOption;
-        if (hapticsToggleButton != null) hapticsToggleButton.gameObject.SetActive(false);
-        if (keepScreenAwakeToggleButton != null) keepScreenAwakeToggleButton.gameObject.SetActive(screenOption);
-
-        LayoutRow(-26f, 520f, musicToggleButton, sfxToggleButton);
-        if (screenOption) LayoutRow(24f, 520f, keepScreenAwakeToggleButton, languageToggleButton);
-        else LayoutRow(24f, 520f, languageToggleButton);
-
-        // Explicit links pointed at hidden buttons; let Unity derive them from the new layout.
-        foreach (Button button in new[] { musicToggleButton, sfxToggleButton, keepScreenAwakeToggleButton,
-                     languageToggleButton, characterButton, achievementsButton, resetProgressButton, closeButton })
+        foreach (Selectable selectable in GetComponentsInChildren<Selectable>(true))
         {
-            if (button == null) continue;
-            Navigation navigation = button.navigation;
+            Navigation navigation = selectable.navigation;
             navigation.mode = Navigation.Mode.Automatic;
-            button.navigation = navigation;
+            selectable.navigation = navigation;
         }
     }
 
-    private static void LayoutRow(float y, float width, params Button[] buttons)
+    private static void SetRowActive(Selectable control, bool active)
     {
-        const float gap = 24f;
-        float total = buttons.Length * width + (buttons.Length - 1) * gap;
-        for (int i = 0; i < buttons.Length; i++)
+        if (control != null) control.gameObject.SetActive(active);
+    }
+
+    /// <summary>Shows one tab's page and selects its first option for gamepad/keyboard.</summary>
+    public void ShowTab(int index)
+    {
+        if (tabPages == null || tabPages.Length == 0) return;
+        currentTab = (index + tabPages.Length) % tabPages.Length;
+        for (int i = 0; i < tabPages.Length; i++)
         {
-            if (buttons[i] == null) continue;
-            var rect = (RectTransform)buttons[i].transform;
-            rect.sizeDelta = new Vector2(width, rect.sizeDelta.y);
-            rect.anchoredPosition = new Vector2(-total / 2f + width / 2f + i * (width + gap), y);
+            if (tabPages[i] != null) tabPages[i].SetActive(i == currentTab);
+            if (tabButtons != null && i < tabButtons.Length && tabButtons[i] != null)
+            {
+                var image = tabButtons[i].GetComponent<Image>();
+                if (image != null) image.sprite = i == currentTab ? tabSelectedSprite : tabNormalSprite;
+            }
         }
+        Canvas.ForceUpdateCanvases();
+        if (tabPages[currentTab] != null)
+            UISelectionUtility.SelectDefault(null, tabPages[currentTab].transform);
+    }
+
+    private void HandleTabShortcuts()
+    {
+        if (!isPanelExplicitlyOpen || !MenuBackStack.IsTop(this)) return;
+        var pad = UnityEngine.InputSystem.Gamepad.current;
+        var keys = UnityEngine.InputSystem.Keyboard.current;
+        bool next = (pad != null && pad.rightShoulder.wasPressedThisFrame) || (keys != null && keys.eKey.wasPressedThisFrame);
+        bool previous = (pad != null && pad.leftShoulder.wasPressedThisFrame) || (keys != null && keys.qKey.wasPressedThisFrame);
+        if (next) ShowTab(currentTab + 1);
+        else if (previous) ShowTab(currentTab - 1);
     }
 
     private void OnEnable() => GameLocalization.Changed += RefreshUI;
@@ -130,9 +176,36 @@ public class SettingsController : MonoBehaviour
         BindButtonListener(languageToggleButton, ToggleLanguage);
         BindButtonListener(characterButton, OpenCharacter);
         BindButtonListener(achievementsButton, OpenAchievements);
+        BindButtonListener(shakeToggleButton, () => { GameOptions.ScreenShake = !GameOptions.ScreenShake; RefreshUI(); });
+        BindButtonListener(rumbleToggleButton, ToggleRumble);
+        BindButtonListener(resolutionButton, () => { GameOptions.StepResolution(1); RefreshUI(); });
+        BindButtonListener(vsyncToggleButton, () => { GameOptions.VSync = !GameOptions.VSync; RefreshUI(); });
+        if (tabButtons != null)
+            for (int i = 0; i < tabButtons.Length; i++)
+            {
+                int tab = i;
+                BindButtonListener(tabButtons[i], () => ShowTab(tab));
+            }
+        BindSlider(musicSlider, value => { GameOptions.MusicVolume = Mathf.RoundToInt(value); RefreshUI(); });
+        BindSlider(sfxSlider, value => { GameOptions.SfxVolume = Mathf.RoundToInt(value); RefreshUI(); });
         BindButtonListener(resetProgressButton, OnResetProgressPressed);
         BindButtonListener(confirmResetButton, ConfirmResetProgress);
         BindButtonListener(cancelResetButton, CancelResetProgress);
+    }
+
+    private void ToggleRumble()
+    {
+        GameOptions.GamepadRumble = !GameOptions.GamepadRumble;
+        if (AppBootstrap.Instance != null) GameOptions.PulseGamepad(AppBootstrap.Instance);   // feel it when turning it on
+        RefreshUI();
+    }
+
+    private void BindSlider(Slider slider, UnityAction<float> listener)
+    {
+        if (slider == null) return;
+        slider.minValue = 0; slider.maxValue = GameOptions.MaxVolume; slider.wholeNumbers = true;
+        slider.onValueChanged.RemoveListener(listener);
+        slider.onValueChanged.AddListener(listener);
     }
 
     private void BindButtonListener(Button button, UnityAction listener)
@@ -155,6 +228,7 @@ public class SettingsController : MonoBehaviour
 
     private void Update()
     {
+        HandleTabShortcuts();
         if (awaitingResetConfirmation)
         {
             resetConfirmTimer -= Time.unscaledDeltaTime;
@@ -211,6 +285,8 @@ public class SettingsController : MonoBehaviour
         }
 
         RefreshUI();
+        ApplyPlatformLayout();
+        if (tabPages != null && tabPages.Length > 0) { ShowTab(currentTab); return; }
 
         // Enfoque para gamepad / navegación
         if (musicToggleButton != null && EventSystem.current != null)
@@ -472,6 +548,23 @@ public class SettingsController : MonoBehaviour
             keepScreenAwakeStatusText.text = keepScreenAwake
                 ? GameLocalization.Get("SETTINGS_AWAKE_ON")
                 : GameLocalization.Get("SETTINGS_AWAKE_OFF");
+        }
+
+        for (int i = 0; tabLabels != null && i < tabLabels.Length && i < TabKeys.Length; i++)
+            if (tabLabels[i] != null) tabLabels[i].text = GameLocalization.Get(TabKeys[i]);
+        if (musicLabel != null) musicLabel.text = GameLocalization.Get("SETTINGS_MUSIC_VOLUME");
+        if (sfxLabel != null) sfxLabel.text = GameLocalization.Get("SETTINGS_SFX_VOLUME");
+        if (musicSlider != null) musicSlider.SetValueWithoutNotify(GameOptions.MusicVolume);
+        if (sfxSlider != null) sfxSlider.SetValueWithoutNotify(GameOptions.SfxVolume);
+        if (musicValueText != null) musicValueText.text = GameOptions.MusicVolume.ToString();
+        if (sfxValueText != null) sfxValueText.text = GameOptions.SfxVolume.ToString();
+        if (shakeStatusText != null) shakeStatusText.text = GameLocalization.Get(GameOptions.ScreenShake ? "SETTINGS_SHAKE_ON" : "SETTINGS_SHAKE_OFF");
+        if (rumbleStatusText != null) rumbleStatusText.text = GameLocalization.Get(GameOptions.GamepadRumble ? "SETTINGS_RUMBLE_ON" : "SETTINGS_RUMBLE_OFF");
+        if (vsyncStatusText != null) vsyncStatusText.text = GameLocalization.Get(GameOptions.VSync ? "SETTINGS_VSYNC_ON" : "SETTINGS_VSYNC_OFF");
+        if (resolutionText != null)
+        {
+            Vector2Int size = GameOptions.CurrentResolution;
+            resolutionText.text = GameLocalization.Get("SETTINGS_RESOLUTION", $"{size.x}x{size.y}");
         }
 
         // Idioma / Language

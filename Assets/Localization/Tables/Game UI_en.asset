@@ -678,6 +678,58 @@ MonoBehaviour:
     m_Localized: Sound
     m_Metadata:
       m_Items: []
+  - m_Id: 804249762
+    m_Localized: 'AUDIO'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249763
+    m_Localized: 'VIDEO'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249764
+    m_Localized: 'GAME'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249765
+    m_Localized: 'DATA'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249766
+    m_Localized: 'MUSIC'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249767
+    m_Localized: 'EFFECTS'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249768
+    m_Localized: 'CAMERA SHAKE: ON'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249769
+    m_Localized: 'CAMERA SHAKE: OFF'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249770
+    m_Localized: 'GAMEPAD RUMBLE: ON'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249771
+    m_Localized: 'GAMEPAD RUMBLE: OFF'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249772
+    m_Localized: 'VSYNC: ON'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249773
+    m_Localized: 'VSYNC: OFF'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249774
+    m_Localized: 'RESOLUTION: {0}'
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

@@ -50,6 +50,7 @@ public class ScreenShake : MonoBehaviour
 
     public void StartShake(float length, float power)
     {
+        if (!GameOptions.ScreenShake) return;   // accessibility option
         // A weaker request never cuts a stronger shake that is still playing.
         if (shakeTimeRamaining > 0f && power < shakePower) return;
         shakeTimeRamaining = length;

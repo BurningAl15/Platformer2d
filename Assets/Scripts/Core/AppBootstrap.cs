@@ -50,6 +50,7 @@ public class AppBootstrap : MonoBehaviour
         ApplyScreenAwakePreference();
         if (PlatformFeatures.Current == PlatformFeatures.Profile.Desktop)
             PlatformFeatures.ApplyDisplayPreference();
+        GameOptions.ApplyVideo();
     }
 
     private void OnApplicationPause(bool paused)
@@ -78,6 +79,8 @@ public class AppBootstrap : MonoBehaviour
 
     public static void TriggerHapticFeedback()
     {
+        if (Instance != null) GameOptions.PulseGamepad(Instance);
+
         if (PlayerPrefs.GetInt("HapticsEnabled", 1) != 1 || !Application.isMobilePlatform)
             return;
 

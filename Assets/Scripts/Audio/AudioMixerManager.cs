@@ -364,15 +364,25 @@ public class AudioMixerManager : MonoBehaviour
     //  Helpers privados
     // ─────────────────────────────────────────────────────────────────────────
 
+    /// <summary>Re-reads the saved volume levels (0-10) and applies them.</summary>
+    public void RefreshVolumes()
+    {
+        isMusicOn = GameOptions.MusicVolume > 0;
+        isSFXOn = GameOptions.SfxVolume > 0;
+        ApplyMusicVolume();
+        ApplySFXVolume();
+        RefreshAudioButtons();
+    }
+
     private void ApplyMusicVolume()
     {
-        float level = isMusicOn ? 1f : 0.0001f;
+        float level = isMusicOn ? Mathf.Max(0.0001f, GameOptions.MusicVolume / (float)GameOptions.MaxVolume) : 0.0001f;
         mixer.SetFloat("MusicVol", Mathf.Log10(level) * 20f);
     }
 
     private void ApplySFXVolume()
     {
-        float level = isSFXOn ? 1f : 0.0001f;
+        float level = isSFXOn ? Mathf.Max(0.0001f, GameOptions.SfxVolume / (float)GameOptions.MaxVolume) : 0.0001f;
         mixer.SetFloat("SFXVol", Mathf.Log10(level) * 20f);
     }
 

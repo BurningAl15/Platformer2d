@@ -674,6 +674,58 @@ MonoBehaviour:
     m_Localized: Sonido
     m_Metadata:
       m_Items: []
+  - m_Id: 804249762
+    m_Localized: 'AUDIO'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249763
+    m_Localized: 'VIDEO'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249764
+    m_Localized: 'JUEGO'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249765
+    m_Localized: 'DATOS'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249766
+    m_Localized: 'MÚSICA'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249767
+    m_Localized: 'EFECTOS'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249768
+    m_Localized: 'SACUDIDA DE CÁMARA: SÍ'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249769
+    m_Localized: 'SACUDIDA DE CÁMARA: NO'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249770
+    m_Localized: 'VIBRACIÓN DEL MANDO: SÍ'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249771
+    m_Localized: 'VIBRACIÓN DEL MANDO: NO'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249772
+    m_Localized: 'VSYNC: SÍ'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249773
+    m_Localized: 'VSYNC: NO'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249774
+    m_Localized: 'RESOLUCIÓN: {0}'
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

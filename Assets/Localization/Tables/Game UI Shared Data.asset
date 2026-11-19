@@ -671,6 +671,58 @@ MonoBehaviour:
     m_Key: SETTINGS_GROUP_SOUND_ONLY
     m_Metadata:
       m_Items: []
+  - m_Id: 804249762
+    m_Key: SETTINGS_TAB_AUDIO
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249763
+    m_Key: SETTINGS_TAB_VIDEO
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249764
+    m_Key: SETTINGS_TAB_GAME
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249765
+    m_Key: SETTINGS_TAB_DATA
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249766
+    m_Key: SETTINGS_MUSIC_VOLUME
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249767
+    m_Key: SETTINGS_SFX_VOLUME
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249768
+    m_Key: SETTINGS_SHAKE_ON
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249769
+    m_Key: SETTINGS_SHAKE_OFF
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249770
+    m_Key: SETTINGS_RUMBLE_ON
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249771
+    m_Key: SETTINGS_RUMBLE_OFF
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249772
+    m_Key: SETTINGS_VSYNC_ON
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249773
+    m_Key: SETTINGS_VSYNC_OFF
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249774
+    m_Key: SETTINGS_RESOLUTION
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

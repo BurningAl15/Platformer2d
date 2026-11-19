@@ -287,6 +287,7 @@ public class SaveManager : MonoBehaviour
         bool tutorialDone = keepTutorial && (IsTutorialCompleted() || PlayerPrefs.GetInt(StringUtils.Get_Level(1), 0) == 1);
         bool music = LoadMusicEnabled();
         bool sfx   = LoadSFXEnabled();
+        var options = GameOptions.Snapshot();   // settings are not progress
 
         // Preservar el estado de NoAds — la compra IAP NO se borra al resetear el progreso
         int noAdsPurchased = PlayerPrefs.GetInt(KEY_NO_ADS, 0);
@@ -298,6 +299,7 @@ public class SaveManager : MonoBehaviour
 
         // Restaurar NoAds después del borrado
         PlayerPrefs.SetInt(KEY_NO_ADS, noAdsPurchased);
+        GameOptions.Restore(options);
 
         if (tutorialDone)
         {
