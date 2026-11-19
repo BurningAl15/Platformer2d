@@ -422,6 +422,14 @@
       "createdAt": "2026-11-19T03:10:00-05:00",
       "updatedAt": "2026-11-19T03:10:00-05:00",
       "description": "Quick win from docs/AI/LEVEL_AUDIT_WORLD1.md, owner approved all proposals (sheet of the 8 maps).\n\n2026-11-19 Claude Code — Method: an automatic jump-reachability analysis was tried and discarded (moving edges, logs and bouncers made routes unreliable). Each level's clover goes beside the gem farthest from the main line (start, checkpoints, goal), and the heart fragment beside the second farthest; gems mark places the original design made reachable. New positions: L1 C(92.9,-2.2) H(106,12.3); L2 C(103.7,-7.8) H(142.1,-6); L3 C(34.4,-0.1) H(99.2,-0.5) (weakest: L3 gems sit on the route); L4 C(102.7,-4.6) H(50.1,-6.6); L5 C(20.8,-7.7) H(55.2,-8.2); L6 C(66.5,30.4) H(27.3,91.2); L7 C(33.8,-4.5) (no heart in L7); L8 C(14.2,-2.3) (boss, no heart). Applied as a 28-line YAML patch (prefab instance position overrides only) because saving the scenes from the Editor reserialized unrelated UI anchor overrides. Verified the positions load in the Editor. Reachability and feel need device play QA."
+    },
+    {
+      "id": "66798f7f-0b34-4ca1-9515-ecfce594cf23",
+      "title": "Enemy variety: roster plan and placement in levels 3-7",
+      "status": "todo",
+      "createdAt": "2026-11-19T04:00:00-05:00",
+      "updatedAt": "2026-11-19T04:00:00-05:00",
+      "description": "Owner asked for more enemy variety. 2026-11-19 Claude Code — Documented in docs/AI/ENEMY_ROSTER_PLAN.md: current roster, SpawnFactory/EnemyParent foundation, proposed archetypes per world (hedgehog and seed-spitting plant for World 1), art options, and why placing frog/eagle/bat in levels 3-7 was postponed (route stretches already dense with falling logs). Owner decisions: placement waits until some levels are extended; new enemies are documentation only for now (art not sourced). Nothing was added to scenes."
     }
   ]
 }
