@@ -1365,6 +1365,36 @@
       "storeProcessing": "not_checked",
       "testerAvailability": "not_checked",
       "deviceQA": "pending_owner"
+    },
+    {
+      "id": "59508f75-c807-4756-bee6-7192c5fd81d1",
+      "platform": "android",
+      "number": "40",
+      "androidVersionCode": "40",
+      "uploadRequested": true,
+      "status": "uploaded_internal_testing_unverified",
+      "finishedAt": "2026-11-18",
+      "source": ".kiro/handoff.md",
+      "storeStatus": "release-test.sh both --android-code 40 --ios-build 34 --upload-test from 95df690 (achievements list, sound and vibration row, hidden clovers and heart fragments). Story.unity present in both build reports. Addressables catalog verified as RuntimePath}/Android. Fastlane accepted the upload to the Play internal track. Processing, tester availability and device QA not checked.",
+      "storeUpload": "accepted",
+      "storeProcessing": "not_checked",
+      "testerAvailability": "not_checked",
+      "deviceQA": "pending_owner"
+    },
+    {
+      "id": "3badd6a7-8f87-404c-a644-8007966b8610",
+      "platform": "ios",
+      "number": "34",
+      "iosBuild": "34",
+      "uploadRequested": true,
+      "status": "uploaded_processing_unverified",
+      "finishedAt": "2026-11-18",
+      "source": ".kiro/handoff.md",
+      "storeStatus": "release-test.sh both --android-code 40 --ios-build 34 --upload-test from 95df690 (achievements list, sound and vibration row, hidden clovers and heart fragments). Story.unity present in both build reports. Addressables catalog verified as RuntimePath}/iOS. Fastlane accepted the upload to App Store Connect (processing wait skipped). Processing, tester availability and device QA not checked.",
+      "storeUpload": "accepted",
+      "storeProcessing": "not_checked",
+      "testerAvailability": "not_checked",
+      "deviceQA": "pending_owner"
     }
   ]
 }

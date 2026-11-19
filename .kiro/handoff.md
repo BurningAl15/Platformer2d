@@ -1757,3 +1757,5 @@ Nota agregada en el docstring con la acción requerida en el dashboard.
 2026-11-19 — 53bc84e1-5442-4e94-aa62-9d1abf6399d6 — Clovers and heart fragments moved off the goal to the most remote gem areas in Levels 1-8 (owner approved). Patched positions only. Needs play QA for reachability/feel. Note: saving level scenes from the Editor reserializes unrelated UI-Canvas anchor overrides — review scene diffs before committing.
 
 2026-11-19 — 66798f7f-0b34-4ca1-9515-ecfce594cf23 — Enemy roster plan documented (docs/AI/ENEMY_ROSTER_PLAN.md). Placement in L3-7 postponed until levels are extended; new archetypes documentation only.
+
+2026-11-19 — Builds Android 40 / iOS 34 — from 95df690; Story scene confirmed in both builds; catalogs verified. Uploads accepted by Fastlane. Processing, tester availability and device QA NOT verified.
