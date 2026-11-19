@@ -23,10 +23,13 @@ public static class BuildAutomation
     private const string COMPANY_NAME = "Fatcat Game Studio";
     private static string ProjectRoot => Directory.GetParent(Application.dataPath).FullName;
 
+    // Player builds use this list, not the Editor Build Settings: every scene the
+    // game loads by name (including Story) must be listed here.
     private static readonly string[] RequiredScenes = new string[]
     {
         "Assets/FatCatStudio/Splash/FatCatSplash.unity",
         "Assets/Scenes/MainMenu.unity",
+        "Assets/Scenes/Story.unity",
         "Assets/Scenes/LevelSelection.unity",
         "Assets/Scenes/Levels/Level_0.unity",
         "Assets/Scenes/Levels/Level_1.unity",

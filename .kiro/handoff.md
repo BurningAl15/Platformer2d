@@ -1745,3 +1745,5 @@ Nota agregada en el docstring con la acción requerida en el dashboard.
 2026-11-18 — Builds Android 38 / iOS 32 — from add401a (intro story); catalogs verified per platform. Uploads accepted by Fastlane. Processing, tester availability and device QA NOT verified.
 
 2026-11-18 — 9ebaad7d-ad02-46b6-9fb3-a9b096cc9b4b — Vertical platform reversal no longer plays the fall animation: rider vertical speed matches the platform while attached, no re-attach mid-jump, animator grounded while riding. Verified in Play Mode (Level_1); device QA pending.
+
+2026-11-18 — 40ac6576-104e-496d-a774-c71682273f34 — BUG Android 38 / iOS 32: Story.unity missing from BuildAutomation.RequiredScenes, so New Game stayed on the menu (after resetting progress). Fixed + menu fallback to Level_0. Do not test New Game on 38/32.

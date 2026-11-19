@@ -173,8 +173,12 @@ public class MainMenuManager : MonoBehaviour
             PlayerPrefs.Save();
         }
 
-        // The intro story plays first and then loads the tutorial (Level_0).
-        SceneUtils.LoadScene(StorySceneName);
+        // The intro story plays first and then loads the tutorial (Level_0). If a
+        // build is missing the story scene, never strand the player on the menu.
+        if (Application.CanStreamedLevelBeLoaded(StorySceneName))
+            SceneUtils.LoadScene(StorySceneName);
+        else
+            SceneUtils.LoadGameplayScene(0);
     }
 
     private bool HasContinueProgress()
