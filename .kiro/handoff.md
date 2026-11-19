@@ -1759,3 +1759,12 @@ Nota agregada en el docstring con la acción requerida en el dashboard.
 2026-11-19 — 66798f7f-0b34-4ca1-9515-ecfce594cf23 — Enemy roster plan documented (docs/AI/ENEMY_ROSTER_PLAN.md). Placement in L3-7 postponed until levels are extended; new archetypes documentation only.
 
 2026-11-19 — Builds Android 40 / iOS 34 — from 95df690; Story scene confirmed in both builds; catalogs verified. Uploads accepted by Fastlane. Processing, tester availability and device QA NOT verified.
+
+
+2026-11-19 Codex — Estado actual de tiendas, verificado en consola:
+- Google Play: Fox’s Tale no está en Producción. La pista closed alpha conserva 1.0.1; Internal Testing tiene 1.0.1 / versionCode 40, publicada el 19 nov 08:55 Lima y disponible para testers en 19.840 dispositivos. En el canal interno, la consola muestra inscripción Web; no expuso las listas ni el correo del tester en la vista consultada. No se confirmó instalación ni QA física.
+- Google Play muestra avisos de `androidx.fragment:fragment` obsoleto y compatibilidad con pantallas grandes para la versión 1.0.1; son avisos técnicos, no se interpretan como rechazo de política.
+- App Store Connect: FastTask/builds.json y el handoff registran upload aceptado de iOS build 34. La sesión web actual redirige a login con `authResult=FAILED`; por tanto build processing, disponibilidad TestFlight, draft/submission, privacidad, metadatos de la app y estado real de IAP `6827746088` siguen sin verificación directa. El IAP continúa documentado como Prepare for Submission, con metadata y captura de Review Information pendientes.
+- La tarea `49b77c90-d7e5-466d-be9e-2b0b0aba03d7` sigue abierta; ficha Play pendiente (store listing, audiencia, ads, Data Safety/IARC y cambios sin enviar). Orden de trabajo acordado por el propietario: primero Lazy Lovers; Fox’s Tale después. No hubo publicación en producción. FastTask cloud sync no disponible.
+
+2026-11-19 — 08c7a144-dc4f-49ec-9568-0ea5be9c3724 — Pause menu taps blocked by a frozen FadeEffect overlay; fades now unscaled and stop blocking when nearly transparent. Verified in Play Mode; device QA pending.

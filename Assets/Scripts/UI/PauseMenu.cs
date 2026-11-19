@@ -81,6 +81,9 @@ public class PauseMenu : MonoBehaviour
             // Congelar el juego INMEDIATAMENTE, antes de animar el panel
             Time.timeScale = 0;
             TurnCanvasGroup(true);
+            // A fade in progress sits above this panel; never let it eat the menu's taps.
+            if (FadeEffect._instance != null)
+                FadeEffect._instance.ReleaseInputIfVisible();
             RefreshPauseStats();
             // The touch controls canvas renders above this panel and would take its clicks.
             PlatformDetector.Instance?.SetGameplayControlsSuppressed(true);

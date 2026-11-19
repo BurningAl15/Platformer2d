@@ -23,6 +23,19 @@ public class FadeEffect : MonoBehaviour
     public bool endFade = false;
 
     public bool IsScreenBlack() => fadeScreen != null && fadeScreen.color.a >= 0.95f;
+
+    // Below this alpha the fade no longer hides the screen, so it must not take taps.
+    private const float BlockingAlpha = 0.1f;
+
+    /// <summary>
+    /// Stops a nearly transparent fade from swallowing taps (e.g. the pause menu
+    /// sits under it in the same canvas). A black screen keeps blocking.
+    /// </summary>
+    public void ReleaseInputIfVisible()
+    {
+        if (fadeScreen != null && fadeScreen.color.a < BlockingAlpha)
+            fadeScreen.raycastTarget = false;
+    }
     
     private void Awake()
     {
@@ -64,9 +77,11 @@ public class FadeEffect : MonoBehaviour
         Color tempColor = fadeScreen.color;
         while (initialValue >= 0)
         {
-            initialValue -= Time.deltaTime * fadeSpeed;
+            initialValue -= Time.unscaledDeltaTime * fadeSpeed;
             float animValue = animationCurve.Evaluate(initialValue);
             fadeScreen.color = new Color(tempColor.r, tempColor.g, tempColor.b, animValue);
+            if (animValue < BlockingAlpha)
+                fadeScreen.raycastTarget = false;
             yield return null;
         }
 
@@ -83,7 +98,7 @@ public class FadeEffect : MonoBehaviour
         Color tempColor = fadeScreen.color;
         while (initialValue <= 1)
         {
-            initialValue += Time.deltaTime * fadeSpeed;
+            initialValue += Time.unscaledDeltaTime * fadeSpeed;
             float animValue = animationCurve.Evaluate(initialValue);
             fadeScreen.color = new Color(tempColor.r, tempColor.g, tempColor.b, animValue);
             yield return null;
