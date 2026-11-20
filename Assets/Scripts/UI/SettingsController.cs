@@ -147,8 +147,52 @@ public class SettingsController : MonoBehaviour
             }
         }
         Canvas.ForceUpdateCanvases();
+        WireNavigation();
         if (tabPages[currentTab] != null)
             UISelectionUtility.SelectDefault(null, tabPages[currentTab].transform);
+    }
+
+    /// <summary>
+    /// Explicit gamepad/keyboard links for the visible tab: tabs left/right,
+    /// rows up/down in order, first row up to its tab, last row down to Close.
+    /// Sliders keep left/right for their value.
+    /// </summary>
+    private void WireNavigation()
+    {
+        var rows = new System.Collections.Generic.List<Selectable>();
+        if (tabPages[currentTab] != null)
+            foreach (Selectable selectable in tabPages[currentTab].GetComponentsInChildren<Selectable>(false))
+                if (selectable.IsInteractable() && selectable.gameObject.activeInHierarchy) rows.Add(selectable);
+
+        Selectable currentTabButton = tabButtons != null && currentTab < tabButtons.Length ? tabButtons[currentTab] : null;
+        Selectable first = rows.Count > 0 ? rows[0] : closeButton;
+        for (int i = 0; tabButtons != null && i < tabButtons.Length; i++)
+        {
+            if (tabButtons[i] == null) continue;
+            Link(tabButtons[i], up: closeButton, down: first,
+                left: tabButtons[(i - 1 + tabButtons.Length) % tabButtons.Length],
+                right: tabButtons[(i + 1) % tabButtons.Length]);
+        }
+        for (int i = 0; i < rows.Count; i++)
+        {
+            Selectable up = i == 0 ? currentTabButton : rows[i - 1];
+            Selectable down = i == rows.Count - 1 ? closeButton : rows[i + 1];
+            if (rows[i] is Slider) Link(rows[i], up, down, null, null);
+            else Link(rows[i], up, down, rows[i], rows[i]);
+        }
+        if (closeButton != null)
+            Link(closeButton, rows.Count > 0 ? rows[rows.Count - 1] : currentTabButton, currentTabButton, closeButton, closeButton);
+    }
+
+    private static void Link(Selectable target, Selectable up, Selectable down, Selectable left, Selectable right)
+    {
+        if (target == null) return;
+        Navigation navigation = new Navigation
+        {
+            mode = Navigation.Mode.Explicit,
+            selectOnUp = up, selectOnDown = down, selectOnLeft = left, selectOnRight = right
+        };
+        target.navigation = navigation;
     }
 
     private void HandleTabShortcuts()
