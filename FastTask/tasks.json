@@ -956,6 +956,21 @@
           "summary": "Awaiting the owner's decision."
         }
       ]
+    },
+    {
+      "id": "0e5475c0-ac3a-45b6-8628-f8dc1488732b",
+      "title": "Localization audit of every screen (Spanish)",
+      "status": "done",
+      "createdAt": "2026-11-20T15:50:00-05:00",
+      "updatedAt": "2026-11-20T15:50:00-05:00",
+      "description": "Platform: all. Trigger: an owner screenshot showed the pause menu in English.\n\n2026-11-20 Claude Code — Built the list of 150 strings whose English value differs from Spanish in the Game UI table, then in Play Mode with Spanish selected scanned every visible TMP text on: title menu, store, New Game confirmation, Settings (4 tabs, title and in-level copies), map and level panel, Character, Achievements, Story, HUD, Pause, in-level Settings (3 tabs), Game Over and dice. Result: no English text on any screen. Positive control: the same scan with English selected flags exactly the five pause labels (PAUSED, Resume, Restart, Level Select, Main Menu), so the owner's screenshot reflects the game language being English at the time, not missing translations. Completion evidence: the audit results above.",
+      "events": [
+        {
+          "at": "2026-11-20T15:50:00-05:00",
+          "actor": "Claude Code",
+          "summary": "Audited all screens in Spanish with a positive control; nothing untranslated."
+        }
+      ]
     }
   ],
   "updatedAt": "2026-11-19T19:20:00Z"

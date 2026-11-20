@@ -1846,3 +1846,5 @@ Codex: Play Games + 12 achievements, Game Center + 12 achievements, store achiev
 2026-11-20 — 7d5200e0-1b81-41f1-bdd7-230ca846a6ae — Gamepad navigation audit of every menu; fixed store, map back (B), story skip (B/Esc), World Complete containment. Verified with a simulated gamepad.
 
 2026-11-20 — PC builds: fixed (start Unity on the target platform; catalog check per player format). Windows and macOS players build locally; Linux needs the Linux IL2CPP toolchain package (owner decision). Not run on real PCs yet.
+
+2026-11-20 — Localization audit: every screen fully Spanish (positive control in English flags the pause labels as expected).
