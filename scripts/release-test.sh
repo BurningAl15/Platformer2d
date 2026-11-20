@@ -34,12 +34,12 @@ load_foxstale_config
 
 usage() {
   cat <<'EOF'
-Usage: scripts/release-test.sh android|ios|both|windows|macos|pc [--android-code N] [--ios-build N] [--upload-test] [--skip-build]
+Usage: scripts/release-test.sh android|ios|both|windows|macos|linux|pc [--android-code N] [--ios-build N] [--upload-test] [--skip-build]
 
 Builds local Android AAB and/or iOS Xcode project. --upload-test additionally uploads
 only to Google Play Internal Testing and/or TestFlight. It never targets production.
 --skip-build reuses an existing iOS Xcode export for its numbered build.
-Windows and macOS builds are local standalone players and do not accept uploads.
+Windows, macOS and Linux builds are local standalone players and do not accept uploads.
 
 Android signing: FOXSTALE_KEYSTORE_PATH, FOXSTALE_KEYSTORE_PASSWORD,
 FOXSTALE_KEYALIAS_NAME, FOXSTALE_KEYALIAS_PASSWORD (all required for Android).
@@ -56,7 +56,7 @@ EOF
 die() { printf 'ERROR: %s\n' "$1" >&2; exit 2; }
 [[ $# -ge 1 ]] || { usage >&2; exit 2; }
 mode="$1"; shift
-case "$mode" in android|ios|both|windows|macos|pc) ;; -h|--help) usage; exit 0 ;; *) usage >&2; exit 2 ;; esac
+case "$mode" in android|ios|both|windows|macos|linux|pc) ;; -h|--help) usage; exit 0 ;; *) usage >&2; exit 2 ;; esac
 android_code=""
 ios_build=""
 upload=0
@@ -73,7 +73,7 @@ while (($#)); do
 done
 
 [[ "$(uname -s)" == "Darwin" ]] || die "This pipeline requires macOS"
-if [[ "$mode" == windows || "$mode" == macos || "$mode" == pc ]]; then
+if [[ "$mode" == windows || "$mode" == macos || "$mode" == linux || "$mode" == pc ]]; then
   ((upload == 0)) || die "PC builds are local artifacts; --upload-test supports Android and iOS only"
   ((skip_build == 0)) || die "--skip-build supports iOS only"
 fi
@@ -139,10 +139,12 @@ verify_catalog_platform() {
 }
 
 verify_standalone_catalog() {
-  local player="$1" platform="$2" catalog data_root
+  local player="$1" platform="$2" catalog data_root player_name
   data_root="$player"
   if [[ ! -d "$data_root" ]]; then
-    data_root="$(dirname "$player")/$(basename "$player" .exe)_Data"
+    player_name="$(basename "$player")"
+    player_name="${player_name%.*}"
+    data_root="$(dirname "$player")/${player_name}_Data"
   fi
   catalog="$(find "$data_root" -path '*/StreamingAssets/aa/catalog.*' -type f -print -quit)"
   [[ -n "$catalog" ]] || die "Addressables catalog missing from the $platform player"
@@ -195,6 +197,12 @@ if [[ "$mode" == macos || "$mode" == pc ]]; then
   build_standalone BuildAutomation.BuildMacOS \
     "$build_root/PC/macOS/FoxsTale.app" StandaloneOSX \
     "$build_root/logs/macos.log"
+fi
+
+if [[ "$mode" == linux || "$mode" == pc ]]; then
+  build_standalone BuildAutomation.BuildLinux \
+    "$build_root/PC/Linux/FoxsTale.x86_64" StandaloneLinux64 \
+    "$build_root/logs/linux.log"
 fi
 
 if ((upload)); then

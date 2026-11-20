@@ -570,10 +570,10 @@
     {
       "id": "6a7477fb-baff-400f-b3fa-5f67546c7c15",
       "title": "Controls screen and key rebinding",
-      "status": "doing",
+      "status": "todo",
       "createdAt": "2026-11-20T10:00:00-05:00",
-      "updatedAt": "2026-11-20T08:36:04-05:00",
-      "description": "Platform: PC, web, consoles. Next action owner: Claude Code. Estimate: 1.5-2 days.\n\nSettings tab showing every action with its keyboard and gamepad glyphs, Input System interactive rebinding saved per player, reset to defaults; fully gamepad-navigable.\n\nDepends on: None.\n\n2026-11-20 Codex review — Confirmed PlayerInputSystem.inputactions and the generated PlayerInputSystem wrapper are the current action source; InputManager owns the action asset. SettingsController currently uses repeated serialized settings copies in MainMenu, LevelSelection and the UI-Canvas prefab. Unity Editor/MCP is unreachable and batch editing aborts on the Licensing Client mutex, so no serialized control UI or rebinding implementation was changed. This task remains in progress until the Editor authoring path is available.",
+      "updatedAt": "2026-11-20T11:09:35-05:00",
+      "description": "Platform: PC, web, consoles. Next action owner: Claude Code. Estimate: 1.5-2 days.\n\nSettings tab showing every action with its keyboard and gamepad glyphs, Input System interactive rebinding saved per player, reset to defaults; fully gamepad-navigable.\n\nDepends on: None.\n\n2026-11-20 Codex review — Confirmed PlayerInputSystem.inputactions and the generated PlayerInputSystem wrapper are the current action source; InputManager owns the action asset. SettingsController currently uses repeated serialized settings copies in MainMenu, LevelSelection and the UI-Canvas prefab. Unity Editor/MCP is unreachable and batch editing aborts on the Licensing Client mutex, so no serialized control UI or rebinding implementation was changed. This task remains in progress until the Editor authoring path is available.\n\n2026-11-20 Codex — Initial architecture review only; no control UI or rebinding implementation was made. Returned to todo so FastTask does not imply active implementation. Resume this task as Codex when the existing Settings scene/prefab authoring can be safely validated.",
       "events": [
         {
           "at": "2026-11-20T10:00:00-05:00",
@@ -589,6 +589,11 @@
           "at": "2026-11-20T08:36:04-05:00",
           "actor": "Codex",
           "summary": "Mapped the existing input/action and settings ownership. No files changed; serialized UI integration remains pending because the Unity Editor is unreachable and batch authoring is blocked by the same licensing IPC failure."
+        },
+        {
+          "at": "2026-11-20T11:09:35-05:00",
+          "actor": "Codex",
+          "summary": "No implementation in this pass; returned task to todo after documenting existing Input System and Settings UI ownership."
         }
       ]
     },
@@ -597,8 +602,8 @@
       "title": "PC build pipeline (Windows, macOS; no Steam yet)",
       "status": "testing",
       "createdAt": "2026-11-20T10:00:00-05:00",
-      "updatedAt": "2026-11-20T08:36:04-05:00",
-      "description": "Platform: PC. Next action owner: Claude Code. Estimate: 1 day.\n\nBuildAutomation methods and release-test.sh targets for Windows and macOS standalone, Addressables catalog check per platform, local artifacts only. Steam is out of scope for now (owner decision 2026-11-19).\n\nDepends on: None.\n\n2026-11-20 Codex — Added BuildAutomation.BuildWindows/BuildMacOS and release-test.sh windows|macos|pc local build modes. The script rejects store uploads for PC and validates each packaged Addressables catalog against StandaloneWindows64/StandaloneOSX. Usage documented in docs/PC_BUILDS.md. Static checks: bash -n and CLI help passed. Unity compilation/player build and platform-module/catalog validation remain pending; task stays testing.\n\n2026-11-20 Codex follow-up — The installed Unity modules show Windows Mono and macOS IL2CPP available. BuildAutomation now selects these target-compatible backends for standalone builds and restores the prior scripting backend and active build target afterward. Actual Unity player builds remain pending.\n\n2026-11-20 Codex follow-up 2 — The standalone pipeline now runs without a forced CLI build target, so BuildAutomation can restore the pre-build active platform. It also scopes the PC bundle identifier and restores the original identifier, and removes the temporary build_info asset if it did not exist before the build.\n\n2026-11-20 Codex validation attempt — `scripts/release-test.sh windows` aborted before compilation/artifact creation: Unity 6000.6.0f1 failed to acquire its Licensing Client IPC mutex and reported another project instance. `unity status` reports the discovered Editor unreachable. No PC build/catalog validation passed. Keep status testing; unblock Unity process/license IPC, then run Windows and macOS local builds.",
+      "updatedAt": "2026-11-20T11:09:35-05:00",
+      "description": "Platform: PC. Next action owner: Claude Code. Estimate: 1 day.\n\nBuildAutomation methods and release-test.sh targets for Windows and macOS standalone, Addressables catalog check per platform, local artifacts only. Steam is out of scope for now (owner decision 2026-11-19).\n\nDepends on: None.\n\n2026-11-20 Codex — Added BuildAutomation.BuildWindows/BuildMacOS and release-test.sh windows|macos|pc local build modes. The script rejects store uploads for PC and validates each packaged Addressables catalog against StandaloneWindows64/StandaloneOSX. Usage documented in docs/PC_BUILDS.md. Static checks: bash -n and CLI help passed. Unity compilation/player build and platform-module/catalog validation remain pending; task stays testing.\n\n2026-11-20 Codex follow-up — The installed Unity modules show Windows Mono and macOS IL2CPP available. BuildAutomation now selects these target-compatible backends for standalone builds and restores the prior scripting backend and active build target afterward. Actual Unity player builds remain pending.\n\n2026-11-20 Codex follow-up 2 — The standalone pipeline now runs without a forced CLI build target, so BuildAutomation can restore the pre-build active platform. It also scopes the PC bundle identifier and restores the original identifier, and removes the temporary build_info asset if it did not exist before the build.\n\n2026-11-20 Codex validation attempt — `scripts/release-test.sh windows` aborted before compilation/artifact creation: Unity 6000.6.0f1 failed to acquire its Licensing Client IPC mutex and reported another project instance. `unity status` reports the discovered Editor unreachable. No PC build/catalog validation passed. Keep status testing; unblock Unity process/license IPC, then run Windows and macOS local builds.\n\n2026-11-20 Codex — Added Linux x64 as a third standalone target (`StandaloneLinux64`, IL2CPP module confirmed installed), output `Builds/CI/PC/Linux/FoxsTale.x86_64`. `pc` now requests Windows, macOS, and Linux; the catalog verifier resolves Linux `_Data` output correctly. Static checks passed (`bash -n`, CLI help, and Linux local-only upload guard). Actual Windows/macOS/Linux player and catalog builds remain unverified due to the recorded Unity licensing/instance blocker; status remains testing.\n\n2026-11-20 Codex validation — With elevated local execution, Unity 6000.6.0f1 connected to Licensing Client and compiled/invoked BuildAutomation.BuildWindows, but Addressables/SBP failed before the player artifact was produced (`Unable to build with the current configuration`; `SBP ErrorException`). The log also reports missing `TMPro_Properties.cginc` in several TMP shaders. Windows player/catalog verification failed; macOS and Linux player builds were not reached. Keep testing and isolate Addressables/build configuration plus TMP shader setup before claiming a usable pipeline.",
       "events": [
         {
           "at": "2026-11-20T10:00:00-05:00",
@@ -629,6 +634,16 @@
           "at": "2026-11-20T08:36:04-05:00",
           "actor": "Codex",
           "summary": "Attempted the Windows player build; Unity aborted before compilation due to Licensing Client IPC/mutex failure and detected another project instance. No artifact was generated; status remains testing."
+        },
+        {
+          "at": "2026-11-20T11:06:08-05:00",
+          "actor": "Codex",
+          "summary": "Extended the local desktop pipeline to Linux x64. Unity reports Linux IL2CPP Build Support installed. Task remains testing until all three player/catalog builds pass."
+        },
+        {
+          "at": "2026-11-20T11:09:35-05:00",
+          "actor": "Codex",
+          "summary": "Re-attempted local desktop build after Unity was no longer running. Unity launched, compiled/invoked BuildAutomation.BuildWindows, then Addressables/SBP failed before output; TMP shader include errors also appeared. Linux support is installed; macOS/Linux builds were not reached. Status remains testing."
         }
       ]
     },

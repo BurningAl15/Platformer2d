@@ -8,7 +8,7 @@ using UnityEditor.iOS.Xcode;
 using UnityEngine;
 
 /// <summary>
-/// Builds the game's Android, iOS, Windows, and macOS players from the Editor or CLI.
+/// Builds the game's Android, iOS, Windows, macOS, and Linux players from the Editor or CLI.
 ///
 /// CLI examples:
 /// /Applications/Unity/Hub/Editor/6000.6.0f1/Unity.app/Contents/MacOS/Unity -batchmode -quit -projectPath . -executeMethod BuildAutomation.BuildAndroidAPK
@@ -16,6 +16,7 @@ using UnityEngine;
 /// /Applications/Unity/Hub/Editor/6000.6.0f1/Unity.app/Contents/MacOS/Unity -batchmode -quit -projectPath . -executeMethod BuildAutomation.BuildiOS
 /// /Applications/Unity/Hub/Editor/6000.6.0f1/Unity.app/Contents/MacOS/Unity -batchmode -quit -projectPath . -executeMethod BuildAutomation.BuildWindows
 /// /Applications/Unity/Hub/Editor/6000.6.0f1/Unity.app/Contents/MacOS/Unity -batchmode -quit -projectPath . -executeMethod BuildAutomation.BuildMacOS
+/// /Applications/Unity/Hub/Editor/6000.6.0f1/Unity.app/Contents/MacOS/Unity -batchmode -quit -projectPath . -executeMethod BuildAutomation.BuildLinux
 /// </summary>
 public static class BuildAutomation
 {
@@ -111,6 +112,12 @@ public static class BuildAutomation
     public static void BuildMacOS()
     {
         PerformStandaloneBuild(BuildTarget.StandaloneOSX, "Builds/PC/macOS/FoxsTale.app");
+    }
+
+    [MenuItem("CustomEditorTools/Builds/Build Linux Player")]
+    public static void BuildLinux()
+    {
+        PerformStandaloneBuild(BuildTarget.StandaloneLinux64, "Builds/PC/Linux/FoxsTale.x86_64");
     }
 
     private static void PerformStandaloneBuild(BuildTarget target, string defaultRelativeOutputPath)
