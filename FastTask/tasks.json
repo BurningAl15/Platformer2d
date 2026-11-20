@@ -486,6 +486,216 @@
       "createdAt": "2026-11-19T23:00:00-05:00",
       "updatedAt": "2026-11-19T23:00:00-05:00",
       "description": "Owner: no-damage runs need a Restart in the pause menu; leave the amber prefabs ready (Amber Heart in Level 10; owner adds two levels) and a template for creating levels.\n\n2026-11-19 Claude Code — PauseMenu.RestartLevel (unpauses and reloads the current scene, no life spent) with a Restart-Button in the UI-Canvas prefab (PAUSE_RESTART en/es), four pause buttons re-spaced with an explicit gamepad loop. New AmberHeartPickup + Assets/Prefabs/LevelKit/AmberHeart.prefab (heart + glow, bob/pulse, saves AmberHeart_Found, notice AMBER_HEART_TITLE/FOUND, celebration); AmberShard.prefab moved to Assets/Prefabs/LevelKit/ (guid kept). Level template Assets/Scenes/Templates/Level_Template.unity built from Level 1 (current UI-Canvas prefab, camera/parallax, managers, player), level content removed, terrain reduced to a flat floor from the start column, one checkpoint and the Goal on the floor, examples: 3 gems, clover, heart fragment, 3 amber shards, Amber Heart disabled. (Level_9 carries an outdated embedded UI copy, so it was not used as the base.) GameLocalization.GetLevelName now works for any level with LEVEL_NAME_n. Guide: docs/LEVEL_CREATION.md (template, kit, builds list, WorldData, map point and sign tile, texts, WorldLevelCount 8 -> 10 when levels 9-10 are playable). Play Mode: Restart label 'Reiniciar', reloads Level_1 unpaused; template plays with HUD timer/lives/amber 0/3/gems 0/3 and the fox grounded; Amber Heart saved on touch. Device QA pending."
+    },
+    {
+      "id": "65a32548-8288-43d0-a15a-64480d9bdc1b",
+      "title": "In-app review prompt (mobile)",
+      "status": "todo",
+      "createdAt": "2026-11-20T10:00:00-05:00",
+      "updatedAt": "2026-11-20T10:00:00-05:00",
+      "description": "Platform: Android + iOS. Next action owner: Claude Code. Estimate: 0.5 day.\n\nAsk for a store review with the official APIs (Google Play In-App Review package, iOS native request) once, after the first clear of Level 3; never after a Game Over or in the tutorial. Store quotas decide whether the dialog shows, so device QA can only confirm the request is made.\n\nDepends on: Owner confirms the trigger moment (proposed: first clear of Level 3).",
+      "events": [
+        {
+          "at": "2026-11-20T10:00:00-05:00",
+          "actor": "Claude Code",
+          "summary": "Planned with the owner. Assigned to Claude Code."
+        }
+      ]
+    },
+    {
+      "id": "366bd130-d80f-4a0c-9ba2-703a5e33d80e",
+      "title": "Assist mode (accessibility)",
+      "status": "todo",
+      "createdAt": "2026-11-20T10:00:00-05:00",
+      "updatedAt": "2026-11-20T10:00:00-05:00",
+      "description": "Platform: All platforms. Next action owner: Claude Code. Estimate: 1 day.\n\nSettings > Game toggle: extra hearts and reduced damage (plus longer invulnerability after a hit). While on, no-damage (perfect) clears and their achievements do not count, with a short notice.\n\nDepends on: Owner decides how much help it gives.",
+      "events": [
+        {
+          "at": "2026-11-20T10:00:00-05:00",
+          "actor": "Claude Code",
+          "summary": "Planned with the owner. Assigned to Claude Code."
+        }
+      ]
+    },
+    {
+      "id": "5bbc38e2-3b03-4c0f-8294-c74a80287d0c",
+      "title": "Credits and World 1 ending",
+      "status": "todo",
+      "createdAt": "2026-11-20T10:00:00-05:00",
+      "updatedAt": "2026-11-20T10:00:00-05:00",
+      "description": "Platform: All platforms. Next action owner: Claude Code. Estimate: 1-1.5 days (+0.5 day for an ending illustration).\n\nScene reusing the Story system: closing narration of the Amber Heart arc and scrolling credits, shown after the last World 1 level, then back to the map. Credits must include the Sunny Land attribution required by its license.\n\nDepends on: Credits content (Codex compiles licenses, owner adds names); Levels 9-10 and the final level decided.",
+      "events": [
+        {
+          "at": "2026-11-20T10:00:00-05:00",
+          "actor": "Claude Code",
+          "summary": "Planned with the owner. Assigned to Claude Code."
+        }
+      ]
+    },
+    {
+      "id": "d0bf691d-fa42-40ed-bd67-cd9f268a8452",
+      "title": "Platform achievements integration (Google Play Games, Game Center)",
+      "status": "todo",
+      "createdAt": "2026-11-20T10:00:00-05:00",
+      "updatedAt": "2026-11-20T10:00:00-05:00",
+      "description": "Platform: Android + iOS. Next action owner: Claude Code. Estimate: 2-3 days of code.\n\nAdd Google Play Games plugin and GameKit, report the existing 12 Achievements through IAchievementReporter, sign-in flow, keep builds compiling with LevelPlay/EDM dependencies; device QA on both stores.\n\nDepends on: Codex tasks: achievement entries and IDs in Play Console and App Store Connect, Play Games Services configuration.",
+      "events": [
+        {
+          "at": "2026-11-20T10:00:00-05:00",
+          "actor": "Claude Code",
+          "summary": "Planned with the owner. Assigned to Claude Code."
+        }
+      ]
+    },
+    {
+      "id": "906e12b2-1deb-421a-8bc9-aef2fac8c178",
+      "title": "Discord community link",
+      "status": "todo",
+      "createdAt": "2026-11-20T10:00:00-05:00",
+      "updatedAt": "2026-11-20T10:00:00-05:00",
+      "description": "Platform: Mobile, PC, web (hidden on consoles). Next action owner: Claude Code. Estimate: 0.5 day.\n\nSettings > Game 'Community (Discord)' row (optional title-screen icon) opening the invite with Application.OpenURL, behind a 'you are leaving the game' confirmation; hidden on consoles via PlatformFeatures; hidden or confirmed per the family policy decision.\n\nDepends on: Owner: permanent invite link and the Google Play Families decision (Discord is 13+).",
+      "events": [
+        {
+          "at": "2026-11-20T10:00:00-05:00",
+          "actor": "Claude Code",
+          "summary": "Planned with the owner. Assigned to Claude Code."
+        }
+      ]
+    },
+    {
+      "id": "6a7477fb-baff-400f-b3fa-5f67546c7c15",
+      "title": "Controls screen and key rebinding",
+      "status": "todo",
+      "createdAt": "2026-11-20T10:00:00-05:00",
+      "updatedAt": "2026-11-20T10:00:00-05:00",
+      "description": "Platform: PC, web, consoles. Next action owner: Claude Code. Estimate: 1.5-2 days.\n\nSettings tab showing every action with its keyboard and gamepad glyphs, Input System interactive rebinding saved per player, reset to defaults; fully gamepad-navigable.\n\nDepends on: None.",
+      "events": [
+        {
+          "at": "2026-11-20T10:00:00-05:00",
+          "actor": "Claude Code",
+          "summary": "Planned with the owner. Assigned to Claude Code."
+        }
+      ]
+    },
+    {
+      "id": "3725f06b-2961-4bf7-b6f5-8c6ab9ea2179",
+      "title": "PC build pipeline (Windows, macOS; no Steam yet)",
+      "status": "todo",
+      "createdAt": "2026-11-20T10:00:00-05:00",
+      "updatedAt": "2026-11-20T10:00:00-05:00",
+      "description": "Platform: PC. Next action owner: Claude Code. Estimate: 1 day.\n\nBuildAutomation methods and release-test.sh targets for Windows and macOS standalone, Addressables catalog check per platform, local artifacts only. Steam is out of scope for now (owner decision 2026-11-19).\n\nDepends on: None.",
+      "events": [
+        {
+          "at": "2026-11-20T10:00:00-05:00",
+          "actor": "Claude Code",
+          "summary": "Planned with the owner. Assigned to Claude Code."
+        }
+      ]
+    },
+    {
+      "id": "cdd0bcf5-82ea-43a9-9fb7-c803f5e22be4",
+      "title": "Web build evaluation",
+      "status": "todo",
+      "createdAt": "2026-11-20T10:00:00-05:00",
+      "updatedAt": "2026-11-20T10:00:00-05:00",
+      "description": "Platform: Web. Next action owner: Claude Code. Estimate: 1 day evaluation.\n\nWebGL build test: first-load size with Addressables, saves in the browser, touch controls on mobile browsers, no LevelPlay; recommend portal monetization options. Evaluation only.\n\nDepends on: Owner decides whether to publish on the web.",
+      "events": [
+        {
+          "at": "2026-11-20T10:00:00-05:00",
+          "actor": "Claude Code",
+          "summary": "Planned with the owner. Assigned to Claude Code."
+        }
+      ]
+    },
+    {
+      "id": "6d1236bc-5f50-4233-9865-a49be364c55f",
+      "title": "Register Levels 9-10 in World 1",
+      "status": "todo",
+      "createdAt": "2026-11-20T10:00:00-05:00",
+      "updatedAt": "2026-11-20T10:00:00-05:00",
+      "description": "Platform: All platforms. Next action owner: Claude Code. Estimate: 0.5 day.\n\nAfter the owner builds them from the template: WorldData targets, Editor Build Settings, map points and signs, LEVEL_NAME_9/10 texts, Achievements.WorldLevelCount 8 -> 10, Amber Heart enabled in Level 10, playthrough check. See docs/LEVEL_CREATION.md.\n\nDepends on: Owner builds Level 9 and Level 10 from Assets/Scenes/Templates/Level_Template.unity.",
+      "events": [
+        {
+          "at": "2026-11-20T10:00:00-05:00",
+          "actor": "Claude Code",
+          "summary": "Planned with the owner. Assigned to Claude Code."
+        }
+      ]
+    },
+    {
+      "id": "e108dd95-04a3-4d08-81b4-4d4a87a2f594",
+      "title": "Play Console: Play Games Services and the 12 achievements",
+      "status": "todo",
+      "createdAt": "2026-11-20T10:00:00-05:00",
+      "updatedAt": "2026-11-20T10:00:00-05:00",
+      "description": "Platform: Android. Next action owner: Codex. Estimate: Half a day of console work.\n\nEnable Play Games Services for com.fatcatgamestudio.foxstale, create the 12 achievements (en/es names and descriptions from the Game UI table: ACH_*), upload icons, configure the OAuth client with the upload and app-signing SHA-1 fingerprints (read in Play Console; never print or copy signing material), publish the Play Games configuration to testers and record the achievement IDs in the handoff for the integration task.\n\nDepends on: Achievement icons task.",
+      "events": [
+        {
+          "at": "2026-11-20T10:00:00-05:00",
+          "actor": "Claude Code",
+          "summary": "Planned with the owner. Assigned to Codex."
+        }
+      ]
+    },
+    {
+      "id": "808d0d5e-6a13-4fbb-868e-f5cc2816dd48",
+      "title": "App Store Connect: Game Center and the 12 achievements",
+      "status": "todo",
+      "createdAt": "2026-11-20T10:00:00-05:00",
+      "updatedAt": "2026-11-20T10:00:00-05:00",
+      "description": "Platform: iOS. Next action owner: Codex. Estimate: Half a day of console work.\n\nEnable Game Center for the app, create the 12 achievements (reference names, en/es localizations, points, icons) and record their IDs in the handoff for the integration task.\n\nDepends on: Achievement icons task.",
+      "events": [
+        {
+          "at": "2026-11-20T10:00:00-05:00",
+          "actor": "Claude Code",
+          "summary": "Planned with the owner. Assigned to Codex."
+        }
+      ]
+    },
+    {
+      "id": "035b716d-0437-4f25-a2fe-29f58bdfddee",
+      "title": "Achievement icons for the stores",
+      "status": "todo",
+      "createdAt": "2026-11-20T10:00:00-05:00",
+      "updatedAt": "2026-11-20T10:00:00-05:00",
+      "description": "Platform: Android + iOS. Next action owner: Codex. Estimate: Half a day.\n\n512x512 (Google Play) and 1024x1024 (Apple) icons for the 12 achievements, built from the in-game art (fox, star, clover, gem, heart, amber) in the 16-bit style; locked versions are generated by the stores.\n\nDepends on: None.",
+      "events": [
+        {
+          "at": "2026-11-20T10:00:00-05:00",
+          "actor": "Claude Code",
+          "summary": "Planned with the owner. Assigned to Codex."
+        }
+      ]
+    },
+    {
+      "id": "a7262f99-7107-44d9-89f6-6f6660fea262",
+      "title": "Store policy update: families status, data safety, Game Center/Play Games disclosure",
+      "status": "todo",
+      "createdAt": "2026-11-20T10:00:00-05:00",
+      "updatedAt": "2026-11-20T10:00:00-05:00",
+      "description": "Platform: Android + iOS. Next action owner: Codex. Estimate: 2-3 hours.\n\nRecord whether the app targets children / Google Play Families (decides the Discord link), and update Play Data safety and App Store privacy answers for Play Games, Game Center and the review prompt.\n\nDepends on: Owner confirms the target audience.",
+      "events": [
+        {
+          "at": "2026-11-20T10:00:00-05:00",
+          "actor": "Claude Code",
+          "summary": "Planned with the owner. Assigned to Codex."
+        }
+      ]
+    },
+    {
+      "id": "5e455633-0795-45cf-a18c-1494772a6237",
+      "title": "Compile third-party licenses for the credits",
+      "status": "todo",
+      "createdAt": "2026-11-20T10:00:00-05:00",
+      "updatedAt": "2026-11-20T10:00:00-05:00",
+      "description": "Platform: All platforms. Next action owner: Codex. Estimate: 1-2 hours.\n\nList every third-party asset and package with its required attribution (Sunny Land pack, fonts, DOTween, TextMeshPro, Unity packages, LevelPlay, RevenueCat, music/SFX sources) in docs/CREDITS.md for the credits scene; the owner adds team names.\n\nDepends on: None.",
+      "events": [
+        {
+          "at": "2026-11-20T10:00:00-05:00",
+          "actor": "Claude Code",
+          "summary": "Planned with the owner. Assigned to Codex."
+        }
+      ]
     }
   ],
   "updatedAt": "2026-11-19T19:20:00Z"

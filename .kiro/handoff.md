@@ -1806,3 +1806,19 @@ Nota agregada en el docstring con la acción requerida en el dashboard.
 2026-11-19 — Builds Android 42 / iOS 36 — from 29247f5; Story scene in both builds; catalogs verified. Uploads accepted by Fastlane. Processing, tester availability and device QA NOT verified.
 
 2026-11-19 — 3d9934cf-6035-40f1-b535-6bcc6db7beef — Pause Restart; LevelKit (AmberShard, AmberHeart); Level_Template scene; docs/LEVEL_CREATION.md. Note: Level_9 still has an outdated embedded UI-Canvas — rebuild it from the template.
+
+2026-11-20 — Planning: new todo tasks split by owner. Claude Code (programming): review, assist, credits, achcode, discord, controls, pcbuild, webbuild, worldlevels. Codex (consoles/forms): gpgs, gamecenter, icons, policy, creditlist. IDs:
+- review: 65a32548-8288-43d0-a15a-64480d9bdc1b
+- assist: 366bd130-d80f-4a0c-9ba2-703a5e33d80e
+- credits: 5bbc38e2-3b03-4c0f-8294-c74a80287d0c
+- achcode: d0bf691d-fa42-40ed-bd67-cd9f268a8452
+- discord: 906e12b2-1deb-421a-8bc9-aef2fac8c178
+- controls: 6a7477fb-baff-400f-b3fa-5f67546c7c15
+- pcbuild: 3725f06b-2961-4bf7-b6f5-8c6ab9ea2179
+- webbuild: cdd0bcf5-82ea-43a9-9fb7-c803f5e22be4
+- worldlevels: 6d1236bc-5f50-4233-9865-a49be364c55f
+- gpgs: e108dd95-04a3-4d08-81b4-4d4a87a2f594
+- gamecenter: 808d0d5e-6a13-4fbb-868e-f5cc2816dd48
+- icons: 035b716d-0437-4f25-a2fe-29f58bdfddee
+- policy: a7262f99-7107-44d9-89f6-6f6660fea262
+- creditlist: 5e455633-0795-45cf-a18c-1494772a6237
