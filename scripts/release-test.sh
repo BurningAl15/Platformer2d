@@ -148,8 +148,11 @@ verify_standalone_catalog() {
   fi
   catalog="$(find "$data_root" -path '*/StreamingAssets/aa/catalog.*' -type f -print -quit)"
   [[ -n "$catalog" ]] || die "Addressables catalog missing from the $platform player"
-  # Windows players store the path with a backslash, macOS/Linux with a slash.
-  strings "$catalog" | grep -Eq "RuntimePath\}[/\\\\]$platform" || die "Addressables catalog does not point at the $platform bundles"
+  # Catalog formats differ per player (Windows uses backslashes, macOS stores
+  # the folder name on its own), so check that the catalog names this
+  # platform's folder and that the folder really holds the bundles.
+  strings "$catalog" | grep -q "$platform" || die "Addressables catalog does not point at the $platform bundles"
+  [[ -n "$(find "$(dirname "$catalog")/$platform" -name '*.bundle' -print -quit 2>/dev/null)" ]] || die "No $platform Addressables bundles next to the catalog"
 }
 
 if [[ "$mode" == android || "$mode" == both ]]; then

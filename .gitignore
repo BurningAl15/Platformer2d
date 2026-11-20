@@ -447,3 +447,7 @@ crashlytics-build.properties
 /Assets/AddressableAssetsData/iOS.meta
 /Assets/AddressableAssetsData/Windows/
 /Assets/AddressableAssetsData/Windows.meta
+/Assets/AddressableAssetsData/OSX/
+/Assets/AddressableAssetsData/OSX.meta
+/Assets/AddressableAssetsData/Linux/
+/Assets/AddressableAssetsData/Linux.meta
