@@ -1455,6 +1455,36 @@
       "storeProcessing": "not_checked",
       "testerAvailability": "not_checked",
       "deviceQA": "pending_owner"
+    },
+    {
+      "id": "3b597015-301d-4d5c-9dea-c4d31cb121c9",
+      "platform": "android",
+      "number": "43",
+      "androidVersionCode": "43",
+      "uploadRequested": true,
+      "status": "uploaded_internal_testing_unverified",
+      "finishedAt": "2026-11-18",
+      "source": ".kiro/handoff.md",
+      "storeStatus": "release-test.sh both --android-code 43 --ios-build 37 --upload-test from be6d15d (review prompt, gamepad navigation in every menu, gems collectible only, Game Over buttons, pause Restart, Amber Heart kit, perfect = no damage). First attempt failed on a device-only compile error in StoreReview (fixed in be6d15d, nothing uploaded). Story.unity in both build reports; Google Play review classes present in the AAB dex. Addressables catalog verified as RuntimePath}/Android. Fastlane accepted the upload to the Play internal track. Processing, tester availability and device QA not checked.",
+      "storeUpload": "accepted",
+      "storeProcessing": "not_checked",
+      "testerAvailability": "not_checked",
+      "deviceQA": "pending_owner"
+    },
+    {
+      "id": "01f37c33-f46f-48d1-890b-a6c1b064bffc",
+      "platform": "ios",
+      "number": "37",
+      "iosBuild": "37",
+      "uploadRequested": true,
+      "status": "uploaded_processing_unverified",
+      "finishedAt": "2026-11-18",
+      "source": ".kiro/handoff.md",
+      "storeStatus": "release-test.sh both --android-code 43 --ios-build 37 --upload-test from be6d15d (review prompt, gamepad navigation in every menu, gems collectible only, Game Over buttons, pause Restart, Amber Heart kit, perfect = no damage). First attempt failed on a device-only compile error in StoreReview (fixed in be6d15d, nothing uploaded). Story.unity in both build reports; Google Play review classes present in the AAB dex. Addressables catalog verified as RuntimePath}/iOS. Fastlane accepted the upload to App Store Connect (processing wait skipped). Processing, tester availability and device QA not checked.",
+      "storeUpload": "accepted",
+      "storeProcessing": "not_checked",
+      "testerAvailability": "not_checked",
+      "deviceQA": "pending_owner"
     }
   ]
 }

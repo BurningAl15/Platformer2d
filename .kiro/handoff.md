@@ -1848,3 +1848,5 @@ Codex: Play Games + 12 achievements, Game Center + 12 achievements, store achiev
 2026-11-20 — PC builds: fixed (start Unity on the target platform; catalog check per player format). Windows and macOS players build locally; Linux needs the Linux IL2CPP toolchain package (owner decision). Not run on real PCs yet.
 
 2026-11-20 — Localization audit: every screen fully Spanish (positive control in English flags the pause labels as expected).
+
+2026-11-20 — Builds Android 43 / iOS 37 — from be6d15d; Story scene in both; review classes in the AAB; catalogs verified. Uploads accepted by Fastlane. Processing, tester availability and device QA NOT verified.
