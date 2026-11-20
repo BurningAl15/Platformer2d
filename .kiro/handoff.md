@@ -1802,3 +1802,5 @@ Nota agregada en el docstring con la acción requerida en el dashboard.
 2026-11-19 — Builds Android 41 / iOS 35 — from 8e32938; Story scene in both builds; catalogs verified. Uploads accepted by Fastlane. Processing, tester availability and device QA NOT verified.
 
 2026-11-19 — f7f0ef6f-2ddb-4423-83f4-8127d95e0321 — Perfect now means no damage taken (not just no life lost). Verified in Play Mode; not in Android 41 / iOS 35.
+
+2026-11-19 — Builds Android 42 / iOS 36 — from 29247f5; Story scene in both builds; catalogs verified. Uploads accepted by Fastlane. Processing, tester availability and device QA NOT verified.

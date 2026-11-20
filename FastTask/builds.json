@@ -1425,6 +1425,36 @@
       "storeProcessing": "not_checked",
       "testerAvailability": "not_checked",
       "deviceQA": "pending_owner"
+    },
+    {
+      "id": "9906ab25-00a9-4441-8da5-1e4e89e195bd",
+      "platform": "android",
+      "number": "42",
+      "androidVersionCode": "42",
+      "uploadRequested": true,
+      "status": "uploaded_internal_testing_unverified",
+      "finishedAt": "2026-11-18",
+      "source": ".kiro/handoff.md",
+      "storeStatus": "release-test.sh both --android-code 42 --ios-build 36 --upload-test from 29247f5 (41/35 plus: perfect level means no damage taken). Story.unity present in both build reports. Addressables catalog verified as RuntimePath}/Android. Fastlane accepted the upload to the Play internal track. Processing, tester availability and device QA not checked.",
+      "storeUpload": "accepted",
+      "storeProcessing": "not_checked",
+      "testerAvailability": "not_checked",
+      "deviceQA": "pending_owner"
+    },
+    {
+      "id": "b48b3af2-87c1-45b2-831c-fbf57df6db0d",
+      "platform": "ios",
+      "number": "36",
+      "iosBuild": "36",
+      "uploadRequested": true,
+      "status": "uploaded_processing_unverified",
+      "finishedAt": "2026-11-18",
+      "source": ".kiro/handoff.md",
+      "storeStatus": "release-test.sh both --android-code 42 --ios-build 36 --upload-test from 29247f5 (41/35 plus: perfect level means no damage taken). Story.unity present in both build reports. Addressables catalog verified as RuntimePath}/iOS. Fastlane accepted the upload to App Store Connect (processing wait skipped). Processing, tester availability and device QA not checked.",
+      "storeUpload": "accepted",
+      "storeProcessing": "not_checked",
+      "testerAvailability": "not_checked",
+      "deviceQA": "pending_owner"
     }
   ]
 }
