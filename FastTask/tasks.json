@@ -567,8 +567,8 @@
       "title": "Controls screen and key rebinding",
       "status": "doing",
       "createdAt": "2026-11-20T10:00:00-05:00",
-      "updatedAt": "2026-11-20T08:30:00-05:00",
-      "description": "Platform: PC, web, consoles. Next action owner: Claude Code. Estimate: 1.5-2 days.\n\nSettings tab showing every action with its keyboard and gamepad glyphs, Input System interactive rebinding saved per player, reset to defaults; fully gamepad-navigable.\n\nDepends on: None.",
+      "updatedAt": "2026-11-20T08:36:04-05:00",
+      "description": "Platform: PC, web, consoles. Next action owner: Claude Code. Estimate: 1.5-2 days.\n\nSettings tab showing every action with its keyboard and gamepad glyphs, Input System interactive rebinding saved per player, reset to defaults; fully gamepad-navigable.\n\nDepends on: None.\n\n2026-11-20 Codex review — Confirmed PlayerInputSystem.inputactions and the generated PlayerInputSystem wrapper are the current action source; InputManager owns the action asset. SettingsController currently uses repeated serialized settings copies in MainMenu, LevelSelection and the UI-Canvas prefab. Unity Editor/MCP is unreachable and batch editing aborts on the Licensing Client mutex, so no serialized control UI or rebinding implementation was changed. This task remains in progress until the Editor authoring path is available.",
       "events": [
         {
           "at": "2026-11-20T10:00:00-05:00",
@@ -579,6 +579,11 @@
           "at": "2026-11-20T08:30:00-05:00",
           "actor": "Codex",
           "summary": "Starting the assigned keyboard/gamepad controls page after inspecting the existing Input System action asset and tabbed Settings UI."
+        },
+        {
+          "at": "2026-11-20T08:36:04-05:00",
+          "actor": "Codex",
+          "summary": "Mapped the existing input/action and settings ownership. No files changed; serialized UI integration remains pending because the Unity Editor is unreachable and batch authoring is blocked by the same licensing IPC failure."
         }
       ]
     },
@@ -587,8 +592,8 @@
       "title": "PC build pipeline (Windows, macOS; no Steam yet)",
       "status": "testing",
       "createdAt": "2026-11-20T10:00:00-05:00",
-      "updatedAt": "2026-11-20T08:50:00-05:00",
-      "description": "Platform: PC. Next action owner: Claude Code. Estimate: 1 day.\n\nBuildAutomation methods and release-test.sh targets for Windows and macOS standalone, Addressables catalog check per platform, local artifacts only. Steam is out of scope for now (owner decision 2026-11-19).\n\nDepends on: None.\n\n2026-11-20 Codex — Added BuildAutomation.BuildWindows/BuildMacOS and release-test.sh windows|macos|pc local build modes. The script rejects store uploads for PC and validates each packaged Addressables catalog against StandaloneWindows64/StandaloneOSX. Usage documented in docs/PC_BUILDS.md. Static checks: bash -n and CLI help passed. Unity compilation/player build and platform-module/catalog validation remain pending; task stays testing.\n\n2026-11-20 Codex follow-up — The installed Unity modules show Windows Mono and macOS IL2CPP available. BuildAutomation now selects these target-compatible backends for standalone builds and restores the prior scripting backend and active build target afterward. Actual Unity player builds remain pending.\n\n2026-11-20 Codex follow-up 2 — The standalone pipeline now runs without a forced CLI build target, so BuildAutomation can restore the pre-build active platform. It also scopes the PC bundle identifier and restores the original identifier, and removes the temporary build_info asset if it did not exist before the build.",
+      "updatedAt": "2026-11-20T08:36:04-05:00",
+      "description": "Platform: PC. Next action owner: Claude Code. Estimate: 1 day.\n\nBuildAutomation methods and release-test.sh targets for Windows and macOS standalone, Addressables catalog check per platform, local artifacts only. Steam is out of scope for now (owner decision 2026-11-19).\n\nDepends on: None.\n\n2026-11-20 Codex — Added BuildAutomation.BuildWindows/BuildMacOS and release-test.sh windows|macos|pc local build modes. The script rejects store uploads for PC and validates each packaged Addressables catalog against StandaloneWindows64/StandaloneOSX. Usage documented in docs/PC_BUILDS.md. Static checks: bash -n and CLI help passed. Unity compilation/player build and platform-module/catalog validation remain pending; task stays testing.\n\n2026-11-20 Codex follow-up — The installed Unity modules show Windows Mono and macOS IL2CPP available. BuildAutomation now selects these target-compatible backends for standalone builds and restores the prior scripting backend and active build target afterward. Actual Unity player builds remain pending.\n\n2026-11-20 Codex follow-up 2 — The standalone pipeline now runs without a forced CLI build target, so BuildAutomation can restore the pre-build active platform. It also scopes the PC bundle identifier and restores the original identifier, and removes the temporary build_info asset if it did not exist before the build.\n\n2026-11-20 Codex validation attempt — `scripts/release-test.sh windows` aborted before compilation/artifact creation: Unity 6000.6.0f1 failed to acquire its Licensing Client IPC mutex and reported another project instance. `unity status` reports the discovered Editor unreachable. No PC build/catalog validation passed. Keep status testing; unblock Unity process/license IPC, then run Windows and macOS local builds.",
       "events": [
         {
           "at": "2026-11-20T10:00:00-05:00",
@@ -614,6 +619,11 @@
           "at": "2026-11-20T08:50:00-05:00",
           "actor": "Codex",
           "summary": "Ensured standalone builds can restore the pre-build editor target and app settings; the script now lets BuildAutomation select the platform target."
+        },
+        {
+          "at": "2026-11-20T08:36:04-05:00",
+          "actor": "Codex",
+          "summary": "Attempted the Windows player build; Unity aborted before compilation due to Licensing Client IPC/mutex failure and detected another project instance. No artifact was generated; status remains testing."
         }
       ]
     },
