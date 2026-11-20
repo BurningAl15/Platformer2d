@@ -64,13 +64,13 @@ public static class StoreReview
 
     private sealed class TaskListener : AndroidJavaProxy
     {
-        private readonly System.Action<AndroidJavaObject> onComplete;
+        private readonly System.Action<AndroidJavaObject> callback;
 
-        public TaskListener(System.Action<AndroidJavaObject> onComplete)
-            : base("com.google.android.gms.tasks.OnCompleteListener") => this.onComplete = onComplete;
+        public TaskListener(System.Action<AndroidJavaObject> callback)
+            : base("com.google.android.gms.tasks.OnCompleteListener") => this.callback = callback;
 
-        // Invoked by the Java task on completion.
-        public void onComplete(AndroidJavaObject task) => onComplete?.Invoke(task);
+        // Invoked by the Java task on completion (the name must match the Java interface).
+        public void onComplete(AndroidJavaObject task) => callback?.Invoke(task);
     }
 #endif
 }
