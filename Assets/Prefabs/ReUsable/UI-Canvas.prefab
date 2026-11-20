@@ -1485,7 +1485,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &4208035731004523267
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3745,13 +3745,10 @@ MonoBehaviour:
   panelGroup: {fileID: 5453243929611514567}
   panelRect: {fileID: 8038390129555481821}
   watchAdButton: {fileID: 7047476876210524117}
-  spendGemsButton: {fileID: 162045521462740006}
   useTrebolButton: {fileID: 723727601316965250}
   useSecretDiceButton: {fileID: 8859025238973478046}
   returnToMapButton: {fileID: 8139202759131127191}
   firstSelectedButton: {fileID: 4129185233414178443}
-  gemCostText: {fileID: 5032096065155182636}
-  currentGemsText: {fileID: 5317266698528825026}
   trebolAvailableText: {fileID: 3278463601524830193}
   adFeedbackText: {fileID: 6442994113139141288}
   animDuration: 0.4
@@ -4690,7 +4687,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 238, y: 0}
+  m_AnchoredPosition: {x: 40, y: 0}
   m_SizeDelta: {x: 180, y: 64}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8952192265160249881
@@ -5098,7 +5095,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &3475196213949353626
 RectTransform:
   m_ObjectHideFlags: 0
@@ -10028,7 +10025,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &6978849338366244953
 RectTransform:
   m_ObjectHideFlags: 0
@@ -15065,7 +15062,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 100, y: 0}
+  m_AnchoredPosition: {x: -98, y: 0}
   m_SizeDelta: {x: 64, y: 64}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1975944356032056209

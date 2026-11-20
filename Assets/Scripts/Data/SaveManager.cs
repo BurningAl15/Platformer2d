@@ -16,7 +16,6 @@ public class SaveManager : MonoBehaviour
     public static SaveManager Instance { get; private set; }
 
     // Claves de PlayerPrefs para economía
-    private const string KEY_GLOBAL_GEMS = "GlobalGems";
     private const string KEY_LIVES       = "PlayerLives";
     private const string KEY_HEART_FRAGMENT_COUNT = "PermanentHeartFragmentCount";
     private const string KEY_PERMANENT_HEART_COUNT = "PermanentHeartCount";
@@ -153,30 +152,15 @@ public class SaveManager : MonoBehaviour
     }
 
     // ───────────────────────────────────────────────
-    //  Economía: Gemas globales (wallet)
+    //  Gems are a collectible, not a currency
     // ───────────────────────────────────────────────
-    /// <summary>Total de gemas acumuladas a lo largo de toda la partida.</summary>
-    public int LoadGlobalGems()
-        => PlayerPrefs.GetInt(KEY_GLOBAL_GEMS, 0);
 
-    /// <summary>Añade gemas al wallet global.</summary>
-    public void AddGlobalGems(int amount)
+    /// <summary>Distinct gems found: the best count of every level, so replays do not inflate it.</summary>
+    public int CountCollectedGems(int totalLevels = 10)
     {
-        int current = LoadGlobalGems();
-        PlayerPrefs.SetInt(KEY_GLOBAL_GEMS, current + amount);
-        PlayerPrefs.Save();
-    }
-
-    /// <summary>
-    /// Gasta gemas del wallet si hay suficientes. Retorna true si la transacción fue exitosa.
-    /// </summary>
-    public bool SpendGlobalGems(int amount)
-    {
-        int current = LoadGlobalGems();
-        if (current < amount) return false;
-        PlayerPrefs.SetInt(KEY_GLOBAL_GEMS, current - amount);
-        PlayerPrefs.Save();
-        return true;
+        int count = 0;
+        for (int i = 1; i <= totalLevels; i++) count += LoadGems(i);
+        return count;
     }
 
     // ───────────────────────────────────────────────
@@ -311,7 +295,6 @@ public class SaveManager : MonoBehaviour
         SaveLives(DEFAULT_LIVES);
 
         // Gemas globales en cero
-        PlayerPrefs.SetInt(KEY_GLOBAL_GEMS, 0);
 
         // Progreso de niveles
         for (int i = 1; i <= totalLevels; i++)

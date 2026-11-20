@@ -872,8 +872,8 @@
       "title": "Rewarded ads: what an ad gives (lives or a clover)",
       "status": "todo",
       "createdAt": "2026-11-20T11:30:00-05:00",
-      "updatedAt": "2026-11-20T12:10:00-05:00",
-      "description": "Platform: Android + iOS. Next action owner: Claude Code. Estimate: 0.5-1 day once ads work.\n\nOwner idea 2026-11-20: rewarded ads could give a life or a clover. Today Game Over already offers an ad for lives (LivesManager livesPerAd = 2). Recommendation: keep lives as the main ad reward (Game Over and from the map when lives run low) and allow at most one clover per day by ad, because a clover upgrades the dice and would otherwise break the lives economy.\n\nDepends on: ads working end to end (Codex task 'Cerrar consentimiento y elegibilidad de anuncios': UMP SDK activation, approved privacy message, store linking, device validation).",
+      "updatedAt": "2026-11-20T13:40:00-05:00",
+      "description": "Platform: Android + iOS. Next action owner: Claude Code. Estimate: 0.5-1 day once ads work.\n\nOwner idea 2026-11-20: rewarded ads could give a life or a clover. Today Game Over already offers an ad for lives (LivesManager livesPerAd = 2). Recommendation: keep lives as the main ad reward (Game Over and from the map when lives run low) and allow at most one clover per day by ad, because a clover upgrades the dice and would otherwise break the lives economy.\n\nDepends on: ads working end to end (Codex task 'Cerrar consentimiento y elegibilidad de anuncios': UMP SDK activation, approved privacy message, store linking, device validation).\n\n2026-11-20 Claude Code — Owner: gems are no longer spent, so on mobile the ad is the free way to continue from Game Over (besides a clover). Lives per ad is still 2 (owner did not change it); the 'ad for a clover once a day' idea remains open.",
       "events": [
         {
           "at": "2026-11-20T11:30:00-05:00",
@@ -884,6 +884,21 @@
           "at": "2026-11-20T12:10:00-05:00",
           "actor": "Claude Code",
           "summary": "Owner clarified the split: Codex works only outside Unity (store consoles, listings, forms, policies, external docs); everything inside the Unity project is Claude Code's. This task returns to Claude Code; Codex's notes and work stay as recorded."
+        }
+      ]
+    },
+    {
+      "id": "11ea89a7-01fd-4ebb-a57a-ebe430ddea5c",
+      "title": "Gems are a collectible only: remove gem spending",
+      "status": "testing",
+      "createdAt": "2026-11-20T13:40:00-05:00",
+      "updatedAt": "2026-11-20T13:40:00-05:00",
+      "description": "Owner decision 2026-11-20: gems are a collectible that measures whether the level was fully explored, not money.\n\n2026-11-20 Claude Code — Removed the Game Over 'pay 10 gems for a life' option (button hidden in the UI-Canvas prefab; LivesManager.SpendGemsForLife/CanAffordLife/gem cost and SaveManager's gem wallet removed) and the gem balance row; the clover row is centred. LevelManager no longer adds every run's gems to a growing wallet; Settings and the HUD show distinct gems found (sum of each level's best, SaveManager.CountCollectedGems). Game Over now offers the rewarded ad (mobile, when ads work), the clover dice, and Back to map (which resets lives to 3, so PC/console/web without ads are never stuck). Also removed GameOverController's runtime ColorTint override so its buttons use the kit sprites (the selected clover button looked disabled). Play Mode (es): Game Over shows clovers x9, 'Usar trébol' selected in the kit's focused blue, 'Volver al mapa'. Device QA pending.",
+      "events": [
+        {
+          "at": "2026-11-20T13:40:00-05:00",
+          "actor": "Claude Code",
+          "summary": "Implemented and verified in Play Mode; not in a build yet."
         }
       ]
     }

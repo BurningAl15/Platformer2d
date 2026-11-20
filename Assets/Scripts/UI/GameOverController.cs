@@ -29,7 +29,6 @@ public class GameOverController : MonoBehaviour
 
     [Header("Botones")]
     [SerializeField] private Button watchAdButton;
-    [SerializeField] private Button spendGemsButton;
     [SerializeField] private Button useTrebolButton;
     [Tooltip("Botón opcional para usar el Dado Secreto si está desbloqueado")]
     [SerializeField] private Button useSecretDiceButton;
@@ -37,8 +36,6 @@ public class GameOverController : MonoBehaviour
     [SerializeField] private GameObject firstSelectedButton;
 
     [Header("Textos")]
-    [SerializeField] private TextMeshProUGUI gemCostText;
-    [SerializeField] private TextMeshProUGUI currentGemsText;
     [SerializeField] private TextMeshProUGUI trebolAvailableText;
     [Tooltip("Feedback visible si el rewarded no está disponible.")]
     [SerializeField] private TextMeshProUGUI adFeedbackText;
@@ -63,8 +60,6 @@ public class GameOverController : MonoBehaviour
 
     private void ConfigureAllTextsAutoResize()
     {
-        ConfigureAutoResize(gemCostText, 18f, 40f);
-        ConfigureAutoResize(currentGemsText, 18f, 44f);
         ConfigureAutoResize(trebolAvailableText, 18f, 44f);
         ConfigureAutoResize(adFeedbackText, 18f, 32f);
     }
@@ -90,8 +85,6 @@ public class GameOverController : MonoBehaviour
             useTrebolButton.onClick.AddListener(OnUseTrebolPressed);
         if (useSecretDiceButton != null)
             useSecretDiceButton.onClick.AddListener(OnUseSecretDicePressed);
-        if (spendGemsButton != null)
-            spendGemsButton.onClick.AddListener(OnSpendGemsPressed);
         if (returnToMapButton != null)
             returnToMapButton.onClick.AddListener(OnReturnToMapPressed);
     }
@@ -233,27 +226,6 @@ public class GameOverController : MonoBehaviour
     }
 
     /// <summary>
-    /// Botón "Usar gemas" — gasta gemas del wallet y continúa si hay suficientes.
-    /// </summary>
-    public void OnSpendGemsPressed()
-    {
-        if (LivesManager.Instance == null) return;
-
-        bool success = LivesManager.Instance.SpendGemsForLife();
-        if (success)
-        {
-            ContinueGame();
-        }
-        else
-        {
-            // No hay gemas suficientes: shake del botón como feedback
-            if (spendGemsButton != null)
-                spendGemsButton.transform.DOShakePosition(0.3f, 8f, 20).SetUpdate(true);
-            RefreshEconomyUI();
-        }
-    }
-
-    /// <summary>
     /// Botón "Gastar Trébol" — gasta 1 trébol, abre la pantalla del dado mejorado y continúa.
     /// </summary>
     public void OnUseTrebolPressed()
@@ -364,23 +336,11 @@ public class GameOverController : MonoBehaviour
     {
         if (SaveManager.Instance == null) return;
 
-        int cost     = LivesManager.Instance?.GetGemCostPerLife() ?? 10;
-        int gems     = SaveManager.Instance.LoadGlobalGems();
+        // Gems are a collectible, not a currency: Game Over offers an ad or a clover.
         int trebols  = SaveManager.Instance.LoadTotalTrebols();
-        bool canGems = LivesManager.Instance?.CanAffordLife() ?? false;
-
-        if (gemCostText != null)
-            gemCostText.text = $"x{cost}";
-
-        if (currentGemsText != null)
-            currentGemsText.text = $"x{gems}";
 
         if (trebolAvailableText != null)
             trebolAvailableText.text = $"x{trebols}";
-
-        // Deshabilitar botón de gemas si no alcanza
-        if (spendGemsButton != null)
-            spendGemsButton.interactable = canGems;
 
         // Deshabilitar botón de trébol si no tiene
         if (useTrebolButton != null)
@@ -393,21 +353,8 @@ public class GameOverController : MonoBehaviour
             useSecretDiceButton.gameObject.SetActive(secretUnlocked);
         }
 
-        ConfigureDisabledStateVisual(spendGemsButton);
-        ConfigureDisabledStateVisual(useTrebolButton);
-        ConfigureDisabledStateVisual(watchAdButton);
     }
 
-    private static void ConfigureDisabledStateVisual(Button button)
-    {
-        if (button == null) return;
-
-        ColorBlock colors = button.colors;
-        colors.disabledColor = new Color(0.55f, 0.55f, 0.55f, 0.45f);
-        colors.colorMultiplier = 1f;
-        button.colors = colors;
-        button.transition = Selectable.Transition.ColorTint;
-    }
 
     private void ShowAdUnavailableFeedback()
     {

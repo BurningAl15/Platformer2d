@@ -647,7 +647,7 @@ public class SettingsController : MonoBehaviour
         if (levelsText != null)
             levelsText.text = GameLocalization.Get("SETTINGS_LEVELS", unlockedCount, levelCount);
         if (gemsCountText != null)
-            gemsCountText.text = $"x{(SaveManager.Instance != null ? SaveManager.Instance.LoadGlobalGems() : 0)}";
+            gemsCountText.text = $"x{(SaveManager.Instance != null ? SaveManager.Instance.CountCollectedGems() : 0)}";
         if (cloversCountText != null)
             cloversCountText.text = $"x{(SaveManager.Instance != null ? SaveManager.Instance.LoadTotalTrebols() : 0)}";
 

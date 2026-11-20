@@ -15,7 +15,6 @@ using UnityEngine;
 ///
 /// ACCIONES DE RECUPERACIÓN:
 /// - Rewarded ad → LivesManager.AddLives(2–3) → continuar.
-/// - Gastar gemas  → LivesManager.AddLives(1) via SpendGemsForLife().
 /// - Volver al mapa → resetear vidas y cargar selección de nivel.
 /// </summary>
 public class LivesManager : MonoBehaviour
@@ -23,8 +22,6 @@ public class LivesManager : MonoBehaviour
     public static LivesManager Instance { get; private set; }
 
     [Header("Configuración")]
-    [Tooltip("Coste en gemas globales para comprar una vida extra.")]
-    [SerializeField] private int gemCostPerLife = 10;
     [Tooltip("Vidas que da un rewarded ad.")]
     [SerializeField] private int livesPerAd = 2;
 
@@ -84,33 +81,6 @@ public class LivesManager : MonoBehaviour
         OnLivesChanged?.Invoke(SaveManager.Instance.LoadLives());
     }
 
-    /// <summary>
-    /// Gasta gemas globales para obtener una vida extra.
-    /// Retorna true si la transacción fue exitosa.
-    /// </summary>
-    public bool SpendGemsForLife()
-    {
-        if (SaveManager.Instance == null) return false;
-
-        bool success = SaveManager.Instance.SpendGlobalGems(gemCostPerLife);
-        if (success)
-        {
-            SaveManager.Instance.AddLives(1);
-            OnLivesChanged?.Invoke(SaveManager.Instance.LoadLives());
-        }
-        return success;
-    }
-
-    /// <summary>
-    /// ¿Puede el jugador comprar una vida con gemas?
-    /// </summary>
-    public bool CanAffordLife()
-    {
-        if (SaveManager.Instance == null) return false;
-        return SaveManager.Instance.LoadGlobalGems() >= gemCostPerLife;
-    }
-
-    public int GetGemCostPerLife() => gemCostPerLife;
     public int GetLivesPerAd()     => livesPerAd;
 
     /// <summary>

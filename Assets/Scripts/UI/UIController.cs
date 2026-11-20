@@ -483,11 +483,11 @@ public class UIController : MonoBehaviour
         tmp.overflowMode = TextOverflowModes.Ellipsis;
     }
 
-    /// <summary>Refresca el texto de gemas globales del wallet.</summary>
+    /// <summary>Distinct gems found across levels (gems are a collectible, not a currency).</summary>
     public void RefreshGlobalGemsUI()
     {
         if (gemsGlobalText == null || SaveManager.Instance == null) return;
-        gemsGlobalText.text = SaveManager.Instance.LoadGlobalGems().ToString();
+        gemsGlobalText.text = SaveManager.Instance.CountCollectedGems().ToString();
     }
 
     /// <summary>Refreshes the current level's Clover HUD state.</summary>

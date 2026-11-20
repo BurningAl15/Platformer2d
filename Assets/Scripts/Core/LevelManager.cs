@@ -279,7 +279,6 @@ public class LevelManager : MonoBehaviour
 
             SaveManager.Instance.SaveGemsIfBetter(levelNumber, gemsCollected);
             SaveManager.Instance.SaveTimeIfBetter(levelNumber, timeInLevel);
-            SaveManager.Instance.AddGlobalGems(gemsCollected);
         }
 
         // Calcular y guardar rating de estrellas
