@@ -492,8 +492,8 @@
       "title": "In-app review prompt (mobile)",
       "status": "testing",
       "createdAt": "2026-11-20T10:00:00-05:00",
-      "updatedAt": "2026-11-20T11:30:00-05:00",
-      "description": "Platform: Android + iOS. Next action owner: Claude Code. Estimate: 0.5 day.\n\nAsk for a store review with the official APIs (Google Play In-App Review package, iOS native request) once, after the first clear of Level 3; never after a Game Over or in the tutorial. Store quotas decide whether the dialog shows, so device QA can only confirm the request is made.\n\nDepends on: Owner confirms the trigger moment (proposed: first clear of Level 3).\n\n2026-11-20 Claude Code — Owner decision: first request after Level 2 or 3, then again after every cleared level when not accepted. Stores never report whether the player rated or closed the card and cap how often it appears (Apple 3/year, Google quota), so StoreReview marks a request on every clear from Level 2 on (never tutorial or Game Over) and fires it back on the map after the reward animations; the store decides whether it shows. Android uses Google Play In-App Review through JNI (com.google.android.play:review:2.0.2 added to mainTemplate.gradle; minify is off), iOS uses Device.RequestStoreReview, other platforms and the Editor only log. Batch compile for Android: no errors. The Gradle dependency is resolved at the next Android build; device QA can only confirm the request (stores may not show it in testing).",
+      "updatedAt": "2026-11-20T11:11:41-05:00",
+      "description": "Current assignee: Codex (taken over from Claude Code on 2026-11-20).\nPlatform: Android + iOS. Next action owner: Claude Code. Estimate: 0.5 day.\n\nAsk for a store review with the official APIs (Google Play In-App Review package, iOS native request) once, after the first clear of Level 3; never after a Game Over or in the tutorial. Store quotas decide whether the dialog shows, so device QA can only confirm the request is made.\n\nDepends on: Owner confirms the trigger moment (proposed: first clear of Level 3).\n\n2026-11-20 Claude Code — Owner decision: first request after Level 2 or 3, then again after every cleared level when not accepted. Stores never report whether the player rated or closed the card and cap how often it appears (Apple 3/year, Google quota), so StoreReview marks a request on every clear from Level 2 on (never tutorial or Game Over) and fires it back on the map after the reward animations; the store decides whether it shows. Android uses Google Play In-App Review through JNI (com.google.android.play:review:2.0.2 added to mainTemplate.gradle; minify is off), iOS uses Device.RequestStoreReview, other platforms and the Editor only log. Batch compile for Android: no errors. The Gradle dependency is resolved at the next Android build; device QA can only confirm the request (stores may not show it in testing).",
       "events": [
         {
           "at": "2026-11-20T10:00:00-05:00",
@@ -504,6 +504,11 @@
           "at": "2026-11-20T11:30:00-05:00",
           "actor": "Claude Code",
           "summary": "Implemented StoreReview with native flows; Android compile clean; awaiting build and device check."
+        },
+        {
+          "at": "2026-11-20T11:11:41-05:00",
+          "actor": "Codex",
+          "summary": "Owner asked Codex to take over the task previously assigned to Claude Code. Existing dependencies and completion evidence are preserved."
         }
       ]
     },
@@ -512,13 +517,18 @@
       "title": "Assist mode (accessibility)",
       "status": "todo",
       "createdAt": "2026-11-20T10:00:00-05:00",
-      "updatedAt": "2026-11-20T10:00:00-05:00",
-      "description": "Platform: All platforms. Next action owner: Claude Code. Estimate: 1 day.\n\nSettings > Game toggle: extra hearts and reduced damage (plus longer invulnerability after a hit). While on, no-damage (perfect) clears and their achievements do not count, with a short notice.\n\nDepends on: Owner decides how much help it gives.",
+      "updatedAt": "2026-11-20T11:11:41-05:00",
+      "description": "Current assignee: Codex (taken over from Claude Code on 2026-11-20).\nPlatform: All platforms. Next action owner: Claude Code. Estimate: 1 day.\n\nSettings > Game toggle: extra hearts and reduced damage (plus longer invulnerability after a hit). While on, no-damage (perfect) clears and their achievements do not count, with a short notice.\n\nDepends on: Owner decides how much help it gives.",
       "events": [
         {
           "at": "2026-11-20T10:00:00-05:00",
           "actor": "Claude Code",
           "summary": "Planned with the owner. Assigned to Claude Code."
+        },
+        {
+          "at": "2026-11-20T11:11:41-05:00",
+          "actor": "Codex",
+          "summary": "Owner asked Codex to take over the task previously assigned to Claude Code. Existing dependencies and completion evidence are preserved."
         }
       ]
     },
@@ -527,13 +537,18 @@
       "title": "Credits and World 1 ending",
       "status": "todo",
       "createdAt": "2026-11-20T10:00:00-05:00",
-      "updatedAt": "2026-11-20T10:00:00-05:00",
-      "description": "Platform: All platforms. Next action owner: Claude Code. Estimate: 1-1.5 days (+0.5 day for an ending illustration).\n\nScene reusing the Story system: closing narration of the Amber Heart arc and scrolling credits, shown after the last World 1 level, then back to the map. Credits must include the Sunny Land attribution required by its license.\n\nDepends on: Credits content (Codex compiles licenses, owner adds names); Levels 9-10 and the final level decided.",
+      "updatedAt": "2026-11-20T11:11:41-05:00",
+      "description": "Current assignee: Codex (taken over from Claude Code on 2026-11-20).\nPlatform: All platforms. Next action owner: Claude Code. Estimate: 1-1.5 days (+0.5 day for an ending illustration).\n\nScene reusing the Story system: closing narration of the Amber Heart arc and scrolling credits, shown after the last World 1 level, then back to the map. Credits must include the Sunny Land attribution required by its license.\n\nDepends on: Credits content (Codex compiles licenses, owner adds names); Levels 9-10 and the final level decided.",
       "events": [
         {
           "at": "2026-11-20T10:00:00-05:00",
           "actor": "Claude Code",
           "summary": "Planned with the owner. Assigned to Claude Code."
+        },
+        {
+          "at": "2026-11-20T11:11:41-05:00",
+          "actor": "Codex",
+          "summary": "Owner asked Codex to take over the task previously assigned to Claude Code. Existing dependencies and completion evidence are preserved."
         }
       ]
     },
@@ -542,13 +557,18 @@
       "title": "Platform achievements integration (Google Play Games, Game Center)",
       "status": "todo",
       "createdAt": "2026-11-20T10:00:00-05:00",
-      "updatedAt": "2026-11-20T10:00:00-05:00",
-      "description": "Platform: Android + iOS. Next action owner: Claude Code. Estimate: 2-3 days of code.\n\nAdd Google Play Games plugin and GameKit, report the existing 12 Achievements through IAchievementReporter, sign-in flow, keep builds compiling with LevelPlay/EDM dependencies; device QA on both stores.\n\nDepends on: Codex tasks: achievement entries and IDs in Play Console and App Store Connect, Play Games Services configuration.",
+      "updatedAt": "2026-11-20T11:11:41-05:00",
+      "description": "Current assignee: Codex (taken over from Claude Code on 2026-11-20).\nPlatform: Android + iOS. Next action owner: Claude Code. Estimate: 2-3 days of code.\n\nAdd Google Play Games plugin and GameKit, report the existing 12 Achievements through IAchievementReporter, sign-in flow, keep builds compiling with LevelPlay/EDM dependencies; device QA on both stores.\n\nDepends on: Codex tasks: achievement entries and IDs in Play Console and App Store Connect, Play Games Services configuration.",
       "events": [
         {
           "at": "2026-11-20T10:00:00-05:00",
           "actor": "Claude Code",
           "summary": "Planned with the owner. Assigned to Claude Code."
+        },
+        {
+          "at": "2026-11-20T11:11:41-05:00",
+          "actor": "Codex",
+          "summary": "Owner asked Codex to take over the task previously assigned to Claude Code. Existing dependencies and completion evidence are preserved."
         }
       ]
     },
@@ -557,13 +577,18 @@
       "title": "Discord community link",
       "status": "todo",
       "createdAt": "2026-11-20T10:00:00-05:00",
-      "updatedAt": "2026-11-20T10:00:00-05:00",
-      "description": "Platform: Mobile, PC, web (hidden on consoles). Next action owner: Claude Code. Estimate: 0.5 day.\n\nSettings > Game 'Community (Discord)' row (optional title-screen icon) opening the invite with Application.OpenURL, behind a 'you are leaving the game' confirmation; hidden on consoles via PlatformFeatures; hidden or confirmed per the family policy decision.\n\nDepends on: Owner: permanent invite link and the Google Play Families decision (Discord is 13+).",
+      "updatedAt": "2026-11-20T11:11:41-05:00",
+      "description": "Current assignee: Codex (taken over from Claude Code on 2026-11-20).\nPlatform: Mobile, PC, web (hidden on consoles). Next action owner: Claude Code. Estimate: 0.5 day.\n\nSettings > Game 'Community (Discord)' row (optional title-screen icon) opening the invite with Application.OpenURL, behind a 'you are leaving the game' confirmation; hidden on consoles via PlatformFeatures; hidden or confirmed per the family policy decision.\n\nDepends on: Owner: permanent invite link and the Google Play Families decision (Discord is 13+).",
       "events": [
         {
           "at": "2026-11-20T10:00:00-05:00",
           "actor": "Claude Code",
           "summary": "Planned with the owner. Assigned to Claude Code."
+        },
+        {
+          "at": "2026-11-20T11:11:41-05:00",
+          "actor": "Codex",
+          "summary": "Owner asked Codex to take over the task previously assigned to Claude Code. Existing dependencies and completion evidence are preserved."
         }
       ]
     },
@@ -572,8 +597,8 @@
       "title": "Controls screen and key rebinding",
       "status": "todo",
       "createdAt": "2026-11-20T10:00:00-05:00",
-      "updatedAt": "2026-11-20T11:09:35-05:00",
-      "description": "Platform: PC, web, consoles. Next action owner: Claude Code. Estimate: 1.5-2 days.\n\nSettings tab showing every action with its keyboard and gamepad glyphs, Input System interactive rebinding saved per player, reset to defaults; fully gamepad-navigable.\n\nDepends on: None.\n\n2026-11-20 Codex review — Confirmed PlayerInputSystem.inputactions and the generated PlayerInputSystem wrapper are the current action source; InputManager owns the action asset. SettingsController currently uses repeated serialized settings copies in MainMenu, LevelSelection and the UI-Canvas prefab. Unity Editor/MCP is unreachable and batch editing aborts on the Licensing Client mutex, so no serialized control UI or rebinding implementation was changed. This task remains in progress until the Editor authoring path is available.\n\n2026-11-20 Codex — Initial architecture review only; no control UI or rebinding implementation was made. Returned to todo so FastTask does not imply active implementation. Resume this task as Codex when the existing Settings scene/prefab authoring can be safely validated.",
+      "updatedAt": "2026-11-20T11:11:41-05:00",
+      "description": "Current assignee: Codex (taken over from Claude Code on 2026-11-20).\nPlatform: PC, web, consoles. Next action owner: Claude Code. Estimate: 1.5-2 days.\n\nSettings tab showing every action with its keyboard and gamepad glyphs, Input System interactive rebinding saved per player, reset to defaults; fully gamepad-navigable.\n\nDepends on: None.\n\n2026-11-20 Codex review — Confirmed PlayerInputSystem.inputactions and the generated PlayerInputSystem wrapper are the current action source; InputManager owns the action asset. SettingsController currently uses repeated serialized settings copies in MainMenu, LevelSelection and the UI-Canvas prefab. Unity Editor/MCP is unreachable and batch editing aborts on the Licensing Client mutex, so no serialized control UI or rebinding implementation was changed. This task remains in progress until the Editor authoring path is available.\n\n2026-11-20 Codex — Initial architecture review only; no control UI or rebinding implementation was made. Returned to todo so FastTask does not imply active implementation. Resume this task as Codex when the existing Settings scene/prefab authoring can be safely validated.",
       "events": [
         {
           "at": "2026-11-20T10:00:00-05:00",
@@ -594,16 +619,21 @@
           "at": "2026-11-20T11:09:35-05:00",
           "actor": "Codex",
           "summary": "No implementation in this pass; returned task to todo after documenting existing Input System and Settings UI ownership."
+        },
+        {
+          "at": "2026-11-20T11:11:41-05:00",
+          "actor": "Codex",
+          "summary": "Owner asked Codex to take over the task previously assigned to Claude Code. Existing dependencies and completion evidence are preserved."
         }
       ]
     },
     {
       "id": "3725f06b-2961-4bf7-b6f5-8c6ab9ea2179",
-      "title": "PC build pipeline (Windows, macOS; no Steam yet)",
+      "title": "PC build pipeline (Windows, macOS, Linux; no Steam yet)",
       "status": "testing",
       "createdAt": "2026-11-20T10:00:00-05:00",
-      "updatedAt": "2026-11-20T11:09:35-05:00",
-      "description": "Platform: PC. Next action owner: Claude Code. Estimate: 1 day.\n\nBuildAutomation methods and release-test.sh targets for Windows and macOS standalone, Addressables catalog check per platform, local artifacts only. Steam is out of scope for now (owner decision 2026-11-19).\n\nDepends on: None.\n\n2026-11-20 Codex — Added BuildAutomation.BuildWindows/BuildMacOS and release-test.sh windows|macos|pc local build modes. The script rejects store uploads for PC and validates each packaged Addressables catalog against StandaloneWindows64/StandaloneOSX. Usage documented in docs/PC_BUILDS.md. Static checks: bash -n and CLI help passed. Unity compilation/player build and platform-module/catalog validation remain pending; task stays testing.\n\n2026-11-20 Codex follow-up — The installed Unity modules show Windows Mono and macOS IL2CPP available. BuildAutomation now selects these target-compatible backends for standalone builds and restores the prior scripting backend and active build target afterward. Actual Unity player builds remain pending.\n\n2026-11-20 Codex follow-up 2 — The standalone pipeline now runs without a forced CLI build target, so BuildAutomation can restore the pre-build active platform. It also scopes the PC bundle identifier and restores the original identifier, and removes the temporary build_info asset if it did not exist before the build.\n\n2026-11-20 Codex validation attempt — `scripts/release-test.sh windows` aborted before compilation/artifact creation: Unity 6000.6.0f1 failed to acquire its Licensing Client IPC mutex and reported another project instance. `unity status` reports the discovered Editor unreachable. No PC build/catalog validation passed. Keep status testing; unblock Unity process/license IPC, then run Windows and macOS local builds.\n\n2026-11-20 Codex — Added Linux x64 as a third standalone target (`StandaloneLinux64`, IL2CPP module confirmed installed), output `Builds/CI/PC/Linux/FoxsTale.x86_64`. `pc` now requests Windows, macOS, and Linux; the catalog verifier resolves Linux `_Data` output correctly. Static checks passed (`bash -n`, CLI help, and Linux local-only upload guard). Actual Windows/macOS/Linux player and catalog builds remain unverified due to the recorded Unity licensing/instance blocker; status remains testing.\n\n2026-11-20 Codex validation — With elevated local execution, Unity 6000.6.0f1 connected to Licensing Client and compiled/invoked BuildAutomation.BuildWindows, but Addressables/SBP failed before the player artifact was produced (`Unable to build with the current configuration`; `SBP ErrorException`). The log also reports missing `TMPro_Properties.cginc` in several TMP shaders. Windows player/catalog verification failed; macOS and Linux player builds were not reached. Keep testing and isolate Addressables/build configuration plus TMP shader setup before claiming a usable pipeline.",
+      "updatedAt": "2026-11-20T11:11:41-05:00",
+      "description": "Current assignee: Codex (taken over from Claude Code on 2026-11-20).\nPlatform: PC. Next action owner: Claude Code. Estimate: 1 day.\n\nBuildAutomation methods and release-test.sh targets for Windows and macOS standalone, Addressables catalog check per platform, local artifacts only. Steam is out of scope for now (owner decision 2026-11-19).\n\nDepends on: None.\n\n2026-11-20 Codex — Added BuildAutomation.BuildWindows/BuildMacOS and release-test.sh windows|macos|pc local build modes. The script rejects store uploads for PC and validates each packaged Addressables catalog against StandaloneWindows64/StandaloneOSX. Usage documented in docs/PC_BUILDS.md. Static checks: bash -n and CLI help passed. Unity compilation/player build and platform-module/catalog validation remain pending; task stays testing.\n\n2026-11-20 Codex follow-up — The installed Unity modules show Windows Mono and macOS IL2CPP available. BuildAutomation now selects these target-compatible backends for standalone builds and restores the prior scripting backend and active build target afterward. Actual Unity player builds remain pending.\n\n2026-11-20 Codex follow-up 2 — The standalone pipeline now runs without a forced CLI build target, so BuildAutomation can restore the pre-build active platform. It also scopes the PC bundle identifier and restores the original identifier, and removes the temporary build_info asset if it did not exist before the build.\n\n2026-11-20 Codex validation attempt — `scripts/release-test.sh windows` aborted before compilation/artifact creation: Unity 6000.6.0f1 failed to acquire its Licensing Client IPC mutex and reported another project instance. `unity status` reports the discovered Editor unreachable. No PC build/catalog validation passed. Keep status testing; unblock Unity process/license IPC, then run Windows and macOS local builds.\n\n2026-11-20 Codex — Added Linux x64 as a third standalone target (`StandaloneLinux64`, IL2CPP module confirmed installed), output `Builds/CI/PC/Linux/FoxsTale.x86_64`. `pc` now requests Windows, macOS, and Linux; the catalog verifier resolves Linux `_Data` output correctly. Static checks passed (`bash -n`, CLI help, and Linux local-only upload guard). Actual Windows/macOS/Linux player and catalog builds remain unverified due to the recorded Unity licensing/instance blocker; status remains testing.\n\n2026-11-20 Codex validation — With elevated local execution, Unity 6000.6.0f1 connected to Licensing Client and compiled/invoked BuildAutomation.BuildWindows, but Addressables/SBP failed before the player artifact was produced (`Unable to build with the current configuration`; `SBP ErrorException`). The log also reports missing `TMPro_Properties.cginc` in several TMP shaders. Windows player/catalog verification failed; macOS and Linux player builds were not reached. Keep testing and isolate Addressables/build configuration plus TMP shader setup before claiming a usable pipeline.",
       "events": [
         {
           "at": "2026-11-20T10:00:00-05:00",
@@ -644,6 +674,11 @@
           "at": "2026-11-20T11:09:35-05:00",
           "actor": "Codex",
           "summary": "Re-attempted local desktop build after Unity was no longer running. Unity launched, compiled/invoked BuildAutomation.BuildWindows, then Addressables/SBP failed before output; TMP shader include errors also appeared. Linux support is installed; macOS/Linux builds were not reached. Status remains testing."
+        },
+        {
+          "at": "2026-11-20T11:11:41-05:00",
+          "actor": "Codex",
+          "summary": "Owner asked Codex to take over the task previously assigned to Claude Code. Existing dependencies and completion evidence are preserved."
         }
       ]
     },
@@ -652,13 +687,18 @@
       "title": "Web build evaluation",
       "status": "todo",
       "createdAt": "2026-11-20T10:00:00-05:00",
-      "updatedAt": "2026-11-20T10:00:00-05:00",
-      "description": "Platform: Web. Next action owner: Claude Code. Estimate: 1 day evaluation.\n\nWebGL build test: first-load size with Addressables, saves in the browser, touch controls on mobile browsers, no LevelPlay; recommend portal monetization options. Evaluation only.\n\nDepends on: Owner decides whether to publish on the web.",
+      "updatedAt": "2026-11-20T11:11:41-05:00",
+      "description": "Current assignee: Codex (taken over from Claude Code on 2026-11-20).\nPlatform: Web. Next action owner: Claude Code. Estimate: 1 day evaluation.\n\nWebGL build test: first-load size with Addressables, saves in the browser, touch controls on mobile browsers, no LevelPlay; recommend portal monetization options. Evaluation only.\n\nDepends on: Owner decides whether to publish on the web.",
       "events": [
         {
           "at": "2026-11-20T10:00:00-05:00",
           "actor": "Claude Code",
           "summary": "Planned with the owner. Assigned to Claude Code."
+        },
+        {
+          "at": "2026-11-20T11:11:41-05:00",
+          "actor": "Codex",
+          "summary": "Owner asked Codex to take over the task previously assigned to Claude Code. Existing dependencies and completion evidence are preserved."
         }
       ]
     },
@@ -667,13 +707,18 @@
       "title": "Register Levels 9-10 in World 1",
       "status": "todo",
       "createdAt": "2026-11-20T10:00:00-05:00",
-      "updatedAt": "2026-11-20T10:00:00-05:00",
-      "description": "Platform: All platforms. Next action owner: Claude Code. Estimate: 0.5 day.\n\nAfter the owner builds them from the template: WorldData targets, Editor Build Settings, map points and signs, LEVEL_NAME_9/10 texts, Achievements.WorldLevelCount 8 -> 10, Amber Heart enabled in Level 10, playthrough check. See docs/LEVEL_CREATION.md.\n\nDepends on: Owner builds Level 9 and Level 10 from Assets/Scenes/Templates/Level_Template.unity.",
+      "updatedAt": "2026-11-20T11:11:41-05:00",
+      "description": "Current assignee: Codex (taken over from Claude Code on 2026-11-20).\nPlatform: All platforms. Next action owner: Claude Code. Estimate: 0.5 day.\n\nAfter the owner builds them from the template: WorldData targets, Editor Build Settings, map points and signs, LEVEL_NAME_9/10 texts, Achievements.WorldLevelCount 8 -> 10, Amber Heart enabled in Level 10, playthrough check. See docs/LEVEL_CREATION.md.\n\nDepends on: Owner builds Level 9 and Level 10 from Assets/Scenes/Templates/Level_Template.unity.",
       "events": [
         {
           "at": "2026-11-20T10:00:00-05:00",
           "actor": "Claude Code",
           "summary": "Planned with the owner. Assigned to Claude Code."
+        },
+        {
+          "at": "2026-11-20T11:11:41-05:00",
+          "actor": "Codex",
+          "summary": "Owner asked Codex to take over the task previously assigned to Claude Code. Existing dependencies and completion evidence are preserved."
         }
       ]
     },
