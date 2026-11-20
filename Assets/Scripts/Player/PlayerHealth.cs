@@ -82,6 +82,7 @@ public class PlayerHealth : MonoBehaviour
         if (invicibilityCounter > 0f || currentHealth <= 0) return;
 
         currentHealth = Mathf.Max(0, currentHealth - 1);
+        if (LevelManager._instance != null) LevelManager._instance.NotifyDamageTaken();
         AppBootstrap.TriggerHapticFeedback();
         UIController._instance?.RefreshHealthDisplay();
         UIController._instance?.AnimateDamagedHeart();

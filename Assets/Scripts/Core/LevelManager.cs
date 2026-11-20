@@ -32,9 +32,13 @@ public class LevelManager : MonoBehaviour
     // A clover picked up in this run is always new: collected clovers are hidden on later runs.
     private bool cloverFoundThisRun;
     private int livesLostThisRun;
+    private int damageTakenThisRun;
 
-    /// <summary>True while no life has been lost in this run of the level.</summary>
-    public bool IsFlawlessRun => livesLostThisRun == 0;
+    /// <summary>Called by PlayerHealth whenever the player loses health (hits and falls).</summary>
+    public void NotifyDamageTaken() => damageTakenThisRun++;
+
+    /// <summary>True while the player has taken no damage at all in this run of the level.</summary>
+    public bool IsFlawlessRun => damageTakenThisRun == 0 && livesLostThisRun == 0;
     private bool earnedRewardRoll;
 
     public void NotifyCloverFound() => cloverFoundThisRun = true;
@@ -267,7 +271,7 @@ public class LevelManager : MonoBehaviour
             MapPointsHolder.QueueBadgeArrival(levelNumber, earnedGemBadge, earnedTimeBadge);
             if (totalGemsInLevel > 0 && gemsCollected >= totalGemsInLevel)
                 SaveManager.Instance.SetGemsPerfect(levelNumber);
-            // A clear without losing a life marks the level on the map.
+            // A clear without taking any damage marks the level on the map.
             bool firstFlawless = IsFlawlessRun && !SaveManager.Instance.IsLevelFlawless(levelNumber);
             if (IsFlawlessRun)
                 SaveManager.Instance.SetLevelFlawless(levelNumber);

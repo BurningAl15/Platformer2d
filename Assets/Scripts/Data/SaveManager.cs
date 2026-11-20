@@ -411,7 +411,7 @@ public class SaveManager : MonoBehaviour
         return count;
     }
 
-    /// <summary>A level finished at least once without losing a life.</summary>
+    /// <summary>A level finished at least once without taking any damage.</summary>
     public bool IsLevelFlawless(int levelNumber) => GetFlag("Flawless_Level_" + levelNumber);
 
     public void SetLevelFlawless(int levelNumber) => SetFlag("Flawless_Level_" + levelNumber);
