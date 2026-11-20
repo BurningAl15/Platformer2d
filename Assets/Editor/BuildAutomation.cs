@@ -121,11 +121,17 @@ public static class BuildAutomation
 
         string buildInfoPath = Path.Combine(ProjectRoot, "Assets", "Resources", "build_info.txt");
         string originalBuildInfo = File.Exists(buildInfoPath) ? File.ReadAllText(buildInfoPath) : null;
+        BuildTarget previousBuildTarget = EditorUserBuildSettings.activeBuildTarget;
+        BuildTargetGroup previousBuildTargetGroup = BuildPipeline.GetBuildTargetGroup(previousBuildTarget);
+        ScriptingImplementation previousStandaloneBackend = PlayerSettings.GetScriptingBackend(BuildTargetGroup.Standalone);
 
         try
         {
             Directory.CreateDirectory(Path.GetDirectoryName(Path.GetFullPath(outputPath)));
             WriteBuildInfo("PC");
+            PlayerSettings.SetScriptingBackend(
+                BuildTargetGroup.Standalone,
+                target == BuildTarget.StandaloneWindows64 ? ScriptingImplementation.Mono2x : ScriptingImplementation.IL2CPP);
             EnsureActiveBuildTarget(BuildTargetGroup.Standalone, target);
 
             BuildPlayerOptions options = new BuildPlayerOptions
@@ -146,6 +152,11 @@ public static class BuildAutomation
                 File.WriteAllText(buildInfoPath, originalBuildInfo);
                 AssetDatabase.ImportAsset("Assets/Resources/build_info.txt", ImportAssetOptions.ForceUpdate);
             }
+
+            PlayerSettings.SetScriptingBackend(BuildTargetGroup.Standalone, previousStandaloneBackend);
+            if (EditorUserBuildSettings.activeBuildTarget != previousBuildTarget &&
+                !EditorUserBuildSettings.SwitchActiveBuildTarget(previousBuildTargetGroup, previousBuildTarget))
+                Debug.LogWarning("[BuildAutomation] Could not restore the previous active build target after the standalone build.");
         }
     }
 

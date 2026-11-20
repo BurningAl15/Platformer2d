@@ -565,15 +565,20 @@
     {
       "id": "6a7477fb-baff-400f-b3fa-5f67546c7c15",
       "title": "Controls screen and key rebinding",
-      "status": "todo",
+      "status": "doing",
       "createdAt": "2026-11-20T10:00:00-05:00",
-      "updatedAt": "2026-11-20T10:00:00-05:00",
+      "updatedAt": "2026-11-20T08:30:00-05:00",
       "description": "Platform: PC, web, consoles. Next action owner: Claude Code. Estimate: 1.5-2 days.\n\nSettings tab showing every action with its keyboard and gamepad glyphs, Input System interactive rebinding saved per player, reset to defaults; fully gamepad-navigable.\n\nDepends on: None.",
       "events": [
         {
           "at": "2026-11-20T10:00:00-05:00",
           "actor": "Claude Code",
           "summary": "Planned with the owner. Assigned to Claude Code."
+        },
+        {
+          "at": "2026-11-20T08:30:00-05:00",
+          "actor": "Codex",
+          "summary": "Starting the assigned keyboard/gamepad controls page after inspecting the existing Input System action asset and tabbed Settings UI."
         }
       ]
     },
@@ -582,8 +587,8 @@
       "title": "PC build pipeline (Windows, macOS; no Steam yet)",
       "status": "testing",
       "createdAt": "2026-11-20T10:00:00-05:00",
-      "updatedAt": "2026-11-20T08:24:42-05:00",
-      "description": "Platform: PC. Next action owner: Claude Code. Estimate: 1 day.\n\nBuildAutomation methods and release-test.sh targets for Windows and macOS standalone, Addressables catalog check per platform, local artifacts only. Steam is out of scope for now (owner decision 2026-11-19).\n\nDepends on: None.\n\n2026-11-20 Codex — Added BuildAutomation.BuildWindows/BuildMacOS and release-test.sh windows|macos|pc local build modes. The script rejects store uploads for PC and validates each packaged Addressables catalog against StandaloneWindows64/StandaloneOSX. Usage documented in docs/PC_BUILDS.md. Static checks: bash -n and CLI help passed. Unity compilation/player build and platform-module/catalog validation remain pending; task stays testing.",
+      "updatedAt": "2026-11-20T08:42:00-05:00",
+      "description": "Platform: PC. Next action owner: Claude Code. Estimate: 1 day.\n\nBuildAutomation methods and release-test.sh targets for Windows and macOS standalone, Addressables catalog check per platform, local artifacts only. Steam is out of scope for now (owner decision 2026-11-19).\n\nDepends on: None.\n\n2026-11-20 Codex — Added BuildAutomation.BuildWindows/BuildMacOS and release-test.sh windows|macos|pc local build modes. The script rejects store uploads for PC and validates each packaged Addressables catalog against StandaloneWindows64/StandaloneOSX. Usage documented in docs/PC_BUILDS.md. Static checks: bash -n and CLI help passed. Unity compilation/player build and platform-module/catalog validation remain pending; task stays testing.\n\n2026-11-20 Codex follow-up — The installed Unity modules show Windows Mono and macOS IL2CPP available. BuildAutomation now selects these target-compatible backends for standalone builds and restores the prior scripting backend and active build target afterward. Actual Unity player builds remain pending.",
       "events": [
         {
           "at": "2026-11-20T10:00:00-05:00",
@@ -599,6 +604,11 @@
           "at": "2026-11-20T08:24:42-05:00",
           "actor": "Codex",
           "summary": "Implemented the local Windows/macOS build pipeline and static-checked its shell entry point. Unity compile and actual player/catalog builds remain pending; status set to testing."
+        },
+        {
+          "at": "2026-11-20T08:42:00-05:00",
+          "actor": "Codex",
+          "summary": "Checked installed Unity build modules and made PC builds select the available Windows Mono/macOS IL2CPP backends, restoring the prior editor target/backend afterward."
         }
       ]
     },

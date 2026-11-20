@@ -16,4 +16,4 @@ scripts/release-test.sh pc
 
 The Windows player uses Unity's `Win64` target and is written to `Windows/FoxsTale.exe`. The macOS player uses `OSXStandalone` and is written to `macOS/FoxsTale.app`. The standalone catalog check verifies that each build contains an Addressables catalog whose runtime path targets `StandaloneWindows64` or `StandaloneOSX`, respectively.
 
-The Unity installation must include the Windows Build Support (IL2CPP) module to make Windows players, and macOS Build Support to make macOS players. This pipeline only prepares local artifacts; it does not configure Steam or another distribution service.
+The current Unity installation's Windows Mono and macOS IL2CPP modules are used by these targets. The pipeline restores the project's previous Standalone scripting backend and active build target after each build. This only prepares local artifacts; it does not configure Steam or another distribution service.
