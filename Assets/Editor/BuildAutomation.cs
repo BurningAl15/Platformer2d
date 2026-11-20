@@ -124,11 +124,13 @@ public static class BuildAutomation
         BuildTarget previousBuildTarget = EditorUserBuildSettings.activeBuildTarget;
         BuildTargetGroup previousBuildTargetGroup = BuildPipeline.GetBuildTargetGroup(previousBuildTarget);
         ScriptingImplementation previousStandaloneBackend = PlayerSettings.GetScriptingBackend(BuildTargetGroup.Standalone);
+        string previousStandaloneIdentifier = PlayerSettings.GetApplicationIdentifier(BuildTargetGroup.Standalone);
 
         try
         {
             Directory.CreateDirectory(Path.GetDirectoryName(Path.GetFullPath(outputPath)));
             WriteBuildInfo("PC");
+            PlayerSettings.SetApplicationIdentifier(BuildTargetGroup.Standalone, APP_IDENTIFIER);
             PlayerSettings.SetScriptingBackend(
                 BuildTargetGroup.Standalone,
                 target == BuildTarget.StandaloneWindows64 ? ScriptingImplementation.Mono2x : ScriptingImplementation.IL2CPP);
@@ -152,7 +154,10 @@ public static class BuildAutomation
                 File.WriteAllText(buildInfoPath, originalBuildInfo);
                 AssetDatabase.ImportAsset("Assets/Resources/build_info.txt", ImportAssetOptions.ForceUpdate);
             }
+            else
+                AssetDatabase.DeleteAsset("Assets/Resources/build_info.txt");
 
+            PlayerSettings.SetApplicationIdentifier(BuildTargetGroup.Standalone, previousStandaloneIdentifier);
             PlayerSettings.SetScriptingBackend(BuildTargetGroup.Standalone, previousStandaloneBackend);
             if (EditorUserBuildSettings.activeBuildTarget != previousBuildTarget &&
                 !EditorUserBuildSettings.SwitchActiveBuildTarget(previousBuildTargetGroup, previousBuildTarget))

@@ -587,8 +587,8 @@
       "title": "PC build pipeline (Windows, macOS; no Steam yet)",
       "status": "testing",
       "createdAt": "2026-11-20T10:00:00-05:00",
-      "updatedAt": "2026-11-20T08:42:00-05:00",
-      "description": "Platform: PC. Next action owner: Claude Code. Estimate: 1 day.\n\nBuildAutomation methods and release-test.sh targets for Windows and macOS standalone, Addressables catalog check per platform, local artifacts only. Steam is out of scope for now (owner decision 2026-11-19).\n\nDepends on: None.\n\n2026-11-20 Codex — Added BuildAutomation.BuildWindows/BuildMacOS and release-test.sh windows|macos|pc local build modes. The script rejects store uploads for PC and validates each packaged Addressables catalog against StandaloneWindows64/StandaloneOSX. Usage documented in docs/PC_BUILDS.md. Static checks: bash -n and CLI help passed. Unity compilation/player build and platform-module/catalog validation remain pending; task stays testing.\n\n2026-11-20 Codex follow-up — The installed Unity modules show Windows Mono and macOS IL2CPP available. BuildAutomation now selects these target-compatible backends for standalone builds and restores the prior scripting backend and active build target afterward. Actual Unity player builds remain pending.",
+      "updatedAt": "2026-11-20T08:50:00-05:00",
+      "description": "Platform: PC. Next action owner: Claude Code. Estimate: 1 day.\n\nBuildAutomation methods and release-test.sh targets for Windows and macOS standalone, Addressables catalog check per platform, local artifacts only. Steam is out of scope for now (owner decision 2026-11-19).\n\nDepends on: None.\n\n2026-11-20 Codex — Added BuildAutomation.BuildWindows/BuildMacOS and release-test.sh windows|macos|pc local build modes. The script rejects store uploads for PC and validates each packaged Addressables catalog against StandaloneWindows64/StandaloneOSX. Usage documented in docs/PC_BUILDS.md. Static checks: bash -n and CLI help passed. Unity compilation/player build and platform-module/catalog validation remain pending; task stays testing.\n\n2026-11-20 Codex follow-up — The installed Unity modules show Windows Mono and macOS IL2CPP available. BuildAutomation now selects these target-compatible backends for standalone builds and restores the prior scripting backend and active build target afterward. Actual Unity player builds remain pending.\n\n2026-11-20 Codex follow-up 2 — The standalone pipeline now runs without a forced CLI build target, so BuildAutomation can restore the pre-build active platform. It also scopes the PC bundle identifier and restores the original identifier, and removes the temporary build_info asset if it did not exist before the build.",
       "events": [
         {
           "at": "2026-11-20T10:00:00-05:00",
@@ -609,6 +609,11 @@
           "at": "2026-11-20T08:42:00-05:00",
           "actor": "Codex",
           "summary": "Checked installed Unity build modules and made PC builds select the available Windows Mono/macOS IL2CPP backends, restoring the prior editor target/backend afterward."
+        },
+        {
+          "at": "2026-11-20T08:50:00-05:00",
+          "actor": "Codex",
+          "summary": "Ensured standalone builds can restore the pre-build editor target and app settings; the script now lets BuildAutomation select the platform target."
         }
       ]
     },

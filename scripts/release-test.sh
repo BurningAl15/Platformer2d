@@ -124,7 +124,11 @@ run_unity() {
   local method="$1" log_file="$2" target="$3"
   # Open the Editor on the target platform: Addressables bakes the active build
   # target into its catalog paths.
-  "$unity_bin" -batchmode -quit -nographics -projectPath "$project_root" -buildTarget "$target" -executeMethod "$method" -logFile "$log_file" || die "Unity build failed; inspect the local build log"
+  if [[ -n "$target" ]]; then
+    "$unity_bin" -batchmode -quit -nographics -projectPath "$project_root" -buildTarget "$target" -executeMethod "$method" -logFile "$log_file" || die "Unity build failed; inspect the local build log"
+  else
+    "$unity_bin" -batchmode -quit -nographics -projectPath "$project_root" -executeMethod "$method" -logFile "$log_file" || die "Unity build failed; inspect the local build log"
+  fi
 }
 
 # Fails when the Addressables catalog points at another platform's bundle folder.
@@ -172,23 +176,23 @@ if [[ "$mode" == ios || "$mode" == both ]]; then
 fi
 
 build_standalone() {
-  local target="$1" method="$2" output="$3" platform="$4" log="$5"
+  local method="$1" output="$2" platform="$3" log="$4"
   [[ ! -e "$output" ]] || die "$platform output already exists; move it or choose another output path"
   mkdir -p "$(dirname "$output")"
   export FOXSTALE_STANDALONE_OUTPUT_PATH="$output"
-  run_unity "$method" "$log" "$target"
+  run_unity "$method" "$log" ""
   [[ -e "$output" ]] || die "Unity did not create the $platform player"
   verify_standalone_catalog "$output" "$platform"
 }
 
 if [[ "$mode" == windows || "$mode" == pc ]]; then
-  build_standalone Win64 BuildAutomation.BuildWindows \
+  build_standalone BuildAutomation.BuildWindows \
     "$build_root/PC/Windows/FoxsTale.exe" StandaloneWindows64 \
     "$build_root/logs/windows.log"
 fi
 
 if [[ "$mode" == macos || "$mode" == pc ]]; then
-  build_standalone OSXStandalone BuildAutomation.BuildMacOS \
+  build_standalone BuildAutomation.BuildMacOS \
     "$build_root/PC/macOS/FoxsTale.app" StandaloneOSX \
     "$build_root/logs/macos.log"
 fi
