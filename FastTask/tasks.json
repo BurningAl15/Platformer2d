@@ -921,6 +921,36 @@
           "summary": "Audited every menu and fixed store, map back, story skip and World Complete navigation; verified with a simulated gamepad."
         }
       ]
+    },
+    {
+      "id": "d35a1619-32e0-416f-9bb8-9c886e219ec9",
+      "title": "Lives economy model and difficulty curve per level",
+      "status": "done",
+      "createdAt": "2026-11-20T14:20:00-05:00",
+      "updatedAt": "2026-11-20T14:20:00-05:00",
+      "description": "Platform: all. Owner direction: more lives must mean harder levels.\n\n2026-11-20 Claude Code — docs/AI/LIVES_ECONOMY_AND_DIFFICULTY.md from the current code: health per life (6 units, up to 12 with all heart fragments), falls cost health not lives, dice values and roll conditions, Game Over sources, back-to-map resets to 3 lives (a Game Over costs level progress, never world progress), expected lives (~15 on a first pass, ~50-60 more for completionists), a target lives-lost table per level (0-1 in L1 rising to ~3 at the boss and 3-3.5 in L9-10), design levers (hits per stretch, checkpoint spacing, pits vs damage, fragment placement) and recommendations: lives cap 15 (owner decision), telemetry with Firebase, tests to lock the rules. Completion evidence: the document.",
+      "events": [
+        {
+          "at": "2026-11-20T14:20:00-05:00",
+          "actor": "Claude Code",
+          "summary": "Delivered the economy and difficulty document."
+        }
+      ]
+    },
+    {
+      "id": "f36bc911-0bd2-4f5f-a0d1-eeb7444e50de",
+      "title": "Decide the lives cap",
+      "status": "todo",
+      "createdAt": "2026-11-20T14:20:00-05:00",
+      "updatedAt": "2026-11-20T14:20:00-05:00",
+      "description": "Platform: all. Next action owner: Project owner. Estimate: decision only (code change is minutes).\n\nToday SaveManager.MAX_LIVES = 999 (no real cap). docs/AI/LIVES_ECONOMY_AND_DIFFICULTY.md recommends 15 so completionist dice rolls stop piling up lives and difficulty keeps meaning something.",
+      "events": [
+        {
+          "at": "2026-11-20T14:20:00-05:00",
+          "actor": "Claude Code",
+          "summary": "Awaiting the owner's decision."
+        }
+      ]
     }
   ],
   "updatedAt": "2026-11-19T19:20:00Z"

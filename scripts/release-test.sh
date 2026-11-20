@@ -148,7 +148,8 @@ verify_standalone_catalog() {
   fi
   catalog="$(find "$data_root" -path '*/StreamingAssets/aa/catalog.*' -type f -print -quit)"
   [[ -n "$catalog" ]] || die "Addressables catalog missing from the $platform player"
-  strings "$catalog" | grep -q "RuntimePath}/$platform" || die "Addressables catalog does not point at the $platform bundles"
+  # Windows players store the path with a backslash, macOS/Linux with a slash.
+  strings "$catalog" | grep -Eq "RuntimePath\}[/\\\\]$platform" || die "Addressables catalog does not point at the $platform bundles"
 }
 
 if [[ "$mode" == android || "$mode" == both ]]; then
@@ -182,7 +183,18 @@ build_standalone() {
   [[ ! -e "$output" ]] || die "$platform output already exists; move it or choose another output path"
   mkdir -p "$(dirname "$output")"
   export FOXSTALE_STANDALONE_OUTPUT_PATH="$output"
-  run_unity "$method" "$log" ""
+  # Start Unity on the target platform. Switching platform inside the build
+  # method needs a script reload that batch mode does not get before
+  # Addressables builds, which then fails with "Unable to build with the
+  # current configuration".
+  local cli_target
+  case "$platform" in
+    StandaloneWindows64) cli_target="Win64" ;;
+    StandaloneOSX) cli_target="OSXUniversal" ;;
+    StandaloneLinux64) cli_target="Linux64" ;;
+    *) die "Unknown standalone platform" ;;
+  esac
+  run_unity "$method" "$log" "$cli_target"
   [[ -e "$output" ]] || die "Unity did not create the $platform player"
   verify_standalone_catalog "$output" "$platform"
 }
