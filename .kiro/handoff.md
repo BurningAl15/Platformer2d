@@ -1842,3 +1842,5 @@ Back to Claude Code: in-app review (done, testing), assist mode, credits/ending,
 Codex: Play Games + 12 achievements, Game Center + 12 achievements, store achievement icons, store policy update, third-party licenses list, plus its existing ads consent/eligibility and Play listing/IAP metadata tasks.
 
 2026-11-20 — 11ea89a7-01fd-4ebb-a57a-ebe430ddea5c — Gems are collectible only: no gem purchases, no gem wallet; counters show distinct gems found. Game Over buttons use kit sprites. Verified in Play Mode; not in a build.
+
+2026-11-20 — 7d5200e0-1b81-41f1-bdd7-230ca846a6ae — Gamepad navigation audit of every menu; fixed store, map back (B), story skip (B/Esc), World Complete containment. Verified with a simulated gamepad.

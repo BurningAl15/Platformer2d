@@ -34,6 +34,8 @@ public class InputManager : MonoBehaviour
     public System.Action OnJumpPressed;
     public System.Action OnJumpReleased;
     public System.Action OnPausePressed;
+    /// <summary>Gamepad B when no menu is open (for example the map's back to title).</summary>
+    public System.Action OnBackWithoutMenu;
     public System.Action OnSubmitPressed;
 
     // ───────────────────────────────────────────────
@@ -78,8 +80,15 @@ public class InputManager : MonoBehaviour
         inputActions.Player.Jump.canceled  += _ => OnJumpReleased?.Invoke();
         inputActions.UI.Pause.performed    += _ => OnPausePressed?.Invoke();
         inputActions.UI.Submit.performed   += _ => OnSubmitPressed?.Invoke();
-        // Gamepad B / Esc closes the menu on top.
-        inputActions.UI.Cancel.performed   += _ => MenuBackStack.CloseTop();
+        // Gamepad B / Esc closes the menu on top. With nothing open, gamepad B is "back"
+        // (Esc stays Start/Pause on keyboards).
+        inputActions.UI.Cancel.performed   += context =>
+        {
+            if (MenuBackStack.CloseTop()) return;
+            if (context.control != null && context.control.device is UnityEngine.InputSystem.Gamepad pad &&
+                MobileGameplayControls.IsPhysicalGameController(pad))
+                OnBackWithoutMenu?.Invoke();
+        };
     }
 
     private void OnEnable()

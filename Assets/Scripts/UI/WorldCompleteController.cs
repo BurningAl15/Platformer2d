@@ -50,6 +50,7 @@ public class WorldCompleteController : MonoBehaviour
         {
             SetPanelVisible(true);
             PlayShowAnimation();
+            UISelectionUtility.ContainNavigation(panel.transform);
             UISelectionUtility.SelectDefault(null, panel.transform);
         }
     }

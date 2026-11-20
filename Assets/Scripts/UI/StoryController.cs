@@ -53,6 +53,7 @@ public class StoryController : MonoBehaviour
             if (layers[i].layer != null) homes[i] = layers[i].layer.localPosition;
 
         if (skipButton != null) skipButton.onClick.AddListener(Finish);
+        MenuBackStack.Push(this, Finish);   // gamepad B / Esc skips the story
         if (skipLabel != null) skipLabel.text = GameLocalization.Get("STORY_SKIP");
         if (fade != null)
         {
@@ -164,6 +165,7 @@ public class StoryController : MonoBehaviour
     {
         if (leaving) return;
         leaving = true;
+        MenuBackStack.Remove(this);
         if (skipButton != null) skipButton.interactable = false;
         if (fade == null)
         {

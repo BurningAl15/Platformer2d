@@ -125,11 +125,33 @@ public class NoAdsPurchaseButton : MonoBehaviour
         SetStatus(string.Empty);
         RefreshUI();
         RefreshPriceWhenReady();
+        WireStoreNavigation();
+    }
+
+    /// <summary>Gamepad/keyboard: focus stays inside the store, starting on Purchase (or Restore).</summary>
+    private void WireStoreNavigation()
+    {
+        var buttons = new System.Collections.Generic.List<Button>();
+        foreach (Button button in new[] { purchaseButton, restoreButton, closeStoreButton })
+            if (button != null && button.gameObject.activeInHierarchy) buttons.Add(button);
+        for (int i = 0; i < buttons.Count; i++)
+        {
+            buttons[i].navigation = new Navigation
+            {
+                mode = Navigation.Mode.Explicit,
+                selectOnUp = buttons[(i - 1 + buttons.Count) % buttons.Count],
+                selectOnDown = buttons[(i + 1) % buttons.Count]
+            };
+        }
+        if (buttons.Count > 0) UISelectionUtility.SelectDefault(buttons[0].gameObject, storePanelGroup != null ? storePanelGroup.transform : transform);
     }
 
     public void ClosePanel()
     {
+        bool wasOpen = storePanelGroup != null && storePanelGroup.blocksRaycasts;
         MenuBackStack.Remove(this);
+        if (wasOpen && openStoreButton != null && openStoreButton.gameObject.activeInHierarchy)
+            UISelectionUtility.SelectDefault(openStoreButton.gameObject);
         if (storePanelGroup != null)
         {
             storePanelGroup.alpha = 0f;

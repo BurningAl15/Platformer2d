@@ -41,6 +41,7 @@ public class LSPlayerController : MonoBehaviour
         {
             InputManager.Instance.OnJumpPressed += HandleConfirmPressed;
             InputManager.Instance.OnPausePressed += OpenSettingsFromGamepad;
+            InputManager.Instance.OnBackWithoutMenu += BackToTitle;
         }
     }
 
@@ -50,6 +51,7 @@ public class LSPlayerController : MonoBehaviour
         {
             InputManager.Instance.OnJumpPressed -= HandleConfirmPressed;
             InputManager.Instance.OnPausePressed -= OpenSettingsFromGamepad;
+            InputManager.Instance.OnBackWithoutMenu -= BackToTitle;
         }
     }
 
@@ -84,6 +86,13 @@ public class LSPlayerController : MonoBehaviour
         if (settings == null) return;
         if (character) settings.OpenCharacter();
         else settings.OpenAchievements();
+    }
+
+    /// <summary>Gamepad B on the map with nothing open: back to the title screen (the "< Menu" button).</summary>
+    private void BackToTitle()
+    {
+        if (IsInputLocked) return;
+        SceneUtils.ToMainScene();
     }
 
     private void OpenSettingsFromGamepad()

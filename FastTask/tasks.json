@@ -901,6 +901,26 @@
           "summary": "Implemented and verified in Play Mode; not in a build yet."
         }
       ]
+    },
+    {
+      "id": "7d5200e0-1b81-41f1-bdd7-230ca846a6ae",
+      "title": "Gamepad navigation in every menu",
+      "status": "testing",
+      "createdAt": "2026-11-20T14:00:00-05:00",
+      "updatedAt": "2026-11-20T15:10:00-05:00",
+      "description": "Platform: all. Next action owner: Claude Code. Estimate: 1 day.\n\nOwner rule: every menu must be navigable with a gamepad. Settings and Pause are done; audit and fix Game Over, dice, World Complete, store, story, Character, Achievements, New Game confirmation, Settings reset confirmation and the level selector panels: a default selection when each opens, every button reachable, B/Esc closes or goes back.\n\n2026-11-20 Claude Code — Audit (Play Mode, default selection + reachability through navigation links): OK as found: title menu, New Game confirmation, Character, Achievements, Game Over, dice; Settings reset is an inline press-again confirmation. Fixed: Store opened with no selection and its buttons unreachable -> selects Purchase, explicit loop Purchase/Restore/Close, B closes it via the back stack and focus returns to the Store button; map '< Menu' was unreachable -> physical gamepad B with no menu open goes back to the title (Esc keeps opening Settings since it is also Pause), with a gamepad-only B prompt on the button; Story skip had no gamepad path -> B/Esc skips; World Complete could leak focus to other panels -> UISelectionUtility.ContainNavigation chains a panel's visible buttons. Verified with a simulated physical gamepad: store start=Purchase, all reachable, B closes and refocuses Store; World Complete contained; B on the map -> MainMenu; B in Story -> Level_0. Real gamepad and device QA pending.",
+      "events": [
+        {
+          "at": "2026-11-20T14:00:00-05:00",
+          "actor": "Claude Code",
+          "summary": "Started: automated audit of default selection and reachability per menu."
+        },
+        {
+          "at": "2026-11-20T15:10:00-05:00",
+          "actor": "Claude Code",
+          "summary": "Audited every menu and fixed store, map back, story skip and World Complete navigation; verified with a simulated gamepad."
+        }
+      ]
     }
   ],
   "updatedAt": "2026-11-19T19:20:00Z"

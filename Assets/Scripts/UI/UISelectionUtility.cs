@@ -17,6 +17,28 @@ public static class UISelectionUtility
             eventSystem.SetSelectedGameObject(candidate);
     }
 
+    /// <summary>
+    /// Keeps gamepad/keyboard navigation inside a panel: its visible buttons are
+    /// chained top to bottom (wrapping), so focus never jumps to another panel.
+    /// </summary>
+    public static void ContainNavigation(Transform scope)
+    {
+        if (scope == null) return;
+        var buttons = new List<Selectable>();
+        foreach (Selectable selectable in scope.GetComponentsInChildren<Selectable>(false))
+            if (selectable.IsInteractable() && selectable.isActiveAndEnabled) buttons.Add(selectable);
+        buttons.Sort((a, b) => b.transform.position.y.CompareTo(a.transform.position.y));
+        for (int i = 0; i < buttons.Count; i++)
+        {
+            buttons[i].navigation = new Navigation
+            {
+                mode = Navigation.Mode.Explicit,
+                selectOnUp = buttons[(i - 1 + buttons.Count) % buttons.Count],
+                selectOnDown = buttons[(i + 1) % buttons.Count]
+            };
+        }
+    }
+
     private static readonly List<RaycastResult> raycastResults = new List<RaycastResult>();
 
     /// <summary>
