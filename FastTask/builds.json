@@ -1395,6 +1395,36 @@
       "storeProcessing": "not_checked",
       "testerAvailability": "not_checked",
       "deviceQA": "pending_owner"
+    },
+    {
+      "id": "2514c1b4-8a90-4e92-a5b5-d4dfe23ad338",
+      "platform": "android",
+      "number": "41",
+      "androidVersionCode": "41",
+      "uploadRequested": true,
+      "status": "uploaded_internal_testing_unverified",
+      "finishedAt": "2026-11-18",
+      "source": ".kiro/handoff.md",
+      "storeStatus": "release-test.sh both --android-code 41 --ios-build 35 --upload-test from 8e32938 (pause fix, flawless levels, amber shards, platform-aware menus, keyboard/gamepad menu controls, tabbed Settings with new options). Story.unity present in both build reports. Addressables catalog verified as RuntimePath}/Android. Fastlane accepted the upload to the Play internal track. Processing, tester availability and device QA not checked.",
+      "storeUpload": "accepted",
+      "storeProcessing": "not_checked",
+      "testerAvailability": "not_checked",
+      "deviceQA": "pending_owner"
+    },
+    {
+      "id": "2431629e-df43-40c2-b10c-81db1b4587ee",
+      "platform": "ios",
+      "number": "35",
+      "iosBuild": "35",
+      "uploadRequested": true,
+      "status": "uploaded_processing_unverified",
+      "finishedAt": "2026-11-18",
+      "source": ".kiro/handoff.md",
+      "storeStatus": "release-test.sh both --android-code 41 --ios-build 35 --upload-test from 8e32938 (pause fix, flawless levels, amber shards, platform-aware menus, keyboard/gamepad menu controls, tabbed Settings with new options). Story.unity present in both build reports. Addressables catalog verified as RuntimePath}/iOS. Fastlane accepted the upload to App Store Connect (processing wait skipped). Processing, tester availability and device QA not checked.",
+      "storeUpload": "accepted",
+      "storeProcessing": "not_checked",
+      "testerAvailability": "not_checked",
+      "deviceQA": "pending_owner"
     }
   ]
 }

@@ -1798,3 +1798,5 @@ Nota agregada en el docstring con la acción requerida en el dashboard.
 2026-11-19 — 4af9fb98-1dd0-4c2f-af4c-547b62323d8c — Settings tabs + new options in progress (logic and window rebuild committed; label-size polish and tab navigation test pending). Editor stopped answering commands, likely a modal dialog.
 
 2026-11-19 — 4af9fb98-1dd0-4c2f-af4c-547b62323d8c — Settings tabs finished: label sizes, data tab, explicit per-tab gamepad navigation. Verified in Play Mode; real gamepad and device QA pending.
+
+2026-11-19 — Builds Android 41 / iOS 35 — from 8e32938; Story scene in both builds; catalogs verified. Uploads accepted by Fastlane. Processing, tester availability and device QA NOT verified.
