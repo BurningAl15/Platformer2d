@@ -17,6 +17,7 @@ dependencies {
     implementation 'com.unity3d.ads-mediation:mediation-sdk:9.5.0'
     implementation 'androidx.javascriptengine:javascriptengine:1.0.0-beta01' // Android 14+ ad JavaScript runtime compatibility
     implementation 'androidx.webkit:webkit:1.13.0' // WebView support for ads SDKs
+    implementation 'com.google.android.play:review:2.0.2' // Google Play In-App Review (StoreReview.cs)
 **DEPS**}
 
 // Android Resolver Exclusions Start

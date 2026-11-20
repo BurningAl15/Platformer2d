@@ -490,15 +490,20 @@
     {
       "id": "65a32548-8288-43d0-a15a-64480d9bdc1b",
       "title": "In-app review prompt (mobile)",
-      "status": "todo",
+      "status": "testing",
       "createdAt": "2026-11-20T10:00:00-05:00",
-      "updatedAt": "2026-11-20T10:00:00-05:00",
-      "description": "Platform: Android + iOS. Next action owner: Claude Code. Estimate: 0.5 day.\n\nAsk for a store review with the official APIs (Google Play In-App Review package, iOS native request) once, after the first clear of Level 3; never after a Game Over or in the tutorial. Store quotas decide whether the dialog shows, so device QA can only confirm the request is made.\n\nDepends on: Owner confirms the trigger moment (proposed: first clear of Level 3).",
+      "updatedAt": "2026-11-20T11:30:00-05:00",
+      "description": "Platform: Android + iOS. Next action owner: Claude Code. Estimate: 0.5 day.\n\nAsk for a store review with the official APIs (Google Play In-App Review package, iOS native request) once, after the first clear of Level 3; never after a Game Over or in the tutorial. Store quotas decide whether the dialog shows, so device QA can only confirm the request is made.\n\nDepends on: Owner confirms the trigger moment (proposed: first clear of Level 3).\n\n2026-11-20 Claude Code — Owner decision: first request after Level 2 or 3, then again after every cleared level when not accepted. Stores never report whether the player rated or closed the card and cap how often it appears (Apple 3/year, Google quota), so StoreReview marks a request on every clear from Level 2 on (never tutorial or Game Over) and fires it back on the map after the reward animations; the store decides whether it shows. Android uses Google Play In-App Review through JNI (com.google.android.play:review:2.0.2 added to mainTemplate.gradle; minify is off), iOS uses Device.RequestStoreReview, other platforms and the Editor only log. Batch compile for Android: no errors. The Gradle dependency is resolved at the next Android build; device QA can only confirm the request (stores may not show it in testing).",
       "events": [
         {
           "at": "2026-11-20T10:00:00-05:00",
           "actor": "Claude Code",
           "summary": "Planned with the owner. Assigned to Claude Code."
+        },
+        {
+          "at": "2026-11-20T11:30:00-05:00",
+          "actor": "Claude Code",
+          "summary": "Implemented StoreReview with native flows; Android compile clean; awaiting build and device check."
         }
       ]
     },
@@ -729,6 +734,21 @@
           "at": "2026-11-20T10:00:00-05:00",
           "actor": "Claude Code",
           "summary": "Planned with the owner. Assigned to Codex."
+        }
+      ]
+    },
+    {
+      "id": "2f840575-f1a0-4a92-abe9-0f05fa5cb073",
+      "title": "Rewarded ads: what an ad gives (lives or a clover)",
+      "status": "todo",
+      "createdAt": "2026-11-20T11:30:00-05:00",
+      "updatedAt": "2026-11-20T11:30:00-05:00",
+      "description": "Platform: Android + iOS. Next action owner: Project owner (decision), then Claude Code. Estimate: 0.5-1 day once ads work.\n\nOwner idea 2026-11-20: rewarded ads could give a life or a clover. Today Game Over already offers an ad for lives (LivesManager livesPerAd = 2). Recommendation: keep lives as the main ad reward (Game Over and from the map when lives run low) and allow at most one clover per day by ad, because a clover upgrades the dice and would otherwise break the lives economy.\n\nDepends on: ads working end to end (Codex task 'Cerrar consentimiento y elegibilidad de anuncios': UMP SDK activation, approved privacy message, store linking, device validation).",
+      "events": [
+        {
+          "at": "2026-11-20T11:30:00-05:00",
+          "actor": "Claude Code",
+          "summary": "Recorded the owner's idea and a recommendation; blocked until ads work."
         }
       ]
     }

@@ -48,6 +48,8 @@ public class MapPointsHolder : MonoBehaviour
         // Rewards from the level just finished play first; the player waits for them.
         if (player != null)
             player.LockInput(PendingArrivalDuration());
+        // A level was just cleared: ask for a store review once the rewards have played.
+        StoreReview.RequestIfPending(this, PendingArrivalDuration() + 0.8f);
         PositionPlayer();
         PlayPendingCloverArrival();
     }
