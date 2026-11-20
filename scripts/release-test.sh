@@ -34,11 +34,12 @@ load_foxstale_config
 
 usage() {
   cat <<'EOF'
-Usage: scripts/release-test.sh android|ios|both --android-code N --ios-build N [--upload-test] [--skip-build]
+Usage: scripts/release-test.sh android|ios|both|windows|macos|pc [--android-code N] [--ios-build N] [--upload-test] [--skip-build]
 
 Builds local Android AAB and/or iOS Xcode project. --upload-test additionally uploads
 only to Google Play Internal Testing and/or TestFlight. It never targets production.
 --skip-build reuses an existing iOS Xcode export for its numbered build.
+Windows and macOS builds are local standalone players and do not accept uploads.
 
 Android signing: FOXSTALE_KEYSTORE_PATH, FOXSTALE_KEYSTORE_PASSWORD,
 FOXSTALE_KEYALIAS_NAME, FOXSTALE_KEYALIAS_PASSWORD (all required for Android).
@@ -55,7 +56,7 @@ EOF
 die() { printf 'ERROR: %s\n' "$1" >&2; exit 2; }
 [[ $# -ge 1 ]] || { usage >&2; exit 2; }
 mode="$1"; shift
-case "$mode" in android|ios|both) ;; -h|--help) usage; exit 0 ;; *) usage >&2; exit 2 ;; esac
+case "$mode" in android|ios|both|windows|macos|pc) ;; -h|--help) usage; exit 0 ;; *) usage >&2; exit 2 ;; esac
 android_code=""
 ios_build=""
 upload=0
@@ -72,6 +73,10 @@ while (($#)); do
 done
 
 [[ "$(uname -s)" == "Darwin" ]] || die "This pipeline requires macOS"
+if [[ "$mode" == windows || "$mode" == macos || "$mode" == pc ]]; then
+  ((upload == 0)) || die "PC builds are local artifacts; --upload-test supports Android and iOS only"
+  ((skip_build == 0)) || die "--skip-build supports iOS only"
+fi
 if [[ "$mode" == android || "$mode" == both ]]; then
   [[ "$android_code" =~ ^[1-9][0-9]*$ ]] || die "Provide --android-code with a fresh positive integer"
   for name in FOXSTALE_KEYSTORE_PATH FOXSTALE_KEYSTORE_PASSWORD FOXSTALE_KEYALIAS_NAME FOXSTALE_KEYALIAS_PASSWORD; do
@@ -129,6 +134,17 @@ verify_catalog_platform() {
   strings "$catalog" | grep -q "RuntimePath}/${platform}" || die "Addressables catalog does not point at the $platform bundles; localization would fail"
 }
 
+verify_standalone_catalog() {
+  local player="$1" platform="$2" catalog data_root
+  data_root="$player"
+  if [[ ! -d "$data_root" ]]; then
+    data_root="$(dirname "$player")/$(basename "$player" .exe)_Data"
+  fi
+  catalog="$(find "$data_root" -path '*/StreamingAssets/aa/catalog.*' -type f -print -quit)"
+  [[ -n "$catalog" ]] || die "Addressables catalog missing from the $platform player"
+  strings "$catalog" | grep -q "RuntimePath}/$platform" || die "Addressables catalog does not point at the $platform bundles"
+}
+
 if [[ "$mode" == android || "$mode" == both ]]; then
   android_aab="$build_root/Android/FoxsTale_${android_code}.aab"
   [[ ! -e "$android_aab" ]] || die "Android build output already exists; choose a fresh versionCode"
@@ -153,6 +169,28 @@ if [[ "$mode" == ios || "$mode" == both ]]; then
   fi
   [[ -d "$ios_project/Unity-iPhone.xcodeproj" ]] || die "Unity did not create an Xcode project"
   verify_catalog_platform "$ios_project/Data/Raw/aa/catalog.bin" iOS
+fi
+
+build_standalone() {
+  local target="$1" method="$2" output="$3" platform="$4" log="$5"
+  [[ ! -e "$output" ]] || die "$platform output already exists; move it or choose another output path"
+  mkdir -p "$(dirname "$output")"
+  export FOXSTALE_STANDALONE_OUTPUT_PATH="$output"
+  run_unity "$method" "$log" "$target"
+  [[ -e "$output" ]] || die "Unity did not create the $platform player"
+  verify_standalone_catalog "$output" "$platform"
+}
+
+if [[ "$mode" == windows || "$mode" == pc ]]; then
+  build_standalone Win64 BuildAutomation.BuildWindows \
+    "$build_root/PC/Windows/FoxsTale.exe" StandaloneWindows64 \
+    "$build_root/logs/windows.log"
+fi
+
+if [[ "$mode" == macos || "$mode" == pc ]]; then
+  build_standalone OSXStandalone BuildAutomation.BuildMacOS \
+    "$build_root/PC/macOS/FoxsTale.app" StandaloneOSX \
+    "$build_root/logs/macos.log"
 fi
 
 if ((upload)); then

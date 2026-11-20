@@ -580,15 +580,25 @@
     {
       "id": "3725f06b-2961-4bf7-b6f5-8c6ab9ea2179",
       "title": "PC build pipeline (Windows, macOS; no Steam yet)",
-      "status": "todo",
+      "status": "testing",
       "createdAt": "2026-11-20T10:00:00-05:00",
-      "updatedAt": "2026-11-20T10:00:00-05:00",
-      "description": "Platform: PC. Next action owner: Claude Code. Estimate: 1 day.\n\nBuildAutomation methods and release-test.sh targets for Windows and macOS standalone, Addressables catalog check per platform, local artifacts only. Steam is out of scope for now (owner decision 2026-11-19).\n\nDepends on: None.",
+      "updatedAt": "2026-11-20T08:24:42-05:00",
+      "description": "Platform: PC. Next action owner: Claude Code. Estimate: 1 day.\n\nBuildAutomation methods and release-test.sh targets for Windows and macOS standalone, Addressables catalog check per platform, local artifacts only. Steam is out of scope for now (owner decision 2026-11-19).\n\nDepends on: None.\n\n2026-11-20 Codex — Added BuildAutomation.BuildWindows/BuildMacOS and release-test.sh windows|macos|pc local build modes. The script rejects store uploads for PC and validates each packaged Addressables catalog against StandaloneWindows64/StandaloneOSX. Usage documented in docs/PC_BUILDS.md. Static checks: bash -n and CLI help passed. Unity compilation/player build and platform-module/catalog validation remain pending; task stays testing.",
       "events": [
         {
           "at": "2026-11-20T10:00:00-05:00",
           "actor": "Claude Code",
           "summary": "Planned with the owner. Assigned to Claude Code."
+        },
+        {
+          "at": "2026-11-20T00:00:00-05:00",
+          "actor": "Codex",
+          "summary": "Starting the assigned PC build pipeline task after checking the current project scripts, targets, and Addressables setup."
+        },
+        {
+          "at": "2026-11-20T08:24:42-05:00",
+          "actor": "Codex",
+          "summary": "Implemented the local Windows/macOS build pipeline and static-checked its shell entry point. Unity compile and actual player/catalog builds remain pending; status set to testing."
         }
       ]
     },

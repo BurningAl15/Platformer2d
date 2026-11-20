@@ -8,13 +8,14 @@ using UnityEditor.iOS.Xcode;
 using UnityEngine;
 
 /// <summary>
-/// Automatización de builds para Android e iOS.
-/// Permite generar builds desde el Editor de Unity (menú superior) o desde la terminal CLI en CI/CD.
-/// 
-/// COMANDOS CLI:
+/// Builds the game's Android, iOS, Windows, and macOS players from the Editor or CLI.
+///
+/// CLI examples:
 /// /Applications/Unity/Hub/Editor/6000.6.0f1/Unity.app/Contents/MacOS/Unity -batchmode -quit -projectPath . -executeMethod BuildAutomation.BuildAndroidAPK
 /// /Applications/Unity/Hub/Editor/6000.6.0f1/Unity.app/Contents/MacOS/Unity -batchmode -quit -projectPath . -executeMethod BuildAutomation.BuildAndroidAAB
 /// /Applications/Unity/Hub/Editor/6000.6.0f1/Unity.app/Contents/MacOS/Unity -batchmode -quit -projectPath . -executeMethod BuildAutomation.BuildiOS
+/// /Applications/Unity/Hub/Editor/6000.6.0f1/Unity.app/Contents/MacOS/Unity -batchmode -quit -projectPath . -executeMethod BuildAutomation.BuildWindows
+/// /Applications/Unity/Hub/Editor/6000.6.0f1/Unity.app/Contents/MacOS/Unity -batchmode -quit -projectPath . -executeMethod BuildAutomation.BuildMacOS
 /// </summary>
 public static class BuildAutomation
 {
@@ -98,6 +99,54 @@ public static class BuildAutomation
     public static void BuildiOS()
     {
         PerformiOSBuild();
+    }
+
+    [MenuItem("CustomEditorTools/Builds/Build Windows Player")]
+    public static void BuildWindows()
+    {
+        PerformStandaloneBuild(BuildTarget.StandaloneWindows64, "Builds/PC/Windows/FoxsTale.exe");
+    }
+
+    [MenuItem("CustomEditorTools/Builds/Build macOS Player")]
+    public static void BuildMacOS()
+    {
+        PerformStandaloneBuild(BuildTarget.StandaloneOSX, "Builds/PC/macOS/FoxsTale.app");
+    }
+
+    private static void PerformStandaloneBuild(BuildTarget target, string defaultRelativeOutputPath)
+    {
+        string outputPath = Environment.GetEnvironmentVariable("FOXSTALE_STANDALONE_OUTPUT_PATH");
+        if (string.IsNullOrEmpty(outputPath))
+            outputPath = Path.Combine(ProjectRoot, defaultRelativeOutputPath);
+
+        string buildInfoPath = Path.Combine(ProjectRoot, "Assets", "Resources", "build_info.txt");
+        string originalBuildInfo = File.Exists(buildInfoPath) ? File.ReadAllText(buildInfoPath) : null;
+
+        try
+        {
+            Directory.CreateDirectory(Path.GetDirectoryName(Path.GetFullPath(outputPath)));
+            WriteBuildInfo("PC");
+            EnsureActiveBuildTarget(BuildTargetGroup.Standalone, target);
+
+            BuildPlayerOptions options = new BuildPlayerOptions
+            {
+                scenes = GetScenesForBuild(),
+                locationPathName = outputPath,
+                target = target,
+                options = BuildOptions.None
+            };
+
+            BuildReport report = BuildPipeline.BuildPlayer(options);
+            ProcessBuildResult(report, outputPath);
+        }
+        finally
+        {
+            if (originalBuildInfo != null)
+            {
+                File.WriteAllText(buildInfoPath, originalBuildInfo);
+                AssetDatabase.ImportAsset("Assets/Resources/build_info.txt", ImportAssetOptions.ForceUpdate);
+            }
+        }
     }
 
     private static void PerformAndroidBuild(bool isAppBundle)

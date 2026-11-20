@@ -1822,3 +1822,5 @@ Nota agregada en el docstring con la acción requerida en el dashboard.
 - icons: 035b716d-0437-4f25-a2fe-29f58bdfddee
 - policy: a7262f99-7107-44d9-89f6-6f6660fea262
 - creditlist: 5e455633-0795-45cf-a18c-1494772a6237
+
+2026-11-20 — `3725f06b-2961-4bf7-b6f5-8c6ab9ea2179` — Added local Windows x64 and macOS standalone build targets to BuildAutomation and release-test.sh. Commands and Addressables target checks are documented in `docs/PC_BUILDS.md`. Static shell validation (`bash -n`, CLI help) passed. A Unity player build was not run; Windows/macOS support modules and catalog outputs still need validation in Unity. FastTask status: testing.
