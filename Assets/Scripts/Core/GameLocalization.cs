@@ -97,7 +97,11 @@ public static class GameLocalization
 
     public static string GetLevelName(int levelNumber, string fallback)
     {
-        return levelNumber >= 1 && levelNumber <= 8 ? Get($"LEVEL_NAME_{levelNumber}") : fallback;
+        // Any level with a LEVEL_NAME_n entry gets its translated name; others keep the map point's name.
+        if (levelNumber < 1) return fallback;
+        string key = $"LEVEL_NAME_{levelNumber}";
+        string value = Get(key);
+        return string.IsNullOrEmpty(value) || value == key ? fallback : value;
     }
 
     public static string GetWorldName(string sourceName)

@@ -2,6 +2,7 @@
 
 gem.png -> Assets/Sprites/Collectibles/AmberShard.png (purple gem hues to amber)
 UI_Heart.png -> Assets/Sprites/UI/AmberHeart.png (red heart hues to amber)
+AmberGlow.png: soft glow drawn behind the Amber Heart relic.
 Each .meta mirrors its source meta with its own guid.
 Run: uv run --with pillow python ArtSource/Map/bake_amber.py
 """
@@ -36,3 +37,12 @@ def recolor(src, dst):
 
 for src, dst in JOBS:
     recolor(src, dst)
+
+# Soft stepped glow behind the Amber Heart (32x32, three alpha rings).
+glow = Image.new("RGBA", (32, 32), (0, 0, 0, 0)); gp = glow.load()
+for y in range(32):
+    for x in range(32):
+        d = ((x - 15.5) ** 2 + (y - 15.5) ** 2) ** 0.5
+        a = 150 if d < 7 else 90 if d < 11 else 40 if d < 15 else 0
+        if a: gp[x, y] = (255, 196, 92, a)
+glow.save(ROOT / "Assets/Sprites/Collectibles/AmberGlow.png")

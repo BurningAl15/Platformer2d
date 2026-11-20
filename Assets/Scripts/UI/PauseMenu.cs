@@ -29,6 +29,9 @@ public class PauseMenu : MonoBehaviour
     [SerializeField] private Image cloverIcon;
     [SerializeField] private TextMeshProUGUI heartsText;
     [SerializeField] private TextMeshProUGUI fragmentsText;
+    [Tooltip("Restarts the level; useful when chasing a no-damage run.")]
+    [SerializeField] private Button restartButton;
+    [SerializeField] private TextMeshProUGUI restartText;
     [SerializeField] private TextMeshProUGUI livesText;
     [SerializeField] private Color missingTint = new Color(0.35f, 0.38f, 0.55f, 1f);
 
@@ -63,6 +66,7 @@ public class PauseMenu : MonoBehaviour
 
     private void Start()
     {
+        if (restartButton != null) restartButton.onClick.AddListener(RestartLevel);
         initPoint = CalculateHiddenPosition();
         SetPausePanelY(initPoint);
         TurnCanvasGroup(false);
@@ -108,6 +112,7 @@ public class PauseMenu : MonoBehaviour
 
     private void RefreshPauseStats()
     {
+        if (restartText != null) restartText.text = GameLocalization.Get("PAUSE_RESTART");
         SaveManager save = SaveManager.Instance;
         int levelNumber = SceneUtils.Get_CurrentLevelName();
         int currentGems = LevelManager._instance != null ? LevelManager._instance.GetGemsCollected() : 0;
@@ -133,6 +138,13 @@ public class PauseMenu : MonoBehaviour
     {
         isPaused = false;
         ResumeGame();
+    }
+
+    /// <summary>Restarts the current level from the start (no life is spent).</summary>
+    public void RestartLevel()
+    {
+        ForceResume();
+        SceneUtils.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
     }
 
     public void LevelSelection()

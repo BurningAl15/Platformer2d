@@ -730,6 +730,18 @@ MonoBehaviour:
     m_Localized: 'RESOLUTION: {0}'
     m_Metadata:
       m_Items: []
+  - m_Id: 804249775
+    m_Localized: 'Restart'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249776
+    m_Localized: 'Amber Heart!'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249777
+    m_Localized: 'You found the lost gem.'
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

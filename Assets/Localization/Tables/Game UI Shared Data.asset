@@ -723,6 +723,18 @@ MonoBehaviour:
     m_Key: SETTINGS_RESOLUTION
     m_Metadata:
       m_Items: []
+  - m_Id: 804249775
+    m_Key: PAUSE_RESTART
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249776
+    m_Key: AMBER_HEART_TITLE
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249777
+    m_Key: AMBER_HEART_FOUND
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

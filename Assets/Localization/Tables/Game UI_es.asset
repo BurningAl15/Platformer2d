@@ -726,6 +726,18 @@ MonoBehaviour:
     m_Localized: 'RESOLUCIÓN: {0}'
     m_Metadata:
       m_Items: []
+  - m_Id: 804249775
+    m_Localized: 'Reiniciar'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249776
+    m_Localized: '¡Corazón de Ámbar!'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804249777
+    m_Localized: 'Encontraste la gema perdida.'
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []
