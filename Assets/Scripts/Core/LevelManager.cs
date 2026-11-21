@@ -35,7 +35,17 @@ public class LevelManager : MonoBehaviour
     private int damageTakenThisRun;
 
     /// <summary>Called by PlayerHealth whenever the player loses health (hits and falls).</summary>
-    public void NotifyDamageTaken() => damageTakenThisRun++;
+    /// <summary>
+    /// True while a death/respawn or the level-end sequence runs. Pausing then would
+    /// freeze the fade over the pause menu, so the pause stays closed.
+    /// </summary>
+    public bool BlocksPause => currentCoroutine != null || stopGame;
+
+    public void NotifyDamageTaken()
+    {
+        // Hits after the goal never count against the run.
+        if (!stopGame) damageTakenThisRun++;
+    }
 
     /// <summary>True while the player has taken no damage at all in this run of the level.</summary>
     public bool IsFlawlessRun => damageTakenThisRun == 0 && livesLostThisRun == 0;
@@ -149,7 +159,7 @@ public class LevelManager : MonoBehaviour
 
     private void TryRespawn(bool consumeLife, bool restoreHealth)
     {
-        if (currentCoroutine != null) return;
+        if (currentCoroutine != null || stopGame) return;
 
         bool isTutorial = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "Level_0";
         bool canContinue = !consumeLife || isTutorial || LivesManager.Instance == null ||
@@ -193,6 +203,7 @@ public class LevelManager : MonoBehaviour
     private IEnumerator EndLevelRoutine()
     {
         stopGame = true;
+        ClearEnemiesAtGoal();
 
         AudioMixerManager._instance.PlayBackgroundSource(false);
         SimpleCameraController2d._instance.StopFollow();
@@ -231,6 +242,18 @@ public class LevelManager : MonoBehaviour
         }
 
         SceneUtils.ToSelectionScene();
+    }
+
+    /// <summary>
+    /// Defeats every active enemy when the goal is reached. Spawners already stop
+    /// while <see cref="stopGame"/> is set; this clears what is still on screen.
+    /// </summary>
+    private static void ClearEnemiesAtGoal()
+    {
+        foreach (EnemyParent enemy in FindObjectsByType<EnemyParent>(FindObjectsInactive.Exclude))
+        {
+            if (!enemy.IsDying) enemy.Death();
+        }
     }
 
     private bool IsCurrentWorldComplete()

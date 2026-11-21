@@ -80,6 +80,9 @@ public class PlayerHealth : MonoBehaviour
     private void ApplyDamage(bool returnToCheckpoint, string cause)
     {
         if (invicibilityCounter > 0f || currentHealth <= 0) return;
+        // Once the goal is reached the run is over: nothing can hurt the player
+        // or cost the no-damage record.
+        if (LevelManager._instance != null && LevelManager._instance.stopGame) return;
 
         currentHealth = Mathf.Max(0, currentHealth - 1);
         if (LevelManager._instance != null) LevelManager._instance.NotifyDamageTaken();

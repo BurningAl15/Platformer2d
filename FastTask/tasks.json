@@ -971,7 +971,22 @@
           "summary": "Audited all screens in Spanish with a positive control; nothing untranslated."
         }
       ]
+    },
+    {
+      "id": "456d47b4-cac6-4d57-aa7c-a8dac876262f",
+      "title": "Post-goal safety, pause during death fade, pause text sizes",
+      "status": "testing",
+      "createdAt": "2026-11-20T18:30:00-05:00",
+      "updatedAt": "2026-11-20T18:30:00-05:00",
+      "description": "Platform: all. Owner QA report: pausing during the death fade left a black screen; Restart and dice texts smaller; after the goal a rat spawned, hit the fox and cost a perfect run.\n\n2026-11-20 Claude Code:\n- After the goal (LevelManager.stopGame): PlayerHealth.ApplyDamage ignores hits, NotifyDamageTaken does not count, respawn and knockback are skipped; every active EnemyParent is defeated (ClearEnemiesAtGoal); SpawnerParent.LevelEnded stops SpawnByGroup, SpawnerTime, SpikeSpawner and SpawnerSwitch from spawning.\n- PauseMenu.Pause does not open while LevelManager.BlocksPause (death/respawn or level-end routine); closing still works.\n- Text sizes: Levels 2-8 kept stale scene overrides (max 75 / min 24) on Resume, Level Select and Main Menu; Restart and the dice buttons use the UI standard 44. Removed those 6 overrides per scene (YAML only), so every level matches the prefab.\n\nVerified in Play Mode (Level_2): pause blocked during respawn and available after; pause buttons all 44; EndLevel defeated 4/4 enemies, a post-goal hit left health 6->6, pause did not open. Pending: device QA in the next build.",
+      "events": [
+        {
+          "at": "2026-11-20T18:30:00-05:00",
+          "actor": "Claude Code",
+          "summary": "Implemented and verified in Play Mode; awaiting device QA in the next build."
+        }
+      ]
     }
   ],
-  "updatedAt": "2026-11-19T19:20:00Z"
+  "updatedAt": "2026-11-20T18:30:00-05:00"
 }

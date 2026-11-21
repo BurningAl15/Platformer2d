@@ -10,9 +10,12 @@ public class SpawnerParent : MonoBehaviour
 
     public bool runSpawning = false;
 
+    /// <summary>True once the goal is reached; spawners create nothing after that.</summary>
+    public static bool LevelEnded => LevelManager._instance != null && LevelManager._instance.stopGame;
+
     protected void Update()
     {
-        if (!LevelManager._instance.stopGame)
+        if (!LevelEnded)
         {
             if (runSpawning)
             {

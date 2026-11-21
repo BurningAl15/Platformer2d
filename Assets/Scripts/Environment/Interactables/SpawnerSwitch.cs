@@ -21,6 +21,7 @@ public class SpawnerSwitch : SpawnerParent
 
     public override void Spawn()
     {
+        if (LevelEnded) return;
         SpawnFactory.Spawn(enemy, initialPosition.position, enemy.transform.rotation);
     }
 

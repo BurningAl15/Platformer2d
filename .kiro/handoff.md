@@ -1850,3 +1850,5 @@ Codex: Play Games + 12 achievements, Game Center + 12 achievements, store achiev
 2026-11-20 — Localization audit: every screen fully Spanish (positive control in English flags the pause labels as expected).
 
 2026-11-20 — Builds Android 43 / iOS 37 — from be6d15d; Story scene in both; review classes in the AAB; catalogs verified. Uploads accepted by Fastlane. Processing, tester availability and device QA NOT verified.
+
+2026-11-20 — Post-goal safety: after the goal the fox cannot be hurt (no damage, no perfect loss, no knockback/respawn), active enemies are defeated and spawners stop. Pause cannot open during death/respawn or level end. Levels 2–8: removed stale 75pt overrides on three pause buttons so all menus use 44. Verified in Play Mode; device QA pending in the next build.

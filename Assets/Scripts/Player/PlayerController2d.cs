@@ -153,6 +153,7 @@ public class PlayerController2d : MonoBehaviour
     
     public void KnockBack()
     {
+        if (LevelManager._instance != null && LevelManager._instance.stopGame) return;
         if (knockback != null)
         {
             knockback.ApplyKnockback();

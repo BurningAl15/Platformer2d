@@ -82,6 +82,8 @@ public class PauseMenu : MonoBehaviour
         if (MenuBackStack.ClosedThisFrame) return;
         // With a menu open over the pause (e.g. Settings), Start/Esc leaves it to Cancel.
         if (isPaused && MenuBackStack.HasOpen && !MenuBackStack.IsTop(this)) return;
+        // Never open during a death fade or after the goal (only closing is allowed).
+        if (!isPaused && LevelManager._instance != null && LevelManager._instance.BlocksPause) return;
         isPaused = !isPaused;
 
         if (isPaused)

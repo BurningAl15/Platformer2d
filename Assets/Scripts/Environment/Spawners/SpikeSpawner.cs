@@ -14,6 +14,7 @@ public class SpikeSpawner : SpawnerParent
     
     public override void Spawn()
     {
+        if (LevelEnded) return;
         SpawnFactory.Spawn(enemy, transform.position, Quaternion.identity);
     }
 

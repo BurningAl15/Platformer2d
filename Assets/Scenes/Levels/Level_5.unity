@@ -614,14 +614,6 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5647457846979810459, guid: 52073add4951c934daba861871d7e9ed, type: 3}
-      propertyPath: m_fontSizeMax
-      value: 75
-      objectReference: {fileID: 0}
-    - target: {fileID: 5647457846979810459, guid: 52073add4951c934daba861871d7e9ed, type: 3}
-      propertyPath: m_fontSizeMin
-      value: 24
-      objectReference: {fileID: 0}
-    - target: {fileID: 5647457846979810459, guid: 52073add4951c934daba861871d7e9ed, type: 3}
       propertyPath: m_overflowMode
       value: 1
       objectReference: {fileID: 0}
@@ -654,14 +646,6 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5647457847608308738, guid: 52073add4951c934daba861871d7e9ed, type: 3}
-      propertyPath: m_fontSizeMax
-      value: 75
-      objectReference: {fileID: 0}
-    - target: {fileID: 5647457847608308738, guid: 52073add4951c934daba861871d7e9ed, type: 3}
-      propertyPath: m_fontSizeMin
-      value: 24
-      objectReference: {fileID: 0}
-    - target: {fileID: 5647457847608308738, guid: 52073add4951c934daba861871d7e9ed, type: 3}
       propertyPath: m_overflowMode
       value: 1
       objectReference: {fileID: 0}
@@ -688,14 +672,6 @@ PrefabInstance:
     - target: {fileID: 5647457847608308738, guid: 52073add4951c934daba861871d7e9ed, type: 3}
       propertyPath: m_textInfo.characterCount
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5647457848694358801, guid: 52073add4951c934daba861871d7e9ed, type: 3}
-      propertyPath: m_fontSizeMax
-      value: 75
-      objectReference: {fileID: 0}
-    - target: {fileID: 5647457848694358801, guid: 52073add4951c934daba861871d7e9ed, type: 3}
-      propertyPath: m_fontSizeMin
-      value: 24
       objectReference: {fileID: 0}
     - target: {fileID: 5647457848694358801, guid: 52073add4951c934daba861871d7e9ed, type: 3}
       propertyPath: m_overflowMode

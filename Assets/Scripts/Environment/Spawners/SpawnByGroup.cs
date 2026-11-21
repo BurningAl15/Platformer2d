@@ -40,6 +40,7 @@ public class SpawnByGroup : SpawnerParent
 
     public override void Spawn(int _index)
     {
+        if (LevelEnded) return;
         SpawnFactory.Spawn(_spawnGroup[_index].spawnPrefab, _spawnGroup[_index].spawnPrefabPosition.position, _spawnGroup[_index].spawnPrefab.transform.rotation);
     }
 
