@@ -58,6 +58,14 @@ public class UI_SelectController : MonoBehaviour
     private RectTransform panelRect;
     private MapPoint currentLevelInfo;
 
+    // Fixed-size blocks of the panel (stats, Play) with their authored layout. They are
+    // placed for a wide screen; narrower aspect ratios (16:9, iPad 4:3) shrink them to fit.
+    private RectTransform[] fitBlocks;
+    private Vector2[] fitBlockPositions;
+    private float fitContentWidth;
+    private float fittedPanelWidth = -1f;
+    private const float FitMargin = 160f;
+
     private void Awake()
     {
         if (_instance != null && _instance != this)
@@ -98,6 +106,7 @@ public class UI_SelectController : MonoBehaviour
         if (cloverText != null)
             cloverText.gameObject.SetActive(false);
 
+        CacheFitBlocks();
         levelInfoContainer.SetActive(false);
 
         if (playButton != null && player != null)
@@ -118,6 +127,8 @@ public class UI_SelectController : MonoBehaviour
     {
         if (currentLevelInfo != null)
             RenderLevelData(currentLevelInfo);
+        if (playButtonText != null)
+            playButtonText.text = GameLocalization.Get("UI_PLAY");
     }
 
     private void ClearLevelInfoPlaceholders()
@@ -128,6 +139,61 @@ public class UI_SelectController : MonoBehaviour
         if (bestTimeText != null) bestTimeText.text = string.Empty;
         if (timeTargetText != null) timeTargetText.text = string.Empty;
         if (cloverText != null) cloverText.text = string.Empty;
+    }
+
+    private void CacheFitBlocks()
+    {
+        if (panelRect == null) return;
+        var blocks = new System.Collections.Generic.List<RectTransform>();
+        float halfWidth = 0f;
+        foreach (Transform child in panelRect)
+        {
+            // Stretched children (the title) already follow the panel width.
+            if (child is not RectTransform rect || rect.anchorMin != rect.anchorMax) continue;
+            blocks.Add(rect);
+            halfWidth = Mathf.Max(halfWidth, Mathf.Abs(rect.anchoredPosition.x) + ContentHalfWidth(rect));
+        }
+        fitBlocks = blocks.ToArray();
+        fitBlockPositions = new Vector2[fitBlocks.Length];
+        for (int i = 0; i < fitBlocks.Length; i++) fitBlockPositions[i] = fitBlocks[i].anchoredPosition;
+        fitContentWidth = halfWidth * 2f + FitMargin;
+    }
+
+    /// <summary>Half the width actually covered by a block, including children placed outside its rect.</summary>
+    private static float ContentHalfWidth(RectTransform rect)
+    {
+        // Empty layout containers can be much wider than what they show; only drawn rects count.
+        float half = rect.GetComponent<UnityEngine.UI.Graphic>() != null ? rect.rect.width * 0.5f : 0f;
+        foreach (Transform child in rect)
+        {
+            if (child is not RectTransform c || !c.gameObject.activeSelf) continue;
+            if (c.anchorMin != c.anchorMax) continue;
+            Vector2 anchorOffset = (c.anchorMin - new Vector2(0.5f, 0.5f)) * rect.rect.size;
+            half = Mathf.Max(half, Mathf.Abs(anchorOffset.x + c.anchoredPosition.x) + ContentHalfWidth(c));
+        }
+        return half;
+    }
+
+    private void LateUpdate()
+    {
+        // Refit when the panel width changes (resolution, window size) while it is shown.
+        if (panelRect != null && levelInfoContainer.activeSelf &&
+            !Mathf.Approximately(panelRect.rect.width, fittedPanelWidth))
+            FitContentToPanel();
+    }
+
+    private void FitContentToPanel()
+    {
+        if (fitBlocks == null || fitContentWidth <= 0f) return;
+        Canvas.ForceUpdateCanvases();
+        fittedPanelWidth = panelRect.rect.width;
+        float scale = Mathf.Min(1f, panelRect.rect.width / fitContentWidth);
+        for (int i = 0; i < fitBlocks.Length; i++)
+        {
+            if (fitBlocks[i] == null) continue;
+            fitBlocks[i].localScale = new Vector3(scale, scale, 1f);
+            fitBlocks[i].anchoredPosition = new Vector2(fitBlockPositions[i].x * scale, fitBlockPositions[i].y);
+        }
     }
 
     private static void ConfigureAutoResize(TextMeshProUGUI tmp, float minSize, float maxSize)
@@ -202,6 +268,7 @@ public class UI_SelectController : MonoBehaviour
             // Rises from below while fading from transparent to solid.
             bool wasHidden = !levelInfoContainer.activeSelf;
             levelInfoContainer.SetActive(true);
+            FitContentToPanel();
             panelRect.DOKill();
             if (wasHidden)
                 panelRect.anchoredPosition = new Vector2(panelRect.anchoredPosition.x, hiddenY);
