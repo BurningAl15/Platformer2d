@@ -69,6 +69,22 @@ public class DiceRollController : MonoBehaviour
     private Vector3 diceRestScale;
     private Vector3 diceRestRotation;
 
+    // Wide phones (about 2.2:1) give the canvas less height than the 1080 the box was
+    // authored for, which cut the header off. The fixed-size box shrinks to fit.
+    private const float FitMargin = 40f;
+    private Vector2 fittedPanelSize = new Vector2(-1f, -1f);
+
+    private void LateUpdate()
+    {
+        if (panelRect != null && panelGroup != null && panelGroup.alpha > 0f && panelRect.parent is RectTransform fitParent && fitParent.rect.size != fittedPanelSize)
+            FitPanelToScreen();
+    }
+
+    private void FitPanelToScreen()
+    {
+        fittedPanelSize = UISelectionUtility.FitBoxToParent(panelRect, FitMargin);
+    }
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -170,6 +186,7 @@ public class DiceRollController : MonoBehaviour
 
         if (panelRect != null)
         {
+            FitPanelToScreen();
             panelRect.DOKill();
             panelRect.DOAnchorPosY(visibleY, 0.4f).SetEase(Ease.OutBack).SetUpdate(true);
         }

@@ -121,6 +121,15 @@ public class GameOverController : MonoBehaviour
     //  Mostrar / ocultar
     // ─────────────────────────────────────────────────────────────────────────
 
+    private Vector2 fittedPanelSize = new Vector2(-1f, -1f);
+
+    private void LateUpdate()
+    {
+        // Refit when the screen size changes while the panel is shown (see FitFixedChildren).
+        if (panelRect != null && panelGroup != null && panelGroup.alpha > 0f && panelRect.parent is RectTransform fitParent && fitParent.rect.size != fittedPanelSize)
+            fittedPanelSize = UISelectionUtility.FitBoxToParent(panelRect);
+    }
+
     public void Show()
     {
         // Pausar el juego y ocultar controles virtuales de gameplay para no solapar el menú
@@ -144,6 +153,7 @@ public class GameOverController : MonoBehaviour
 
         if (panelRect != null)
         {
+            fittedPanelSize = UISelectionUtility.FitBoxToParent(panelRect);
             panelRect.anchoredPosition = new Vector2(panelRect.anchoredPosition.x, hiddenY);
             panelRect.DOKill();
             panelRect.DOAnchorPosY(visibleY, animDuration)
